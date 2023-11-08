@@ -20,6 +20,8 @@
         <module>car-rental-common</module>
         <module>car-rental-agency</module>
         <module>car-rental-api-gateway</module>
+        <module>car-rental-agency</module>
+        <module>car-rental-agency</module>
     </modules>
 
     <repositories>

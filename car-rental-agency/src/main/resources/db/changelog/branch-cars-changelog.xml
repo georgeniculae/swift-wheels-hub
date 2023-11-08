@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="create-table-branch-cars" author="George Niculae">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="car-rental-agency" catalogName="car-rental-agency" tableName="branch_cars"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="branch_cars">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="branch_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cars_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="branch_id"
+                                 baseTableName="branch_cars"
+                                 constraintName="fk_branch_cars_branch_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="branch"/>
+
+        <addForeignKeyConstraint baseColumnNames="cars_id"
+                                 baseTableName="branch_cars"
+                                 constraintName="fk_branch_cars_cars_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="car"/>
+    </changeSet>
+
+    <changeSet id="add-branch-cars-1" author="George Niculae">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*)
+                FROM branch_cars
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="branch_cars">
+            <column name="branch_id" value="1"/>
+            <column name="cars_id" value="1"/>
+        </insert>
+
+        <insert tableName="branch_cars">
+            <column name="branch_id" value="2"/>
+            <column name="cars_id" value="2"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

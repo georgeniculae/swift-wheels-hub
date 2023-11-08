@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="create-table-rental-office" author="George Niculae">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="car-rental-agency" catalogName="car-rental-agency" tableName="rental-office"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="rental_office">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="contact_address" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="logo_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add-rental-office-1" author="George Niculae">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*)
+                FROM rental_office
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="rental_office">
+            <column name="name" value="Rental Office 1"/>
+            <column name="contact_address" value="Ploiesti"/>
+            <column name="logo_type" value="logo 1"/>
+        </insert>
+
+        <insert tableName="rental_office">
+            <column name="name" value="Rental Office 2"/>
+            <column name="contact_address" value="Bucuresti"/>
+            <column name="logo_type" value="logo 2"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
