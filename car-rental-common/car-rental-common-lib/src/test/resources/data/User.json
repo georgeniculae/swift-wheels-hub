@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "username": "alexandrupopescu",
+  "password": "12345678",
+  "role": "ROLE_ADMIN",
+  "firstName": "Alexandru",
+  "lastName": "Popescu",
+  "email": "alexandrupopescu@email.com",
+  "dateOfBirth": "1980-01-20",
+  "address": "Ploiesti"
+}
