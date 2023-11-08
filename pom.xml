@@ -22,6 +22,7 @@
         <module>car-rental-api-gateway</module>
         <module>car-rental-agency</module>
         <module>car-rental-agency</module>
+        <module>car-rental-audit</module>
     </modules>
 
     <repositories>
