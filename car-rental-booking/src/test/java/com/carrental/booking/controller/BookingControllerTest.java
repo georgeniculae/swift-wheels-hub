@@ -368,7 +368,7 @@ class BookingControllerTest {
         when(bookingService.updateBooking(any(HttpServletRequest.class), anyLong(), any(BookingDto.class)))
                 .thenReturn(bookingDto);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/edit/{id}", 1L).contextPath(PATH)
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L).contextPath(PATH)
                         .with(csrf())
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
