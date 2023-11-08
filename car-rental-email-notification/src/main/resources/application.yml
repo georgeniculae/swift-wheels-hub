@@ -1,0 +1,51 @@
+server:
+  port: ${PORT:8090}
+  error:
+    include-message: always
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
+
+spring:
+  application:
+    name: car-rental-email-notification
+  thread-executor: virtual
+  mvc:
+    throw-exception-if-no-handler-found: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    listener:
+      missing-topics-fatal: false
+  sendgrid:
+    api-key: ${SENDGRID_API_KEY}
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${EUREKA_USER}:${EUREKA_PASSWORD}@localhost:8761/eureka
+    registryFetchIntervalSeconds: 5
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 10
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [ "prometheus" ]
+
+kafka:
+  enabled: true
+  email-notification-producer-topic-name: ${EMAIL_NOTIFICATION_PRODUCER_TOPIC}
+  groupId: ${EMAIL_NOTIFICATION_CONSUMER_GROUP}
+
+sendgrid:
+  enabled: true
+  mail:
+    mailFrom: ${SENDGRID_MAIL_FROM}
+    name: Car Rental
+
+mustache-template:
+  enabled: true
