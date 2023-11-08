@@ -17,12 +17,6 @@
         <module>car-rental-customer</module>
         <module>car-rental-email-notification</module>
         <module>car-rental-expense</module>
-        <module>car-rental-common</module>
-        <module>car-rental-agency</module>
-        <module>car-rental-api-gateway</module>
-        <module>car-rental-agency</module>
-        <module>car-rental-agency</module>
-        <module>car-rental-audit</module>
     </modules>
 
     <repositories>
