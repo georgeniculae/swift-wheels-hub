@@ -59,7 +59,7 @@ public class SwaggerExtractorService {
     private Map<String, String> getSwaggersIdentifiersAndContents(Tuple4<Map<String, String>, Map<String, String>, Map<String, String>, Map<String, String>> swaggersMapTuple) {
         Map<String, String> swaggers = new HashMap<>();
 
-        swaggersMapTuple.forEach(o -> swaggers.putAll((Map<String, String>) o));
+        swaggersMapTuple.forEach(swaggerIdentifierAndContent -> swaggers.putAll((Map<String, String>) swaggerIdentifierAndContent));
 
         return swaggers;
     }

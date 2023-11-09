@@ -3,8 +3,7 @@ package service;
 import com.carrental.cloudgateway.model.SwaggerFolder;
 import com.carrental.cloudgateway.service.RedisService;
 import com.carrental.cloudgateway.service.SwaggerExtractorService;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.parser.OpenAPIV3Parser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,6 +14,8 @@ import org.springframework.data.redis.core.ReactiveValueOperations;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,19 +38,22 @@ class RedisServiceTest {
     @Mock
     private ReactiveValueOperations<String, SwaggerFolder> reactiveValueOperations;
 
-//    @Test
-//    void addSwaggerFolderToRedisTest_success() {
-//        Map<String, OpenAPI> expectedResult = new HashMap<>();
-//        expectedResult.put("agency", new OpenAPIV3Parser().read("src/main/resources/swagger-definitions/car-rental-agency.yaml"));
-//
-//        when(swaggerExtractorService.getSwaggerIdentifierAndContent()).thenReturn(Mono.just(expectedResult));
-//        when(redisSwagger.opsForValue()).thenReturn(reactiveValueOperations);
-//        when(reactiveValueOperations.set(anyString(), any(SwaggerFolder.class))).thenReturn(Mono.just(true));
-//
-//        StepVerifier.create(redisService.addSwaggerFolderToRedis())
-//                .expectNext(true)
-//                .verifyComplete();
-//    }
+    @Mock
+    private ObjectMapper objectMapper;
+
+    @Test
+    void addSwaggerFolderToRedisTest_success() throws IOException {
+        Map<String, String> expectedResult = new HashMap<>();
+        expectedResult.put("agency", objectMapper.readValue(new File("src/test/resources/swagger-definition/car-rental-agency.yaml"), String.class));
+
+        when(swaggerExtractorService.getSwaggerIdentifierAndContent()).thenReturn(Mono.just(expectedResult));
+        when(redisSwagger.opsForValue()).thenReturn(reactiveValueOperations);
+        when(reactiveValueOperations.set(anyString(), any(SwaggerFolder.class))).thenReturn(Mono.just(true));
+
+        StepVerifier.create(redisService.addSwaggerFolderToRedis())
+                .expectNext(true)
+                .verifyComplete();
+    }
 
     @Test
     void addSwaggerFolderToRedisTest_errorOnGettingSwaggerFolder() {
@@ -60,20 +64,20 @@ class RedisServiceTest {
                 .verify();
     }
 
-//    @Test
-//    void repopulateRedisWithSwaggerFolderTest_success() {
-//        Map<String, OpenAPI> expectedResult = new HashMap<>();
-//        expectedResult.put("agency", new OpenAPIV3Parser().read("src/main/resources/swagger-definitions/car-rental-agency.yaml"));
-//
-//        when(redisSwagger.delete(anyString())).thenReturn(Mono.just(1L));
-//        when(swaggerExtractorService.getSwaggerIdentifierAndContent()).thenReturn(Mono.just(expectedResult));
-//        when(redisSwagger.opsForValue()).thenReturn(reactiveValueOperations);
-//        when(reactiveValueOperations.set(anyString(), any(SwaggerFolder.class))).thenReturn(Mono.just(true));
-//
-//        StepVerifier.create(redisService.repopulateRedisWithSwaggerFolder())
-//                .expectNext(true)
-//                .verifyComplete();
-//    }
+    @Test
+    void repopulateRedisWithSwaggerFolderTest_success() throws IOException {
+        Map<String, String> expectedResult = new HashMap<>();
+        expectedResult.put("agency", objectMapper.readValue(new File("src/test/resources/swagger-definition/car-rental-agency.yaml"), String.class));
+
+        when(redisSwagger.delete(anyString())).thenReturn(Mono.just(1L));
+        when(swaggerExtractorService.getSwaggerIdentifierAndContent()).thenReturn(Mono.just(expectedResult));
+        when(redisSwagger.opsForValue()).thenReturn(reactiveValueOperations);
+        when(reactiveValueOperations.set(anyString(), any(SwaggerFolder.class))).thenReturn(Mono.just(true));
+
+        StepVerifier.create(redisService.repopulateRedisWithSwaggerFolder())
+                .expectNext(true)
+                .verifyComplete();
+    }
 
     @Test
     void repopulateRedisWithSwaggerFolderTest_errorOnDeleteInRedis() {
