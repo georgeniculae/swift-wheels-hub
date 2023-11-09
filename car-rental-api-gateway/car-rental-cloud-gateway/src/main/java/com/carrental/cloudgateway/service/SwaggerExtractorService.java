@@ -1,33 +1,32 @@
 package com.carrental.cloudgateway.service;
 
-import com.carrental.cloudgateway.exception.CarRentalException;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.parser.OpenAPIV3Parser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple4;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "swagger-validator", name = "enabled", havingValue = "true")
 @Slf4j
 public class SwaggerExtractorService {
+
+    private static final String X_API_KEY = "X-API-KEY";
+
+    private static final String AGENCY = "agency";
+
+    private static final String BOOKINGS = "bookings";
+
+    private static final String CUSTOMERS = "customers";
+
+    private static final String EXPENSE = "expense";
 
     @Value("${swagger.agency}")
     private String agencyApiDocUrl;
@@ -44,10 +43,6 @@ public class SwaggerExtractorService {
     @Value("${apikey-secret}")
     private String apikey;
 
-    private static final String X_API_KEY = "X-API-KEY";
-
-    private static final String HYPHEN_REGEX = "-";
-
     private final WebClient webClient;
 
     public Mono<Map<String, String>> getSwaggerIdentifierAndContent() {
@@ -61,21 +56,12 @@ public class SwaggerExtractorService {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, String> getSwaggersIdentifiersAndContents(Tuple4<Map<String, String>, Map<String, String>, Map<String, String>, Map<String, String>> swaggersTuple) {
+    private Map<String, String> getSwaggersIdentifiersAndContents(Tuple4<Map<String, String>, Map<String, String>, Map<String, String>, Map<String, String>> swaggersMapTuple) {
         Map<String, String> swaggers = new HashMap<>();
 
-        swaggersTuple.forEach(o -> swaggers.putAll((Map<String, String>) o));
+        swaggersMapTuple.forEach(o -> swaggers.putAll((Map<String, String>) o));
 
         return swaggers;
-    }
-
-    private Mono<Map<String, String>> addSwaggerIdentifierAndContent(Map<String, String> swaggerIdentifierAndContent) {
-        return getCarRentalBookingSwagger()
-                .map(actualIdentifierAndContent -> {
-                    swaggerIdentifierAndContent.putAll(actualIdentifierAndContent);
-
-                    return swaggerIdentifierAndContent;
-                });
     }
 
     private Mono<Map<String, String>> getCarRentalAgencySwagger() {
@@ -85,7 +71,7 @@ public class SwaggerExtractorService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .flux()
-                .collectMap(openAPI -> "agency");
+                .collectMap(openAPI -> AGENCY);
     }
 
     private Mono<Map<String, String>> getCarRentalBookingSwagger() {
@@ -95,7 +81,7 @@ public class SwaggerExtractorService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .flux()
-                .collectMap(openAPI -> "bookings");
+                .collectMap(openAPI -> BOOKINGS);
     }
 
     private Mono<Map<String, String>> getCarRentalCustomerSwagger() {
@@ -105,7 +91,7 @@ public class SwaggerExtractorService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .flux()
-                .collectMap(openAPI -> "customers");
+                .collectMap(openAPI -> CUSTOMERS);
     }
 
     private Mono<Map<String, String>> getCarRentalExpenseSwagger() {
@@ -115,34 +101,7 @@ public class SwaggerExtractorService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .flux()
-                .collectMap(openAPI -> "expense");
-    }
-
-    private Map<String, OpenAPI> getSwaggerFiles(Resource resource) {
-        return getFilesPaths(resource).stream()
-                .collect(Collectors.toMap(this::getSwaggerIdentifier, this::extractSwaggerFile));
-    }
-
-    private List<Path> getFilesPaths(Resource resource) {
-        try {
-            Path path = Paths.get(resource.getURI());
-
-            try (Stream<Path> lines = Files.list(path)) {
-                return lines.toList();
-            }
-        } catch (Exception e) {
-            throw new CarRentalException(e);
-        }
-    }
-
-    private String getSwaggerIdentifier(Path swaggerFilePath) {
-        String[] split = FilenameUtils.removeExtension(swaggerFilePath.getFileName().toString()).split(HYPHEN_REGEX);
-
-        return split[split.length - 1];
-    }
-
-    private OpenAPI extractSwaggerFile(Path swaggerFilePath) {
-        return new OpenAPIV3Parser().read(swaggerFilePath.toUri().toString());
+                .collectMap(openAPI -> EXPENSE);
     }
 
 }
