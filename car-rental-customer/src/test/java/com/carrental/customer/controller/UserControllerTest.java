@@ -207,8 +207,6 @@ class UserControllerTest {
 
         String content = TestUtils.writeValueAsString(userDto);
 
-        when(customerService.updateUser(anyLong(), any(userDto.getClass()))).thenReturn(userDto);
-
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L).contextPath(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
