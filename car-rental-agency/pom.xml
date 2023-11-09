@@ -206,24 +206,4 @@
         </plugins>
     </build>
 
-    <repositories>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/georgeniculae/*</url>
-        </repository>
-    </repositories>
-
-    <scm>
-        <developerConnection>scm:git:https://github.com/georgeniculae/car-rental-agency</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>car-rental-agency</name>
-            <url>https://maven.pkg.github.com/georgeniculae/car-rental-agency</url>
-        </repository>
-    </distributionManagement>
-
 </project>
