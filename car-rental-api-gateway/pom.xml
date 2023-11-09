@@ -4,13 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.4</version>
-        <relativePath/>
+        <groupId>com.carrental</groupId>
+        <artifactId>car-rental-service</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.carrental</groupId>
     <artifactId>car-rental-api-gateway</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
