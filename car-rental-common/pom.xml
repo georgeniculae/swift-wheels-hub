@@ -30,4 +30,17 @@
         </repository>
     </repositories>
 
+    <scm>
+        <developerConnection>scm:git:https://github.com/georgeniculae/car-rental-service</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>car-rental-service</name>
+            <url>https://maven.pkg.github.com/georgeniculae/car-rental-service</url>
+        </repository>
+    </distributionManagement>
+
 </project>
