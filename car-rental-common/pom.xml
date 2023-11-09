@@ -23,4 +23,11 @@
         <module>car-rental-common-lib</module>
     </modules>
 
+    <repositories>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/georgeniculae/*</url>
+        </repository>
+    </repositories>
+
 </project>
