@@ -4,9 +4,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.carrental</groupId>
-    <artifactId>aggregate</artifactId>
+    <artifactId>car-rental-service</artifactId>
     <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.1.4</version>
+        <relativePath/>
+    </parent>
 
     <modules>
         <module>car-rental-common</module>
@@ -38,4 +45,5 @@
             <url>https://maven.pkg.github.com/georgeniculae/car-rental-service</url>
         </repository>
     </distributionManagement>
+
 </project>
