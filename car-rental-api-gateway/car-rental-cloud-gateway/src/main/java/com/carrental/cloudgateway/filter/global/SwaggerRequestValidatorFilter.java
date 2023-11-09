@@ -5,13 +5,13 @@ import com.atlassian.oai.validator.model.SimpleRequest;
 import com.atlassian.oai.validator.report.ValidationReport;
 import com.atlassian.oai.validator.whitelist.ValidationErrorsWhitelist;
 import com.atlassian.oai.validator.whitelist.rule.WhitelistRules;
-import com.carrental.cloudgateway.model.SwaggerFolder;
 import com.carrental.cloudgateway.exception.CarRentalException;
 import com.carrental.cloudgateway.exception.CarRentalResponseStatusException;
-import io.swagger.v3.oas.models.OpenAPI;
+import com.carrental.cloudgateway.model.SwaggerFolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "swagger-validator", name = "enabled", havingValue = "true")
 @Slf4j
 public class SwaggerRequestValidatorFilter implements GlobalFilter, Ordered {
 
@@ -83,7 +84,7 @@ public class SwaggerRequestValidatorFilter implements GlobalFilter, Ordered {
         return simpleRequestBuilder.build();
     }
 
-    private OpenAPI getSwaggerFile(ServerWebExchange exchange, Map<String, OpenAPI> swaggerIdentifierAndContent) {
+    private String getSwaggerFile(ServerWebExchange exchange, Map<String, String> swaggerIdentifierAndContent) {
         String path = exchange.getRequest().getPath().value().replaceFirst(SEPARATOR, StringUtils.EMPTY);
 
         return swaggerIdentifierAndContent.entrySet()
@@ -98,9 +99,8 @@ public class SwaggerRequestValidatorFilter implements GlobalFilter, Ordered {
         return redisSwagger.opsForValue()
                 .get(SWAGGER)
                 .map(swaggerFolder -> {
-                    OpenAPI swaggerFile = getSwaggerFile(exchange, swaggerFolder.getSwaggerIdentifierAndContent());
-                    OpenApiInteractionValidator validator = OpenApiInteractionValidator.createFor(swaggerFile)
-                            .withApi(swaggerFile)
+                    String swaggerFile = getSwaggerFile(exchange, swaggerFolder.getSwaggerIdentifierAndContent());
+                    OpenApiInteractionValidator validator = OpenApiInteractionValidator.createForInlineApiSpecification(swaggerFile)
                             .withWhitelist(getWhitelist())
                             .build();
 

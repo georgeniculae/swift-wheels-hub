@@ -1,6 +1,7 @@
 package com.carrental.cloudgateway.config.redis;
 
 import com.carrental.cloudgateway.model.SwaggerFolder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
@@ -11,6 +12,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
+@ConditionalOnProperty(prefix = "swagger-validator", name = "enabled", havingValue = "true")
 public class RedisConfig {
 
     @Bean

@@ -21,6 +21,6 @@ public class SwaggerFolder {
 
     @Id
     private String id;
-    private Map<String, OpenAPI> swaggerIdentifierAndContent;
+    private Map<String, String> swaggerIdentifierAndContent;
 
 }
