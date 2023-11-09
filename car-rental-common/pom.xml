@@ -4,13 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.4</version>
-        <relativePath/>
+       <groupId>com.carrental</groupId>
+        <artifactId>car-rental-service</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.carrental</groupId>
     <artifactId>car-rental-common-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -22,25 +20,5 @@
         <module>car-rental-common-model</module>
         <module>car-rental-common-lib</module>
     </modules>
-
-    <repositories>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/georgeniculae/*</url>
-        </repository>
-    </repositories>
-
-    <scm>
-        <developerConnection>scm:git:https://github.com/georgeniculae/car-rental-service</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>car-rental-service</name>
-            <url>https://maven.pkg.github.com/georgeniculae/car-rental-service</url>
-        </repository>
-    </distributionManagement>
 
 </project>
