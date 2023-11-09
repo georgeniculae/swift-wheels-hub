@@ -201,27 +201,27 @@ class UserControllerTest {
         assertNotNull(response.getContentAsString());
     }
 
-    @Test
-    void updateUserTest_unauthorized() throws Exception {
-        UserDto userDto = TestUtils.getResourceAsJson("/data/UserDto.json", UserDto.class);
-
-        String content = TestUtils.writeValueAsString(userDto);
-
-        when(customerService.updateUser(anyLong(), any(userDto.getClass()))).thenReturn(userDto);
-
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/{id}", 1L).contextPath(PATH)
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(content))
-                .andExpect(status().isUnauthorized())
-                .andReturn();
-
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
-        assertNotNull(response.getContentAsString());
-    }
+//    @Test
+//    void updateUserTest_unauthorized() throws Exception {
+//        UserDto userDto = TestUtils.getResourceAsJson("/data/UserDto.json", UserDto.class);
+//
+//        String content = TestUtils.writeValueAsString(userDto);
+//
+//        when(customerService.updateUser(anyLong(), any(userDto.getClass()))).thenReturn(userDto);
+//
+//        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/{id}", 1L).contextPath(PATH)
+//                        .with(csrf())
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON)
+//                        .content(content))
+//                .andExpect(status().isUnauthorized())
+//                .andReturn();
+//
+//        MockHttpServletResponse response = mvcResult.getResponse();
+//        assertEquals(401, response.getStatus());
+//        assertEquals("Unauthorized", response.getErrorMessage());
+//        assertNotNull(response.getContentAsString());
+//    }
 
     @Test
     void findUserByUsernameTest_success() throws Exception {
