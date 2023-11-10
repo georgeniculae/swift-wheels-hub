@@ -39,9 +39,10 @@ public class SecurityConfig {
                                         Mono.fromRunnable(() -> response.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED)))
                                 .accessDeniedHandler((response, error) ->
                                         Mono.fromRunnable(() -> response.getResponse().setStatusCode(HttpStatus.FORBIDDEN))))
+                .oauth2ResourceServer(resourceServerSpec ->
+                        resourceServerSpec.jwt(jwtSpec -> jwtSpec.authenticationManager(authenticationManager)))
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-                .authenticationManager(authenticationManager)
                 .securityContextRepository(securityContextRepositoryImpl)
                 .requestCache(request -> request.requestCache(NoOpServerRequestCache.getInstance()))
                 .build();

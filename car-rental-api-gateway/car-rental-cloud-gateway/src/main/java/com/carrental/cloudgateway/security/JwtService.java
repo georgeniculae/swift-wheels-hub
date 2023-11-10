@@ -5,18 +5,25 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-@Service
-public class JwtService {
+import static org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.Jwt;
+
+@Component
+@RequiredArgsConstructor
+public class JwtService implements Converter<Jwt, AbstractAuthenticationToken> {
 
     @Value("${token.signing-key}")
     private String signingKey;
@@ -24,8 +31,11 @@ public class JwtService {
     @Value("${token.expiration}")
     private Long expiration;
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter;
+
+    @Override
+    public AbstractAuthenticationToken convert(@NonNull Jwt source) {
+        return null;
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {

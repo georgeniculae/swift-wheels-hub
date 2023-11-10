@@ -9,6 +9,12 @@ server:
 spring:
   application:
     name: car-rental-cloud-gateway
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/car-rental-service
+          jwk-set-uri: http://localhost:8080/realms/car-rental-service/protocol/open-id-connect/certs
   cloud:
     gateway:
       routes:
