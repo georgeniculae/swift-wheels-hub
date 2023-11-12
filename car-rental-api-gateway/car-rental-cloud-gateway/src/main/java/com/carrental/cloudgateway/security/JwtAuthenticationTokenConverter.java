@@ -10,21 +10,24 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
-
-import static org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.Jwt;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationTokenConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+public class JwtAuthenticationTokenConverter implements Converter<Jwt, Mono<AbstractAuthenticationToken>> {
 
     @Value("${token.signing-key}")
     private String signingKey;
@@ -32,11 +35,13 @@ public class JwtAuthenticationTokenConverter implements Converter<Jwt, AbstractA
     @Value("${token.expiration}")
     private Long expiration;
 
-    private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter;
+    private final Converter<Jwt, Flux<GrantedAuthority>> jwtGrantedAuthoritiesConverter;
 
     @Override
-    public AbstractAuthenticationToken convert(@NonNull Jwt source) {
-        return null;
+    public Mono<AbstractAuthenticationToken> convert(@NonNull Jwt source) {
+        return Optional.ofNullable(jwtGrantedAuthoritiesConverter.convert(source)).orElseThrow()
+                .collectList()
+                .map(authorities -> new JwtAuthenticationToken(source, authorities, extractUsername(source)));
     }
 
     public String generateToken(UserDetails userDetails) {
@@ -47,6 +52,10 @@ public class JwtAuthenticationTokenConverter implements Converter<Jwt, AbstractA
         final String username = extractUsername(token);
 
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    }
+
+    protected String extractUsername(Jwt jwt) {
+        return jwt.getClaimAsBoolean("preferred_username") ? jwt.getClaimAsString("preferred_username") : jwt.getSubject();
     }
 
     public String extractUsername(String token) {

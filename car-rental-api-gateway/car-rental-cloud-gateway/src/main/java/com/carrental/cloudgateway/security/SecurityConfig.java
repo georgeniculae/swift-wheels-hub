@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 public class SecurityConfig {
 
     private final AuthenticationManager authenticationManager;
+    private final JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
     private final SecurityContextRepositoryImpl securityContextRepositoryImpl;
 
     @Bean
@@ -40,7 +41,8 @@ public class SecurityConfig {
                                 .accessDeniedHandler((response, error) ->
                                         Mono.fromRunnable(() -> response.getResponse().setStatusCode(HttpStatus.FORBIDDEN))))
                 .oauth2ResourceServer(resourceServerSpec ->
-                        resourceServerSpec.jwt(jwtSpec -> jwtSpec.authenticationManager(authenticationManager)))
+                        resourceServerSpec.jwt(jwtSpec -> jwtSpec.authenticationManager(authenticationManager)
+                                .jwtAuthenticationConverter(jwtAuthenticationTokenConverter)))
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .securityContextRepository(securityContextRepositoryImpl)
