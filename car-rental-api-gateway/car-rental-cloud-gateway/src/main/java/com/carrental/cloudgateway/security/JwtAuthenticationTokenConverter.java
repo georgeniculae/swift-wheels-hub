@@ -24,7 +24,7 @@ import static org.springframework.boot.autoconfigure.security.oauth2.resource.OA
 
 @Component
 @RequiredArgsConstructor
-public class JwtService implements Converter<Jwt, AbstractAuthenticationToken> {
+public class JwtAuthenticationTokenConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
     @Value("${token.signing-key}")
     private String signingKey;

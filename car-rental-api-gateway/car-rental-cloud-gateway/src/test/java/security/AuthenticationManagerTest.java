@@ -2,7 +2,7 @@ package security;
 
 import com.carrental.cloudgateway.model.User;
 import com.carrental.cloudgateway.security.AuthenticationManager;
-import com.carrental.cloudgateway.security.JwtService;
+import com.carrental.cloudgateway.security.JwtAuthenticationTokenConverter;
 import com.carrental.cloudgateway.security.UserDetailsService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +32,7 @@ class AuthenticationManagerTest {
     private AuthenticationManager authenticationManager;
 
     @Mock
-    private JwtService jwtService;
+    private JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
 
     @Mock
     private UserDetailsService userDetailsService;
@@ -47,9 +47,9 @@ class AuthenticationManagerTest {
         Authentication authentication = mock(Authentication.class);
 
         when(authentication.getCredentials()).thenReturn(token);
-        when(jwtService.extractUsername(anyString())).thenReturn(username);
+        when(jwtAuthenticationTokenConverter.extractUsername(anyString())).thenReturn(username);
         when(userDetailsService.findByUsername(anyString())).thenReturn(Mono.just(user));
-        when(jwtService.isTokenValid(anyString(), any(UserDetails.class))).thenReturn(true);
+        when(jwtAuthenticationTokenConverter.isTokenValid(anyString(), any(UserDetails.class))).thenReturn(true);
 
         StepVerifier.create(authenticationManager.authenticate(authentication))
                 .expectNextMatches(auth -> username.equals(auth.getPrincipal()) &&
@@ -66,7 +66,7 @@ class AuthenticationManagerTest {
         Authentication authentication = mock(Authentication.class);
 
         when(authentication.getCredentials()).thenReturn(token);
-        when(jwtService.extractUsername(anyString())).thenReturn(username);
+        when(jwtAuthenticationTokenConverter.extractUsername(anyString())).thenReturn(username);
         when(userDetailsService.findByUsername(anyString())).thenReturn(Mono.empty());
 
         StepVerifier.create(authenticationManager.authenticate(authentication))

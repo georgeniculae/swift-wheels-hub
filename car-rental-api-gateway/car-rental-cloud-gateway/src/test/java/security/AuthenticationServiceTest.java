@@ -2,7 +2,7 @@ package security;
 
 import com.carrental.cloudgateway.model.User;
 import com.carrental.cloudgateway.security.AuthenticationService;
-import com.carrental.cloudgateway.security.JwtService;
+import com.carrental.cloudgateway.security.JwtAuthenticationTokenConverter;
 import com.carrental.cloudgateway.security.UserDetailsService;
 import com.carrental.dto.AuthenticationRequest;
 import com.carrental.dto.AuthenticationResponse;
@@ -32,7 +32,7 @@ class AuthenticationServiceTest {
     private UserDetailsService userDetailsService;
 
     @Mock
-    private JwtService jwtService;
+    private JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -49,7 +49,7 @@ class AuthenticationServiceTest {
 
         when(userDetailsService.findByUsername(anyString())).thenReturn(Mono.just(user));
         when(passwordEncoder.matches(any(CharSequence.class), anyString())).thenReturn(true);
-        when(jwtService.generateToken(any())).thenReturn(token);
+        when(jwtAuthenticationTokenConverter.generateToken(any())).thenReturn(token);
 
         StepVerifier.create(authenticationService.authenticateUser(authenticationRequest))
                 .expectNextMatches(actualResponse -> Objects.equals(authenticationResponse.getToken(), actualResponse.getToken()))

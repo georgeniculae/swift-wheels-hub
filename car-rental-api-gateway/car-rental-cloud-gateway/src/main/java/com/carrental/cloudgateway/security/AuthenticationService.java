@@ -15,13 +15,13 @@ import reactor.core.publisher.Mono;
 public class AuthenticationService {
 
     private final UserDetailsService userDetailsService;
-    private final JwtService jwtService;
+    private final JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
     private final PasswordEncoder passwordEncoder;
 
     public Mono<AuthenticationResponse> authenticateUser(AuthenticationRequest authenticationRequest) {
         return userDetailsService.findByUsername(authenticationRequest.username())
                 .filter(existingUser -> doPasswordsMatch(authenticationRequest, existingUser))
-                .map(user -> new AuthenticationResponse().token(jwtService.generateToken(user)))
+                .map(user -> new AuthenticationResponse().token(jwtAuthenticationTokenConverter.generateToken(user)))
                 .onErrorResume(e -> {
                     log.error("Error while processing request: {}", e.getMessage());
 

@@ -13,16 +13,16 @@ import reactor.core.publisher.Mono;
 public class AuthenticationManager implements ReactiveAuthenticationManager {
 
     private final UserDetailsService userDetailsService;
-    private final JwtService jwtService;
+    private final JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
         String token = authentication.getCredentials().toString();
 
         return Mono.just(token)
-                .map(jwtService::extractUsername)
+                .map(jwtAuthenticationTokenConverter::extractUsername)
                 .flatMap(userDetailsService::findByUsername)
-                .filter(user -> jwtService.isTokenValid(token, user))
+                .filter(user -> jwtAuthenticationTokenConverter.isTokenValid(token, user))
                 .map(this::getUsernamePasswordAuthenticationToken)
                 .switchIfEmpty(Mono.empty());
     }

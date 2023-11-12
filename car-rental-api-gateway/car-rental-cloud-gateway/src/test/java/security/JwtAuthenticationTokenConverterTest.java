@@ -1,7 +1,7 @@
 package security;
 
 import com.carrental.cloudgateway.model.User;
-import com.carrental.cloudgateway.security.JwtService;
+import com.carrental.cloudgateway.security.JwtAuthenticationTokenConverter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,19 +12,19 @@ import util.TestUtils;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ExtendWith(MockitoExtension.class)
-class JwtServiceTest {
+class JwtAuthenticationTokenConverterTest {
 
     @InjectMocks
-    private JwtService jwtService;
+    private JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
 
     @Test
     void generateTokenTest_success() {
-        ReflectionTestUtils.setField(jwtService, "signingKey", "asdffgdgftyfhfjhjgjhghjghjjhfhjfhfjhfjfh776986hgh");
-        ReflectionTestUtils.setField(jwtService, "expiration", 30L);
+        ReflectionTestUtils.setField(jwtAuthenticationTokenConverter, "signingKey", "asdffgdgftyfhfjhjgjhghjghjjhfhjfhfjhfjfh776986hgh");
+        ReflectionTestUtils.setField(jwtAuthenticationTokenConverter, "expiration", 30L);
 
         User user = TestUtils.getResourceAsJson("/data/User.json", User.class);
 
-        assertDoesNotThrow(() -> jwtService.generateToken(user));
+        assertDoesNotThrow(() -> jwtAuthenticationTokenConverter.generateToken(user));
     }
 
 }

@@ -1,7 +1,7 @@
 package com.carrental.cloudgateway.filter.global;
 
 import com.carrental.cloudgateway.exception.CarRentalResponseStatusException;
-import com.carrental.cloudgateway.security.JwtService;
+import com.carrental.cloudgateway.security.JwtAuthenticationTokenConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -32,7 +32,7 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     @Value("${apikey-secret}")
     private String apikey;
 
-    private final JwtService jwtService;
+    private final JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -62,7 +62,7 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     }
 
     private String getUsername(ServerHttpRequest request) {
-        return jwtService.extractUsername(getAuthorizationHeader(request));
+        return jwtAuthenticationTokenConverter.extractUsername(getAuthorizationHeader(request));
     }
 
     private String getAuthorizationHeader(ServerHttpRequest request) {
