@@ -29,6 +29,7 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class JwtAuthenticationTokenConverter implements Converter<Jwt, Mono<AbstractAuthenticationToken>> {
 
+    public static final String USERNAME_CLAIM = "preferred_username";
     @Value("${token.signing-key}")
     private String signingKey;
 
@@ -44,6 +45,10 @@ public class JwtAuthenticationTokenConverter implements Converter<Jwt, Mono<Abst
                 .map(authorities -> new JwtAuthenticationToken(source, authorities, extractUsername(source)));
     }
 
+    protected String extractUsername(Jwt jwt) {
+        return jwt.getClaimAsBoolean(USERNAME_CLAIM) ? jwt.getClaimAsString(USERNAME_CLAIM) : jwt.getSubject();
+    }
+
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
@@ -52,10 +57,6 @@ public class JwtAuthenticationTokenConverter implements Converter<Jwt, Mono<Abst
         final String username = extractUsername(token);
 
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
-    }
-
-    protected String extractUsername(Jwt jwt) {
-        return jwt.getClaimAsBoolean("preferred_username") ? jwt.getClaimAsString("preferred_username") : jwt.getSubject();
     }
 
     public String extractUsername(String token) {
