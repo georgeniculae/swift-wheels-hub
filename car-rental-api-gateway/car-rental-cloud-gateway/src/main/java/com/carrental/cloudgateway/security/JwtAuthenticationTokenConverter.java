@@ -30,6 +30,7 @@ import java.util.function.Function;
 public class JwtAuthenticationTokenConverter implements Converter<Jwt, Mono<AbstractAuthenticationToken>> {
 
     public static final String USERNAME_CLAIM = "preferred_username";
+
     @Value("${token.signing-key}")
     private String signingKey;
 
