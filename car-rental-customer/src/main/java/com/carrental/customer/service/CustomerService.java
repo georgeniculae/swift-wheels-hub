@@ -34,7 +34,7 @@ public class CustomerService {
     public AuthenticationResponse registerCustomer(RegisterRequest request) {
         var jwtToken = jwtService.generateToken(saveUser(request));
 
-        return new AuthenticationResponse().token(jwtToken);
+        return new AuthenticationResponse(jwtToken);
     }
 
     public CurrentUserDto getCurrentUser() {
@@ -59,14 +59,14 @@ public class CustomerService {
         validateRequest(request);
         User user = new User();
 
-        user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setEmail(request.getEmail());
-        user.setAddress(request.getAddress());
+        user.setUsername(request.username());
+        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastName());
+        user.setEmail(request.email());
+        user.setAddress(request.address());
         user.setRole(Role.ROLE_USER);
-        user.setDateOfBirth(request.getDateOfBirth());
+        user.setDateOfBirth(request.dateOfBirth());
 
         return userRepository.saveAndFlush(user);
     }
@@ -74,10 +74,10 @@ public class CustomerService {
     public UserDto updateUser(Long id, UserDto userDto) {
         User user = findEntityById(id);
 
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
-        user.setEmail(userDto.getEmail());
+        user.setPassword(passwordEncoder.encode(userDto.password()));
+        user.setFirstName(userDto.firstName());
+        user.setLastName(userDto.lastName());
+        user.setEmail(userDto.email());
 
         User savedUser = userRepository.saveAndFlush(user);
 
@@ -100,15 +100,15 @@ public class CustomerService {
     }
 
     private void validateRequest(RegisterRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
+        if (userRepository.existsByUsername(request.username())) {
             throw new CarRentalResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists");
         }
 
-        if (Optional.ofNullable(request.getPassword()).orElseThrow().length() < 8) {
+        if (Optional.ofNullable(request.password()).orElseThrow().length() < 8) {
             throw new CarRentalResponseStatusException(HttpStatus.BAD_REQUEST, "Password too short");
         }
 
-        if (Period.between(Optional.ofNullable(request.getDateOfBirth()).orElseThrow(), LocalDate.now()).getYears() < 18) {
+        if (Period.between(Optional.ofNullable(request.dateOfBirth()).orElseThrow(), LocalDate.now()).getYears() < 18) {
             throw new CarRentalResponseStatusException(HttpStatus.BAD_REQUEST, "Customer is under 18 years old");
         }
     }

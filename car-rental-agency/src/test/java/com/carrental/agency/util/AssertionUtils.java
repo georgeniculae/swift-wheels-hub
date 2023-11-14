@@ -2,13 +2,10 @@ package com.carrental.agency.util;
 
 import com.carrental.dto.BranchDto;
 import com.carrental.dto.CarDto;
-import com.carrental.dto.CarStatusEnum;
 import com.carrental.dto.EmployeeDto;
 import com.carrental.dto.RentalOfficeDto;
-import com.carrental.entity.BodyType;
 import com.carrental.entity.Branch;
 import com.carrental.entity.Car;
-import com.carrental.entity.CarStatus;
 import com.carrental.entity.Employee;
 import com.carrental.entity.RentalOffice;
 
@@ -19,41 +16,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AssertionUtils {
 
     public static void assertCar(Car car, CarDto carDto) {
-        assertEquals(car.getMake(), carDto.getMake());
-        assertEquals(car.getModel(), carDto.getModel());
-        assertBodyType(car.getBodyType(), Objects.requireNonNull(carDto.getBodyType()));
-        assertEquals(car.getYearOfProduction(), carDto.getYearOfProduction());
-        assertEquals(car.getColor(), carDto.getColor());
-        assertEquals(car.getMileage(), carDto.getMileage());
-        assertCarStatus(car.getCarStatus(), Objects.requireNonNull(carDto.getCarStatus()));
-        assertEquals(car.getAmount(), Objects.requireNonNull(carDto.getAmount()).doubleValue());
-        assertEquals(car.getUrlOfImage(), carDto.getUrlOfImage());
+        assertEquals(car.getMake(), carDto.make());
+        assertEquals(car.getModel(), carDto.model());
+        assertEquals(car.getBodyType(), Objects.requireNonNull(carDto.bodyType()));
+        assertEquals(car.getYearOfProduction(), carDto.yearOfProduction());
+        assertEquals(car.getColor(), carDto.color());
+        assertEquals(car.getMileage(), carDto.mileage());
+        assertEquals(car.getCarStatus(), Objects.requireNonNull(carDto.carStatus()));
+        assertEquals(car.getAmount(), Objects.requireNonNull(carDto.amount()).doubleValue());
+        assertEquals(car.getUrlOfImage(), carDto.urlOfImage());
     }
 
     public static void assertBranch(Branch branch, BranchDto branchDto) {
-        assertEquals(branch.getName(), branchDto.getName());
-        assertEquals(branch.getAddress(), branchDto.getAddress());
+        assertEquals(branch.getName(), branchDto.name());
+        assertEquals(branch.getAddress(), branchDto.address());
     }
 
     public static void assertRentalOffice(RentalOffice rentalOffice, RentalOfficeDto rentalOfficeDto) {
-        assertEquals(rentalOffice.getName(), rentalOfficeDto.getName());
-        assertEquals(rentalOffice.getContactAddress(), rentalOfficeDto.getContactAddress());
-        assertEquals(rentalOffice.getLogoType(), rentalOfficeDto.getLogoType());
+        assertEquals(rentalOffice.getName(), rentalOfficeDto.name());
+        assertEquals(rentalOffice.getContactAddress(), rentalOfficeDto.contactAddress());
+        assertEquals(rentalOffice.getLogoType(), rentalOfficeDto.logoType());
     }
 
     public static void assertEmployee(Employee employee, EmployeeDto employeeDto) {
-        assertEquals(employee.getFirstName(), employeeDto.getFirstName());
-        assertEquals(employee.getLastName(), employeeDto.getLastName());
-        assertEquals(employee.getJobPosition(), employeeDto.getJobPosition());
-        assertEquals(employee.getFirstName(), employeeDto.getFirstName());
-    }
-
-    private static void assertBodyType(BodyType bodyType, CarDto.BodyTypeEnum bodyTypeEnum) {
-        assertEquals(bodyType.getDisplayName(), bodyTypeEnum.getValue());
-    }
-
-    private static void assertCarStatus(CarStatus carStatus, CarStatusEnum carStatusEnum) {
-        assertEquals(carStatus.getDisplayName(), carStatusEnum.getValue());
+        assertEquals(employee.getFirstName(), employeeDto.firstName());
+        assertEquals(employee.getLastName(), employeeDto.lastName());
+        assertEquals(employee.getJobPosition(), employeeDto.jobPosition());
+        assertEquals(employee.getFirstName(), employeeDto.firstName());
     }
 
 }

@@ -114,7 +114,7 @@ public class DebeziumListener {
         }
 
         if (Operation.DELETE.equals(operation)) {
-            bookingProducerService.sendDeletedBooking(bookingDto.getId());
+            bookingProducerService.sendDeletedBooking(bookingDto.id());
         }
     }
 

@@ -14,33 +14,19 @@ import com.carrental.lib.repository.UserRepository;
 import com.carrental.lib.security.jwt.JwtService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CustomerServiceTest {
@@ -79,7 +65,7 @@ class CustomerServiceTest {
         AuthenticationResponse authenticationResponse =
                 assertDoesNotThrow(() -> customerService.registerCustomer(registerRequest));
 
-        assertEquals(token, authenticationResponse.getToken());
+        assertEquals(token, authenticationResponse.token());
 
         verify(passwordEncoder).encode(any());
         verify(userRepository).saveAndFlush(argumentCaptor.capture());
@@ -117,8 +103,7 @@ class CustomerServiceTest {
     @Test
     void saveUserTest_customerUnderAge() {
         RegisterRequest registerRequest =
-                TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
-        registerRequest.setDateOfBirth(LocalDate.now());
+                TestUtils.getResourceAsJson("/data/RegisterRequestAgeBelow18.json", RegisterRequest.class);
 
         when(userRepository.existsByUsername(anyString())).thenReturn(false);
 
@@ -132,8 +117,7 @@ class CustomerServiceTest {
     @Test
     void saveUserTest_passwordTooShort() {
         RegisterRequest registerRequest =
-                TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
-        registerRequest.setPassword("123456");
+                TestUtils.getResourceAsJson("/data/RegisterRequestPasswordTooShort.json", RegisterRequest.class);
 
         when(userRepository.existsByUsername(anyString())).thenReturn(false);
 
@@ -197,10 +181,10 @@ class CustomerServiceTest {
 
         UserDto updatedUserDto = assertDoesNotThrow(() -> customerService.updateUser(1L, userDto));
 
-        assertEquals(user.getPassword(), updatedUserDto.getPassword());
-        assertEquals(user.getFirstName(), updatedUserDto.getFirstName());
-        assertEquals(user.getLastName(), updatedUserDto.getLastName());
-        assertEquals(user.getEmail(), updatedUserDto.getEmail());
+        assertEquals(user.getPassword(), updatedUserDto.password());
+        assertEquals(user.getFirstName(), updatedUserDto.firstName());
+        assertEquals(user.getLastName(), updatedUserDto.lastName());
+        assertEquals(user.getEmail(), updatedUserDto.email());
     }
 
     @Test

@@ -49,9 +49,9 @@ public class RentalOfficeService {
     public RentalOfficeDto updateRentalOffice(Long id, RentalOfficeDto updatedRentalOfficeDto) {
         RentalOffice existingRentalOffice = findEntityById(id);
 
-        existingRentalOffice.setName(updatedRentalOfficeDto.getName());
-        existingRentalOffice.setContactAddress(updatedRentalOfficeDto.getContactAddress());
-        existingRentalOffice.setLogoType(updatedRentalOfficeDto.getLogoType());
+        existingRentalOffice.setName(updatedRentalOfficeDto.name());
+        existingRentalOffice.setContactAddress(updatedRentalOfficeDto.contactAddress());
+        existingRentalOffice.setLogoType(updatedRentalOfficeDto.logoType());
 
         RentalOffice savedRentalOffice = saveEntity(existingRentalOffice);
 

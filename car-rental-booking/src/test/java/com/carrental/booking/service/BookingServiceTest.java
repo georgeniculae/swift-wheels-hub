@@ -8,9 +8,9 @@ import com.carrental.booking.util.TestUtils;
 import com.carrental.dto.BookingClosingDetailsDto;
 import com.carrental.dto.BookingDto;
 import com.carrental.dto.CarDto;
-import com.carrental.dto.CarStatusEnum;
 import com.carrental.dto.EmployeeDto;
 import com.carrental.entity.Booking;
+import com.carrental.entity.CarStatus;
 import com.carrental.lib.exception.CarRentalNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
@@ -87,7 +87,7 @@ class BookingServiceTest {
 
         when(carService.findAvailableCarById(any(HttpServletRequest.class), anyLong())).thenReturn(carDto);
         when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(booking);
-        doNothing().when(carService).changeCarStatus(any(HttpServletRequest.class), anyLong(), any(CarStatusEnum.class));
+        doNothing().when(carService).changeCarStatus(any(HttpServletRequest.class), anyLong(), any(CarStatus.class));
 
         BookingDto actualBookingDto = assertDoesNotThrow(() -> bookingService.saveBooking(request, bookingDto));
 

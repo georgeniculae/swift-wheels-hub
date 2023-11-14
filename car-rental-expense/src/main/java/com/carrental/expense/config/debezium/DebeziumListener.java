@@ -30,9 +30,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static io.debezium.data.Envelope.FieldName.AFTER;
-import static io.debezium.data.Envelope.FieldName.BEFORE;
-import static io.debezium.data.Envelope.FieldName.OPERATION;
+import static io.debezium.data.Envelope.FieldName.*;
 import static io.debezium.data.Envelope.Operation;
 
 @Component
@@ -138,7 +136,7 @@ public class DebeziumListener {
     }
 
     private void notifyCustomer(Operation operation, InvoiceDto invoiceDto) {
-        if (Operation.UPDATE.equals(operation) && ObjectUtils.isNotEmpty(invoiceDto.getTotalAmount())) {
+        if (Operation.UPDATE.equals(operation) && ObjectUtils.isNotEmpty(invoiceDto.totalAmount())) {
             emailNotificationProducer.sendMessage(invoiceDto);
         }
     }

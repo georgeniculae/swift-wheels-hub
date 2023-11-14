@@ -35,7 +35,7 @@ public class UserService {
 
     @Transactional
     public Mono<User> updateUser(UserDto userDto) {
-        return r2dbcEntityTemplate.selectOne(getFindByIdUsernameQuery(userDto.getUsername()), User.class)
+        return r2dbcEntityTemplate.selectOne(getFindByIdUsernameQuery(userDto.username()), User.class)
                 .map(existingUser -> updateExistingUser(userDto, existingUser))
                 .flatMap(r2dbcEntityTemplate::update)
                 .onErrorResume(e -> {
@@ -55,12 +55,12 @@ public class UserService {
     }
 
     private User updateExistingUser(UserDto userDto, User existingUser) {
-        existingUser.setPassword(userDto.getPassword());
-        existingUser.setFirstName(userDto.getFirstName());
-        existingUser.setLastName(userDto.getLastName());
-        existingUser.setEmail(userDto.getEmail());
-        existingUser.setDateOfBirth(userDto.getDateOfBirth());
-        existingUser.setAddress(userDto.getAddress());
+        existingUser.setPassword(userDto.password());
+        existingUser.setFirstName(userDto.firstName());
+        existingUser.setLastName(userDto.lastName());
+        existingUser.setEmail(userDto.email());
+        existingUser.setDateOfBirth(userDto.dateOfBirth());
+        existingUser.setAddress(userDto.address());
 
         return existingUser;
     }

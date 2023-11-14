@@ -45,14 +45,14 @@ class AuthenticationServiceTest {
         User user = TestUtils.getResourceAsJson("/data/User.json", User.class);
 
         String token = "token";
-        AuthenticationResponse authenticationResponse = new AuthenticationResponse().token(token);
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse(token);
 
         when(userDetailsService.findByUsername(anyString())).thenReturn(Mono.just(user));
         when(passwordEncoder.matches(any(CharSequence.class), anyString())).thenReturn(true);
         when(jwtAuthenticationTokenConverter.generateToken(any())).thenReturn(token);
 
         StepVerifier.create(authenticationService.authenticateUser(authenticationRequest))
-                .expectNextMatches(actualResponse -> Objects.equals(authenticationResponse.getToken(), actualResponse.getToken()))
+                .expectNextMatches(actualResponse -> Objects.equals(authenticationResponse.token(), actualResponse.token()))
                 .verifyComplete();
     }
 

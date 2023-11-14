@@ -10,12 +10,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AssertionUtils {
 
     public static void assertUser(UserDto userDto, User user) {
-        assertEquals(userDto.getUsername(), user.getUsername());
-        assertEquals(userDto.getPassword(), user.getPassword());
-        assertEquals(userDto.getEmail(), user.getEmail());
-        assertEquals(userDto.getFirstName(), user.getFirstName());
-        assertEquals(userDto.getLastName(), user.getLastName());
-        assertEquals(Objects.requireNonNull(userDto.getRole()).getValue(), user.getRole().getName());
+        assertEquals(userDto.username(), user.getUsername());
+        assertEquals(userDto.password(), user.getPassword());
+        assertEquals(userDto.email(), user.getEmail());
+        assertEquals(userDto.firstName(), user.getFirstName());
+        assertEquals(userDto.lastName(), user.getLastName());
+        assertEquals(Objects.requireNonNull(userDto.role()), user.getRole());
     }
 
 }

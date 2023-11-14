@@ -23,14 +23,14 @@ public class UserService {
     }
 
     public void updateUser(UserDto userDto) {
-        boolean existsByUsername = userRepository.existsByUsername(userDto.getUsername());
+        boolean existsByUsername = userRepository.existsByUsername(userDto.username());
 
         if (existsByUsername) {
             User newUser = userMapper.mapDtoToEntity(userDto);
             userRepository.saveAndFlush(newUser);
         }
 
-        throw new CarRentalNotFoundException("User with username " + userDto.getUsername() + " not found");
+        throw new CarRentalNotFoundException("User with username " + userDto.username() + " not found");
     }
 
     public User findByUsername(String username) {

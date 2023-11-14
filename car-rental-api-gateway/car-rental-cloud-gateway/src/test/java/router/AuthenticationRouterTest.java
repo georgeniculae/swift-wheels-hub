@@ -36,7 +36,7 @@ class AuthenticationRouterTest {
     @Test
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void authenticateRouteTest() {
-        Mono<ServerResponse> token = ServerResponse.ok().bodyValue(new AuthenticationResponse().token("token"));
+        Mono<ServerResponse> token = ServerResponse.ok().bodyValue(new AuthenticationResponse("token"));
         when(authenticationHandler.authenticateUser(any())).thenReturn(token);
 
         webTestClient.mutateWith(SecurityMockServerConfigurers.csrf())

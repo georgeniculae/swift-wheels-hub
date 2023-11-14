@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +44,7 @@ public class EmployeeService {
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
         Employee newEmployee = employeeMapper.mapDtoToEntity(employeeDto);
 
-        Long workingBranchId = employeeDto.getWorkingBranchId();
+        Long workingBranchId = employeeDto.workingBranchId();
         Branch workingBranch = branchService.findEntityById(workingBranchId);
         newEmployee.setWorkingBranch(workingBranch);
         Employee savedEmployee = saveEntity(newEmployee);
@@ -56,12 +55,12 @@ public class EmployeeService {
     public EmployeeDto updateEmployee(Long id, EmployeeDto updatedEmployeeDto) {
         Employee existingEmployee = findEntityById(id);
 
-        Long workingBranchId = updatedEmployeeDto.getWorkingBranchId();
+        Long workingBranchId = updatedEmployeeDto.workingBranchId();
         Branch workingBranch = branchService.findEntityById(workingBranchId);
 
-        existingEmployee.setFirstName(updatedEmployeeDto.getFirstName());
-        existingEmployee.setLastName(updatedEmployeeDto.getLastName());
-        existingEmployee.setJobPosition(updatedEmployeeDto.getJobPosition());
+        existingEmployee.setFirstName(updatedEmployeeDto.firstName());
+        existingEmployee.setLastName(updatedEmployeeDto.lastName());
+        existingEmployee.setJobPosition(updatedEmployeeDto.jobPosition());
         existingEmployee.setWorkingBranch(workingBranch);
 
         Employee savedEmployee = saveEntity(existingEmployee);

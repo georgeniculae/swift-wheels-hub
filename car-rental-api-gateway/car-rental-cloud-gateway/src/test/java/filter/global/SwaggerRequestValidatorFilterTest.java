@@ -1,11 +1,7 @@
 package filter.global;
 
-import com.carrental.cloudgateway.model.SwaggerFolder;
 import com.carrental.cloudgateway.filter.global.SwaggerRequestValidatorFilter;
-import com.carrental.dto.RentalOfficeDto;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.parser.OpenAPIV3Parser;
-import org.junit.jupiter.api.Test;
+import com.carrental.cloudgateway.model.SwaggerFolder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -13,19 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.data.redis.core.ReactiveValueOperations;
-import org.springframework.http.MediaType;
-import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
-import org.springframework.mock.web.server.MockServerWebExchange;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-import util.TestUtils;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SwaggerRequestValidatorFilterTest {

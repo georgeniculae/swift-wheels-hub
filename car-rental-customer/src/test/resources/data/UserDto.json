@@ -4,5 +4,7 @@
   "role": "ROLE_ADMIN",
   "firstName": "admin",
   "lastName": "admin",
-  "email": "admin@email.com"
+  "email": "admin@email.com",
+  "dateOfBirth": "1980-01-01",
+  "address": "Ploiesti"
 }

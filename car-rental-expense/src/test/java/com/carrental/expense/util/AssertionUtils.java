@@ -12,17 +12,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AssertionUtils {
 
     public static void assertInvoice(Invoice invoice, InvoiceDto invoiceDto) {
-        assertEquals(invoice.getCarDateOfReturn(), invoiceDto.getCarDateOfReturn());
-        assertEquals(invoice.getIsVehicleDamaged(), invoiceDto.getIsVehicleDamaged());
-        assertEquals(invoice.getDamageCost(), Objects.requireNonNull(invoiceDto.getDamageCost()).doubleValue());
-        assertEquals(invoice.getAdditionalPayment(), Objects.requireNonNull(invoiceDto.getAdditionalPayment()).doubleValue());
-        assertEquals(invoice.getTotalAmount(), Objects.requireNonNull(invoiceDto.getTotalAmount()).doubleValue());
-        assertEquals(invoice.getComments(), invoiceDto.getComments());
+        assertEquals(invoice.getCarDateOfReturn(), invoiceDto.carDateOfReturn());
+        assertEquals(invoice.getIsVehicleDamaged(), invoiceDto.isVehicleDamaged());
+        assertEquals(invoice.getDamageCost(), Objects.requireNonNull(invoiceDto.damageCost()).doubleValue());
+        assertEquals(invoice.getAdditionalPayment(), Objects.requireNonNull(invoiceDto.additionalPayment()).doubleValue());
+        assertEquals(invoice.getTotalAmount(), Objects.requireNonNull(invoiceDto.totalAmount()).doubleValue());
+        assertEquals(invoice.getComments(), invoiceDto.comments());
     }
 
     public static void assertRevenue(Revenue revenue, RevenueDto revenueDto) {
-        assertEquals(revenue.getDateOfRevenue(), revenueDto.getDateOfRevenue());
-        assertEquals(revenue.getAmountFromBooking(), Objects.requireNonNull(revenueDto.getAmountFromBooking()).doubleValue());
+        assertEquals(revenue.getDateOfRevenue(), revenueDto.dateOfRevenue());
+        assertEquals(revenue.getAmountFromBooking(), Objects.requireNonNull(revenueDto.amountFromBooking()).doubleValue());
     }
 
 }

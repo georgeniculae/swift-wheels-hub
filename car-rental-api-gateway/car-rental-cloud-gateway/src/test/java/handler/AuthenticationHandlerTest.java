@@ -38,7 +38,7 @@ class AuthenticationHandlerTest {
                 .body(Mono.just(authenticationRequest));
 
         String token = "token";
-        AuthenticationResponse authenticationResponse = new AuthenticationResponse().token(token);
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse(token);
 
         when(authenticationService.authenticateUser(any(AuthenticationRequest.class)))
                 .thenReturn(Mono.just(authenticationResponse));

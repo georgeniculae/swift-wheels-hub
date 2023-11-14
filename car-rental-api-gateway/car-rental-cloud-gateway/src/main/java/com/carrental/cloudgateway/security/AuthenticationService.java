@@ -21,7 +21,7 @@ public class AuthenticationService {
     public Mono<AuthenticationResponse> authenticateUser(AuthenticationRequest authenticationRequest) {
         return userDetailsService.findByUsername(authenticationRequest.username())
                 .filter(existingUser -> doPasswordsMatch(authenticationRequest, existingUser))
-                .map(user -> new AuthenticationResponse().token(jwtAuthenticationTokenConverter.generateToken(user)))
+                .map(user -> new AuthenticationResponse(jwtAuthenticationTokenConverter.generateToken(user)))
                 .onErrorResume(e -> {
                     log.error("Error while processing request: {}", e.getMessage());
 

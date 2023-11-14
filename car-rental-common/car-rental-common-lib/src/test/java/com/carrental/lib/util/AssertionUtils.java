@@ -8,11 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AssertionUtils {
 
     public static void assertUser(User user, UserDto userDto) {
-        assertEquals(user.getUsername(), userDto.getUsername());
-        assertEquals(user.getPassword(), userDto.getPassword());
-        assertEquals(user.getFirstName(), userDto.getFirstName());
-        assertEquals(user.getLastName(), userDto.getLastName());
-        assertEquals(user.getEmail(), userDto.getEmail());
+        assertEquals(user.getUsername(), userDto.username());
+        assertEquals(user.getPassword(), userDto.password());
+        assertEquals(user.getFirstName(), userDto.firstName());
+        assertEquals(user.getLastName(), userDto.lastName());
+        assertEquals(user.getEmail(), userDto.email());
     }
 
 }

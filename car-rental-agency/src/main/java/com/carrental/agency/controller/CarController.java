@@ -3,7 +3,8 @@ package com.carrental.agency.controller;
 import com.carrental.agency.service.CarService;
 import com.carrental.dto.CarDetailsForUpdateDto;
 import com.carrental.dto.CarDto;
-import com.carrental.dto.CarStatusEnum;
+import com.carrental.dto.CarForUpdate;
+import com.carrental.entity.CarStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -94,15 +95,15 @@ public class CarController {
     }
 
     @PutMapping(path = "/{id}/change-car-status")
-    public ResponseEntity<CarDto> updateCarStatus(@PathVariable("id") Long id, @RequestParam CarStatusEnum carStatus) {
+    public ResponseEntity<CarDto> updateCarStatus(@PathVariable("id") Long id, @RequestParam CarStatus carStatus) {
         CarDto updatedCarDto = carService.updateCarStatus(id, carStatus);
 
         return ResponseEntity.ok(updatedCarDto);
     }
 
     @PutMapping(path = "/update-cars-status")
-    public ResponseEntity<List<CarDto>> updateCarsStatus(@RequestBody @Valid List<CarDetailsForUpdateDto> carDetailsForUpdateDtoList) {
-        List<CarDto> updatedCarDtoList = carService.updateCarsStatus(carDetailsForUpdateDtoList);
+    public ResponseEntity<List<CarDto>> updateCarsStatus(@RequestBody @Valid List<CarForUpdate> carsForUpdate) {
+        List<CarDto> updatedCarDtoList = carService.updateCarsStatus(carsForUpdate);
 
         return ResponseEntity.ok(updatedCarDtoList);
     }

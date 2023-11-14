@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(MockitoExtension.class)
-class UserMapperTest {
+class UserDtoMapperTest {
 
     private final UserMapper userMapper = new UserMapperImpl();
 

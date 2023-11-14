@@ -1,7 +1,7 @@
 package com.carrental.booking.mapper;
 
-import com.carrental.entity.Booking;
 import com.carrental.dto.BookingDto;
+import com.carrental.entity.Booking;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;

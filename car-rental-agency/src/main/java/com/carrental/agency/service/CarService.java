@@ -4,21 +4,13 @@ import com.carrental.agency.mapper.CarMapper;
 import com.carrental.agency.repository.CarRepository;
 import com.carrental.dto.CarDetailsForUpdateDto;
 import com.carrental.dto.CarDto;
-import com.carrental.dto.CarStatusEnum;
-import com.carrental.entity.BodyType;
-import com.carrental.entity.Branch;
-import com.carrental.entity.Car;
-import com.carrental.entity.CarFields;
-import com.carrental.entity.CarStatus;
+import com.carrental.dto.CarForUpdate;
+import com.carrental.entity.*;
 import com.carrental.lib.exception.CarRentalException;
 import com.carrental.lib.exception.CarRentalNotFoundException;
 import com.carrental.lib.exception.CarRentalResponseStatusException;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -62,7 +54,7 @@ public class CarService {
     public CarDto saveCar(CarDto carDto) {
         Car car = carMapper.mapDtoToEntity(carDto);
 
-        car.setOriginalBranch(branchService.findEntityById(carDto.getOriginalBranchId()));
+        car.setOriginalBranch(branchService.findEntityById(carDto.originalBranchId()));
 
         Car savedCar = saveEntity(car);
 
@@ -80,40 +72,40 @@ public class CarService {
     public CarDto updateCar(Long id, CarDto updatedCarDto) {
         Car existingCar = findEntityById(id);
 
-        Long branchId = updatedCarDto.getOriginalBranchId();
+        Long branchId = updatedCarDto.originalBranchId();
         Branch branch = branchService.findEntityById(branchId);
 
-        existingCar.setMake(updatedCarDto.getMake());
-        existingCar.setModel(updatedCarDto.getModel());
-        existingCar.setBodyType(carMapper.mapToBodyType(Objects.requireNonNull(updatedCarDto.getBodyType())));
-        existingCar.setYearOfProduction(Objects.requireNonNull(updatedCarDto.getYearOfProduction()));
-        existingCar.setColor(updatedCarDto.getColor());
-        existingCar.setMileage(Objects.requireNonNull(updatedCarDto.getMileage()));
-        existingCar.setAmount(carMapper.mapBigDecimalToDouble(Objects.requireNonNull(updatedCarDto.getAmount())));
-        existingCar.setCarStatus(carMapper.mapToCarStatus(Objects.requireNonNull(updatedCarDto.getCarStatus())));
+        existingCar.setMake(updatedCarDto.make());
+        existingCar.setModel(updatedCarDto.model());
+        existingCar.setBodyType(Objects.requireNonNull(updatedCarDto.bodyType()));
+        existingCar.setYearOfProduction(updatedCarDto.yearOfProduction());
+        existingCar.setColor(updatedCarDto.color());
+        existingCar.setMileage(updatedCarDto.mileage());
+        existingCar.setAmount(Objects.requireNonNull(updatedCarDto.amount()));
+        existingCar.setCarStatus(Objects.requireNonNull(updatedCarDto.carStatus()));
         existingCar.setOriginalBranch(branch);
-        existingCar.setUrlOfImage(updatedCarDto.getUrlOfImage());
+        existingCar.setUrlOfImage(updatedCarDto.urlOfImage());
 
         Car savedCar = saveEntity(existingCar);
 
         return carMapper.mapEntityToDto(savedCar);
     }
 
-    public CarDto updateCarStatus(Long id, CarStatusEnum carStatus) {
+    public CarDto updateCarStatus(Long id, CarStatus carStatus) {
         Car car = findEntityById(id);
-        car.setCarStatus(carMapper.mapToCarStatus(carStatus));
+        car.setCarStatus(carStatus);
 
         Car savedCar = saveEntity(car);
 
         return carMapper.mapEntityToDto(savedCar);
     }
 
-    public List<CarDto> updateCarsStatus(List<CarDetailsForUpdateDto> carDetailsForUpdateDtoList) {
-        return carRepository.findAllById(getIds(carDetailsForUpdateDtoList))
+    public List<CarDto> updateCarsStatus(List<CarForUpdate> carsForUpdate) {
+        return carRepository.findAllById(getIds(carsForUpdate))
                 .stream()
                 .peek(car -> {
-                    CarDetailsForUpdateDto carDetailsForUpdateDto = getMatchingCarDetails(carDetailsForUpdateDtoList, car);
-                    car.setCarStatus(carMapper.mapToCarStatus(Objects.requireNonNull(carDetailsForUpdateDto.getCarStatus())));
+                    CarForUpdate carForUpdate = getMatchingCarDetails(carsForUpdate, car);
+                    car.setCarStatus(carForUpdate.carStatus());
                 })
                 .map(this::saveEntity)
                 .map(carMapper::mapEntityToDto)
@@ -175,7 +167,7 @@ public class CarService {
 
     public CarDto updateCarWhenBookingIsClosed(Long id, CarDetailsForUpdateDto carDetailsForUpdateDto) {
         Car car = findEntityById(id);
-        car.setCarStatus(carMapper.mapToCarStatus(Objects.requireNonNull(carDetailsForUpdateDto.getCarStatus())));
+        car.setCarStatus(Objects.requireNonNull(carDetailsForUpdateDto.carStatus()));
         car.setActualBranch(getActualBranch(carDetailsForUpdateDto));
 
         Car savedCar = saveEntity(car);
@@ -216,19 +208,21 @@ public class CarService {
         }
     }
 
-    private List<Long> getIds(List<CarDetailsForUpdateDto> carDetailsForUpdateDtoList) {
-        return carDetailsForUpdateDtoList.stream().map(CarDetailsForUpdateDto::getCarId).toList();
+    private List<Long> getIds(List<CarForUpdate> carsForUpdate) {
+        return carsForUpdate.stream()
+                .map(CarForUpdate::carId)
+                .toList();
     }
 
-    private CarDetailsForUpdateDto getMatchingCarDetails(List<CarDetailsForUpdateDto> carDetailsForUpdateDtoList, Car car) {
-        return carDetailsForUpdateDtoList.stream()
-                .filter(carDetailsForUpdateDto -> car.getId().equals(carDetailsForUpdateDto.getCarId()))
+    private CarForUpdate getMatchingCarDetails(List<CarForUpdate> carsForUpdate, Car car) {
+        return carsForUpdate.stream()
+                .filter(carForUpdate -> car.getId().equals(carForUpdate.carId()))
                 .findAny()
                 .orElseThrow(() -> new CarRentalNotFoundException("Car details not found"));
     }
 
     private Branch getActualBranch(CarDetailsForUpdateDto carDetailsForUpdateDto) {
-        return employeeService.findEntityById(carDetailsForUpdateDto.getReceptionistEmployeeId()).getWorkingBranch();
+        return employeeService.findEntityById(carDetailsForUpdateDto.receptionistEmployeeId()).getWorkingBranch();
     }
 
     private List<CarDto> getCarDtoList(List<Car> cars) {

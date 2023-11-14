@@ -2,7 +2,8 @@ package com.carrental.booking.service;
 
 import com.carrental.dto.CarDetailsForUpdateDto;
 import com.carrental.dto.CarDto;
-import com.carrental.dto.CarStatusEnum;
+import com.carrental.dto.CarForUpdate;
+import com.carrental.entity.CarStatus;
 import com.carrental.lib.exception.CarRentalResponseStatusException;
 import com.carrental.lib.util.HttpRequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,7 +43,7 @@ public class CarService {
                 .orElseThrow(() -> new CarRentalResponseStatusException(HttpStatus.BAD_REQUEST, "No car available"));
     }
 
-    public void changeCarStatus(HttpServletRequest request, Long carId, CarStatusEnum carStatus) {
+    public void changeCarStatus(HttpServletRequest request, Long carId, CarStatus carStatus) {
         String finalUrl = url + SEPARATOR + carId + SEPARATOR + "change-car-status";
 
         HttpEntity<String> httpEntity = HttpRequestUtil.getHttpEntity(request);
@@ -58,17 +59,17 @@ public class CarService {
 
     public void updateCarWhenBookingIsFinished(HttpServletRequest request,
                                                CarDetailsForUpdateDto carDetailsForUpdateDto) {
-        String finalUrl = url + SEPARATOR + carDetailsForUpdateDto.getCarId() + SEPARATOR + "update-after-closed-booking";
+        String finalUrl = url + SEPARATOR + carDetailsForUpdateDto.carId() + SEPARATOR + "update-after-closed-booking";
 
         HttpEntity<Object> httpEntity = HttpRequestUtil.getHttpEntityWithBody(request, carDetailsForUpdateDto);
 
         restTemplate.exchange(finalUrl, HttpMethod.PUT, httpEntity, CarDto.class);
     }
 
-    public void updateCarsStatus(HttpServletRequest request, List<CarDetailsForUpdateDto> carDetailsForUpdateDtoList) {
+    public void updateCarsStatus(HttpServletRequest request, List<CarForUpdate> carsForUpdate) {
         String finalUrl = url + SEPARATOR + "update-cars-status";
 
-        HttpEntity<Object> httpEntity = HttpRequestUtil.getHttpEntityWithBody(request, carDetailsForUpdateDtoList);
+        HttpEntity<Object> httpEntity = HttpRequestUtil.getHttpEntityWithBody(request, carsForUpdate);
 
         ParameterizedTypeReference<List<CarDto>> responseType = new ParameterizedTypeReference<>() {
         };

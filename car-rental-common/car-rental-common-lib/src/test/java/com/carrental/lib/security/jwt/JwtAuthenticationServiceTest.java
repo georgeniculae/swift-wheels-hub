@@ -49,7 +49,7 @@ class JwtAuthenticationServiceTest {
         AuthenticationResponse authenticationResponse =
                 assertDoesNotThrow(() -> jwtAuthenticationService.authenticate(authenticationRequest));
 
-        assertEquals(token, authenticationResponse.getToken());
+        assertEquals(token, authenticationResponse.token());
 
         verify(authenticationManager).authenticate(any());
     }

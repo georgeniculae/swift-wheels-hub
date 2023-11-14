@@ -27,9 +27,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static io.debezium.data.Envelope.FieldName.AFTER;
-import static io.debezium.data.Envelope.FieldName.BEFORE;
-import static io.debezium.data.Envelope.FieldName.OPERATION;
+import static io.debezium.data.Envelope.FieldName.*;
 import static io.debezium.data.Envelope.Operation;
 
 @Component
@@ -109,7 +107,7 @@ public class DebeziumListener {
         }
 
         if (Operation.DELETE.equals(operation)) {
-            userProducerService.sendDeletedUser(userDto.getUsername());
+            userProducerService.sendDeletedUser(userDto.username());
         }
     }
 

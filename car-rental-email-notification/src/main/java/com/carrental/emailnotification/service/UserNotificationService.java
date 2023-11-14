@@ -11,7 +11,7 @@ public class UserNotificationService {
     private final EmailService emailService;
 
     public void notifyCustomer(InvoiceDto invoiceDto) {
-        emailService.sendEmail(emailService.createMail(invoiceDto.getCustomerEmail(), invoiceDto));
+        emailService.sendEmail(emailService.createMail(invoiceDto.customerEmail(), invoiceDto));
     }
 
 }

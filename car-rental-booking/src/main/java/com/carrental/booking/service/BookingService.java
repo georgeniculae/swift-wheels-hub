@@ -2,14 +2,10 @@ package com.carrental.booking.service;
 
 import com.carrental.booking.mapper.BookingMapper;
 import com.carrental.booking.repository.BookingRepository;
-import com.carrental.dto.BookingClosingDetailsDto;
-import com.carrental.dto.BookingDto;
-import com.carrental.dto.CarDetailsForUpdateDto;
-import com.carrental.dto.CarDto;
-import com.carrental.dto.CarStatusEnum;
-import com.carrental.dto.EmployeeDto;
+import com.carrental.dto.*;
 import com.carrental.entity.Booking;
 import com.carrental.entity.BookingStatus;
+import com.carrental.entity.CarStatus;
 import com.carrental.lib.exception.CarRentalException;
 import com.carrental.lib.exception.CarRentalNotFoundException;
 import com.carrental.lib.exception.CarRentalResponseStatusException;
@@ -20,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -59,7 +54,7 @@ public class BookingService {
             throw new CarRentalException(e);
         }
 
-        carService.changeCarStatus(request, existingBooking.getCarId(), CarStatusEnum.AVAILABLE);
+        carService.changeCarStatus(request, existingBooking.getCarId(), CarStatus.AVAILABLE);
     }
 
     public Long countBookings() {
@@ -95,18 +90,16 @@ public class BookingService {
     public Double getAmountSpentByLoggedInUser(HttpServletRequest request) {
         return findBookingsByLoggedInUser(request)
                 .stream()
-                .map(BookingDto::getAmount)
+                .map(BookingDto::amount)
                 .filter(Objects::nonNull)
-                .map(BigDecimal::doubleValue)
                 .reduce(0D, Double::sum);
     }
 
     public Double getSumOfAllBookingAmount() {
         return findAllBookings()
                 .stream()
-                .map(BookingDto::getAmount)
+                .map(BookingDto::amount)
                 .filter(Objects::nonNull)
-                .map(BigDecimal::doubleValue)
                 .reduce(0D, Double::sum);
     }
 
@@ -121,7 +114,7 @@ public class BookingService {
         try {
             validateBookingDates(newBookingDto);
 
-            carDto = carService.findAvailableCarById(request, newBookingDto.getCarId());
+            carDto = carService.findAvailableCarById(request, newBookingDto.carId());
             Booking newBooking = setupNewBooking(newBookingDto, carDto);
 
             Booking savedBooking = bookingRepository.saveAndFlush(newBooking);
@@ -130,7 +123,7 @@ public class BookingService {
             throw new CarRentalException(e);
         }
 
-        carService.changeCarStatus(request, carDto.getId(), CarStatusEnum.NOT_AVAILABLE);
+        carService.changeCarStatus(request, carDto.id(), CarStatus.NOT_AVAILABLE);
 
         return bookingDto;
     }
@@ -140,20 +133,20 @@ public class BookingService {
         Booking existingBooking = findEntityById(id);
 
         final Long existingCarId = existingBooking.getCarId();
-        Long newCarId = updatedBookingDto.getCarId();
+        Long newCarId = updatedBookingDto.carId();
 
         BookingDto bookingDto;
         try {
             getCarIfIsChanged(request, existingCarId, newCarId)
                     .ifPresentOrElse(carDto -> {
-                                existingBooking.setCarId(carDto.getId());
-                                existingBooking.setRentalBranchId(carDto.getActualBranchId());
-                                existingBooking.setAmount(getAmount(updatedBookingDto, Objects.requireNonNull(carDto.getAmount()).doubleValue()));
+                                existingBooking.setCarId(carDto.id());
+                                existingBooking.setRentalBranchId(carDto.actualBranchId());
+                                existingBooking.setAmount(getAmount(updatedBookingDto, carDto.amount()));
                             },
                             () -> existingBooking.setAmount(getAmount(updatedBookingDto, existingBooking.getRentalCarPrice())));
 
-            existingBooking.setDateFrom(updatedBookingDto.getDateFrom());
-            existingBooking.setDateTo(updatedBookingDto.getDateTo());
+            existingBooking.setDateFrom(updatedBookingDto.dateFrom());
+            existingBooking.setDateTo(updatedBookingDto.dateTo());
 
             Booking updatedBooking = bookingRepository.saveAndFlush(existingBooking);
             bookingDto = bookingMapper.mapEntityToDto(updatedBooking);
@@ -170,11 +163,11 @@ public class BookingService {
         BookingDto bookingDto;
 
         try {
-            Booking existingBooking = findEntityById(bookingUpdateDetailsDto.getBookingId());
-            EmployeeDto employeeDto = employeeService.findEmployeeById(request, bookingUpdateDetailsDto.getReceptionistEmployeeId());
+            Booking existingBooking = findEntityById(bookingUpdateDetailsDto.bookingId());
+            EmployeeDto employeeDto = employeeService.findEmployeeById(request, bookingUpdateDetailsDto.receptionistEmployeeId());
 
             existingBooking.setStatus(BookingStatus.CLOSED);
-            existingBooking.setReturnBranchId(employeeDto.getWorkingBranchId());
+            existingBooking.setReturnBranchId(employeeDto.workingBranchId());
 
             Booking savedBooking = bookingRepository.saveAndFlush(existingBooking);
             bookingDto = bookingMapper.mapEntityToDto(savedBooking);
@@ -193,8 +186,8 @@ public class BookingService {
     }
 
     private void validateBookingDates(BookingDto newBookingDto) {
-        LocalDate dateFrom = newBookingDto.getDateFrom();
-        LocalDate dateTo = newBookingDto.getDateTo();
+        LocalDate dateFrom = newBookingDto.dateFrom();
+        LocalDate dateTo = newBookingDto.dateTo();
         LocalDate currentDate = LocalDate.now();
 
         if (Objects.requireNonNull(dateFrom).isBefore(currentDate) ||
@@ -218,8 +211,8 @@ public class BookingService {
     }
 
     private Double getAmount(BookingDto bookingDto, Double amount) {
-        LocalDate dateFrom = bookingDto.getDateFrom();
-        LocalDate dateTo = bookingDto.getDateTo();
+        LocalDate dateFrom = bookingDto.dateFrom();
+        LocalDate dateTo = bookingDto.dateTo();
 
         int bookingDays = Period.between(Objects.requireNonNull(dateFrom), Objects.requireNonNull(dateTo)).getDays();
 
@@ -237,38 +230,39 @@ public class BookingService {
 
     private Booking setupNewBooking(BookingDto newBookingDto, CarDto carDto) {
         Booking newBooking = bookingMapper.mapDtoToEntity(newBookingDto);
-        double amount = Objects.requireNonNull(carDto.getAmount()).doubleValue();
+        double amount = carDto.amount();
 
-        newBooking.setDateTo(newBookingDto.getDateTo());
-        newBooking.setDateFrom(newBookingDto.getDateFrom());
-        newBooking.setCustomerUsername(newBookingDto.getCustomerUsername());
-        newBooking.setCarId(carDto.getId());
+        newBooking.setDateTo(newBookingDto.dateTo());
+        newBooking.setDateFrom(newBookingDto.dateFrom());
+        newBooking.setCustomerUsername(newBookingDto.customerUsername());
+        newBooking.setCarId(carDto.id());
         newBooking.setDateOfBooking(LocalDate.now());
-        newBooking.setRentalBranchId(carDto.getActualBranchId());
+        newBooking.setRentalBranchId(carDto.actualBranchId());
         newBooking.setStatus(BookingStatus.IN_PROGRESS);
         newBooking.setAmount(getAmount(newBookingDto, amount));
-        newBooking.setRentalCarPrice(Objects.requireNonNull(carDto.getAmount()).doubleValue());
+        newBooking.setRentalCarPrice(carDto.amount());
 
         return newBooking;
     }
 
     private void getCarsForStatusUpdate(HttpServletRequest request, Long existingCarId, Long newCarId) {
         if (!existingCarId.equals(newCarId)) {
-            List<CarDetailsForUpdateDto> carDetailsForUpdateDtoList = List.of(
-                    new CarDetailsForUpdateDto().carId(existingCarId).carStatus(CarStatusEnum.AVAILABLE),
-                    new CarDetailsForUpdateDto().carId(newCarId).carStatus(CarStatusEnum.NOT_AVAILABLE)
+            List<CarForUpdate> carsForUpdate = List.of(
+                    new CarForUpdate(existingCarId, CarStatus.AVAILABLE),
+                    new CarForUpdate(newCarId, CarStatus.NOT_AVAILABLE)
             );
 
-            carService.updateCarsStatus(request, carDetailsForUpdateDtoList);
+            carService.updateCarsStatus(request, carsForUpdate);
         }
     }
 
     private void updateCarWhenBookingIsClosed(HttpServletRequest request, BookingDto bookingDto,
                                               BookingClosingDetailsDto bookingClosingDetailsDto) {
-        CarDetailsForUpdateDto carDetailsForUpdateDto = new CarDetailsForUpdateDto()
-                .carId(bookingDto.getCarId())
-                .receptionistEmployeeId(bookingClosingDetailsDto.getReceptionistEmployeeId())
-                .carStatus(bookingClosingDetailsDto.getCarStatus());
+        CarDetailsForUpdateDto carDetailsForUpdateDto = new CarDetailsForUpdateDto(
+                bookingDto.carId(),
+                bookingClosingDetailsDto.carStatus(),
+                bookingClosingDetailsDto.receptionistEmployeeId()
+        );
 
         carService.updateCarWhenBookingIsFinished(request, carDetailsForUpdateDto);
     }
