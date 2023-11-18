@@ -43,26 +43,26 @@ public class GrantedAuthoritiesConverter implements Converter<Jwt, Collection<Gr
 
     private Collection<GrantedAuthority> defaultGrantedAuthorities(Jwt jwt) {
         return Optional.ofNullable(authoritiesConverter.convert(jwt))
-                .orElse(Collections.emptySet());
+                .orElse(Set.of());
     }
 
     @SuppressWarnings("unchecked")
     private List<String> realmRoles(Jwt jwt) {
         return Optional.ofNullable(jwt.getClaimAsMap(CLAIM_REALM_ACCESS))
                 .map(realmAccess -> (List<String>) realmAccess.get(ROLES))
-                .orElse(Collections.emptyList());
+                .orElse(List.of());
     }
 
     @SuppressWarnings("unchecked")
     private List<String> clientRoles(Jwt jwt, String clientId) {
         if (ObjectUtils.isEmpty(clientId)) {
-            return Collections.emptyList();
+            return List.of();
         }
 
         return Optional.ofNullable(jwt.getClaimAsMap(RESOURCE_ACCESS))
                 .map(resourceAccess -> (Map<String, List<String>>) resourceAccess.get(clientId))
                 .map(clientAccess -> clientAccess.get(ROLES))
-                .orElse(Collections.emptyList());
+                .orElse(List.of());
     }
 
 }

@@ -20,7 +20,7 @@
         <spring-cloud-dependencies.version>2022.0.2</spring-cloud-dependencies.version>
         <spring-boot.version>3.1.4</spring-boot.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
-        <jsonwebtoken.version>0.11.5</jsonwebtoken.version>
+        <jsonwebtoken.version>0.12.3</jsonwebtoken.version>
         <car-rental-common-model.version>0.0.1-SNAPSHOT</car-rental-common-model.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <liquibase.version>4.22.0</liquibase.version>
