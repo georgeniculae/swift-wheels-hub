@@ -1,6 +1,7 @@
 package com.carrental.cloudgateway.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
+    private String jwkUri;
     private final AuthenticationManager authenticationManager;
     private final JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
     private final SecurityContextRepositoryImpl securityContextRepositoryImpl;
@@ -23,8 +26,7 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http.csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(request ->
-                        request.pathMatchers("/authenticate",
-                                        "/agency/definition/**",
+                        request.pathMatchers("/agency/definition/**",
                                         "/bookings/definition/**",
                                         "/customers/definition/**",
                                         "/customers/register",
@@ -32,7 +34,7 @@ public class SecurityConfig {
                                 .pathMatchers("/agency/**",
                                         "/bookings/**",
                                         "/customers/**",
-                                        "/expense/**").hasRole("ADMIN")
+                                        "/expense/**").authenticated()
                                 .anyExchange().authenticated()
                 )
                 .exceptionHandling(request ->
@@ -41,10 +43,14 @@ public class SecurityConfig {
                                 .accessDeniedHandler((response, error) ->
                                         Mono.fromRunnable(() -> response.getResponse().setStatusCode(HttpStatus.FORBIDDEN))))
                 .oauth2ResourceServer(resourceServerSpec ->
-                        resourceServerSpec.jwt(jwtSpec -> jwtSpec.authenticationManager(authenticationManager)
-                                .jwtAuthenticationConverter(jwtAuthenticationTokenConverter)))
+                        resourceServerSpec.jwt(jwtSpec ->
+                                jwtSpec
+//                                        .authenticationManager(authenticationManager)
+                                        .jwkSetUri(jwkUri)
+                                        .jwtAuthenticationConverter(jwtAuthenticationTokenConverter)))
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                .authenticationManager(authenticationManager)
                 .securityContextRepository(securityContextRepositoryImpl)
                 .requestCache(request -> request.requestCache(NoOpServerRequestCache.getInstance()))
                 .build();

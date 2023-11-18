@@ -17,14 +17,15 @@ import java.util.stream.Stream;
 @Component
 @RequiredArgsConstructor
 public class GrantedAuthoritiesConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
+
     private static final String ROLES = "roles";
     private static final String CLAIM_REALM_ACCESS = "realm_access";
     private static final String RESOURCE_ACCESS = "resource_access";
 
-    @Value("${}")
+    @Value("${keycloak.clientId}")
     private String clientId;
 
-    private final Converter<Jwt, Collection<GrantedAuthority>> defaultAuthoritiesConverter;
+    private final Converter<Jwt, Collection<GrantedAuthority>> authoritiesConverter;
 
     @Override
     public Collection<GrantedAuthority> convert(@NonNull Jwt source) {
@@ -41,7 +42,7 @@ public class GrantedAuthoritiesConverter implements Converter<Jwt, Collection<Gr
     }
 
     private Collection<GrantedAuthority> defaultGrantedAuthorities(Jwt jwt) {
-        return Optional.ofNullable(defaultAuthoritiesConverter.convert(jwt))
+        return Optional.ofNullable(authoritiesConverter.convert(jwt))
                 .orElse(Collections.emptySet());
     }
 

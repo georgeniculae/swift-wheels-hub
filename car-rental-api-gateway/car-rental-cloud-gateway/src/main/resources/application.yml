@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:0}
+  port: ${PORT:8088}
   error:
     include-message: always
     include-binding-errors: never
@@ -13,8 +13,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/car-rental-service
-          jwk-set-uri: http://localhost:8080/realms/car-rental-service/protocol/open-id-connect/certs
+          issuer-uri: http://localhost:8080/auth/realms/car-rental-service
+          jwk-set-uri: http://localhost:8080/auth/realms/car-rental-service/protocol/openid-connect/certs
   cloud:
     gateway:
       routes:
@@ -124,3 +124,6 @@ cross-origin: '*'
 
 swagger-validator:
   enabled: true
+
+keycloak:
+  clientId: client

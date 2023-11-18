@@ -20,7 +20,6 @@ import reactor.core.publisher.Mono;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -46,12 +45,8 @@ public class JwtAuthenticationTokenConverter implements Converter<Jwt, Mono<Abst
                 .map(authorities -> new JwtAuthenticationToken(source, authorities, extractUsername(source)));
     }
 
-    protected String extractUsername(Jwt jwt) {
+    public String extractUsername(Jwt jwt) {
         return jwt.getClaimAsBoolean(USERNAME_CLAIM) ? jwt.getClaimAsString(USERNAME_CLAIM) : jwt.getSubject();
-    }
-
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
@@ -61,6 +56,11 @@ public class JwtAuthenticationTokenConverter implements Converter<Jwt, Mono<Abst
     }
 
     public String extractUsername(String token) {
+//        Jwts.parser()
+//                .parseClaimsJws(token)
+//                .getBody()
+//                .getSubject();
+
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -72,7 +72,7 @@ public class JwtAuthenticationTokenConverter implements Converter<Jwt, Mono<Abst
 
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+//                .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();

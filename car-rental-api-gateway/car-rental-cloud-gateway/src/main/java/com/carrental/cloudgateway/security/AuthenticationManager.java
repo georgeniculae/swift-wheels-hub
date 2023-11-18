@@ -5,6 +5,7 @@ import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -17,14 +18,10 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
-        String token = authentication.getCredentials().toString();
-
-        return Mono.just(token)
-                .map(jwtAuthenticationTokenConverter::extractUsername)
-                .flatMap(userDetailsService::findByUsername)
-                .filter(user -> jwtAuthenticationTokenConverter.isTokenValid(token, user))
-                .map(this::getUsernamePasswordAuthenticationToken)
-                .switchIfEmpty(Mono.empty());
+        return Mono.justOrEmpty(authentication)
+                .filter(auth -> auth instanceof JwtAuthenticationToken)
+                .cast(JwtAuthenticationToken.class)
+                .flatMap(jwtAuthenticationToken -> jwtAuthenticationTokenConverter.convert(jwtAuthenticationToken.getToken()));
     }
 
     private Authentication getUsernamePasswordAuthenticationToken(UserDetails userDetails) {
