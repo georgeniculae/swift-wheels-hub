@@ -43,13 +43,12 @@ public class SecurityConfig {
                                 .accessDeniedHandler((response, error) ->
                                         Mono.fromRunnable(() -> response.getResponse().setStatusCode(HttpStatus.FORBIDDEN))))
                 .oauth2ResourceServer(resourceServerSpec ->
-                        resourceServerSpec.jwt(jwtSpec ->
-                                jwtSpec.authenticationManager(authenticationManager)
-                                        .jwkSetUri(jwkUri)
-                                        .jwtAuthenticationConverter(jwtAuthenticationTokenConverter)))
+                        resourceServerSpec.jwt(jwtSpec -> jwtSpec.jwkSetUri(jwkUri)
+                                .authenticationManager(authenticationManager)
+                                .jwtAuthenticationConverter(jwtAuthenticationTokenConverter)))
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-                .authenticationManager(authenticationManager)
+//                .authenticationManager(authenticationManager)
                 .securityContextRepository(securityContextRepositoryImpl)
                 .requestCache(request -> request.requestCache(NoOpServerRequestCache.getInstance()))
                 .build();
