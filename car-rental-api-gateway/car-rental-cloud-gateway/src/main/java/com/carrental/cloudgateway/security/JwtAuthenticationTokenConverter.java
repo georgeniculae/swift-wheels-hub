@@ -1,7 +1,6 @@
 package com.carrental.cloudgateway.security;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -19,12 +18,6 @@ import java.util.Optional;
 public class JwtAuthenticationTokenConverter implements Converter<Jwt, Mono<AbstractAuthenticationToken>> {
 
     public static final String USERNAME_CLAIM = "preferred_username";
-
-    @Value("${token.signing-key}")
-    private String signingKey;
-
-    @Value("${token.expiration}")
-    private Long expiration;
 
     private final Converter<Jwt, Flux<GrantedAuthority>> jwtGrantedAuthoritiesConverter;
 

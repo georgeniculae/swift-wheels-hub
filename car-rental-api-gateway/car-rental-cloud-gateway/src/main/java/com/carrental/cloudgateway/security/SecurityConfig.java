@@ -44,8 +44,7 @@ public class SecurityConfig {
                                         Mono.fromRunnable(() -> response.getResponse().setStatusCode(HttpStatus.FORBIDDEN))))
                 .oauth2ResourceServer(resourceServerSpec ->
                         resourceServerSpec.jwt(jwtSpec ->
-                                jwtSpec
-//                                        .authenticationManager(authenticationManager)
+                                jwtSpec.authenticationManager(authenticationManager)
                                         .jwkSetUri(jwkUri)
                                         .jwtAuthenticationConverter(jwtAuthenticationTokenConverter)))
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)

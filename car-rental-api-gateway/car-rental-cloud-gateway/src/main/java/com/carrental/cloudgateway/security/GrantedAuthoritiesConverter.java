@@ -29,8 +29,8 @@ public class GrantedAuthoritiesConverter implements Converter<Jwt, Collection<Gr
 
     @Override
     public Collection<GrantedAuthority> convert(@NonNull Jwt source) {
-        var realmRoles = realmRoles(source);
-        var clientRoles = clientRoles(source, clientId);
+        List<String> realmRoles = realmRoles(source);
+        List<String> clientRoles = clientRoles(source, clientId);
 
         Collection<GrantedAuthority> authorities = Stream.concat(realmRoles.stream(), clientRoles.stream())
                 .map(SimpleGrantedAuthority::new)
