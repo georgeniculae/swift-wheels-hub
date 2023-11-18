@@ -10,6 +10,8 @@ import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -33,6 +35,8 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     private String apikey;
 
     private final JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
+
+    private final NimbusJwtDecoder nimbusJwtDecoder;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -62,7 +66,9 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     }
 
     private String getUsername(ServerHttpRequest request) {
-        return jwtAuthenticationTokenConverter.extractUsername(getAuthorizationHeader(request));
+        Jwt jwt = nimbusJwtDecoder.decode(getAuthorizationHeader(request));
+
+        return jwtAuthenticationTokenConverter.extractUsername(jwt);
     }
 
     private String getAuthorizationHeader(ServerHttpRequest request) {

@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import util.TestUtils;
@@ -20,7 +19,6 @@ import util.TestUtils;
 import java.util.Collection;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -47,9 +45,7 @@ class AuthenticationManagerTest {
         Authentication authentication = mock(Authentication.class);
 
         when(authentication.getCredentials()).thenReturn(token);
-        when(jwtAuthenticationTokenConverter.extractUsername(anyString())).thenReturn(username);
         when(userDetailsService.findByUsername(anyString())).thenReturn(Mono.just(user));
-        when(jwtAuthenticationTokenConverter.isTokenValid(anyString(), any(UserDetails.class))).thenReturn(true);
 
         StepVerifier.create(authenticationManager.authenticate(authentication))
                 .expectNextMatches(auth -> username.equals(auth.getPrincipal()) &&
@@ -66,7 +62,6 @@ class AuthenticationManagerTest {
         Authentication authentication = mock(Authentication.class);
 
         when(authentication.getCredentials()).thenReturn(token);
-        when(jwtAuthenticationTokenConverter.extractUsername(anyString())).thenReturn(username);
         when(userDetailsService.findByUsername(anyString())).thenReturn(Mono.empty());
 
         StepVerifier.create(authenticationManager.authenticate(authentication))
