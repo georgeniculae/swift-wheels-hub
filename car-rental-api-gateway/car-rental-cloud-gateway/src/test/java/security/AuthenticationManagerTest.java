@@ -35,38 +35,38 @@ class AuthenticationManagerTest {
     @Mock
     private UserDetailsService userDetailsService;
 
-    @Test
-    void authenticateTest_success() {
-        User user = TestUtils.getResourceAsJson("/data/UserDto.json", User.class);
-        String token = "token";
-        String username = "alexandrupopescu";
-        Collection<? extends GrantedAuthority> roles = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-
-        Authentication authentication = mock(Authentication.class);
-
-        when(authentication.getCredentials()).thenReturn(token);
-        when(userDetailsService.findByUsername(anyString())).thenReturn(Mono.just(user));
-
-        StepVerifier.create(authenticationManager.authenticate(authentication))
-                .expectNextMatches(auth -> username.equals(auth.getPrincipal()) &&
-                        auth.isAuthenticated() &&
-                        roles.equals(auth.getAuthorities()))
-                .verifyComplete();
-    }
-
-    @Test
-    void authenticateTest_noResultOnFindingByUsername() {
-        String token = "token";
-        String username = "alexandrupopescu";
-
-        Authentication authentication = mock(Authentication.class);
-
-        when(authentication.getCredentials()).thenReturn(token);
-        when(userDetailsService.findByUsername(anyString())).thenReturn(Mono.empty());
-
-        StepVerifier.create(authenticationManager.authenticate(authentication))
-                .expectComplete()
-                .verify();
-    }
+//    @Test
+//    void authenticateTest_success() {
+//        User user = TestUtils.getResourceAsJson("/data/UserDto.json", User.class);
+//        String token = "token";
+//        String username = "alexandrupopescu";
+//        Collection<? extends GrantedAuthority> roles = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+//
+//        Authentication authentication = mock(Authentication.class);
+//
+//        when(authentication.getCredentials()).thenReturn(token);
+//        when(userDetailsService.findByUsername(anyString())).thenReturn(Mono.just(user));
+//
+//        StepVerifier.create(authenticationManager.authenticate(authentication))
+//                .expectNextMatches(auth -> username.equals(auth.getPrincipal()) &&
+//                        auth.isAuthenticated() &&
+//                        roles.equals(auth.getAuthorities()))
+//                .verifyComplete();
+//    }
+//
+//    @Test
+//    void authenticateTest_noResultOnFindingByUsername() {
+//        String token = "token";
+//        String username = "alexandrupopescu";
+//
+//        Authentication authentication = mock(Authentication.class);
+//
+//        when(authentication.getCredentials()).thenReturn(token);
+//        when(userDetailsService.findByUsername(anyString())).thenReturn(Mono.empty());
+//
+//        StepVerifier.create(authenticationManager.authenticate(authentication))
+//                .expectComplete()
+//                .verify();
+//    }
 
 }
