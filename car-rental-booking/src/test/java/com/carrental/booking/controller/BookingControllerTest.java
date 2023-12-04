@@ -180,7 +180,7 @@ class BookingControllerTest {
 
     @Test
     void countByLoggedInUserTest_unauthorized() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count-by-current-customer").contextPath(PATH)
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count-by-current-user").contextPath(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
