@@ -40,7 +40,7 @@ public class TestUtils {
 
         try {
             return new String(Files.readAllBytes(Paths.get(resource.toURI())));
-        } catch (IOException | URISyntaxException e) {
+        } catch (Exception e) {
             throw new CarRentalException("Failed getting resource: " + resourceName);
         }
     }
