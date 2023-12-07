@@ -126,4 +126,4 @@ swagger-validator:
   enabled: true
 
 keycloak:
-  clientId: client
+  clientId: car-rental-cloud-gateway
