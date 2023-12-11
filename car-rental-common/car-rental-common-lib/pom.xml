@@ -23,7 +23,7 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <debezium.version>2.3.0.Final</debezium.version>
         <mustache.version>0.9.10</mustache.version>
-        <spring-cloud.version>2022.0.2</spring-cloud.version>
+        <spring-cloud.version>2022.0.4</spring-cloud.version>
         <spring-cloud-starter-netflix-eureka.version>4.0.2</spring-cloud-starter-netflix-eureka.version>
         <jackson-datatype-jsr310.version>2.15.2</jackson-datatype-jsr310.version>
     </properties>

@@ -19,7 +19,7 @@
         <car-rental-common.version>0.0.1-SNAPSHOT</car-rental-common.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <debezium.version>2.3.0.Final</debezium.version>
-        <spring-cloud.version>2022.0.2</spring-cloud.version>
+        <spring-cloud.version>2022.0.4</spring-cloud.version>
         <liquibase.version>4.22.0</liquibase.version>
         <netflix-eventbus.version>0.3.0</netflix-eventbus.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.2.0</springdoc-openapi-starter-webmvc-ui.version>
