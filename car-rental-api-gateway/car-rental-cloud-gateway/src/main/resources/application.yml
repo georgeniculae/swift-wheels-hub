@@ -72,9 +72,9 @@ spring:
       missing-topics-fatal: false
     consumer:
       group-id: ${GATEWAY_CONSUMER_GROUP}
-      saved-user-topic: ${SAVED_USER_PRODUCER_TOPIC}
-      updated-user-topic: ${UPDATED_USER_PRODUCER_TOPIC}
-      deleted-user-topic: ${DELETED_USER_PRODUCER_TOPIC}
+      saved-user-topic: ${SAVED_USER_TOPIC}
+      updated-user-topic: ${UPDATED_USER_TOPIC}
+      deleted-user-topic: ${DELETED_USER_TOPIC}
   liquibase:
     enabled: true
     url: jdbc:postgresql://localhost:5432/car_rental_gateway

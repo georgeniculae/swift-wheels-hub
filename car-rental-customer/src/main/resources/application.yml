@@ -86,9 +86,9 @@ kafka:
   enabled: true
   producer: true
   user-producer: true
-  saved-user-producer-topic-name: ${SAVED_USER_PRODUCER_TOPIC}
-  updated-user-producer-topic-name: ${UPDATED_USER_PRODUCER_TOPIC}
-  deleted-user-producer-topic-name: ${DELETED_USER_PRODUCER_TOPIC}
+  saved-user-producer-topic-name: ${SAVED_USER_TOPIC}
+  updated-user-producer-topic-name: ${UPDATED_USER_TOPIC}
+  deleted-user-producer-topic-name: ${DELETED_USER_TOPIC}
   audit-log-topic-name: ${CUSTOMER_AUDIT_LOG_INFO_TOPIC}
 
 debezium:
