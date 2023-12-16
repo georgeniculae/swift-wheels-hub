@@ -38,7 +38,7 @@ management:
 
 kafka:
   enabled: true
-  email-notification-producer-topic-name: ${EMAIL_NOTIFICATION_PRODUCER_TOPIC}
+  email-notification-producer-topic-name: ${EMAIL_NOTIFICATION_TOPIC}
   groupId: ${EMAIL_NOTIFICATION_CONSUMER_GROUP}
 
 sendgrid:
