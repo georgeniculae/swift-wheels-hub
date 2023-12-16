@@ -68,7 +68,7 @@ logging:
 
 kafka:
   enabled: true
-  booking-audit-log-info-topic-name: ${BOOKING_AUDIT_LOG_INFO_PRODUCER_TOPIC}
-  customer-audit-log-info-topic-name: ${CUSTOMER_AUDIT_LOG_INFO_PRODUCER_TOPIC}
-  expense-audit-log-info-topic-name: ${EXPENSE_AUDIT_LOG_INFO_PRODUCER_TOPIC}
+  booking-audit-log-info-topic-name: ${BOOKING_AUDIT_LOG_INFO_TOPIC}
+  customer-audit-log-info-topic-name: ${CUSTOMER_AUDIT_LOG_INFO_TOPIC}
+  expense-audit-log-info-topic-name: ${EXPENSE_AUDIT_LOG_INFO_TOPIC}
   groupId: ${AUDIT_CONSUMER_GROUP}

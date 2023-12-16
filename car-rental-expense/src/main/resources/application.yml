@@ -122,11 +122,11 @@ rest-template:
 kafka:
   enabled: true
   producer: true
-  saved-booking-producer-topic-name: ${SAVED_BOOKING_PRODUCER_TOPIC}
-  updated-booking-producer-topic-name: ${UPDATED_BOOKING_PRODUCER_TOPIC}
-  deleted-booking-producer-topic-name: ${DELETED_BOOKING_PRODUCER_TOPIC}
-  email-notification-producer-topic-name: ${EMAIL_NOTIFICATION_PRODUCER_TOPIC}
-  audit-log-topic-name: ${EXPENSE_AUDIT_LOG_INFO_PRODUCER_TOPIC}
+  saved-booking-producer-topic-name: ${SAVED_BOOKING_TOPIC}
+  updated-booking-producer-topic-name: ${UPDATED_BOOKING_TOPIC}
+  deleted-booking-producer-topic-name: ${DELETED_BOOKING_TOPIC}
+  email-notification-producer-topic-name: ${EMAIL_NOTIFICATION_TOPIC}
+  audit-log-topic-name: ${EXPENSE_AUDIT_LOG_INFO_TOPIC}
   groupId: ${EXPENSE_CONSUMER_GROUP}
 
 sendgrid:

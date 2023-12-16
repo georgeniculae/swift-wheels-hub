@@ -4,12 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-       <groupId>com.carrental</groupId>
+        <groupId>com.carrental</groupId>
         <artifactId>car-rental-service</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>car-rental-common-parent</artifactId>
+
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 

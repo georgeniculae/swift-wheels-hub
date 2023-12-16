@@ -10,18 +10,19 @@
     </parent>
 
     <artifactId>car-rental-customer</artifactId>
+
     <version>0.0.1-SNAPSHOT</version>
     <name>Car Rental Customer</name>
     <description>Car Rental Customer</description>
 
     <properties>
         <java.version>21</java.version>
+        <spring-boot.version>3.2.0</spring-boot.version>
+        <spring-cloud-dependencies.version>2022.0.4</spring-cloud-dependencies.version>
         <car-rental-common.version>0.0.1-SNAPSHOT</car-rental-common.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <debezium.version>2.4.2.Final</debezium.version>
-        <spring-cloud.version>2022.0.4</spring-cloud.version>
         <liquibase.version>4.25.0</liquibase.version>
-        <netflix-eventbus.version>0.3.0</netflix-eventbus.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.2.0</springdoc-openapi-starter-webmvc-ui.version>
     </properties>
 
@@ -119,13 +120,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.netflix.netflix-commons</groupId>
-            <artifactId>netflix-eventbus</artifactId>
-            <version>${netflix-eventbus.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
@@ -164,9 +158,17 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
+                <version>${spring-cloud-dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

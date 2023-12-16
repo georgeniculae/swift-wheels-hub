@@ -106,11 +106,11 @@ kafka:
   enabled: true
   producer: true
   booking-producer: true
-  saved-booking-producer-topic-name: ${SAVED_BOOKING_PRODUCER_TOPIC}
-  updated-booking-producer-topic-name: ${UPDATED_BOOKING_PRODUCER_TOPIC}
-  deleted-booking-producer-topic-name: ${DELETED_BOOKING_PRODUCER_TOPIC}
-  deleted-user-topic-name: ${DELETED_USER_PRODUCER_TOPIC}
-  audit-log-topic-name: ${BOOKING_AUDIT_LOG_INFO_PRODUCER_TOPIC}
+  saved-booking-producer-topic-name: ${SAVED_BOOKING_TOPIC}
+  updated-booking-producer-topic-name: ${UPDATED_BOOKING_TOPIC}
+  deleted-booking-producer-topic-name: ${DELETED_BOOKING_TOPIC}
+  deleted-user-topic-name: ${DELETED_USER_TOPIC}
+  audit-log-topic-name: ${BOOKING_AUDIT_LOG_INFO_TOPIC}
   groupId: ${BOOKING_CONSUMER_GROUP}
 
 debezium:
