@@ -19,8 +19,8 @@
         <car-rental-common.version>0.0.1-SNAPSHOT</car-rental-common.version>
         <httpclient.version>4.5.14</httpclient.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <spring-cloud.version>2022.0.4</spring-cloud.version>
-        <liquibase.version>4.22.0</liquibase.version>
+        <spring-cloud.version>2023.0.0</spring-cloud.version>
+        <liquibase.version>4.25.0</liquibase.version>
         <netflix-eventbus.version>0.3.0</netflix-eventbus.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.2.0</springdoc-openapi-starter-webmvc-ui.version>
     </properties>

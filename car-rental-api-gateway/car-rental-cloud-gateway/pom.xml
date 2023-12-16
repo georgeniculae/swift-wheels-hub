@@ -17,14 +17,12 @@
 
     <properties>
         <java.version>21</java.version>
-        <spring-cloud-dependencies.version>2022.0.4</spring-cloud-dependencies.version>
-        <spring-boot.version>3.1.4</spring-boot.version>
-        <validation-api.version>2.0.1.Final</validation-api.version>
+        <spring-boot.version>3.2.0</spring-boot.version>
+        <spring-cloud-dependencies.version>2023.0.0</spring-cloud-dependencies.version>
         <jsonwebtoken.version>0.12.3</jsonwebtoken.version>
         <car-rental-common-model.version>0.0.1-SNAPSHOT</car-rental-common-model.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <liquibase.version>4.22.0</liquibase.version>
-        <swagger-request-validator.version>2.38.0</swagger-request-validator.version>
+        <swagger-request-validator.version>2.39.0</swagger-request-validator.version>
     </properties>
 
     <dependencies>
@@ -114,7 +112,6 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>${liquibase.version}</version>
         </dependency>
 
         <dependency>
