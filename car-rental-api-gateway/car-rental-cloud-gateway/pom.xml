@@ -17,7 +17,6 @@
 
     <properties>
         <java.version>21</java.version>
-        <spring-boot.version>3.2.0</spring-boot.version>
         <spring-cloud-dependencies.version>2023.0.0</spring-cloud-dependencies.version>
         <jsonwebtoken.version>0.12.3</jsonwebtoken.version>
         <car-rental-common-model.version>0.0.1-SNAPSHOT</car-rental-common-model.version>
@@ -178,14 +177,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
