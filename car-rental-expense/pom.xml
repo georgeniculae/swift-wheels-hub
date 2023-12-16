@@ -21,7 +21,7 @@
         <car-rental-common.version>0.0.1-SNAPSHOT</car-rental-common.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <liquibase.version>4.25.0</liquibase.version>
-        <debezium.version>2.4.2.Final</debezium.version>
+        <debezium.version>2.3.4.Final</debezium.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.3.0</springdoc-openapi-starter-webmvc-ui.version>
         <httpclient.version>4.5.14</httpclient.version>
     </properties>

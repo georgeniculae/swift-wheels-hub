@@ -20,7 +20,7 @@
         <spring-cloud-dependencies.version>2022.0.2</spring-cloud-dependencies.version>
         <car-rental-common.version>0.0.1-SNAPSHOT</car-rental-common.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <debezium.version>2.4.2.Final</debezium.version>
+        <debezium.version>2.3.4.Final</debezium.version>
         <liquibase.version>4.25.0</liquibase.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.3.0</springdoc-openapi-starter-webmvc-ui.version>
     </properties>
