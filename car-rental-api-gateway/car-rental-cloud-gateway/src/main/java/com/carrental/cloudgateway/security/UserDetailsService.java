@@ -22,7 +22,7 @@ public class UserDetailsService implements ReactiveUserDetailsService {
                         Mono.error(
                                 () -> new CarRentalResponseStatusException(
                                         HttpStatus.NOT_FOUND,
-                                        "User with username " + username + " doesn't exist"
+                                        "User with username " + username + " was not found"
                                 )
                         )
                 )
