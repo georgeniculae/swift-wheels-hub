@@ -27,8 +27,8 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
                 .switchIfEmpty(Mono.empty());
     }
 
-    private String getUsername(Authentication authentication1) {
-        Jwt jwt = nimbusJwtDecoder.decode(authentication1.getPrincipal().toString());
+    private String getUsername(Authentication authentication) {
+        Jwt jwt = nimbusJwtDecoder.decode(authentication.getPrincipal().toString());
 
         return jwtAuthenticationTokenConverter.extractUsername(jwt);
     }
