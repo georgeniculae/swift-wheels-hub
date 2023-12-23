@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 
 @Configuration
 @RequiredArgsConstructor
-public class SecurityContextRepositoryImpl implements ServerSecurityContextRepository {
+public class ReactiveSecurityContextRepository implements ServerSecurityContextRepository {
 
     private static final String SPRING_SECURITY_CONTEXT_ATTR_NAME = "SPRING_SECURITY_CONTEXT";
     private final static String BEARER = "Bearer ";
