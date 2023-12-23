@@ -10,8 +10,7 @@ import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -36,15 +35,12 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
 
     private final JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
 
-    private final NimbusJwtDecoder nimbusJwtDecoder;
+    private final NimbusReactiveJwtDecoder nimbusReactiveJwtDecoder;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        return chain.filter(
-                exchange.mutate()
-                        .request(mutateHeaders(exchange))
-                        .build()
-        );
+        return modifyHeaders(exchange)
+                .flatMap(chain::filter);
     }
 
     @Override
@@ -52,23 +48,16 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
         return 0;
     }
 
-    private Consumer<ServerHttpRequest.Builder> mutateHeaders(ServerWebExchange exchange) {
-        return requestBuilder -> {
-            requestBuilder.header(X_API_KEY_HEADER, apikey);
-
-            String path = exchange.getRequest().getPath().value();
-            if (!path.contains(REGISTER_PATH) && !path.contains(DEFINITION_PATH)) {
-                requestBuilder.header(X_USERNAME, getUsername(exchange.getRequest()));
-            }
-
-            requestBuilder.headers(headers -> headers.remove(HttpHeaders.AUTHORIZATION));
-        };
+    private Mono<ServerWebExchange> modifyHeaders(ServerWebExchange exchange) {
+        return getUsername(exchange.getRequest())
+                .map(username -> exchange.mutate()
+                        .request(mutateHeaders(exchange, username))
+                        .build());
     }
 
-    private String getUsername(ServerHttpRequest request) {
-        Jwt jwt = nimbusJwtDecoder.decode(getAuthorizationHeader(request));
-
-        return jwtAuthenticationTokenConverter.extractUsername(jwt);
+    private Mono<String> getUsername(ServerHttpRequest request) {
+        return nimbusReactiveJwtDecoder.decode(getAuthorizationHeader(request))
+                .map(jwtAuthenticationTokenConverter::extractUsername);
     }
 
     private String getAuthorizationHeader(ServerHttpRequest request) {
@@ -79,6 +68,19 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
                         )
                 )
                 .substring(7);
+    }
+
+    private Consumer<ServerHttpRequest.Builder> mutateHeaders(ServerWebExchange exchange, String username) {
+        return requestBuilder -> {
+            requestBuilder.header(X_API_KEY_HEADER, apikey);
+
+            String path = exchange.getRequest().getPath().value();
+            if (!path.contains(REGISTER_PATH) && !path.contains(DEFINITION_PATH)) {
+                requestBuilder.header(X_USERNAME, username);
+            }
+
+            requestBuilder.headers(headers -> headers.remove(HttpHeaders.AUTHORIZATION));
+        };
     }
 
 }
