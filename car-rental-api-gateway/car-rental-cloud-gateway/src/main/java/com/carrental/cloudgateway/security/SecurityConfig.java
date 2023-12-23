@@ -48,7 +48,6 @@ public class SecurityConfig {
                                 .jwtAuthenticationConverter(jwtAuthenticationTokenConverter)))
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-//                .authenticationManager(authenticationManager)
                 .securityContextRepository(securityContextRepositoryImpl)
                 .requestCache(request -> request.requestCache(NoOpServerRequestCache.getInstance()))
                 .build();
