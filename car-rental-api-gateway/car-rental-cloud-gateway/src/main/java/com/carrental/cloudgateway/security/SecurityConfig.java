@@ -35,8 +35,7 @@ public class SecurityConfig {
                                         "/bookings/**",
                                         "/customers/**",
                                         "/expense/**").authenticated()
-                                .anyExchange().authenticated()
-                )
+                                .anyExchange().authenticated())
                 .exceptionHandling(request ->
                         request.authenticationEntryPoint((response, error) ->
                                         Mono.fromRunnable(() -> response.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED)))
