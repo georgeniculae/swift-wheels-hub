@@ -1,6 +1,6 @@
 package com.carrental.customer.util;
 
-import com.carrental.customer.dto.CurrentUserDto;
+import com.carrental.dto.CurrentUserDto;
 import com.carrental.dto.RegisterRequest;
 import com.carrental.dto.UserDto;
 import com.carrental.entity.User;

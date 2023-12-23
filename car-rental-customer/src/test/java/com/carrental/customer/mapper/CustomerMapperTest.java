@@ -1,6 +1,6 @@
 package com.carrental.customer.mapper;
 
-import com.carrental.customer.dto.CurrentUserDto;
+import com.carrental.dto.CurrentUserDto;
 import com.carrental.customer.util.AssertionUtils;
 import com.carrental.customer.util.TestUtils;
 import com.carrental.entity.User;

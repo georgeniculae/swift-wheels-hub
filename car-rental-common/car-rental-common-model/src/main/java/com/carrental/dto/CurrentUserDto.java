@@ -1,4 +1,4 @@
-package com.carrental.customer.dto;
+package com.carrental.dto;
 
 import com.carrental.entity.Role;
 import org.springframework.security.core.GrantedAuthority;

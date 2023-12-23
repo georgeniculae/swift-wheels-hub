@@ -1,6 +1,6 @@
 package com.carrental.customer.mapper;
 
-import com.carrental.customer.dto.CurrentUserDto;
+import com.carrental.dto.CurrentUserDto;
 import com.carrental.dto.UserDto;
 import com.carrental.entity.User;
 import org.mapstruct.InjectionStrategy;

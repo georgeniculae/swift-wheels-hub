@@ -1,6 +1,6 @@
 package com.carrental.customer.controller;
 
-import com.carrental.customer.dto.CurrentUserDto;
+import com.carrental.dto.CurrentUserDto;
 import com.carrental.customer.service.CustomerService;
 import com.carrental.dto.AuthenticationResponse;
 import com.carrental.dto.RegisterRequest;

@@ -1,6 +1,6 @@
 package com.carrental.customer.service;
 
-import com.carrental.customer.dto.CurrentUserDto;
+import com.carrental.dto.CurrentUserDto;
 import com.carrental.customer.mapper.CustomerMapper;
 import com.carrental.dto.AuthenticationResponse;
 import com.carrental.dto.RegisterRequest;
