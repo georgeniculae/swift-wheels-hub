@@ -3,7 +3,7 @@ package com.carrental.cloudgateway.security;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 
 @Configuration
 public class NimbusJwtDecoderConfig {
@@ -12,8 +12,8 @@ public class NimbusJwtDecoderConfig {
     private String jwkUri;
 
     @Bean
-    public NimbusJwtDecoder nimbusJwtDecoder() {
-        return NimbusJwtDecoder.withJwkSetUri(jwkUri).build();
+    public NimbusReactiveJwtDecoder nimbusReactiveJwtDecoder() {
+        return NimbusReactiveJwtDecoder.withJwkSetUri(jwkUri).build();
     }
 
 }
