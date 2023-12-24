@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import java.util.Collections;
+import java.util.function.Consumer;
 
 @UtilityClass
 public class HttpRequestUtil {
@@ -27,14 +28,12 @@ public class HttpRequestUtil {
         return new HttpEntity<>(HEADERS, headers);
     }
 
-    public static HttpEntity<String> getHttpEntity(String authorization) {
-        HttpHeaders headers = new HttpHeaders();
-
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set(X_API_KEY, authorization);
-
-        return new HttpEntity<>(HEADERS, headers);
+    public static Consumer<HttpHeaders> mutateHeaders(HttpServletRequest request) {
+        return httpHeaders -> {
+            httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+            httpHeaders.add(X_API_KEY, HttpRequestUtil.extractAuthenticationTokenFromRequest(request));
+        };
     }
 
     public static HttpEntity<Object> getHttpEntityWithBody(HttpServletRequest request, Object o) {

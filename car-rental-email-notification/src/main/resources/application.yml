@@ -9,7 +9,9 @@ server:
 spring:
   application:
     name: car-rental-email-notification
-  thread-executor: virtual
+  threads:
+    virtual:
+      enabled: true
   mvc:
     throw-exception-if-no-handler-found: true
   kafka:

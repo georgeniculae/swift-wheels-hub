@@ -3,16 +3,17 @@ package com.carrental.expense.service;
 import com.carrental.dto.BookingClosingDetailsDto;
 import com.carrental.dto.BookingDto;
 import com.carrental.lib.exception.CarRentalNotFoundException;
+import com.carrental.lib.exception.CarRentalResponseStatusException;
 import com.carrental.lib.util.HttpRequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
-import java.util.Optional;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -20,26 +21,44 @@ public class BookingService {
 
     private static final String SEPARATOR = "/";
 
-    @Value("${rest-template.url.car-rental-bookings}")
+    @Value("${rest-client.url.car-rental-bookings}")
     private String url;
 
-    private final RestTemplate restTemplate;
+    private final RestClient restClient;
 
     public BookingDto findBookingById(HttpServletRequest request, Long bookingId) {
         String finalUrl = url + SEPARATOR + bookingId;
 
-        HttpEntity<String> httpEntity = HttpRequestUtil.getHttpEntity(request);
+        return restClient.get()
+                .uri(finalUrl)
+                .headers(HttpRequestUtil.mutateHeaders(request))
+                .exchange((clientRequest, clientResponse) -> {
+                    HttpStatusCode statusCode = clientResponse.getStatusCode();
+                    if (statusCode.isError()) {
+                        throw new CarRentalResponseStatusException(statusCode, clientResponse.getStatusText());
+                    }
 
-        return Optional.ofNullable(restTemplate.exchange(finalUrl, HttpMethod.GET, httpEntity, BookingDto.class).getBody())
-                .orElseThrow(() -> new CarRentalNotFoundException("Booking with id: " + bookingId + " not found"));
+                    if (ObjectUtils.isEmpty(clientResponse.bodyTo(BookingDto.class)) ||
+                            clientResponse.getBody().available() == 0) {
+                        throw new CarRentalNotFoundException("Booking with id: " + bookingId + " not found");
+                    }
+
+                    return Objects.requireNonNull(clientResponse.bodyTo(BookingDto.class));
+                });
     }
 
     public void closeBooking(HttpServletRequest request, BookingClosingDetailsDto bookingClosingDetailsDto) {
         String finalUrl = url + SEPARATOR + "close-booking";
 
-        HttpEntity<Object> httpEntity = HttpRequestUtil.getHttpEntityWithBody(request, bookingClosingDetailsDto);
-
-        restTemplate.exchange(finalUrl, HttpMethod.POST, httpEntity, BookingDto.class);
+        restClient.post()
+                .uri(finalUrl)
+                .headers(HttpRequestUtil.mutateHeaders(request))
+                .body(bookingClosingDetailsDto)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, (clientRequest, clientResponse) -> {
+                    throw new CarRentalResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());
+                })
+                .toBodilessEntity();
     }
 
 }

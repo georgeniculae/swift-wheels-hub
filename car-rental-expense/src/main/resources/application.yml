@@ -11,7 +11,9 @@ server:
 spring:
   application:
     name: car-rental-expense
-  thread-executor: virtual
+  threads:
+    virtual:
+      enabled: true
   datasource:
     url: jdbc:postgresql://localhost:5432/car_rental_expense
     username: ${POSTGRESQL_USERNAME}
@@ -100,24 +102,12 @@ debezium:
   slot-name: invoice_slot
   groupId: ${EXPENSE_CONSUMER_GROUP}
 
-rest-template:
-  enabled: true
-  hostname: lb://car-rental-expense
+rest-client:
   url:
     car-rental-bookings: lb://car-rental-booking/bookings
     car-rental-agency-branches: lb://car-rental-agency/agency/branches
     car-rental-agency-cars: lb://car-rental-agency/agency/cars
     car-rental-agency-employees: lb://car-rental-agency/agency/employees
-  config:
-    pool-size: 5
-    idle-connection-wait-time: 30000
-    socket-timeout: 60000
-    request-timeout: 30000
-    connect-timeout: 30000
-    default-keep-alive-time: 20000
-    max-localhost-connections: 80
-    max-total-connections: 40
-    max-route-connections: 40
 
 kafka:
   enabled: true
