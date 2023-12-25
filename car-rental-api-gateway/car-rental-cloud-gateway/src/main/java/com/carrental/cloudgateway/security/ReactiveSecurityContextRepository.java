@@ -39,8 +39,8 @@ public class ReactiveSecurityContextRepository implements ServerSecurityContextR
                 .filter(authorization -> authorization.startsWith(BEARER))
                 .map(token -> token.substring(BEARER.length()))
                 .flatMap(token -> Mono.just(new UsernamePasswordAuthenticationToken(token, token)))
-                .flatMap(authentication -> authenticationManager.authenticate(authentication)
-                        .map(SecurityContextImpl::new));
+                .delayUntil(authenticationManager::authenticate)
+                .map(SecurityContextImpl::new);
     }
 
 }
