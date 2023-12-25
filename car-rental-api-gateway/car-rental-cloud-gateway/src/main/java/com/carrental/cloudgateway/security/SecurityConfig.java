@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.savedrequest.NoOpServerRequestCache;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @Configuration
@@ -18,7 +19,7 @@ public class SecurityConfig {
 
     @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
     private String jwkUri;
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationManager reactiveAuthenticationManager;
     private final JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
     private final ReactiveSecurityContextRepository reactiveSecurityContextRepository;
 
@@ -37,19 +38,21 @@ public class SecurityConfig {
                                         "/expense/**").authenticated()
                                 .anyExchange().authenticated())
                 .exceptionHandling(request ->
-                        request.authenticationEntryPoint((response, error) ->
-                                        Mono.fromRunnable(() -> response.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED)))
-                                .accessDeniedHandler((response, error) ->
-                                        Mono.fromRunnable(() -> response.getResponse().setStatusCode(HttpStatus.FORBIDDEN))))
+                        request.authenticationEntryPoint((response, error) -> getResponse(response, HttpStatus.UNAUTHORIZED))
+                                .accessDeniedHandler((response, error) -> getResponse(response, HttpStatus.FORBIDDEN)))
                 .oauth2ResourceServer(resourceServerSpec ->
                         resourceServerSpec.jwt(jwtSpec -> jwtSpec.jwkSetUri(jwkUri)
-                                .authenticationManager(authenticationManager)
+                                .authenticationManager(reactiveAuthenticationManager)
                                 .jwtAuthenticationConverter(jwtAuthenticationTokenConverter)))
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .securityContextRepository(reactiveSecurityContextRepository)
                 .requestCache(request -> request.requestCache(NoOpServerRequestCache.getInstance()))
                 .build();
+    }
+
+    private Mono<Void> getResponse(ServerWebExchange response, HttpStatus httpStatus) {
+        return Mono.fromRunnable(() -> response.getResponse().setStatusCode(httpStatus));
     }
 
 }
