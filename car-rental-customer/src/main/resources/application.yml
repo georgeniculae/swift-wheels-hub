@@ -26,8 +26,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  mvc:
-    throw-exception-if-no-handler-found: true
   kafka:
     bootstrap-servers: localhost:9092
   liquibase:
