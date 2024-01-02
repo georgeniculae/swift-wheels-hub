@@ -1,4 +1,4 @@
-package com.carrental.lib.exception;
+package com.carrental.exception;
 
 public class CarRentalException extends RuntimeException {
 
@@ -6,8 +6,8 @@ public class CarRentalException extends RuntimeException {
         super(message);
     }
 
-    public CarRentalException(Throwable e) {
-        super(e);
+    public CarRentalException(Throwable throwable) {
+        super(throwable);
     }
 
 }

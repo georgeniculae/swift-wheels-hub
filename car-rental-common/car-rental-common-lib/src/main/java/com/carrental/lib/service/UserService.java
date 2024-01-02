@@ -2,7 +2,7 @@ package com.carrental.lib.service;
 
 import com.carrental.dto.UserDto;
 import com.carrental.entity.User;
-import com.carrental.lib.exception.CarRentalNotFoundException;
+import com.carrental.exception.CarRentalNotFoundException;
 import com.carrental.lib.mapper.UserMapper;
 import com.carrental.lib.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

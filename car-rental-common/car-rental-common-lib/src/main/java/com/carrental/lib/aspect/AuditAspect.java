@@ -1,7 +1,7 @@
 package com.carrental.lib.aspect;
 
 import com.carrental.dto.AuditLogInfoDto;
-import com.carrental.lib.exception.CarRentalException;
+import com.carrental.exception.CarRentalException;
 import com.carrental.lib.security.jwt.JwtService;
 import com.carrental.lib.service.AuditLogProducerService;
 import jakarta.servlet.http.HttpServletRequest;

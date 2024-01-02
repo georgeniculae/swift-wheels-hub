@@ -1,5 +1,8 @@
 package com.carrental.lib.exception;
 
+import com.carrental.exception.CarRentalException;
+import com.carrental.exception.CarRentalNotFoundException;
+import com.carrental.exception.CarRentalResponseStatusException;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.http.HttpStatus;

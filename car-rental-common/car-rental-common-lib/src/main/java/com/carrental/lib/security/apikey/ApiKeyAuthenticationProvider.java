@@ -1,6 +1,6 @@
 package com.carrental.lib.security.apikey;
 
-import com.carrental.lib.exception.CarRentalException;
+import com.carrental.exception.CarRentalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

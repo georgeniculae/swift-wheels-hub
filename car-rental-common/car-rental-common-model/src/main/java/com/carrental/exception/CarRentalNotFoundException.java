@@ -1,4 +1,4 @@
-package com.carrental.lib.exception;
+package com.carrental.exception;
 
 public class CarRentalNotFoundException extends RuntimeException {
 
