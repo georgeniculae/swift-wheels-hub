@@ -82,12 +82,6 @@ spring:
     user: ${POSTGRESQL_USERNAME}
     password: ${POSTGRESQL_PASSWORD}
 
-swagger:
-  agency: lb://car-rental-agency/agency/definition/v3/api-docs
-  booking: lb://car-rental-booking/bookings/definition/v3/api-docs
-  customer: lb://car-rental-customer/customers/definition/v3/api-docs
-  expense: lb://car-rental-expense/expense/definition/v3/api-docs
-
 eureka:
   client:
     register-with-eureka: true
@@ -121,9 +115,6 @@ token:
 apikey-secret: ${API_KEY_SECRET}
 
 cross-origin: '*'
-
-swagger-validator:
-  enabled: true
 
 keycloak:
   clientId: car-rental-cloud-gateway

@@ -10,11 +10,11 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 @Configuration
 public class SwaggerInvalidationRouter {
 
-    @Bean
-    public RouterFunction<ServerResponse> swaggerInvalidationRoute(SwaggerInvalidationHandler swaggerInvalidationHandler) {
-        return RouterFunctions.route()
-                .DELETE("/invalidate-swagger-cache", swaggerInvalidationHandler::invalidateSwaggerFolderCache)
-                .build();
-    }
+//    @Bean
+//    public RouterFunction<ServerResponse> swaggerInvalidationRoute(SwaggerInvalidationHandler swaggerInvalidationHandler) {
+//        return RouterFunctions.route()
+//                .DELETE("/invalidate-swagger-cache", swaggerInvalidationHandler::invalidateSwaggerFolderCache)
+//                .build();
+//    }
 
 }

@@ -11,7 +11,7 @@ import com.carrental.dto.CarDto;
 import com.carrental.dto.EmployeeDto;
 import com.carrental.entity.Booking;
 import com.carrental.entity.CarStatus;
-import com.carrental.lib.exception.CarRentalNotFoundException;
+import com.carrental.exception.CarRentalNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

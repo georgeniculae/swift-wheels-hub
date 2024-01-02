@@ -1,6 +1,6 @@
 package com.carrental.cloudgateway.security;
 
-import com.carrental.cloudgateway.exception.CarRentalResponseStatusException;
+import com.carrental.exception.CarRentalResponseStatusException;
 import com.carrental.cloudgateway.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

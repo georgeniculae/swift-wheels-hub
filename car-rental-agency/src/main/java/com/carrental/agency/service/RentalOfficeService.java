@@ -4,7 +4,7 @@ import com.carrental.agency.mapper.RentalOfficeMapper;
 import com.carrental.agency.repository.RentalOfficeRepository;
 import com.carrental.dto.RentalOfficeDto;
 import com.carrental.entity.RentalOffice;
-import com.carrental.lib.exception.CarRentalNotFoundException;
+import com.carrental.exception.CarRentalNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

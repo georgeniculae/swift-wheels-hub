@@ -1,29 +1,29 @@
-package filter.global;
-
-import com.carrental.cloudgateway.filter.global.SwaggerRequestValidatorFilter;
-import com.carrental.cloudgateway.model.SwaggerFolder;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.data.redis.core.ReactiveRedisOperations;
-import org.springframework.data.redis.core.ReactiveValueOperations;
-
-@ExtendWith(MockitoExtension.class)
-class SwaggerRequestValidatorFilterTest {
-
-    @InjectMocks
-    private SwaggerRequestValidatorFilter swaggerRequestValidatorFilter;
-
-    @Mock
-    private GatewayFilterChain chain;
-
-    @Mock
-    private ReactiveRedisOperations<String, SwaggerFolder> redisSwagger;
-
-    @Mock
-    private ReactiveValueOperations<String, SwaggerFolder> reactiveValueOperations;
+//package filter.global;
+//
+//import com.carrental.cloudgateway.filter.global.SwaggerRequestValidatorFilter;
+//import com.carrental.requestvalidator.model.SwaggerFolder;
+//import org.junit.jupiter.api.extension.ExtendWith;
+//import org.mockito.InjectMocks;
+//import org.mockito.Mock;
+//import org.mockito.junit.jupiter.MockitoExtension;
+//import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+//import org.springframework.data.redis.core.ReactiveRedisOperations;
+//import org.springframework.data.redis.core.ReactiveValueOperations;
+//
+//@ExtendWith(MockitoExtension.class)
+//class SwaggerRequestValidatorFilterTest {
+//
+//    @InjectMocks
+//    private SwaggerRequestValidatorFilter swaggerRequestValidatorFilter;
+//
+//    @Mock
+//    private GatewayFilterChain chain;
+//
+//    @Mock
+//    private ReactiveRedisOperations<String, SwaggerFolder> redisSwagger;
+//
+//    @Mock
+//    private ReactiveValueOperations<String, SwaggerFolder> reactiveValueOperations;
 
 //    @Test
 //    void filterTest_getRequest_success() {
@@ -99,4 +99,4 @@ class SwaggerRequestValidatorFilterTest {
 //                .verify();
 //    }
 
-}
+//}

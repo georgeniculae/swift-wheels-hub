@@ -26,6 +26,7 @@
         <module>car-rental-customer</module>
         <module>car-rental-email-notification</module>
         <module>car-rental-expense</module>
+        <module>car-rental-request-validator</module>
     </modules>
 
     <repositories>

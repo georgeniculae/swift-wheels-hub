@@ -1,6 +1,6 @@
 package com.carrental.emailnotification.service;
 
-import com.carrental.lib.exception.CarRentalException;
+import com.carrental.exception.CarRentalException;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import com.sendgrid.Method;

@@ -5,7 +5,7 @@ import com.carrental.agency.repository.EmployeeRepository;
 import com.carrental.dto.EmployeeDto;
 import com.carrental.entity.Branch;
 import com.carrental.entity.Employee;
-import com.carrental.lib.exception.CarRentalNotFoundException;
+import com.carrental.exception.CarRentalNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -4,13 +4,13 @@ import com.carrental.dto.BookingClosingDetailsDto;
 import com.carrental.dto.BookingDto;
 import com.carrental.dto.InvoiceDto;
 import com.carrental.entity.Invoice;
+import com.carrental.exception.CarRentalResponseStatusException;
 import com.carrental.expense.mapper.InvoiceMapper;
 import com.carrental.expense.mapper.InvoiceMapperImpl;
 import com.carrental.expense.repository.InvoiceRepository;
 import com.carrental.expense.util.AssertionUtils;
 import com.carrental.expense.util.TestUtils;
-import com.carrental.lib.exception.CarRentalNotFoundException;
-import com.carrental.lib.exception.CarRentalResponseStatusException;
+import com.carrental.exception.CarRentalNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -119,7 +119,7 @@ class InvoiceServiceTest {
         assertDoesNotThrow(() -> invoiceService.findAllInvoices());
         List<InvoiceDto> invoiceDtoList = invoiceService.findAllInvoices();
 
-        AssertionUtils.assertInvoice(invoice, invoiceDtoList.get(0));
+        AssertionUtils.assertInvoice(invoice, invoiceDtoList.getFirst());
     }
 
     @Test
@@ -131,7 +131,7 @@ class InvoiceServiceTest {
         assertDoesNotThrow(() -> invoiceService.findAllInvoices());
         List<InvoiceDto> invoiceDtoList = invoiceService.findAllActiveInvoices();
 
-        AssertionUtils.assertInvoice(invoice, invoiceDtoList.get(0));
+        AssertionUtils.assertInvoice(invoice, invoiceDtoList.getFirst());
     }
 
     @Test
@@ -166,7 +166,7 @@ class InvoiceServiceTest {
         List<InvoiceDto> invoiceDtoList =
                 assertDoesNotThrow(() -> invoiceService.findInvoiceByComments("comment"));
 
-        AssertionUtils.assertInvoice(invoice, invoiceDtoList.get(0));
+        AssertionUtils.assertInvoice(invoice, invoiceDtoList.getFirst());
     }
 
     @Test

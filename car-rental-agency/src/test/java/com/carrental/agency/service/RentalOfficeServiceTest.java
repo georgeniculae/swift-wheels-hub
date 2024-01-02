@@ -7,7 +7,7 @@ import com.carrental.agency.util.AssertionUtils;
 import com.carrental.agency.util.TestUtils;
 import com.carrental.dto.RentalOfficeDto;
 import com.carrental.entity.RentalOffice;
-import com.carrental.lib.exception.CarRentalNotFoundException;
+import com.carrental.exception.CarRentalNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -54,7 +54,7 @@ class RentalOfficeServiceTest {
         when(rentalOfficeRepository.findAll()).thenReturn(List.of(rentalOffice));
 
         List<RentalOfficeDto> rentalOfficeDtoList = assertDoesNotThrow(() -> rentalOfficeService.findAllRentalOffices());
-        AssertionUtils.assertRentalOffice(rentalOffice, rentalOfficeDtoList.get(0));
+        AssertionUtils.assertRentalOffice(rentalOffice, rentalOfficeDtoList.getFirst());
     }
 
     @Test

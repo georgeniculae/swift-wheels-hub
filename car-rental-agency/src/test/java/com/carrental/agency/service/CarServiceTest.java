@@ -5,7 +5,7 @@ import com.carrental.agency.mapper.CarMapperImpl;
 import com.carrental.agency.repository.CarRepository;
 import com.carrental.agency.util.AssertionUtils;
 import com.carrental.agency.util.TestUtils;
-import com.carrental.lib.exception.CarRentalNotFoundException;
+import com.carrental.exception.CarRentalNotFoundException;
 import com.carrental.entity.Branch;
 import com.carrental.entity.Car;
 import com.carrental.dto.CarDto;
@@ -102,7 +102,7 @@ class CarServiceTest {
         when(carRepository.saveAllAndFlush(anyList())).thenReturn(cars);
 
         List<CarDto> savedCarDtoList = assertDoesNotThrow(() -> carService.saveAllCars(carDtoList));
-        assertEquals(carDto, savedCarDtoList.get(0));
+        assertEquals(carDto, savedCarDtoList.getFirst());
     }
 
     @Test
@@ -126,7 +126,7 @@ class CarServiceTest {
         when(carRepository.findAll()).thenReturn(List.of(car));
 
         List<CarDto> carDtoList = assertDoesNotThrow(() -> carService.findAllCars());
-        AssertionUtils.assertCar(car, carDtoList.get(0));
+        AssertionUtils.assertCar(car, carDtoList.getFirst());
     }
 
     @Test

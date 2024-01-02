@@ -1,23 +1,21 @@
-package com.carrental.cloudgateway.model;
+package com.carrental.requestvalidator.model;
 
-import io.swagger.v3.oas.models.OpenAPI;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 import java.util.Map;
 
 @RedisHash("SwaggerFolder")
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Getter
-@Setter
-public class SwaggerFolder {
+public class SwaggerFolder implements Serializable {
 
     @Id
     private String id;

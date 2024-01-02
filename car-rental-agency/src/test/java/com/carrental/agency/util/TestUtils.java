@@ -1,6 +1,6 @@
 package com.carrental.agency.util;
 
-import com.carrental.lib.exception.CarRentalException;
+import com.carrental.exception.CarRentalException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

@@ -1,15 +1,19 @@
 package com.carrental.customer.controller;
 
-import com.carrental.dto.CurrentUserDto;
 import com.carrental.customer.service.CustomerService;
+import com.carrental.customer.service.KeycloakService;
 import com.carrental.dto.AuthenticationResponse;
+import com.carrental.dto.CurrentUserDto;
 import com.carrental.dto.RegisterRequest;
 import com.carrental.dto.UserDto;
 import com.carrental.lib.aspect.LogActivity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,10 +21,16 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final CustomerService customerService;
+    private final KeycloakService keycloakService;
 
     @GetMapping(path = "/current")
     public ResponseEntity<CurrentUserDto> getCurrentUser() {
         return ResponseEntity.ok(customerService.getCurrentUser());
+    }
+
+    @GetMapping(path = "/keycloak-user/{username}")
+    public ResponseEntity<List<UserRepresentation>> getUser(@PathVariable("username") String username) {
+        return ResponseEntity.ok(keycloakService.getUser(username));
     }
 
     @GetMapping(path = "/{username}")

@@ -80,6 +80,14 @@ authentication:
   type: apikey
   secret: ${API_KEY_SECRET}
 
+keycloak:
+  serverUrl: http://localhost:8080/auth
+  realm: car-rental-service
+  username: admin
+  password: admin
+  clientId: car-rental-cloud-gateway
+  clientSecret: 6I276Eqe4mlWR9YmpFqG0ZwDVPBGiUmi
+
 cross-origin: '*'
 
 kafka:

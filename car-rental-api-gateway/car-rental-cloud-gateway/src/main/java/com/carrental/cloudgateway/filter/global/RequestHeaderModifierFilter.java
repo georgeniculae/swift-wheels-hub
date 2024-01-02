@@ -1,7 +1,7 @@
 package com.carrental.cloudgateway.filter.global;
 
-import com.carrental.cloudgateway.exception.CarRentalResponseStatusException;
 import com.carrental.cloudgateway.security.JwtAuthenticationTokenConverter;
+import com.carrental.exception.CarRentalResponseStatusException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

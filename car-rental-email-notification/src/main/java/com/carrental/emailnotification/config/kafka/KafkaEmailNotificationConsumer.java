@@ -1,4 +1,4 @@
-package com.carrental.emailnotification.config;
+package com.carrental.emailnotification.config.kafka;
 
 import com.carrental.dto.InvoiceDto;
 import com.carrental.emailnotification.service.UserNotificationService;

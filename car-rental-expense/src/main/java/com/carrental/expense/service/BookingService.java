@@ -2,8 +2,8 @@ package com.carrental.expense.service;
 
 import com.carrental.dto.BookingClosingDetailsDto;
 import com.carrental.dto.BookingDto;
-import com.carrental.lib.exception.CarRentalNotFoundException;
-import com.carrental.lib.exception.CarRentalResponseStatusException;
+import com.carrental.exception.CarRentalNotFoundException;
+import com.carrental.exception.CarRentalResponseStatusException;
 import com.carrental.lib.util.HttpRequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

@@ -22,7 +22,9 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <debezium.version>2.5.0.Final</debezium.version>
         <liquibase.version>4.25.0</liquibase.version>
+        <keycloak-client.version>23.0.3</keycloak-client.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.3.0</springdoc-openapi-starter-webmvc-ui.version>
+        <resteasy-client.version>6.2.6.Final</resteasy-client.version>
     </properties>
 
     <dependencies>
@@ -66,6 +68,24 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>${keycloak-client.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-core</artifactId>
+            <version>${keycloak-client.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <version>${resteasy-client.version}</version>
         </dependency>
 
         <dependency>

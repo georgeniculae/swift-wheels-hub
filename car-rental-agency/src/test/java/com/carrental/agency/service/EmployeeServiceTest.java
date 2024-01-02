@@ -8,7 +8,7 @@ import com.carrental.agency.util.TestUtils;
 import com.carrental.dto.EmployeeDto;
 import com.carrental.entity.Branch;
 import com.carrental.entity.Employee;
-import com.carrental.lib.exception.CarRentalNotFoundException;
+import com.carrental.exception.CarRentalNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -52,7 +52,7 @@ class EmployeeServiceTest {
         when(employeeRepository.findAll()).thenReturn(List.of(employee));
 
         List<EmployeeDto> employeeDtoList = assertDoesNotThrow(() -> employeeService.findAllEmployees());
-        AssertionUtils.assertEmployee(employee, employeeDtoList.get(0));
+        AssertionUtils.assertEmployee(employee, employeeDtoList.getFirst());
     }
 
     @Test
@@ -112,7 +112,7 @@ class EmployeeServiceTest {
         when(employeeRepository.findAllEmployeesByBranchId(anyLong())).thenReturn(List.of(employee));
 
         List<EmployeeDto> employeeDtoList = assertDoesNotThrow(() -> employeeService.findEmployeesByBranchId(1L));
-        AssertionUtils.assertEmployee(employee, employeeDtoList.get(0));
+        AssertionUtils.assertEmployee(employee, employeeDtoList.getFirst());
     }
 
     @Test

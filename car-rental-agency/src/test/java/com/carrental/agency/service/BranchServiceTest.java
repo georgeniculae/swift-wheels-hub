@@ -5,7 +5,7 @@ import com.carrental.agency.mapper.BranchMapperImpl;
 import com.carrental.agency.repository.BranchRepository;
 import com.carrental.agency.util.AssertionUtils;
 import com.carrental.agency.util.TestUtils;
-import com.carrental.lib.exception.CarRentalNotFoundException;
+import com.carrental.exception.CarRentalNotFoundException;
 import com.carrental.entity.Branch;
 import com.carrental.entity.RentalOffice;
 import com.carrental.dto.BranchDto;
@@ -101,7 +101,7 @@ class BranchServiceTest {
         when(branchRepository.findAll()).thenReturn(List.of(branch));
 
         List<BranchDto> branchDtoList = assertDoesNotThrow(() -> branchService.findAllBranches());
-        AssertionUtils.assertBranch(branch, branchDtoList.get(0));
+        AssertionUtils.assertBranch(branch, branchDtoList.getFirst());
     }
 
     @Test
