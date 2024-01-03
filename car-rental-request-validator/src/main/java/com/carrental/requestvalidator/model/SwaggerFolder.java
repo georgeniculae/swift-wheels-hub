@@ -8,7 +8,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
-import java.util.Map;
 
 @RedisHash("SwaggerFolder")
 @Data
@@ -19,6 +18,6 @@ public class SwaggerFolder implements Serializable {
 
     @Id
     private String id;
-    private Map<String, String> swaggerIdentifierAndContent;
+    private String swaggerContent;
 
 }

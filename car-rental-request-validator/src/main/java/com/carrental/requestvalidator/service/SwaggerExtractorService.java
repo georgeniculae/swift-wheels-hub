@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -46,34 +45,36 @@ public class SwaggerExtractorService {
     private final RestClient restClient;
 
     public Map<String, String> getSwaggerIdentifierAndContent() {
-        CompletableFuture<Map<String, String>> agencySwagger =
-                CompletableFuture.supplyAsync(this::getCarRentalAgencySwagger);
-
-        CompletableFuture<Map<String, String>> bookingSwagger =
-                CompletableFuture.supplyAsync(this::getCarRentalBookingSwagger);
-
-        CompletableFuture<Map<String, String>> customerSwagger =
-                CompletableFuture.supplyAsync(this::getCarRentalCustomerSwagger);
-
-        CompletableFuture<Map<String, String>> expenseSwagger =
-                CompletableFuture.supplyAsync(this::getCarRentalExpenseSwagger);
+        Map<String, String> agencySwagger = getCarRentalAgencySwagger();
+        Map<String, String> bookingSwagger = getCarRentalBookingSwagger();
+        Map<String, String> customerSwagger = getCarRentalCustomerSwagger();
+        Map<String, String> expenseSwagger = getCarRentalExpenseSwagger();
 
         return getSwaggersAndIdentifiers(agencySwagger, bookingSwagger, customerSwagger, expenseSwagger);
     }
 
-    private Map<String, String> getSwaggersAndIdentifiers(CompletableFuture<Map<String, String>> agencySwagger,
-                                                          CompletableFuture<Map<String, String>> bookingSwagger,
-                                                          CompletableFuture<Map<String, String>> customerSwagger,
-                                                          CompletableFuture<Map<String, String>> expenseSwagger) {
-
+    private Map<String, String> getSwaggersAndIdentifiers(Map<String, String> agencySwagger,
+                                                          Map<String, String> bookingSwagger,
+                                                          Map<String, String> customerSwagger,
+                                                          Map<String, String> expenseSwagger) {
         Map<String, String> swaggersAndIdentifiers = new HashMap<>();
 
-        swaggersAndIdentifiers.putAll(agencySwagger.join());
-        swaggersAndIdentifiers.putAll(bookingSwagger.join());
-        swaggersAndIdentifiers.putAll(customerSwagger.join());
-        swaggersAndIdentifiers.putAll(expenseSwagger.join());
+        swaggersAndIdentifiers.putAll(agencySwagger);
+        swaggersAndIdentifiers.putAll(bookingSwagger);
+        swaggersAndIdentifiers.putAll(customerSwagger);
+        swaggersAndIdentifiers.putAll(expenseSwagger);
 
         return Collections.unmodifiableMap(swaggersAndIdentifiers);
+    }
+
+    public Map<String, String> getSwaggerFileForMicroservice(String microserviceName) {
+        return switch (microserviceName) {
+            case AGENCY -> getCarRentalAgencySwagger();
+            case BOOKINGS -> getCarRentalBookingSwagger();
+            case CUSTOMERS -> getCarRentalCustomerSwagger();
+            case EXPENSE -> getCarRentalExpenseSwagger();
+            default -> throw new CarRentalException("Microservice not existent");
+        };
     }
 
     private Map<String, String> getCarRentalAgencySwagger() {

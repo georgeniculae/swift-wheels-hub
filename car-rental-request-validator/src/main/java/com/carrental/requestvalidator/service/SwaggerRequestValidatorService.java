@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -73,23 +72,17 @@ public class SwaggerRequestValidatorService {
         SwaggerFolder swaggerFolder = swaggerRepository.findById(SWAGGER)
                 .orElseThrow(() -> new CarRentalException("Swagger folder does not exist"));
 
-        String swaggerFile = getSwaggerFile(request, swaggerFolder.getSwaggerIdentifierAndContent());
+        String path = request.getServletPath().replaceFirst(SEPARATOR, StringUtils.EMPTY);
+        if (!path.contains(swaggerFolder.getId())) {
+            throw new CarRentalException("There is no swagger file that contains path: " + path);
+        }
+
+        String swaggerFile = swaggerFolder.getSwaggerContent();
         OpenApiInteractionValidator validator = OpenApiInteractionValidator.createForInlineApiSpecification(swaggerFile)
                 .withWhitelist(getWhitelist())
                 .build();
 
         return validator.validateRequest(simpleRequest);
-    }
-
-    private String getSwaggerFile(HttpServletRequest request, Map<String, String> swaggerIdentifierAndContent) {
-        String path = request.getServletPath().replaceFirst(SEPARATOR, StringUtils.EMPTY);
-
-        return swaggerIdentifierAndContent.entrySet()
-                .stream()
-                .filter(entry -> path.contains(entry.getKey()))
-                .findFirst()
-                .map(Map.Entry::getValue)
-                .orElseThrow(() -> new CarRentalException("There is no swagger file that contains path: " + path));
     }
 
     private String getValidationErrorMessage(ValidationReport validationReport) {
