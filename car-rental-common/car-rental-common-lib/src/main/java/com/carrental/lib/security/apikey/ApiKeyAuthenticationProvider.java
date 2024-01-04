@@ -1,9 +1,10 @@
 package com.carrental.lib.security.apikey;
 
-import com.carrental.exception.CarRentalException;
+import com.carrental.exception.CarRentalResponseStatusException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class ApiKeyAuthenticationProvider implements AuthenticationProvider {
             return new ApiKeyAuthenticationToken(apiKey, true);
         }
 
-        throw new CarRentalException("API Key is invalid");
+        throw new CarRentalResponseStatusException(HttpStatus.BAD_REQUEST, "API Key is invalid");
     }
 
     @Override

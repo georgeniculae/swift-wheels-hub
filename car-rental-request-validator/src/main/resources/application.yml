@@ -35,6 +35,9 @@ management:
       exposure:
         include: [ "prometheus" ]
 
+authentication:
+  type: apikey
+
 apikey-secret: ${API_KEY_SECRET}
 
 swagger:
