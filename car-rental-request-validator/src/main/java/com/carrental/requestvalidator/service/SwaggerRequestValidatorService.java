@@ -34,7 +34,7 @@ public class SwaggerRequestValidatorService {
     private static final String QUERY_SPLIT_REGEX = "&";
     private final SwaggerRepository swaggerRepository;
 
-    public RequestValidationReport filter(HttpServletRequest request) {
+    public RequestValidationReport validateRequest(HttpServletRequest request) {
         String bodyAsString = getRequestBodyAsString(request);
         SimpleRequest simpleRequest = getSimpleRequest(request, bodyAsString);
         ValidationReport validationReport = getValidationReport(request, simpleRequest);

@@ -18,7 +18,7 @@ public class RequestValidatorController {
 
     @GetMapping
     public ResponseEntity<RequestValidationReport> validateRequest(HttpServletRequest request) {
-        RequestValidationReport requestValidationReport = swaggerRequestValidatorService.filter(request);
+        RequestValidationReport requestValidationReport = swaggerRequestValidatorService.validateRequest(request);
 
         return ResponseEntity.ok(requestValidationReport);
     }
