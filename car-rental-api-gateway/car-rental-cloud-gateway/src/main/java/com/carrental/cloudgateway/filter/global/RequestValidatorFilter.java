@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -18,8 +19,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 import java.nio.charset.Charset;
+import java.time.Duration;
 
 @Component
 @RequiredArgsConstructor
@@ -77,11 +80,12 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
     private Mono<RequestValidationReport> getValidationReport(IncomingRequestDetails incomingRequestDetails) {
         return webClient.post()
                 .uri(requestValidatorUrl)
-                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .header(API_KEY_HEADER, apikeySecret)
                 .bodyValue(incomingRequestDetails)
                 .retrieve()
                 .bodyToMono(RequestValidationReport.class)
+                .retryWhen(Retry.fixedDelay(3, Duration.ofSeconds(2)))
                 .onErrorResume(e -> {
                     log.error("Error while making REST call: {}", e.getMessage());
 
