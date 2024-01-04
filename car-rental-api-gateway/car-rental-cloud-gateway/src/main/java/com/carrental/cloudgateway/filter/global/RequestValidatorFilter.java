@@ -11,6 +11,7 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
@@ -56,6 +57,7 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
     private Mono<RequestValidationReport> getValidationReport(ServerWebExchange exchange) {
         return webClient.post()
                 .uri(requestValidatorUrl)
+                .accept(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, apikey)
                 .bodyValue(exchange.getRequest())
                 .retrieve()
