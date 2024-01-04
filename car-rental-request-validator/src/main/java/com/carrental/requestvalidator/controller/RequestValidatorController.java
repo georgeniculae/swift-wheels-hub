@@ -17,7 +17,7 @@ public class RequestValidatorController {
     private final SwaggerRequestValidatorService swaggerRequestValidatorService;
     private final RedisService redisService;
 
-    @PostMapping(path = "/validate", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/validate")
     public ResponseEntity<RequestValidationReport> validateRequest(@RequestBody IncomingRequestDetails request) {
         RequestValidationReport requestValidationReport = swaggerRequestValidatorService.validateRequest(request);
 
