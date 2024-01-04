@@ -57,7 +57,6 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
     private Mono<RequestValidationReport> getValidationReport(ServerWebExchange exchange) {
         return webClient.post()
                 .uri(requestValidatorUrl)
-                .accept(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, apikey)
                 .bodyValue(exchange.getRequest())
                 .retrieve()
