@@ -118,3 +118,5 @@ cross-origin: '*'
 
 keycloak:
   clientId: car-rental-cloud-gateway
+
+request-validator-url: lb://car-rental-request-validator/request-validator/validate

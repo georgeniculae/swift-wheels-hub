@@ -16,14 +16,14 @@ public class RequestValidatorController {
     private final SwaggerRequestValidatorService swaggerRequestValidatorService;
     private final RedisService redisService;
 
-    @GetMapping
-    public ResponseEntity<RequestValidationReport> validateRequest(HttpServletRequest request) {
+    @PostMapping(path = "/validate")
+    public ResponseEntity<RequestValidationReport> validateRequest(@RequestBody HttpServletRequest request) {
         RequestValidationReport requestValidationReport = swaggerRequestValidatorService.validateRequest(request);
 
         return ResponseEntity.ok(requestValidationReport);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/invalidate/{microserviceName}")
     public ResponseEntity<Void> invalidateSwaggerCache(@PathVariable("microserviceName") String microserviceName) {
         redisService.repopulateRedisWithSwaggerFolder(microserviceName);
 
