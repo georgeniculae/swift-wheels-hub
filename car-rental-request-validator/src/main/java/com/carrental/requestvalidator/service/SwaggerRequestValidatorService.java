@@ -5,18 +5,15 @@ import com.atlassian.oai.validator.model.SimpleRequest;
 import com.atlassian.oai.validator.report.ValidationReport;
 import com.atlassian.oai.validator.whitelist.ValidationErrorsWhitelist;
 import com.atlassian.oai.validator.whitelist.rule.WhitelistRules;
+import com.carrental.dto.IncomingRequestDetails;
 import com.carrental.dto.RequestValidationReport;
 import com.carrental.exception.CarRentalException;
 import com.carrental.requestvalidator.model.SwaggerFolder;
 import com.carrental.requestvalidator.repository.SwaggerRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Component
@@ -24,58 +21,44 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SwaggerRequestValidatorService {
 
-    private static final String SEPARATOR = "/";
     private static final String SWAGGER = "swagger";
+
     private static final String V3 = "v3";
+
     private static final String SWAGGER_PATH = "Swagger path";
+
     private static final String SWAGGER_MESSAGE = "Swagger message";
+
     private static final String V3_PATH = "v3 path";
+
     private static final String V3_MESSAGE = "v3 message";
-    private static final String QUERY_SPLIT_REGEX = "&";
+
     private final SwaggerRepository swaggerRepository;
 
-    public RequestValidationReport validateRequest(HttpServletRequest request) {
-        String bodyAsString = getRequestBodyAsString(request);
-        SimpleRequest simpleRequest = getSimpleRequest(request, bodyAsString);
-        ValidationReport validationReport = getValidationReport(request, simpleRequest);
+    public RequestValidationReport validateRequest(IncomingRequestDetails request) {
+        SimpleRequest simpleRequest = getSimpleRequest(request);
+        ValidationReport validationReport = getValidationReport(simpleRequest);
 
         return new RequestValidationReport(getValidationErrorMessage(validationReport));
     }
 
-    private String getRequestBodyAsString(HttpServletRequest request) {
-        try {
-            return request.getReader()
-                    .lines()
-                    .collect(Collectors.joining(System.lineSeparator()));
-        } catch (IOException e) {
-            throw new CarRentalException(e);
-        }
-    }
+    private SimpleRequest getSimpleRequest(IncomingRequestDetails request) {
+        SimpleRequest.Builder simpleRequestBuilder = new SimpleRequest.Builder(request.method(), request.path());
 
-    private SimpleRequest getSimpleRequest(HttpServletRequest request, String bodyAsString) {
-        SimpleRequest.Builder simpleRequestBuilder =
-                new SimpleRequest.Builder(request.getMethod(), request.getContextPath());
+        request.headers()
+                .forEach(simpleRequestBuilder::withHeader);
 
-        request.getHeaderNames()
-                .asIterator()
-                .forEachRemaining(simpleRequestBuilder::withHeader);
-
-        Arrays.stream(request.getQueryString().split(QUERY_SPLIT_REGEX))
+        request.queryParams()
                 .forEach(simpleRequestBuilder::withQueryParam);
 
-        simpleRequestBuilder.withBody(bodyAsString);
+        simpleRequestBuilder.withBody(request.body());
 
         return simpleRequestBuilder.build();
     }
 
-    private ValidationReport getValidationReport(HttpServletRequest request, SimpleRequest simpleRequest) {
+    private ValidationReport getValidationReport(SimpleRequest simpleRequest) {
         SwaggerFolder swaggerFolder = swaggerRepository.findById(SWAGGER)
                 .orElseThrow(() -> new CarRentalException("Swagger folder does not exist"));
-
-        String path = request.getServletPath().replaceFirst(SEPARATOR, StringUtils.EMPTY);
-        if (!path.contains(swaggerFolder.getId())) {
-            throw new CarRentalException("There is no swagger file that contains path: " + path);
-        }
 
         String swaggerFile = swaggerFolder.getSwaggerContent();
         OpenApiInteractionValidator validator = OpenApiInteractionValidator.createForInlineApiSpecification(swaggerFile)

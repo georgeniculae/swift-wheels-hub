@@ -1,10 +1,11 @@
 package com.carrental.requestvalidator.controller;
 
+import com.carrental.dto.IncomingRequestDetails;
 import com.carrental.dto.RequestValidationReport;
 import com.carrental.requestvalidator.service.RedisService;
 import com.carrental.requestvalidator.service.SwaggerRequestValidatorService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +17,8 @@ public class RequestValidatorController {
     private final SwaggerRequestValidatorService swaggerRequestValidatorService;
     private final RedisService redisService;
 
-    @PostMapping(path = "/validate")
-    public ResponseEntity<RequestValidationReport> validateRequest(@RequestBody HttpServletRequest request) {
+    @PostMapping(path = "/validate", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RequestValidationReport> validateRequest(@RequestBody IncomingRequestDetails request) {
         RequestValidationReport requestValidationReport = swaggerRequestValidatorService.validateRequest(request);
 
         return ResponseEntity.ok(requestValidationReport);
