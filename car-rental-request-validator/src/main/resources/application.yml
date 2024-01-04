@@ -37,8 +37,7 @@ management:
 
 authentication:
   type: apikey
-
-apikey-secret: ${API_KEY_SECRET}
+  secret: ${API_KEY_SECRET}
 
 swagger:
   agency: lb://car-rental-agency/agency/definition/v3/api-docs

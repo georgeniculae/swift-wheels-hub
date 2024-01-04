@@ -39,7 +39,7 @@ public class SwaggerExtractorService {
     @Value("${swagger.expense}")
     private String expenseApiDocUrl;
 
-    @Value("${apikey-secret}")
+    @Value("${authentication.secret}")
     private String apikey;
 
     private final RestClient restClient;
