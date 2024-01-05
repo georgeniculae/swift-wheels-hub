@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -54,13 +55,35 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
         return request.getBody()
                 .map(dataBuffer -> dataBuffer.toString(Charset.defaultCharset()))
                 .reduce(StringUtils.EMPTY, (current, next) -> current + next)
-                .map(bodyAsString -> IncomingRequestDetails.builder()
-                        .path(request.getPath().value())
-                        .method(request.getMethod().name())
-                        .headers(request.getHeaders())
-                        .queryParams(request.getQueryParams())
-                        .body(bodyAsString)
-                        .build());
+                .map(bodyAsString -> getIncomingRequestDetails(request, bodyAsString));
+    }
+
+    private IncomingRequestDetails getIncomingRequestDetails(ServerHttpRequest request, String bodyAsString) {
+        return IncomingRequestDetails.builder()
+                .path(request.getPath().value())
+                .method(request.getMethod().name())
+                .headers(request.getHeaders())
+                .queryParams(request.getQueryParams())
+                .body(bodyAsString)
+                .build();
+    }
+
+    private Mono<RequestValidationReport> getValidationReport(IncomingRequestDetails incomingRequestDetails) {
+        return webClient.post()
+                .uri(requestValidatorUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .acceptCharset(Charset.defaultCharset())
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .header(API_KEY_HEADER, apikeySecret)
+                .bodyValue(incomingRequestDetails)
+                .retrieve()
+                .bodyToMono(RequestValidationReport.class)
+                .retryWhen(Retry.fixedDelay(3, Duration.ofSeconds(2)))
+                .onErrorResume(e -> {
+                    log.error("Error while making REST call: {}", e.getMessage());
+
+                    return Mono.empty();
+                });
     }
 
     private Mono<Void> filterRequest(ServerWebExchange exchange, GatewayFilterChain chain, RequestValidationReport requestValidationReport) {
@@ -74,22 +97,6 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
                         requestValidationReport.errorMessage()
                 )
         );
-    }
-
-    private Mono<RequestValidationReport> getValidationReport(IncomingRequestDetails incomingRequestDetails) {
-        return webClient.post()
-                .uri(requestValidatorUrl)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(API_KEY_HEADER, apikeySecret)
-                .bodyValue(incomingRequestDetails)
-                .retrieve()
-                .bodyToMono(RequestValidationReport.class)
-                .retryWhen(Retry.fixedDelay(3, Duration.ofSeconds(2)))
-                .onErrorResume(e -> {
-                    log.error("Error while making REST call: {}", e.getMessage());
-
-                    return Mono.empty();
-                });
     }
 
 }
