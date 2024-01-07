@@ -8,7 +8,7 @@ import org.springframework.util.MultiValueMap;
 public record IncomingRequestDetails(
         String path,
         String method,
-        HttpHeaders headers,
+        MultiValueMap<String, String> headers,
         MultiValueMap<String, String> queryParams,
         String body
 ) {
