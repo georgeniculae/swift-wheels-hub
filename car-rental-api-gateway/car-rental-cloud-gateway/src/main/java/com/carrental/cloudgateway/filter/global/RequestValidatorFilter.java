@@ -79,7 +79,7 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
     }
 
     private Mono<Void> filterRequest(ServerWebExchange exchange, GatewayFilterChain chain, RequestValidationReport requestValidationReport) {
-        if (ObjectUtils.isEmpty(requestValidationReport)) {
+        if (ObjectUtils.isEmpty(requestValidationReport.errorMessage())) {
             return chain.filter(exchange);
         }
 

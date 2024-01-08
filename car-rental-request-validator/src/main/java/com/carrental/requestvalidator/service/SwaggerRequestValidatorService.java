@@ -12,6 +12,7 @@ import com.carrental.requestvalidator.model.SwaggerFolder;
 import com.carrental.requestvalidator.repository.SwaggerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -32,6 +33,8 @@ public class SwaggerRequestValidatorService {
     private static final String V3_PATH = "v3 path";
 
     private static final String V3_MESSAGE = "v3 message";
+
+    private static final String SEPARATOR_REGEX = "/";
 
     private final SwaggerRepository swaggerRepository;
 
@@ -57,7 +60,7 @@ public class SwaggerRequestValidatorService {
     }
 
     private ValidationReport getValidationReport(SimpleRequest simpleRequest) {
-        SwaggerFolder swaggerFolder = swaggerRepository.findById(SWAGGER)
+        SwaggerFolder swaggerFolder = swaggerRepository.findById(getMicroserviceIdentifier(simpleRequest))
                 .orElseThrow(() -> new CarRentalException("Swagger folder does not exist"));
 
         String swaggerFile = swaggerFolder.getSwaggerContent();
@@ -66,6 +69,10 @@ public class SwaggerRequestValidatorService {
                 .build();
 
         return validator.validateRequest(simpleRequest);
+    }
+
+    private String getMicroserviceIdentifier(SimpleRequest simpleRequest) {
+        return simpleRequest.getPath().replaceFirst(SEPARATOR_REGEX, StringUtils.EMPTY).split(SEPARATOR_REGEX)[0];
     }
 
     private String getValidationErrorMessage(ValidationReport validationReport) {
