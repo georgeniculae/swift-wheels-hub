@@ -24,7 +24,7 @@ public class RequestValidatorController {
         return ResponseEntity.ok(requestValidationReport);
     }
 
-    @DeleteMapping("/invalidate/{microserviceName}")
+    @PutMapping("/invalidate/{microserviceName}")
     public ResponseEntity<Void> invalidateSwaggerCache(@PathVariable("microserviceName") String microserviceName) {
         redisService.repopulateRedisWithSwaggerFolder(microserviceName);
 
