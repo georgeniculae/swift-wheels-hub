@@ -1,15 +1,22 @@
 package com.carrental.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
-import org.springframework.http.HttpHeaders;
-import org.springframework.util.MultiValueMap;
+
+import java.util.Map;
 
 @Builder
 public record IncomingRequestDetails(
+        @NotBlank
         String path,
+
+        @NotBlank
         String method,
-        MultiValueMap<String, String> headers,
-        MultiValueMap<String, String> queryParams,
+
+        Map<String, String> headers,
+
+        Map<String, String> queryParams,
+
         String body
 ) {
 }

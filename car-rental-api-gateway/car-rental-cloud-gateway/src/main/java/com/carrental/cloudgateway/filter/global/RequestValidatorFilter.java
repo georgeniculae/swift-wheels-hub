@@ -18,10 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import reactor.util.retry.Retry;
 
 import java.nio.charset.Charset;
-import java.time.Duration;
 
 @Component
 @RequiredArgsConstructor
@@ -61,8 +59,8 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
         return IncomingRequestDetails.builder()
                 .path(request.getPath().value())
                 .method(request.getMethod().name())
-                .headers(request.getHeaders())
-                .queryParams(request.getQueryParams())
+                .headers(request.getHeaders().toSingleValueMap())
+                .queryParams(request.getQueryParams().toSingleValueMap())
                 .body(bodyAsString)
                 .build();
     }
@@ -74,7 +72,7 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
                 .bodyValue(incomingRequestDetails)
                 .retrieve()
                 .bodyToMono(RequestValidationReport.class)
-                .retryWhen(Retry.fixedDelay(3, Duration.ofSeconds(2)))
+//                .retryWhen(Retry.fixedDelay(3, Duration.ofSeconds(2)))
                 .onErrorMap(CarRentalException::new);
     }
 
