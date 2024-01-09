@@ -52,9 +52,7 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
 
     private Mono<ServerWebExchange> modifyHeaders(ServerWebExchange exchange) {
         return getUsername(exchange.getRequest())
-                .map(username -> exchange.mutate()
-                        .request(mutateHeaders(username))
-                        .build());
+                .map(username -> mutateServerWebExchange(exchange, username));
     }
 
     private boolean doesPathContainPattern(ServerHttpRequest serverHttpRequest) {
@@ -79,6 +77,12 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
                         )
                 )
                 .substring(7);
+    }
+
+    private ServerWebExchange mutateServerWebExchange(ServerWebExchange exchange, String username) {
+        return exchange.mutate()
+                .request(mutateHeaders(username))
+                .build();
     }
 
     private Consumer<ServerHttpRequest.Builder> mutateHeaders(String username) {
