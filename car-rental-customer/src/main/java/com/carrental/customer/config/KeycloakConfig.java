@@ -29,8 +29,7 @@ public class KeycloakConfig {
 
     @Bean
     public Keycloak keycloak() {
-        return KeycloakBuilder
-                .builder()
+        return KeycloakBuilder.builder()
                 .serverUrl(serverUrl)
                 .realm(realm)
                 .username(username)
