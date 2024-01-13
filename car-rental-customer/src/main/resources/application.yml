@@ -82,11 +82,11 @@ authentication:
 
 keycloak:
   serverUrl: http://localhost:8080/auth
-  realm: car-rental-service
-  username: admin
-  password: admin
-  clientId: car-rental-cloud-gateway
-  clientSecret: 6I276Eqe4mlWR9YmpFqG0ZwDVPBGiUmi
+  realm: ${KEYCLOAK_REALM}
+  username: ${KEYCLOAK_USER}
+  password: ${KEYCLOAK_PASSWORD}
+  clientId: ${KEYCLOAK_CLIENT_ID}
+  clientSecret: ${KEYCLOAK_CLIENT_SECRET}
 
 cross-origin: '*'
 
