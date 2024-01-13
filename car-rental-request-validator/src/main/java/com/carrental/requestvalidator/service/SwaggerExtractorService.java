@@ -3,6 +3,7 @@ package com.carrental.requestvalidator.service;
 import com.carrental.exception.CarRentalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -81,6 +82,7 @@ public class SwaggerExtractorService {
         String body = getRestCallResponse(agencyApiDocUrl);
 
         String openApiContent = Optional.ofNullable(body)
+                .filter(StringUtils::isNotBlank)
                 .orElseThrow(() -> new CarRentalException("Car Rental Agency swagger is empty"));
 
         return Map.of(AGENCY, openApiContent);
@@ -90,6 +92,7 @@ public class SwaggerExtractorService {
         String body = getRestCallResponse(bookingApiDocUrl);
 
         String openApiContent = Optional.ofNullable(body)
+                .filter(StringUtils::isNotBlank)
                 .orElseThrow(() -> new CarRentalException("Car Rental Booking swagger is empty"));
 
         return Map.of(BOOKINGS, openApiContent);
@@ -99,6 +102,7 @@ public class SwaggerExtractorService {
         String body = getRestCallResponse(customerApiDocUrl);
 
         String openApiContent = Optional.ofNullable(body)
+                .filter(StringUtils::isNotBlank)
                 .orElseThrow(() -> new CarRentalException("Car Rental Customers swagger is empty"));
 
         return Map.of(CUSTOMERS, openApiContent);
@@ -108,6 +112,7 @@ public class SwaggerExtractorService {
         String body = getRestCallResponse(expenseApiDocUrl);
 
         String openApiContent = Optional.ofNullable(body)
+                .filter(StringUtils::isNotBlank)
                 .orElseThrow(() -> new CarRentalException("Car Rental Customers swagger is empty"));
 
         return Map.of(EXPENSE, openApiContent);
