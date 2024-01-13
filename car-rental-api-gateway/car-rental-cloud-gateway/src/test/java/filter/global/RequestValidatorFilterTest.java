@@ -97,4 +97,19 @@ class RequestValidatorFilterTest {
                 .verify();
     }
 
+    @Test
+    void filterTest_definitionPath() {
+        MockServerHttpRequest request = MockServerHttpRequest.get("/agency/definition/swagger-ui.html")
+                .accept(MediaType.APPLICATION_JSON)
+                .build();
+        ServerWebExchange exchange = MockServerWebExchange.builder(request).build();
+
+        when(chain.filter(any(ServerWebExchange.class))).thenReturn(Mono.empty());
+
+        requestValidatorFilter.filter(exchange, chain)
+                .as(StepVerifier::create)
+                .expectComplete()
+                .verify();
+    }
+
 }
