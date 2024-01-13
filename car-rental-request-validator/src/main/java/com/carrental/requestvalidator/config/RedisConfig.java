@@ -1,4 +1,4 @@
-package com.carrental.requestvalidator.redis;
+package com.carrental.requestvalidator.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
