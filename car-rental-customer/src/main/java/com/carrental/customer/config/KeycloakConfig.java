@@ -1,5 +1,6 @@
 package com.carrental.customer.config;
 
+import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,7 @@ public class KeycloakConfig {
         return KeycloakBuilder.builder()
                 .serverUrl(serverUrl)
                 .realm(realm)
+                .grantType(OAuth2Constants.PASSWORD)
                 .username(username)
                 .password(password)
                 .clientId(clientId)
