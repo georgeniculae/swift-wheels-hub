@@ -3,7 +3,7 @@ info:
   title: OpenAPI definition
   version: v0
 servers:
-  - url: 'http://172.24.144.1:51657/bookings'
+  - url: 'http://172.30.64.1:51547/bookings'
     description: Generated server url
 paths:
   '/{id}':
@@ -155,16 +155,27 @@ paths:
 components:
   schemas:
     BookingDto:
+      required:
+        - carId
+        - customerEmail
+        - customerUsername
+        - dateFrom
+        - dateOfBooking
+        - dateTo
+        - rentalBranchId
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
         dateOfBooking:
           type: string
           format: date
         status:
           type: string
           enum:
-            - In progress
-            - Closed
+            - IN_PROGRESS
+            - CLOSED
         customerUsername:
           type: string
         customerEmail:
@@ -180,15 +191,14 @@ components:
           format: date
         amount:
           type: number
+          format: double
         rentalCarPrice:
           type: number
+          format: double
         rentalBranchId:
           type: integer
           format: int64
         returnBranchId:
-          type: integer
-          format: int64
-        id:
           type: integer
           format: int64
     BookingClosingDetailsDto:
@@ -203,11 +213,8 @@ components:
         carStatus:
           type: string
           enum:
-            - Not available
-            - Broken
-            - In repair
-            - In service
-            - Available
-        id:
-          type: integer
-          format: int64
+            - NOT_AVAILABLE
+            - BROKEN
+            - IN_REPAIR
+            - IN_SERVICE
+            - AVAILABLE
