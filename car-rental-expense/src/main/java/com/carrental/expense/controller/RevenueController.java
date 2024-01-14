@@ -4,7 +4,6 @@ import com.carrental.dto.RevenueDto;
 import com.carrental.expense.service.RevenueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +15,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/revenues")
-@CrossOrigin(origins = "${cross-origin}")
 public class RevenueController {
 
     private final RevenueService revenueService;

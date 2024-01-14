@@ -89,5 +89,3 @@ logging:
 authentication:
   type: apikey
   secret: ${API_KEY_SECRET}
-
-cross-origin: '*'

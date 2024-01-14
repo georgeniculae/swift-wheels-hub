@@ -17,7 +17,6 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "${cross-origin}")
 public class UserController {
 
     private final CustomerService customerService;

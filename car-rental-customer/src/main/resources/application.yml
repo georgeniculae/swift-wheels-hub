@@ -88,8 +88,6 @@ keycloak:
   clientId: ${KEYCLOAK_CLIENT_ID}
   clientSecret: ${KEYCLOAK_CLIENT_SECRET}
 
-cross-origin: '*'
-
 kafka:
   enabled: true
   producer: true

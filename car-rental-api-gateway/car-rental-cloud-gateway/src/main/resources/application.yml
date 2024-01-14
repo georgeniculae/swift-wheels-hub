@@ -114,8 +114,6 @@ token:
 
 apikey-secret: ${API_KEY_SECRET}
 
-cross-origin: '*'
-
 keycloak:
   clientId: car-rental-cloud-gateway
 

@@ -86,8 +86,6 @@ logging:
             sql:
               BasicBinder: TRACE
 
-cross-origin: '*'
-
 debezium:
   enabled: true
   connector-name: debezium-expense-postgres-connector
