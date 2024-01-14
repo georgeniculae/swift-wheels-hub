@@ -47,7 +47,7 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
                 .flatMap(this::getIncomingRequestDetails)
                 .flatMap(this::getValidationReport)
                 .flatMap(requestValidationReport -> filterRequest(exchange, chain, requestValidationReport))
-                .switchIfEmpty(chain.filter(exchange));
+                .switchIfEmpty(Mono.defer(() -> chain.filter(exchange)));
     }
 
     @Override
