@@ -26,7 +26,7 @@ public class KeycloakService {
     public List<UserRepresentation> getUser(String username) {
         UsersResource usersResource = getUsers();
 
-        return usersResource.search(username, true);
+        return usersResource.searchByUsername(username, true);
     }
 
     public int createAccount(final String username, final String password) {
