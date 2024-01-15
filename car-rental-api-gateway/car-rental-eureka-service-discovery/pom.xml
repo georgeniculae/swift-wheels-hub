@@ -11,7 +11,6 @@
 
     <artifactId>car-rental-eureka-service-discovery</artifactId>
 
-    <version>0.0.1-SNAPSHOT</version>
     <name>Car Rental Eureka Service Discovery</name>
     <description>Car Rental Eureka Service Discovery</description>
 
