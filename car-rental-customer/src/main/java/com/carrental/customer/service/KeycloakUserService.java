@@ -24,7 +24,7 @@ public class KeycloakUserService {
     private final Keycloak keycloak;
 
     public List<UserRepresentation> getUser(String username) {
-        UsersResource usersResource = getUsers();
+        UsersResource usersResource = getUsersResource();
 
         return usersResource.searchByUsername(username, true);
     }
@@ -33,7 +33,7 @@ public class KeycloakUserService {
         CredentialRepresentation passwordCredentials = createPasswordCredentials(password);
         UserRepresentation user = createUserRepresentation(username, passwordCredentials);
 
-        Response response = getUsers().create(user);
+        Response response = getUsersResource().create(user);
         final int status = response.getStatus();
 
         if (status != HttpStatus.CREATED.value()) {
@@ -43,7 +43,7 @@ public class KeycloakUserService {
         String createdId = getCreatedId(response);
         CredentialRepresentation newPasswordCredentials = createPasswordCredentials(password);
 
-        UserResource userResource = getUsers().get(createdId);
+        UserResource userResource = getUsersResource().get(createdId);
         userResource.resetPassword(newPasswordCredentials);
 
         return HttpStatus.CREATED.value();
@@ -60,7 +60,7 @@ public class KeycloakUserService {
         return user;
     }
 
-    private UsersResource getUsers() {
+    private UsersResource getUsersResource() {
         return keycloak.realm(realm).users();
     }
 
