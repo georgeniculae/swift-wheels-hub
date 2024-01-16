@@ -1,7 +1,7 @@
 package com.carrental.customer.controller;
 
 import com.carrental.customer.service.CustomerService;
-import com.carrental.customer.service.KeycloakService;
+import com.carrental.customer.service.KeycloakUserService;
 import com.carrental.dto.AuthenticationResponse;
 import com.carrental.dto.CurrentUserDto;
 import com.carrental.dto.RegisterRequest;
@@ -20,7 +20,7 @@ import java.util.List;
 public class UserController {
 
     private final CustomerService customerService;
-    private final KeycloakService keycloakService;
+    private final KeycloakUserService keycloakUserService;
 
     @GetMapping(path = "/current")
     public ResponseEntity<CurrentUserDto> getCurrentUser() {
@@ -29,7 +29,7 @@ public class UserController {
 
     @GetMapping(path = "/keycloak-user/{username}")
     public ResponseEntity<List<UserRepresentation>> getUser(@PathVariable("username") String username) {
-        return ResponseEntity.ok(keycloakService.getUser(username));
+        return ResponseEntity.ok(keycloakUserService.getUser(username));
     }
 
     @GetMapping(path = "/{username}")

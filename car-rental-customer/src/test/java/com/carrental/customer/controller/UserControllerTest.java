@@ -1,6 +1,6 @@
 package com.carrental.customer.controller;
 
-import com.carrental.customer.service.KeycloakService;
+import com.carrental.customer.service.KeycloakUserService;
 import com.carrental.dto.CurrentUserDto;
 import com.carrental.customer.service.CustomerService;
 import com.carrental.customer.util.TestUtils;
@@ -47,7 +47,7 @@ class UserControllerTest {
     private CustomerService customerService;
 
     @MockBean
-    private KeycloakService keycloakService;
+    private KeycloakUserService keycloakUserService;
 
     @Test
     void getCurrentUserTest_success() throws Exception {

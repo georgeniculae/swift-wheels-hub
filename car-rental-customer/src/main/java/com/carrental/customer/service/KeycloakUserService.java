@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class KeycloakService {
+public class KeycloakUserService {
 
     @Value("${keycloak.realm}")
     private String realm;

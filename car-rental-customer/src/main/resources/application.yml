@@ -83,8 +83,6 @@ authentication:
 keycloak:
   serverUrl: http://localhost:8080/auth
   realm: ${KEYCLOAK_REALM}
-  username: ${KEYCLOAK_USER}
-  password: ${KEYCLOAK_PASSWORD}
   clientId: ${KEYCLOAK_CLIENT_ID}
   clientSecret: ${KEYCLOAK_CLIENT_SECRET}
 
