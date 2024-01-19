@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="create-table-car" author="George Niculae">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="swift_wheels_hub_agency" catalogName="swift_wheels_hub_agency" tableName="car"/>
+            </not>
+        </preConditions>
+
+        <sql>CREATE TYPE body_type_enum AS ENUM('CHOOSE', 'HATCHBACK', 'SEDAN', 'SUV', 'COUPE', 'CONVERTIBLE', 'WAGON',
+            'VAN')
+        </sql>
+        <sql>CREATE CAST (character varying as body_type_enum) WITH INOUT AS IMPLICIT</sql>
+
+        <sql>CREATE TYPE car_status_enum AS ENUM('CHOOSE', 'NOT_AVAILABLE', 'BROKEN', 'IN_REPAIR', 'IN_SERVICE',
+            'AVAILABLE')
+        </sql>
+        <sql>CREATE CAST (character varying as car_status_enum) WITH INOUT AS IMPLICIT</sql>
+        <createTable tableName="car">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="make" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="model" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="body_type" type="body_type_enum">
+                <constraints nullable="false"/>
+            </column>
+            <column name="year_of_production" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mileage" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="car_status" type="car_status_enum">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="original_branch_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="actual_branch_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="url_of_image" type="varchar(50)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="original_branch_id"
+                                 baseTableName="car"
+                                 constraintName="fk_car_original_branch_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="branch"/>
+
+        <addForeignKeyConstraint baseColumnNames="actual_branch_id"
+                                 baseTableName="car"
+                                 constraintName="fk_car_actual_branch_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="branch"/>
+    </changeSet>
+
+    <changeSet id="add-car-1" author="George Niculae">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*)
+                FROM car
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="car">
+            <column name="make" value="Volkswagen"/>
+            <column name="model" value="Golf"/>
+            <column name="body_type" value="HATCHBACK"/>
+            <column name="year_of_production" value="2010"/>
+            <column name="color" value="black"/>
+            <column name="mileage" value="250000"/>
+            <column name="car_status" value="AVAILABLE"/>
+            <column name="amount" value="500"/>
+            <column name="original_branch_id" value="1"/>
+            <column name="actual_branch_id" value="1"/>
+            <column name="url_of_image" value="url 1"/>
+        </insert>
+
+        <insert tableName="car">
+            <column name="make" value="Audi"/>
+            <column name="model" value="A4"/>
+            <column name="body_type" value="SEDAN"/>
+            <column name="year_of_production" value="2015"/>
+            <column name="color" value="white"/>
+            <column name="mileage" value="187000"/>
+            <column name="car_status" value="AVAILABLE"/>
+            <column name="amount" value="800"/>
+            <column name="original_branch_id" value="2"/>
+            <column name="actual_branch_id" value="2"/>
+            <column name="url_of_image" value="url 2"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

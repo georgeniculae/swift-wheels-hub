@@ -3,8 +3,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.carrental</groupId>
-    <artifactId>car-rental-service</artifactId>
+    <groupId>com.swiftwheelshub</groupId>
+    <artifactId>swift-wheels-hub</artifactId>
     <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
@@ -15,18 +15,18 @@
         <relativePath/>
     </parent>
 
-    <name>Car Rental Service</name>
+    <name>Swift Wheels Hub</name>
 
     <modules>
-        <module>car-rental-common</module>
-        <module>car-rental-api-gateway</module>
-        <module>car-rental-agency</module>
-        <module>car-rental-audit</module>
-        <module>car-rental-booking</module>
-        <module>car-rental-customer</module>
-        <module>car-rental-email-notification</module>
-        <module>car-rental-expense</module>
-        <module>car-rental-request-validator</module>
+        <module>swift-wheels-hub-common</module>
+        <module>swift-wheels-hub-api-gateway</module>
+        <module>swift-wheels-hub-agency</module>
+        <module>swift-wheels-hub-audit</module>
+        <module>swift-wheels-hub-booking</module>
+        <module>swift-wheels-hub-customer</module>
+        <module>swift-wheels-hub-email-notification</module>
+        <module>swift-wheels-hub-expense</module>
+        <module>swift-wheels-hub-request-validator</module>
     </modules>
 
     <repositories>
@@ -37,15 +37,15 @@
     </repositories>
 
     <scm>
-        <developerConnection>scm:git:https://github.com/georgeniculae/car-rental-service</developerConnection>
+        <developerConnection>scm:git:https://github.com/georgeniculae/swift-wheels-hub</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
         <repository>
             <id>github</id>
-            <name>car-rental-service</name>
-            <url>https://maven.pkg.github.com/georgeniculae/car-rental-service</url>
+            <name>swift-wheels-hub</name>
+            <url>https://maven.pkg.github.com/georgeniculae/swift-wheels-hub</url>
         </repository>
     </distributionManagement>
 

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="create-table-user" author="George Niculae">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="swift_wheels_hub_customer" catalogName="swift_wheels_hub_customer"
+                             tableName="user"/>
+            </not>
+        </preConditions>
+
+        <sql>CREATE TYPE role_enum AS ENUM('ROLE_ADMIN', 'ROLE_USER', 'ROLE_SUPPORT')</sql>
+        <sql>CREATE CAST (character varying as role_enum) WITH INOUT AS IMPLICIT</sql>
+        <createTable tableName="user">
+            <column name="username" type="varchar(100)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="role_enum">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="email" type="varchar(50)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="first_name" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="last_name" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="date_of_birth" type="date">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add-user-1" author="George Niculae">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*)
+                FROM public.user
+                WHERE username = 'admin'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="user">
+            <column name="username" value="admin"/>
+            <column name="password" value="$2a$10$hadYmhDPuigFKchXrkmmUe6i1L8B50Be.ggbdVuszCbYu7yg14Lqa"/>
+            <column name="role" value="ROLE_ADMIN"/>
+            <column name="first_name" value="admin"/>
+            <column name="last_name" value="admin"/>
+            <column name="email" value="admin@email.com"/>
+            <column name="date_of_birth" value="1970-01-01"/>
+            <column name="address" value=""/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="add-user-2" author="George Niculae">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*)
+                FROM public.user
+                WHERE username = 'user'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="user">
+            <column name="username" value="user"/>
+            <column name="password" value="$2a$10$TxvQ5OD.ZEK3IEjMS7JFyuFyjm1X8CSaAPGCF/daFahfHXccdKkqO"/>
+            <column name="role" value="ROLE_USER"/>
+            <column name="first_name" value="user"/>
+            <column name="last_name" value="user"/>
+            <column name="email" value="user@email.com"/>
+            <column name="date_of_birth" value="1970-01-01"/>
+            <column name="address" value=""/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="add-user-3" author="George Niculae">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*)
+                FROM public.user
+                WHERE username = 'support'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="user">
+            <column name="username" value="support"/>
+            <column name="password" value="$2a$10$bje5mA18dGDa4N/Ds/eQGuBm3anOkjSgn81f6VojjwEGb74VNZpfG"/>
+            <column name="role" value="ROLE_SUPPORT"/>
+            <column name="first_name" value="support"/>
+            <column name="last_name" value="support"/>
+            <column name="email" value="support@email.com"/>
+            <column name="date_of_birth" value="1970-01-01"/>
+            <column name="address" value=""/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="add-user-4" author="George Niculae">
+        <insert tableName="user">
+            <column name="username" value="ionpopescu"/>
+            <column name="password" value="$2a$12$M3ifxwJFF6cZi2Mt//JaIuW5dtJztCXNhv6rq.cfGG0vxXrJsAqZq"/>
+            <column name="role" value="ROLE_USER"/>
+            <column name="address" value="Ploiesti"/>
+            <column name="email" value="ion.popescu@email.com"/>
+            <column name="first_name" value="Ion"/>
+            <column name="last_name" value="Popescu"/>
+            <column name="date_of_birth" value="1980-04-15"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="user-update-wal-level" author="George Niculae" runInTransaction="false">
+        <sql>ALTER SYSTEM SET wal_level = logical</sql>
+        <sql>SELECT pg_create_logical_replication_slot('customer_slot', 'pgoutput')</sql>
+    </changeSet>
+</databaseChangeLog>

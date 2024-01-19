@@ -1,0 +1,46 @@
+server:
+  port: ${PORT:0}
+  error:
+    include-message: always
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
+
+spring:
+  application:
+    name: swift-wheels-hub-request-validator
+  threads:
+    virtual:
+      enabled: true
+  redis:
+    host: ${REDIS_HOST}
+    password: ${REDIS_PASSWORD}
+    port: 6379
+    database: 0
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${EUREKA_USER}:${EUREKA_PASSWORD}@localhost:8761/eureka
+    registryFetchIntervalSeconds: 5
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 10
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [ "prometheus" ]
+
+authentication:
+  type: apikey
+  secret: ${API_KEY_SECRET}
+
+swagger:
+  agency: lb://swift-wheels-hub-agency/agency/definition/v3/api-docs
+  booking: lb://swift-wheels-hub-booking/bookings/definition/v3/api-docs
+  customer: lb://swift-wheels-hub-customer/customers/definition/v3/api-docs
+  expense: lb://swift-wheels-hub-expense/expense/definition/v3/api-docs

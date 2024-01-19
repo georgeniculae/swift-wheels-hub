@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="create-table-booking" author="George Niculae">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="swift_wheels_hub_booking" catalogName="swift_wheels_hub_booking"
+                             tableName="booking"/>
+            </not>
+        </preConditions>
+
+        <sql>CREATE TYPE status_enum AS ENUM('IN_PROGRESS', 'CLOSED')</sql>
+        <sql>CREATE CAST (character varying as status_enum) WITH INOUT AS IMPLICIT</sql>
+        <createTable tableName="booking">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="date_of_booking" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="status_enum">>
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_from" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_to" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="car_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="customer_username" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="customer_email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rental_branch_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="return_branch_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="rental_car_price" type="double">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="booking-update-wal-level" author="George Niculae" runInTransaction="false">
+        <sql>ALTER SYSTEM SET wal_level = logical</sql>
+        <sql>SELECT pg_create_logical_replication_slot('booking_slot', 'pgoutput')</sql>
+    </changeSet>
+</databaseChangeLog>
