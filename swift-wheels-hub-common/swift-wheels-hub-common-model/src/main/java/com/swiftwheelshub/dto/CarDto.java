@@ -5,7 +5,9 @@ import com.swiftwheelshub.entity.CarStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.Builder;
 
+@Builder
 public record CarDto(
         Long id,
 

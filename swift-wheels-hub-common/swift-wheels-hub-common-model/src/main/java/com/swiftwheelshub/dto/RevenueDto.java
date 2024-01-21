@@ -1,9 +1,11 @@
 package com.swiftwheelshub.dto;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 import java.time.LocalDate;
 
+@Builder
 public record RevenueDto(
         Long id,
 

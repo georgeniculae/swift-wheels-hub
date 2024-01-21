@@ -1,9 +1,11 @@
 package com.swiftwheelshub.dto;
 
 import com.swiftwheelshub.entity.Role;
+import lombok.Builder;
 
 import java.time.LocalDate;
 
+@Builder
 public record RegisterRequest(
         String username,
         String password,
