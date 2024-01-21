@@ -115,6 +115,6 @@ token:
 apikey-secret: ${API_KEY_SECRET}
 
 keycloak:
-  clientId: swift_wheels_hub-cloud-gateway
+  clientId: admin-cli
 
-request-validator-url: lb://swift_wheels_hub-request-validator/request-validator/validate
+request-validator-url: lb://swift-wheels-hub-request-validator/request-validator/validate
