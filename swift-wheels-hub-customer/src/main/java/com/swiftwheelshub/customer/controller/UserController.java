@@ -2,9 +2,9 @@ package com.swiftwheelshub.customer.controller;
 
 import com.swiftwheelshub.customer.service.CustomerService;
 import com.swiftwheelshub.customer.service.KeycloakUserService;
-import com.swiftwheelshub.dto.AuthenticationResponse;
 import com.swiftwheelshub.dto.CurrentUserDto;
 import com.swiftwheelshub.dto.RegisterRequest;
+import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserDto;
 import com.swiftwheelshub.lib.aspect.LogActivity;
 import jakarta.validation.Valid;
@@ -48,7 +48,7 @@ public class UserController {
             sentParameters = "registerRequest",
             activityDescription = "User registration"
     )
-    public ResponseEntity<AuthenticationResponse> registerUser(@RequestBody @Valid RegisterRequest registerRequest) {
+    public ResponseEntity<RegistrationResponse> registerUser(@RequestBody @Valid RegisterRequest registerRequest) {
         return ResponseEntity.ok(customerService.registerCustomer(registerRequest));
     }
 

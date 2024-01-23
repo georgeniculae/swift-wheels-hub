@@ -4,14 +4,13 @@ import com.swiftwheelshub.customer.mapper.CustomerMapper;
 import com.swiftwheelshub.customer.mapper.CustomerMapperImpl;
 import com.swiftwheelshub.customer.util.AssertionUtils;
 import com.swiftwheelshub.customer.util.TestUtils;
-import com.swiftwheelshub.dto.AuthenticationResponse;
 import com.swiftwheelshub.dto.RegisterRequest;
+import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserDto;
 import com.swiftwheelshub.entity.User;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.lib.repository.UserRepository;
-import com.swiftwheelshub.lib.security.jwt.JwtService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,9 +51,6 @@ class CustomerServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    @Mock
-    private JwtService jwtService;
-
     @Spy
     private CustomerMapper customerMapper = new CustomerMapperImpl();
 
@@ -66,18 +62,16 @@ class CustomerServiceTest {
         RegisterRequest registerRequest =
                 TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
         User user = TestUtils.getResourceAsJson("/data/User.json", User.class);
-        String token = "token";
         String password = "$2a$10$hadYmhDPuigFKchXrkmmUe6i1L8B50Be.ggbdVuszCbYu7yg14Lqa";
 
         when(userRepository.existsByUsername(anyString())).thenReturn(false);
-        when(passwordEncoder.encode(any())).thenReturn(password);
+//        when(passwordEncoder.encode(any())).thenReturn(password);
         when(userRepository.saveAndFlush(any(User.class))).thenReturn(user);
-        when(jwtService.generateToken(any())).thenReturn(token);
 
-        AuthenticationResponse authenticationResponse =
+        RegistrationResponse registrationResponse =
                 Assertions.assertDoesNotThrow(() -> customerService.registerCustomer(registerRequest));
 
-        assertEquals(token, authenticationResponse.token());
+//        assertEquals(token, registrationResponse);
 
         verify(passwordEncoder).encode(any());
         verify(userRepository).saveAndFlush(argumentCaptor.capture());

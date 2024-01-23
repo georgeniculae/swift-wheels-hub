@@ -1,17 +1,20 @@
 package com.swiftwheelshub.customer.service;
 
+import com.swiftwheelshub.dto.RegisterRequest;
+import com.swiftwheelshub.dto.RegistrationResponse;
+import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,35 +32,21 @@ public class KeycloakUserService {
         return usersResource.searchByUsername(username, true);
     }
 
-    public int createAccount(final String username, final String password) {
-        CredentialRepresentation passwordCredentials = createPasswordCredentials(password);
-        UserRepresentation user = createUserRepresentation(username, passwordCredentials);
+    public RegistrationResponse createUser(RegisterRequest request) {
+        UserRepresentation userRepresentation = createUserRepresentation(request);
 
-        Response response = getUsersResource().create(user);
-        final int status = response.getStatus();
+        try (Response response = getUsersResource().create(userRepresentation)) {
+            final int statusCode = response.getStatus();
 
-        if (status != HttpStatus.CREATED.value()) {
-            return status;
+            if (HttpStatus.CREATED.value() == statusCode) {
+                return getRegistrationResponse(userRepresentation, response);
+            }
+
+            throw new SwiftWheelsHubResponseStatusException(
+                    HttpStatusCode.valueOf(statusCode),
+                    "User could not be created: " + response.getStatusInfo().getReasonPhrase()
+            );
         }
-
-        String createdId = getCreatedId(response);
-        CredentialRepresentation newPasswordCredentials = createPasswordCredentials(password);
-
-        UserResource userResource = getUsersResource().get(createdId);
-        userResource.resetPassword(newPasswordCredentials);
-
-        return HttpStatus.CREATED.value();
-    }
-
-    private UserRepresentation createUserRepresentation(String username, CredentialRepresentation passwordCredentials) {
-        UserRepresentation user = new UserRepresentation();
-        user.setUsername(username);
-        user.setFirstName("First Name");
-        user.setLastName("Last Name");
-        user.singleAttribute("customAttribute", "customAttribute");
-        user.setCredentials(List.of(passwordCredentials));
-
-        return user;
     }
 
     private UsersResource getUsersResource() {
@@ -73,22 +62,45 @@ public class KeycloakUserService {
         return passwordCredentials;
     }
 
-    public String getCreatedId(Response response) {
-        URI location = response.getLocation();
+    private UserRepresentation createUserRepresentation(RegisterRequest request) {
+        UserRepresentation userRepresentation = new UserRepresentation();
+        userRepresentation.setUsername(request.username());
+        userRepresentation.setFirstName(request.firstName());
+        userRepresentation.setLastName(request.lastName());
+        userRepresentation.setEmail(request.email());
+        userRepresentation.setCredentials(List.of(createPasswordCredentials(request.password())));
+//        userRepresentation.singleAttribute("address", request.address());
+        userRepresentation.setEmailVerified(false);
+        userRepresentation.setEnabled(true);
 
-        if (!response.getStatusInfo().equals(Response.Status.CREATED)) {
-            Response.StatusType statusInfo = response.getStatusInfo();
-            throw new RuntimeException("Create method returned status " +
-                    statusInfo.getReasonPhrase() + " (Code: " + statusInfo.getStatusCode() + "); expected status: Created (201)");
-        }
+        return userRepresentation;
+    }
 
-        if (location == null) {
-            return null;
-        }
+    private void emailVerification(String userId) {
+        UsersResource usersResource = getUsersResource();
+        usersResource.get(userId).sendVerifyEmail();
+    }
 
-        String path = location.getPath();
+    private RegistrationResponse getRegistrationResponse(UserRepresentation userRepresentation, Response response) {
+//        CredentialRepresentation newPasswordCredentials = createPasswordCredentials(password);
 
-        return path.substring(path.lastIndexOf('/') + 1);
+//        UserResource userResource = getUsersResource().get(createdId);
+//        userResource.resetPassword(newPasswordCredentials);
+        emailVerification(getUserId(userRepresentation.getUsername()));
+
+        Date registrationDate = response.getDate();
+
+        return RegistrationResponse.builder()
+                .username(userRepresentation.getUsername())
+                .email(userRepresentation.getEmail())
+                .firstName(userRepresentation.getFirstName())
+                .lastName(userRepresentation.getLastName())
+                .registrationDate(registrationDate)
+                .build();
+    }
+
+    private String getUserId(String username) {
+        return getUser(username).getFirst().getId();
     }
 
 }

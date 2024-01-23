@@ -1,16 +1,15 @@
 package com.swiftwheelshub.customer.service;
 
 import com.swiftwheelshub.customer.mapper.CustomerMapper;
-import com.swiftwheelshub.dto.AuthenticationResponse;
 import com.swiftwheelshub.dto.CurrentUserDto;
 import com.swiftwheelshub.dto.RegisterRequest;
+import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserDto;
 import com.swiftwheelshub.entity.Role;
 import com.swiftwheelshub.entity.User;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.lib.repository.UserRepository;
-import com.swiftwheelshub.lib.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,15 +25,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomerService {
 
-    private final JwtService jwtService;
+    private final KeycloakUserService keycloakUserService;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final CustomerMapper customerMapper;
 
-    public AuthenticationResponse registerCustomer(RegisterRequest request) {
-        var jwtToken = jwtService.generateToken(saveUser(request));
-
-        return new AuthenticationResponse(jwtToken);
+    public RegistrationResponse registerCustomer(RegisterRequest request) {
+        return keycloakUserService.createUser(request);
     }
 
     public CurrentUserDto getCurrentUser() {
