@@ -25,7 +25,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        return http.csrf(ServerHttpSecurity.CsrfSpec::disable)
+        return http.cors(ServerHttpSecurity.CorsSpec::disable)
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(request ->
                         request.pathMatchers("/agency/definition/**",
                                         "/bookings/definition/**",
