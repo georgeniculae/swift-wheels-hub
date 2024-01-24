@@ -21,6 +21,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -101,6 +102,7 @@ public class KeycloakUserService {
         }
 
         String registrationDate = ZonedDateTime.of(LocalDate.now(), LocalTime.now(), ZoneId.of(UTC))
+                .truncatedTo(ChronoUnit.SECONDS)
                 .format(DateTimeFormatter.ISO_DATE_TIME);
 
         return RegistrationResponse.builder()
