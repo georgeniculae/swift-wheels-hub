@@ -5,7 +5,9 @@ import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -39,7 +41,7 @@ public class KeycloakUserService {
             final int statusCode = response.getStatus();
 
             if (HttpStatus.CREATED.value() == statusCode) {
-                return getRegistrationResponse(userRepresentation, response);
+                return getRegistrationResponse(userRepresentation, response, request.password());
             }
 
             throw new SwiftWheelsHubResponseStatusException(
@@ -69,7 +71,7 @@ public class KeycloakUserService {
         userRepresentation.setLastName(request.lastName());
         userRepresentation.setEmail(request.email());
         userRepresentation.setCredentials(List.of(createPasswordCredentials(request.password())));
-//        userRepresentation.singleAttribute("address", request.address());
+        userRepresentation.singleAttribute("address", request.address());
         userRepresentation.setEmailVerified(false);
         userRepresentation.setEnabled(true);
 
@@ -81,11 +83,12 @@ public class KeycloakUserService {
         usersResource.get(userId).sendVerifyEmail();
     }
 
-    private RegistrationResponse getRegistrationResponse(UserRepresentation userRepresentation, Response response) {
-//        CredentialRepresentation newPasswordCredentials = createPasswordCredentials(password);
+    private RegistrationResponse getRegistrationResponse(UserRepresentation userRepresentation, Response response,
+                                                         String password) {
+        CredentialRepresentation newPasswordCredentials = createPasswordCredentials(password);
 
-//        UserResource userResource = getUsersResource().get(createdId);
-//        userResource.resetPassword(newPasswordCredentials);
+        UserResource userResource = getUsersResource().get(CreatedResponseUtil.getCreatedId(response));
+        userResource.resetPassword(newPasswordCredentials);
         emailVerification(getUserId(userRepresentation.getUsername()));
 
         Date registrationDate = response.getDate();
