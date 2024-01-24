@@ -14,7 +14,8 @@ public record RegisterRequest(
         String email,
         String address,
         Role role,
-        LocalDate dateOfBirth
+        LocalDate dateOfBirth,
+        boolean needsVerification
 ) {
 
     @Override

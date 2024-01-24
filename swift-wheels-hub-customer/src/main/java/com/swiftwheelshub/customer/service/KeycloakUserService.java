@@ -16,11 +16,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class KeycloakUserService {
+
+    private static final String UTC = "UTC";
 
     @Value("${keycloak.realm}")
     private String realm;
@@ -40,7 +44,7 @@ public class KeycloakUserService {
             final int statusCode = response.getStatus();
 
             if (HttpStatus.CREATED.value() == statusCode) {
-                return getRegistrationResponse(userRepresentation, response, request.password());
+                return getRegistrationResponse(userRepresentation, response, request);
             }
 
             throw new SwiftWheelsHubResponseStatusException(
@@ -77,23 +81,26 @@ public class KeycloakUserService {
         return userRepresentation;
     }
 
-    private void emailVerification(String userId) {
+    private void doEmailVerification(String userId) {
         UsersResource usersResource = getUsersResource();
         usersResource.get(userId).sendVerifyEmail();
     }
 
     private RegistrationResponse getRegistrationResponse(UserRepresentation userRepresentation, Response response,
-                                                         String password) {
+                                                         RegisterRequest request) {
         UserResource userResource = getUsersResource().get(CreatedResponseUtil.getCreatedId(response));
-        userResource.resetPassword(createPasswordCredentials(password));
-        emailVerification(getUserId(userRepresentation.getUsername()));
+        userResource.resetPassword(createPasswordCredentials(request.password()));
+
+        if (request.needsVerification()) {
+            doEmailVerification(getUserId(userRepresentation.getUsername()));
+        }
 
         return RegistrationResponse.builder()
                 .username(userRepresentation.getUsername())
                 .email(userRepresentation.getEmail())
                 .firstName(userRepresentation.getFirstName())
                 .lastName(userRepresentation.getLastName())
-                .registrationDate(response.getDate())
+                .registrationDate(ZonedDateTime.now(ZoneId.of(UTC)))
                 .build();
     }
 

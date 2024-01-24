@@ -2,7 +2,7 @@ package com.swiftwheelshub.dto;
 
 import lombok.Builder;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 @Builder
 public record RegistrationResponse(
@@ -10,6 +10,6 @@ public record RegistrationResponse(
         String firstName,
         String lastName,
         String email,
-        Date registrationDate
+        ZonedDateTime registrationDate
 ) {
 }
