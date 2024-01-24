@@ -85,10 +85,8 @@ public class KeycloakUserService {
 
     private RegistrationResponse getRegistrationResponse(UserRepresentation userRepresentation, Response response,
                                                          String password) {
-        CredentialRepresentation newPasswordCredentials = createPasswordCredentials(password);
-
         UserResource userResource = getUsersResource().get(CreatedResponseUtil.getCreatedId(response));
-        userResource.resetPassword(newPasswordCredentials);
+        userResource.resetPassword(createPasswordCredentials(password));
         emailVerification(getUserId(userRepresentation.getUsername()));
 
         Date registrationDate = response.getDate();
