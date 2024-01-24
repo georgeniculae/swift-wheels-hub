@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -89,14 +88,12 @@ public class KeycloakUserService {
         userResource.resetPassword(createPasswordCredentials(password));
         emailVerification(getUserId(userRepresentation.getUsername()));
 
-        Date registrationDate = response.getDate();
-
         return RegistrationResponse.builder()
                 .username(userRepresentation.getUsername())
                 .email(userRepresentation.getEmail())
                 .firstName(userRepresentation.getFirstName())
                 .lastName(userRepresentation.getLastName())
-                .registrationDate(registrationDate)
+                .registrationDate(response.getDate())
                 .build();
     }
 
