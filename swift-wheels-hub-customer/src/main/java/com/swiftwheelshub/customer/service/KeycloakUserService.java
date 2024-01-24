@@ -96,7 +96,7 @@ public class KeycloakUserService {
         UserResource userResource = getUsersResource().get(CreatedResponseUtil.getCreatedId(response));
         userResource.resetPassword(createPasswordCredentials(request.password()));
 
-        if (request.needsVerification()) {
+        if (request.needsEmailVerification()) {
             doEmailVerification(getUserId(userRepresentation.getUsername()));
         }
 

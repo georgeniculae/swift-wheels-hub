@@ -15,7 +15,7 @@ public record RegisterRequest(
         String address,
         Role role,
         LocalDate dateOfBirth,
-        boolean needsVerification
+        boolean needsEmailVerification
 ) {
 
     @Override
@@ -29,6 +29,7 @@ public record RegisterRequest(
                 "address='" + address + "\n" +
                 "role=" + role + "\n" +
                 "dateOfBirth=" + dateOfBirth + "\n" +
+                "needsEmailVerification" + needsEmailVerification + "\n" +
                 "}";
     }
 
