@@ -16,8 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -25,6 +28,8 @@ import java.util.List;
 public class KeycloakUserService {
 
     private static final String UTC = "UTC";
+
+    private static final String ADDRESS = "address";
 
     @Value("${keycloak.realm}")
     private String realm;
@@ -74,7 +79,7 @@ public class KeycloakUserService {
         userRepresentation.setLastName(request.lastName());
         userRepresentation.setEmail(request.email());
         userRepresentation.setCredentials(List.of(createPasswordCredentials(request.password())));
-        userRepresentation.singleAttribute("address", request.address());
+        userRepresentation.singleAttribute(ADDRESS, request.address());
         userRepresentation.setEmailVerified(false);
         userRepresentation.setEnabled(true);
 
@@ -95,12 +100,15 @@ public class KeycloakUserService {
             doEmailVerification(getUserId(userRepresentation.getUsername()));
         }
 
+        String registrationDate = ZonedDateTime.of(LocalDate.now(), LocalTime.now(), ZoneId.of(UTC))
+                .format(DateTimeFormatter.ISO_DATE_TIME);
+
         return RegistrationResponse.builder()
                 .username(userRepresentation.getUsername())
                 .email(userRepresentation.getEmail())
                 .firstName(userRepresentation.getFirstName())
                 .lastName(userRepresentation.getLastName())
-                .registrationDate(ZonedDateTime.now(ZoneId.of(UTC)))
+                .registrationDate(registrationDate)
                 .build();
     }
 
