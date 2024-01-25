@@ -45,7 +45,7 @@ public class KafkaUpdatedUserConsumerConfig {
 
                     return Mono.empty();
                 })
-                .then(Mono.just(record));
+                .thenReturn(record);
     }
 
     private void logReceivedRecordValue(ReceiverRecord<String, UserDto> record) {

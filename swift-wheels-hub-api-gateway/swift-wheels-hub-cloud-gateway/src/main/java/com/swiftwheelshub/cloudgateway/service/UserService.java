@@ -9,10 +9,8 @@ import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
-@Deprecated
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -22,7 +20,6 @@ public class UserService {
     private final R2dbcEntityTemplate r2dbcEntityTemplate;
     private final UserMapper userMapper;
 
-    @Transactional
     public Mono<User> saveUser(UserDto userDto) {
         return Mono.just(userDto)
                 .map(userMapper::mapUserDtoToUser)
@@ -34,7 +31,6 @@ public class UserService {
                 });
     }
 
-    @Transactional
     public Mono<User> updateUser(UserDto userDto) {
         return r2dbcEntityTemplate.selectOne(getFindByIdUsernameQuery(userDto.username()), User.class)
                 .map(existingUser -> updateExistingUser(userDto, existingUser))
@@ -46,7 +42,6 @@ public class UserService {
                 });
     }
 
-    @Transactional
     public Mono<Long> deleteUserByUsername(String username) {
         return r2dbcEntityTemplate.delete(getDeletionQuery(username), User.class);
     }
@@ -68,7 +63,6 @@ public class UserService {
 
     private Query getDeletionQuery(String username) {
         return Query.query(Criteria.where(USERNAME).is(username));
-
     }
 
 }

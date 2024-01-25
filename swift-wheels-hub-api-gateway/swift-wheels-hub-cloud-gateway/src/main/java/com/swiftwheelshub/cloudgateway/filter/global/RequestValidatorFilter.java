@@ -79,7 +79,7 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
                 .bodyValue(incomingRequestDetails)
                 .retrieve()
                 .bodyToMono(RequestValidationReport.class)
-                .retryWhen(Retry.fixedDelay(5, Duration.ofSeconds(3)))
+                .retryWhen(Retry.fixedDelay(Long.MAX_VALUE, Duration.ofMinutes(1)))
                 .onErrorMap(SwiftWheelsHubException::new);
     }
 
