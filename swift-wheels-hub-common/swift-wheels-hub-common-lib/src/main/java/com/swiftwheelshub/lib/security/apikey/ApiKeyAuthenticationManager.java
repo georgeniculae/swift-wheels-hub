@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public class ApiKeyAuthenticationManager {
 
     @Bean
     public AuthenticationManager authenticationManager() {
-        return new ProviderManager(Collections.singletonList(apiKeyAuthenticationProvider));
+        return new ProviderManager(List.of(apiKeyAuthenticationProvider));
     }
 
 }
