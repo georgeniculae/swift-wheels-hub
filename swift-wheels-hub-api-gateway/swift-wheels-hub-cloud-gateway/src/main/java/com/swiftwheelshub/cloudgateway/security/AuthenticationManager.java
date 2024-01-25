@@ -17,9 +17,13 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
         return Mono.justOrEmpty(authentication)
-                .map(auth -> auth.getPrincipal().toString())
+                .map(this::getAuthorization)
                 .flatMap(nimbusReactiveJwtDecoder::decode)
                 .flatMap(jwtAuthenticationTokenConverter::convert);
+    }
+
+    private String getAuthorization(Authentication authentication) {
+        return authentication.getPrincipal().toString();
     }
 
 }
