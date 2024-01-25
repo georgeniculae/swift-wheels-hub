@@ -2,7 +2,7 @@ package com.swiftwheelshub.customer.mapper;
 
 import com.swiftwheelshub.customer.util.AssertionUtils;
 import com.swiftwheelshub.customer.util.TestUtils;
-import com.swiftwheelshub.dto.CurrentUserDto;
+import com.swiftwheelshub.dto.CurrentUserDetails;
 import com.swiftwheelshub.dto.UserDto;
 import com.swiftwheelshub.entity.User;
 import org.junit.jupiter.api.Assertions;
@@ -13,38 +13,38 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(MockitoExtension.class)
-class CustomerMapperTest {
+class UserMapperTest {
 
-    private final CustomerMapper customerMapper = new CustomerMapperImpl();
+    private final UserMapper userMapper = new UserMapperImpl();
 
     @Test
     void mapUserToCurrentUserDtoTest_success() {
         User user = TestUtils.getResourceAsJson("/data/User.json", User.class);
 
-        CurrentUserDto currentUserDto = Assertions.assertDoesNotThrow(() -> customerMapper.mapUserToCurrentUserDto(user));
+        CurrentUserDetails currentUserDetails = Assertions.assertDoesNotThrow(() -> userMapper.mapUserToCurrentUserDto(user));
 
-        AssertionUtils.assertCurrentUser(user, currentUserDto);
+        AssertionUtils.assertCurrentUser(user, currentUserDetails);
     }
 
     @Test
     void mapUserToCurrentUserDtoTest_null() {
-        CurrentUserDto currentUserDto = Assertions.assertDoesNotThrow(() -> customerMapper.mapUserToCurrentUserDto(null));
+        CurrentUserDetails currentUserDetails = Assertions.assertDoesNotThrow(() -> userMapper.mapUserToCurrentUserDto(null));
 
-        assertNull(currentUserDto);
+        assertNull(currentUserDetails);
     }
 
     @Test
     void mapEntityToDtoTest_success() {
         User user = TestUtils.getResourceAsJson("/data/User.json", User.class);
 
-        UserDto userDto = Assertions.assertDoesNotThrow(() -> customerMapper.mapEntityToDto(user));
+        UserDto userDto = Assertions.assertDoesNotThrow(() -> userMapper.mapEntityToDto(user));
 
         AssertionUtils.assertUser(user, userDto);
     }
 
     @Test
     void mapEntityToDtoTest_null() {
-        UserDto userDto = Assertions.assertDoesNotThrow(() -> customerMapper.mapEntityToDto(null));
+        UserDto userDto = Assertions.assertDoesNotThrow(() -> userMapper.mapEntityToDto(null));
 
         assertNull(userDto);
     }

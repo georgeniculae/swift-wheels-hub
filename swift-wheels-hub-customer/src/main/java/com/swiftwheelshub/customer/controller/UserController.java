@@ -2,7 +2,7 @@ package com.swiftwheelshub.customer.controller;
 
 import com.swiftwheelshub.customer.service.CustomerService;
 import com.swiftwheelshub.customer.service.KeycloakUserService;
-import com.swiftwheelshub.dto.CurrentUserDto;
+import com.swiftwheelshub.dto.CurrentUserDetails;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserDto;
@@ -29,7 +29,7 @@ public class UserController {
     private final KeycloakUserService keycloakUserService;
 
     @GetMapping(path = "/current")
-    public ResponseEntity<CurrentUserDto> getCurrentUser() {
+    public ResponseEntity<CurrentUserDetails> getCurrentUser() {
         return ResponseEntity.ok(customerService.getCurrentUser());
     }
 

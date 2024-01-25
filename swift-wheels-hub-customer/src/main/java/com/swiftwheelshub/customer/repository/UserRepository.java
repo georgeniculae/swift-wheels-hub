@@ -1,4 +1,4 @@
-package com.swiftwheelshub.lib.repository;
+package com.swiftwheelshub.customer.repository;
 
 import com.swiftwheelshub.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -8,6 +8,7 @@ public record RegistrationResponse(
         String firstName,
         String lastName,
         String email,
+        String address,
         String registrationDate
 ) {
 }

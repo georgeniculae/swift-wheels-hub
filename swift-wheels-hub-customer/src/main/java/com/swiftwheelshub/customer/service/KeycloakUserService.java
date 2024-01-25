@@ -1,5 +1,6 @@
 package com.swiftwheelshub.customer.service;
 
+import com.swiftwheelshub.customer.mapper.UserMapper;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
@@ -16,12 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -36,6 +31,8 @@ public class KeycloakUserService {
     private String realm;
 
     private final Keycloak keycloak;
+
+    private final UserMapper userMapper;
 
     public List<UserRepresentation> getUser(String username) {
         UsersResource usersResource = getUsersResource();
@@ -101,23 +98,11 @@ public class KeycloakUserService {
             makeEmailVerification(getUserId(userRepresentation.getUsername()));
         }
 
-        return RegistrationResponse.builder()
-                .username(userRepresentation.getUsername())
-                .email(userRepresentation.getEmail())
-                .firstName(userRepresentation.getFirstName())
-                .lastName(userRepresentation.getLastName())
-                .registrationDate(getRegistrationDate())
-                .build();
+        return userMapper.mapToRegistrationResponse(userRepresentation);
     }
 
     private String getUserId(String username) {
         return getUser(username).getFirst().getId();
-    }
-
-    private String getRegistrationDate() {
-        return ZonedDateTime.of(LocalDate.now(), LocalTime.now(), ZoneId.of(UTC))
-                .truncatedTo(ChronoUnit.SECONDS)
-                .format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.swiftwheelshub.customer.service;
 
-import com.swiftwheelshub.customer.mapper.CustomerMapper;
-import com.swiftwheelshub.dto.CurrentUserDto;
+import com.swiftwheelshub.customer.mapper.UserMapper;
+import com.swiftwheelshub.dto.CurrentUserDetails;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserDto;
@@ -9,7 +9,7 @@ import com.swiftwheelshub.entity.Role;
 import com.swiftwheelshub.entity.User;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
-import com.swiftwheelshub.lib.repository.UserRepository;
+import com.swiftwheelshub.customer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,24 +28,26 @@ public class CustomerService {
     private final KeycloakUserService keycloakUserService;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final CustomerMapper customerMapper;
+    private final UserMapper userMapper;
 
     public RegistrationResponse registerCustomer(RegisterRequest request) {
+        validateRequest(request);
+
         return keycloakUserService.createUser(request);
     }
 
-    public CurrentUserDto getCurrentUser() {
+    public CurrentUserDetails getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = findByUsername(username);
 
-        return customerMapper.mapUserToCurrentUserDto(user);
+        return userMapper.mapUserToCurrentUserDto(user);
     }
 
     public UserDto findUserByUsername(String username) {
         User user = findByUsername(username);
 
-        return customerMapper.mapEntityToDto(user);
+        return userMapper.mapEntityToDto(user);
     }
 
     public Long countUsers() {
@@ -53,7 +55,7 @@ public class CustomerService {
     }
 
     public User saveUser(RegisterRequest request) {
-        validateRequest(request);
+
         User user = new User();
 
         user.setUsername(request.username());
@@ -78,7 +80,7 @@ public class CustomerService {
 
         User savedUser = userRepository.saveAndFlush(user);
 
-        return customerMapper.mapEntityToDto(savedUser);
+        return userMapper.mapEntityToDto(savedUser);
     }
 
     @Transactional

@@ -1,6 +1,6 @@
 package com.swiftwheelshub.customer.util;
 
-import com.swiftwheelshub.dto.CurrentUserDto;
+import com.swiftwheelshub.dto.CurrentUserDetails;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.UserDto;
 import com.swiftwheelshub.entity.User;
@@ -9,17 +9,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AssertionUtils {
 
-    public static void assertCurrentUser(User user, CurrentUserDto currentUserDto) {
-        assertEquals(user.getUsername(), currentUserDto.username());
-        assertEquals(user.getPassword(), currentUserDto.password());
-        assertEquals(user.getRole(), currentUserDto.role());
-        assertEquals(user.getFirstName(), currentUserDto.firstName());
-        assertEquals(user.getLastName(), currentUserDto.lastName());
-        assertEquals(user.getEmail(), currentUserDto.email());
-        assertEquals(user.isAccountNonExpired(), currentUserDto.accountNonExpired());
-        assertEquals(user.isAccountNonExpired(), currentUserDto.accountNonExpired());
-        assertEquals(user.isCredentialsNonExpired(), currentUserDto.credentialsNonExpired());
-        assertEquals(user.getAuthorities(), currentUserDto.authorities());
+    public static void assertCurrentUser(User user, CurrentUserDetails currentUserDetails) {
+        assertEquals(user.getUsername(), currentUserDetails.username());
+        assertEquals(user.getPassword(), currentUserDetails.password());
+        assertEquals(user.getRole(), currentUserDetails.role());
+        assertEquals(user.getFirstName(), currentUserDetails.firstName());
+        assertEquals(user.getLastName(), currentUserDetails.lastName());
+        assertEquals(user.getEmail(), currentUserDetails.email());
+        assertEquals(user.isAccountNonExpired(), currentUserDetails.accountNonExpired());
+        assertEquals(user.isAccountNonExpired(), currentUserDetails.accountNonExpired());
+        assertEquals(user.isCredentialsNonExpired(), currentUserDetails.credentialsNonExpired());
+        assertEquals(user.getAuthorities(), currentUserDetails.authorities());
     }
 
     public static void assertUser(User user, UserDto userDto) {

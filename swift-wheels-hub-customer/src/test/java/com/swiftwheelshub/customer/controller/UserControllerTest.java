@@ -1,13 +1,13 @@
 package com.swiftwheelshub.customer.controller;
 
-import com.swiftwheelshub.customer.service.KeycloakUserService;
 import com.swiftwheelshub.customer.service.CustomerService;
+import com.swiftwheelshub.customer.service.KeycloakUserService;
 import com.swiftwheelshub.customer.util.TestUtils;
-import com.swiftwheelshub.dto.CurrentUserDto;
+import com.swiftwheelshub.dto.CurrentUserDetails;
 import com.swiftwheelshub.dto.RegisterRequest;
+import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserDto;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -31,7 +30,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = UserController.class)
 @AutoConfigureMockMvc
 @EnableWebMvc
@@ -50,10 +48,10 @@ class UserControllerTest {
 
     @Test
     void getCurrentUserTest_success() throws Exception {
-        CurrentUserDto currentUserDto =
-                TestUtils.getResourceAsJson("/data/CurrentUserDto.json", CurrentUserDto.class);
+        CurrentUserDetails currentUserDetails =
+                TestUtils.getResourceAsJson("/data/CurrentUserDto.json", CurrentUserDetails.class);
 
-        when(customerService.getCurrentUser()).thenReturn(currentUserDto);
+        when(customerService.getCurrentUser()).thenReturn(currentUserDetails);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/current").contextPath(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -81,84 +79,83 @@ class UserControllerTest {
         assertNotNull(response.getContentAsString());
     }
 
-//    @Test
-//    void registerUserTest_success() throws Exception {
-//        RegisterRequest registerRequest =
-//                TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
-//
-//        AuthenticationResponse authenticationResponse =
-//                TestUtils.getResourceAsJson("/data/AuthenticationResponse.json", AuthenticationResponse.class);
-//
-//        String content = TestUtils.writeValueAsString(registerRequest);
-//
-//        when(customerService.registerCustomer(any(RegisterRequest.class))).thenReturn(authenticationResponse);
-//
-//        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/register").contextPath(PATH)
-//                        .with(csrf())
-//                        .with(user("admin").password("admin").roles("ADMIN"))
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON)
-//                        .content(content))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        MockHttpServletResponse response = mvcResult.getResponse();
-//        assertEquals(200, response.getStatus());
-//        assertNotNull(response.getContentAsString());
-//    }
-//
-//    @Test
-//    void registerUserTest_forbidden() throws Exception {
-//        RegisterRequest registerRequest =
-//                TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
-//
-//        AuthenticationResponse authenticationResponse =
-//                TestUtils.getResourceAsJson("/data/AuthenticationResponse.json", AuthenticationResponse.class);
-//
-//        String content = TestUtils.writeValueAsString(registerRequest);
-//
-//        when(customerService.registerCustomer(any(RegisterRequest.class)))
-//                .thenReturn(authenticationResponse);
-//
-//        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/register").contextPath(PATH)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON)
-//                        .content(content))
-//                .andExpect(status().isForbidden())
-//                .andReturn();
-//
-//        MockHttpServletResponse response = mvcResult.getResponse();
-//        assertEquals(403, response.getStatus());
-//        assertEquals("Forbidden", response.getErrorMessage());
-//        assertNotNull(response.getContentAsString());
-//    }
-//
-//    @Test
-//    void registerUserTest_unauthorized() throws Exception {
-//        RegisterRequest registerRequest =
-//                TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
-//
-//        AuthenticationResponse authenticationResponse =
-//                TestUtils.getResourceAsJson("/data/AuthenticationResponse.json", AuthenticationResponse.class);
-//
-//        String content = TestUtils.writeValueAsString(registerRequest);
-//
-//        when(customerService.registerCustomer(any(RegisterRequest.class)))
-//                .thenReturn(authenticationResponse);
-//
-//        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/register").contextPath(PATH)
-//                        .with(csrf())
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON)
-//                        .content(content))
-//                .andExpect(status().isUnauthorized())
-//                .andReturn();
-//
-//        MockHttpServletResponse response = mvcResult.getResponse();
-//        assertEquals(401, response.getStatus());
-//        assertEquals("Unauthorized", response.getErrorMessage());
-//        assertNotNull(response.getContentAsString());
-//    }
+    @Test
+    void registerUserTest_success() throws Exception {
+        RegisterRequest registerRequest =
+                TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
+
+        RegistrationResponse registrationResponse =
+                TestUtils.getResourceAsJson("/data/RegistrationResponse.json", RegistrationResponse.class);
+
+        String content = TestUtils.writeValueAsString(registerRequest);
+
+        when(customerService.registerCustomer(any(RegisterRequest.class))).thenReturn(registrationResponse);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/register").contextPath(PATH)
+                        .with(csrf())
+                        .with(user("admin").password("admin").roles("ADMIN"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        MockHttpServletResponse response = mvcResult.getResponse();
+        assertEquals(200, response.getStatus());
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    void registerUserTest_forbidden() throws Exception {
+        RegisterRequest registerRequest =
+                TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
+
+        RegistrationResponse registrationResponse =
+                TestUtils.getResourceAsJson("/data/RegistrationResponse.json", RegistrationResponse.class);
+
+        String content = TestUtils.writeValueAsString(registerRequest);
+
+        when(customerService.registerCustomer(any(RegisterRequest.class)))
+                .thenReturn(registrationResponse);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/register").contextPath(PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isForbidden())
+                .andReturn();
+
+        MockHttpServletResponse response = mvcResult.getResponse();
+        assertEquals(403, response.getStatus());
+        assertEquals("Forbidden", response.getErrorMessage());
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    void registerUserTest_unauthorized() throws Exception {
+        RegisterRequest registerRequest =
+                TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
+
+        RegistrationResponse registrationResponse =
+                TestUtils.getResourceAsJson("/data/RegistrationResponse.json", RegistrationResponse.class);
+
+        String content = TestUtils.writeValueAsString(registerRequest);
+
+        when(customerService.registerCustomer(any(RegisterRequest.class))).thenReturn(registrationResponse);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/register").contextPath(PATH)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isUnauthorized())
+                .andReturn();
+
+        MockHttpServletResponse response = mvcResult.getResponse();
+        assertEquals(401, response.getStatus());
+        assertEquals("Unauthorized", response.getErrorMessage());
+        assertNotNull(response.getContentAsString());
+    }
 
     @Test
     void updateUserTest_success() throws Exception {
