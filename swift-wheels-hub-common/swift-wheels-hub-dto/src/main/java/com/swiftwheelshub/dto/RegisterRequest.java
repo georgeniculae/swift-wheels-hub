@@ -1,6 +1,5 @@
 package com.swiftwheelshub.dto;
 
-import com.swiftwheelshub.entity.Role;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -13,7 +12,6 @@ public record RegisterRequest(
         String lastName,
         String email,
         String address,
-        Role role,
         LocalDate dateOfBirth,
         boolean needsEmailVerification
 ) {
@@ -27,7 +25,6 @@ public record RegisterRequest(
                 "lastName='" + lastName + "\n" +
                 "email='" + email + "\n" +
                 "address='" + address + "\n" +
-                "role=" + role + "\n" +
                 "dateOfBirth=" + dateOfBirth + "\n" +
                 "needsEmailVerification" + needsEmailVerification + "\n" +
                 "}";

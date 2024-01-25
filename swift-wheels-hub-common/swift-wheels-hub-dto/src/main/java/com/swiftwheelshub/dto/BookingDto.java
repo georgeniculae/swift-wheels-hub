@@ -1,6 +1,5 @@
 package com.swiftwheelshub.dto;
 
-import com.swiftwheelshub.entity.BookingStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Temporal;
@@ -22,7 +21,7 @@ public record BookingDto(
         LocalDate dateOfBooking,
 
         @Enumerated(EnumType.STRING)
-        BookingStatus status,
+        BookingState status,
 
         @NotEmpty(message = "Username cannot be empty")
         String customerUsername,

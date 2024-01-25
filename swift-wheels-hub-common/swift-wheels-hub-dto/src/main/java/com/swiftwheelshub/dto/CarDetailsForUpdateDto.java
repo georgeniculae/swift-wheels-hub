@@ -1,12 +1,11 @@
 package com.swiftwheelshub.dto;
 
-import com.swiftwheelshub.entity.CarStatus;
 import lombok.Builder;
 
 @Builder
 public record CarDetailsForUpdateDto(
         Long carId,
-        CarStatus carStatus,
+        CarState carState,
         Long receptionistEmployeeId
 ) {
 
@@ -14,7 +13,7 @@ public record CarDetailsForUpdateDto(
     public String toString() {
         return "CarDetailsForUpdateDto{" + "\n" +
                 "carId=" + carId + "\n" +
-                "carStatus=" + carStatus + "\n" +
+                "carState=" + carState + "\n" +
                 "receptionistEmployeeId=" + receptionistEmployeeId + "\n" +
                 "}";
     }

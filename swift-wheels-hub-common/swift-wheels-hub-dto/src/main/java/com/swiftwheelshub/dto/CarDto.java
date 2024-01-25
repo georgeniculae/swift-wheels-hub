@@ -1,7 +1,5 @@
 package com.swiftwheelshub.dto;
 
-import com.swiftwheelshub.entity.BodyType;
-import com.swiftwheelshub.entity.CarStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotEmpty;
@@ -18,7 +16,7 @@ public record CarDto(
         String model,
 
         @Enumerated(EnumType.STRING)
-        BodyType bodyType,
+        BodyCategory bodyCategory,
 
         int yearOfProduction,
 
@@ -27,7 +25,7 @@ public record CarDto(
         int mileage,
 
         @Enumerated(EnumType.STRING)
-        CarStatus carStatus,
+        CarState carState,
 
         Double amount,
 
@@ -44,11 +42,11 @@ public record CarDto(
                 "id=" + id +
                 "make='" + make + "\n" +
                 "model='" + model + "\n" +
-                "bodyType=" + bodyType + "\n" +
+                "bodyCategory=" + bodyCategory + "\n" +
                 "yearOfProduction=" + yearOfProduction + "\n" +
                 "color='" + color + "\n" +
                 "mileage=" + mileage + "\n" +
-                "carStatus=" + carStatus + "\n" +
+                "carState=" + carState + "\n" +
                 "amount=" + amount + "\n" +
                 "originalBranchId=" + originalBranchId + "\n" +
                 "actualBranchId=" + actualBranchId + "\n" +
