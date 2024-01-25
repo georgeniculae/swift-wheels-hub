@@ -5,13 +5,11 @@ import lombok.Builder;
 import java.time.LocalDate;
 
 @Builder
-public record RegistrationResponse(
+public record UserUpdateRequest(
         String username,
         String firstName,
         String lastName,
-        String email,
         String address,
-        LocalDate datOfBirth,
-        String registrationDate
+        LocalDate dateOfBirth
 ) {
 }
