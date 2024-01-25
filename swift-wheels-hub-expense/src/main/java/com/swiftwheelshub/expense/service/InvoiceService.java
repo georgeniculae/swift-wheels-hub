@@ -2,8 +2,8 @@ package com.swiftwheelshub.expense.service;
 
 import com.swiftwheelshub.dto.BookingClosingDetailsDto;
 import com.swiftwheelshub.dto.BookingDto;
+import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.InvoiceDto;
-import com.swiftwheelshub.entity.CarStatus;
 import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
@@ -214,7 +214,7 @@ public class InvoiceService {
         return new BookingClosingDetailsDto(
                 invoiceDto.bookingId(),
                 receptionistEmployeeId,
-                getCarStatus(Objects.requireNonNull(invoiceDto.isVehicleDamaged()))
+                getCarStatus(invoiceDto.isVehicleDamaged())
         );
     }
 
@@ -244,8 +244,8 @@ public class InvoiceService {
                 getDaysPeriod(bookingDateTo, carReturnDate) * 2 * carAmount;
     }
 
-    private CarStatus getCarStatus(boolean isVehicleDamaged) {
-        return Boolean.TRUE.equals(isVehicleDamaged) ? CarStatus.BROKEN : CarStatus.AVAILABLE;
+    private CarState getCarStatus(boolean isVehicleDamaged) {
+        return Boolean.TRUE.equals(isVehicleDamaged) ? CarState.BROKEN : CarState.AVAILABLE;
     }
 
 }

@@ -50,31 +50,6 @@ spring:
             - name: LanguageHeaderUpdater
               args:
                 language: "EN"
-  data:
-    r2dbc:
-      repositories:
-        enabled: true
-    redis:
-      host: ${REDIS_HOST}
-      password: ${REDIS_PASSWORD}
-      port: 6379
-      database: 0
-  r2dbc:
-    host: localhost
-    port: 5432
-    name: swift_wheels_hub_gateway
-    url: r2dbc:postgresql://localhost:5432/swift_wheels_hub_gateway
-    username: ${POSTGRESQL_USERNAME}
-    password: ${POSTGRESQL_PASSWORD}
-  kafka:
-    bootstrap-servers: localhost:9092
-    listener:
-      missing-topics-fatal: false
-    consumer:
-      group-id: ${GATEWAY_CONSUMER_GROUP}
-      saved-user-topic: ${SAVED_USER_TOPIC}
-      updated-user-topic: ${UPDATED_USER_TOPIC}
-      deleted-user-topic: ${DELETED_USER_TOPIC}
 
 eureka:
   client:

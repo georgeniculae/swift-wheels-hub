@@ -214,7 +214,7 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: carStatus
+        - name: carState
           in: query
           required: true
           schema:
