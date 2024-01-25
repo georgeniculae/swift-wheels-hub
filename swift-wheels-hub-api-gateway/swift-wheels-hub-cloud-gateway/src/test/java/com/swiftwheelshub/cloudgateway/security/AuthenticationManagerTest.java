@@ -44,7 +44,7 @@ class AuthenticationManagerTest {
     void authenticateTest_success() {
         String token = TestUtils.getResourceAsJson("/data/JwtToken.json", String.class);
 
-        String username = "alexandrupopescu";
+        String username = "user";
         Collection<? extends GrantedAuthority> roles = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
         Map<String, Object> headers = Map.of(HttpHeaders.AUTHORIZATION, "Bearer " + token);

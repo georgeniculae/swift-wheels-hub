@@ -32,9 +32,6 @@ class ReactiveSecurityContextRepositoryTest {
     private AuthenticationManager authenticationManager;
 
     @Mock
-    private ReactiveSecurityContextRepository reactiveSecurityContextRepository;
-
-    @Mock
     private Authentication authentication;
 
     @Mock
