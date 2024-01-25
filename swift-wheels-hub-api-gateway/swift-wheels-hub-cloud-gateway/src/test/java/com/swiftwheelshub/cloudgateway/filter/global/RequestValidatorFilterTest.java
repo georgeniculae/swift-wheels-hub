@@ -1,6 +1,5 @@
-package com.swiftwheelshub.cloudgateway.global.filter;
+package com.swiftwheelshub.cloudgateway.filter.global;
 
-import com.swiftwheelshub.cloudgateway.filter.global.RequestValidatorFilter;
 import com.swiftwheelshub.dto.RequestValidationReport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

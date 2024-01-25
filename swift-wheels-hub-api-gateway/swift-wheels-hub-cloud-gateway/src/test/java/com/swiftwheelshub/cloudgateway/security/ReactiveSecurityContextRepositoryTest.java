@@ -22,14 +22,17 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AuthenticationManagerTest {
+class ReactiveSecurityContextRepositoryTest {
 
     @InjectMocks
     private AuthenticationManager authenticationManager;
+
+    @Mock
+    private ReactiveSecurityContextRepository reactiveSecurityContextRepository;
 
     @Mock
     private Authentication authentication;
@@ -41,10 +44,10 @@ class AuthenticationManagerTest {
     private JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
 
     @Test
-    void authenticateTest_success() {
+    void loadTest_success() {
         String token = TestUtils.getResourceAsJson("/data/JwtToken.json", String.class);
 
-        String username = "alexandrupopescu";
+        String username = "user";
         Collection<? extends GrantedAuthority> roles = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
         Map<String, Object> headers = Map.of(HttpHeaders.AUTHORIZATION, "Bearer " + token);
@@ -54,12 +57,12 @@ class AuthenticationManagerTest {
         JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(jwt, roles, username);
 
         when(authentication.getPrincipal()).thenReturn(token);
-        when(nimbusReactiveJwtDecoder.decode(anyString())).thenReturn(Mono.just(jwt));
-        when(jwtAuthenticationTokenConverter.convert(jwt)).thenReturn(Mono.just(jwtAuthenticationToken));
+        when(nimbusReactiveJwtDecoder.decode(token)).thenReturn(Mono.just(jwt));
+        when(jwtAuthenticationTokenConverter.convert(any(Jwt.class))).thenReturn(Mono.just(jwtAuthenticationToken));
 
         authenticationManager.authenticate(authentication)
                 .as(StepVerifier::create)
-                .expectNextMatches(auth -> auth.isAuthenticated() && roles.equals(auth.getAuthorities()))
+                .expectNext(jwtAuthenticationToken)
                 .verifyComplete();
     }
 

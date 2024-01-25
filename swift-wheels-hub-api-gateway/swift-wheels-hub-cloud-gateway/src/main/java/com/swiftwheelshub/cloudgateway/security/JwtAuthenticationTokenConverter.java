@@ -15,8 +15,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class JwtAuthenticationTokenConverter implements Converter<Jwt, Mono<AbstractAuthenticationToken>> {
 
-    public static final String USERNAME_CLAIM = "preferred_username";
-
+    private static final String USERNAME_CLAIM = "preferred_username";
     private final Converter<Jwt, Flux<GrantedAuthority>> jwtGrantedAuthoritiesConverter;
 
     @Override

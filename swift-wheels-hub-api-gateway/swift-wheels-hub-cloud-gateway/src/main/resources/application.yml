@@ -75,12 +75,6 @@ spring:
       saved-user-topic: ${SAVED_USER_TOPIC}
       updated-user-topic: ${UPDATED_USER_TOPIC}
       deleted-user-topic: ${DELETED_USER_TOPIC}
-  liquibase:
-    enabled: true
-    url: jdbc:postgresql://localhost:5432/swift_wheels_hub_gateway
-    change-log: classpath:db/changelog/db.changelog-master.xml
-    user: ${POSTGRESQL_USERNAME}
-    password: ${POSTGRESQL_PASSWORD}
 
 eureka:
   client:
