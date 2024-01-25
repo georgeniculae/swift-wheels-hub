@@ -42,10 +42,27 @@ eureka:
     leaseRenewalIntervalInSeconds: 10
 
 management:
+  server:
+    port: ${PORT:0}
+  endpoint:
+    loggers:
+      enabled: true
+    health:
+      group:
+        custom:
+          show-components: always
+          show-details: always
+      probes:
+        enabled: true
   endpoints:
     web:
       exposure:
-        include: [ "prometheus" ]
+        include: health,info,loggers,prometheus
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
 
 logging:
   level:
