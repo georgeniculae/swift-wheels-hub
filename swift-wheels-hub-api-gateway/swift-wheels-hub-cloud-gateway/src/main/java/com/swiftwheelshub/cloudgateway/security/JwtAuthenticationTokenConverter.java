@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Optional;
-
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationTokenConverter implements Converter<Jwt, Mono<AbstractAuthenticationToken>> {
@@ -29,12 +27,11 @@ public class JwtAuthenticationTokenConverter implements Converter<Jwt, Mono<Abst
     }
 
     private Flux<GrantedAuthority> getGrantedAuthorityFlux(Jwt source) {
-        return Optional.ofNullable(jwtGrantedAuthoritiesConverter.convert(source))
-                .orElseThrow();
+        return jwtGrantedAuthoritiesConverter.convert(source);
     }
 
-    public String extractUsername(Jwt jwt) {
-        return (String) jwt.getClaims().get(USERNAME_CLAIM);
+    public String extractUsername(Jwt source) {
+        return (String) source.getClaims().get(USERNAME_CLAIM);
     }
 
 }

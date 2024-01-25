@@ -11,8 +11,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class AuthenticationManager implements ReactiveAuthenticationManager {
 
-    private final JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
     private final NimbusReactiveJwtDecoder nimbusReactiveJwtDecoder;
+    private final JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
