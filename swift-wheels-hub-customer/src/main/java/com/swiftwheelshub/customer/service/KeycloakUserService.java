@@ -87,7 +87,7 @@ public class KeycloakUserService {
         return userRepresentation;
     }
 
-    private void doEmailVerification(String userId) {
+    private void makeEmailVerification(String userId) {
         UsersResource usersResource = getUsersResource();
         usersResource.get(userId).sendVerifyEmail();
     }
@@ -98,24 +98,26 @@ public class KeycloakUserService {
         userResource.resetPassword(createPasswordCredentials(request.password()));
 
         if (request.needsEmailVerification()) {
-            doEmailVerification(getUserId(userRepresentation.getUsername()));
+            makeEmailVerification(getUserId(userRepresentation.getUsername()));
         }
-
-        String registrationDate = ZonedDateTime.of(LocalDate.now(), LocalTime.now(), ZoneId.of(UTC))
-                .truncatedTo(ChronoUnit.SECONDS)
-                .format(DateTimeFormatter.ISO_DATE_TIME);
 
         return RegistrationResponse.builder()
                 .username(userRepresentation.getUsername())
                 .email(userRepresentation.getEmail())
                 .firstName(userRepresentation.getFirstName())
                 .lastName(userRepresentation.getLastName())
-                .registrationDate(registrationDate)
+                .registrationDate(getRegistrationDate())
                 .build();
     }
 
     private String getUserId(String username) {
         return getUser(username).getFirst().getId();
+    }
+
+    private String getRegistrationDate() {
+        return ZonedDateTime.of(LocalDate.now(), LocalTime.now(), ZoneId.of(UTC))
+                .truncatedTo(ChronoUnit.SECONDS)
+                .format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
 }
