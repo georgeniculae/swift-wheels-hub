@@ -28,9 +28,6 @@ spring:
         format_sql: true
   kafka:
     bootstrap-servers: localhost:9092
-  liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.xml
 
 eureka:
   client:
@@ -102,29 +99,6 @@ keycloak:
   realm: ${KEYCLOAK_REALM}
   clientId: ${KEYCLOAK_CLIENT_ID}
   clientSecret: ${KEYCLOAK_CLIENT_SECRET}
-
-kafka:
-  enabled: true
-  producer: true
-  user-producer: true
-  saved-user-producer-topic-name: ${SAVED_USER_TOPIC}
-  updated-user-producer-topic-name: ${UPDATED_USER_TOPIC}
-  deleted-user-producer-topic-name: ${DELETED_USER_TOPIC}
-  audit-log-topic-name: ${CUSTOMER_AUDIT_LOG_INFO_TOPIC}
-
-debezium:
-  enabled: true
-  connector-name: debezium-customer-postgres-connector
-  server-name: customer-postgres-server
-  server-id: 10181
-  database-name: swift_wheels_hub_customer
-  database-host: localhost
-  database-port: 5432
-  topic-name: ${DEBEZIUM_USER_TOPIC}
-  table-name: user
-  schema-name: public
-  slot-name: customer_slot
-  groupId: ${USER_CONSUMER_GROUP}
 
 audit:
   enabled: true

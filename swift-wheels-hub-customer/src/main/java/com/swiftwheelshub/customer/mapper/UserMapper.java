@@ -1,8 +1,9 @@
 package com.swiftwheelshub.customer.mapper;
 
-import com.swiftwheelshub.dto.CurrentUserDetails;
+import com.swiftwheelshub.dto.UserDetails;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserDto;
+import com.swiftwheelshub.dto.UserUpdateRequest;
 import com.swiftwheelshub.entity.User;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -28,12 +29,16 @@ public interface UserMapper {
 
     String UTC = "UTC";
     String ADDRESS = "address";
+    String DATE_OF_BIRTH = "dateOfBirth";
 
-    CurrentUserDetails mapUserToCurrentUserDto(User user);
-
-    UserDto mapEntityToDto(User user);
+    UserRepresentation mapToUserRepresentation(UserUpdateRequest userUpdateRequest);
 
     @Mapping(target = "address", expression = "java(getAddress(userRepresentation))")
+    @Mapping(target = "dateOfBirth", expression = "java(getDateOfBirth(userRepresentation))")
+    UserDetails mapUserToCurrentUserDetails(UserRepresentation userRepresentation);
+
+    @Mapping(target = "address", expression = "java(getAddress(userRepresentation))")
+    @Mapping(target = "dateOfBirth", expression = "java(getDateOfBirth(userRepresentation))")
     @Mapping(target = "registrationDate", expression = "java(getRegistrationDate())")
     RegistrationResponse mapToRegistrationResponse(UserRepresentation userRepresentation);
 
@@ -41,6 +46,14 @@ public interface UserMapper {
         return userRepresentation.getAttributes()
                 .getOrDefault(ADDRESS, List.of(StringUtils.EMPTY))
                 .getFirst();
+    }
+
+    default LocalDate getDateOfBirth(UserRepresentation userRepresentation) {
+        String dateOfBirthAsString = userRepresentation.getAttributes()
+                .getOrDefault(DATE_OF_BIRTH, List.of(StringUtils.EMPTY))
+                .getFirst();
+
+        return LocalDate.parse(dateOfBirthAsString);
     }
 
     default String getRegistrationDate() {

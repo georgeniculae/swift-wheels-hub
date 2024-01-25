@@ -1,7 +1,8 @@
 package com.swiftwheelshub.customer.util;
 
-import com.swiftwheelshub.dto.CurrentUserDetails;
 import com.swiftwheelshub.dto.RegisterRequest;
+import com.swiftwheelshub.dto.RegistrationResponse;
+import com.swiftwheelshub.dto.UserDetails;
 import com.swiftwheelshub.dto.UserDto;
 import com.swiftwheelshub.entity.User;
 
@@ -9,17 +10,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AssertionUtils {
 
-    public static void assertCurrentUser(User user, CurrentUserDetails currentUserDetails) {
-        assertEquals(user.getUsername(), currentUserDetails.username());
-        assertEquals(user.getPassword(), currentUserDetails.password());
-        assertEquals(user.getRole(), currentUserDetails.role());
-        assertEquals(user.getFirstName(), currentUserDetails.firstName());
-        assertEquals(user.getLastName(), currentUserDetails.lastName());
-        assertEquals(user.getEmail(), currentUserDetails.email());
-        assertEquals(user.isAccountNonExpired(), currentUserDetails.accountNonExpired());
-        assertEquals(user.isAccountNonExpired(), currentUserDetails.accountNonExpired());
-        assertEquals(user.isCredentialsNonExpired(), currentUserDetails.credentialsNonExpired());
-        assertEquals(user.getAuthorities(), currentUserDetails.authorities());
+    public static void assertCurrentUser(User user, UserDetails userDetails) {
+        assertEquals(user.getUsername(), userDetails.username());
+        assertEquals(user.getRole(), userDetails.role());
+        assertEquals(user.getFirstName(), userDetails.firstName());
+        assertEquals(user.getLastName(), userDetails.lastName());
+        assertEquals(user.getEmail(), userDetails.email());
+        assertEquals(user.getAuthorities(), userDetails.authorities());
     }
 
     public static void assertUser(User user, UserDto userDto) {
@@ -39,4 +36,10 @@ public class AssertionUtils {
         assertEquals(registerRequest.email(), user.getEmail());
     }
 
+    public static void assertRegistrationResponse(RegisterRequest registerRequest, RegistrationResponse registrationResponse) {
+        assertEquals(registerRequest.username(), registrationResponse.username());
+        assertEquals(registerRequest.firstName(), registrationResponse.firstName());
+        assertEquals(registerRequest.lastName(), registrationResponse.lastName());
+        assertEquals(registerRequest.email(), registrationResponse.email());
+    }
 }

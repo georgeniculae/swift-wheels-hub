@@ -1,15 +1,14 @@
 package com.swiftwheelshub.customer.controller;
 
 import com.swiftwheelshub.customer.service.CustomerService;
-import com.swiftwheelshub.customer.service.KeycloakUserService;
-import com.swiftwheelshub.dto.CurrentUserDetails;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
-import com.swiftwheelshub.dto.UserDto;
+import com.swiftwheelshub.dto.UserDetails;
+import com.swiftwheelshub.dto.UserUpdateRequest;
 import com.swiftwheelshub.lib.aspect.LogActivity;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,27 +18,19 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 
     private final CustomerService customerService;
-    private final KeycloakUserService keycloakUserService;
 
     @GetMapping(path = "/current")
-    public ResponseEntity<CurrentUserDetails> getCurrentUser() {
-        return ResponseEntity.ok(customerService.getCurrentUser());
-    }
-
-    @GetMapping(path = "/keycloak-user/{username}")
-    public ResponseEntity<List<UserRepresentation>> getUser(@PathVariable("username") String username) {
-        return ResponseEntity.ok(keycloakUserService.getUser(username));
+    public ResponseEntity<UserDetails> getCurrentUser(HttpServletRequest request) {
+        return ResponseEntity.ok(customerService.getCurrentUser(request));
     }
 
     @GetMapping(path = "/{username}")
-    public ResponseEntity<UserDto> findUserByUsername(@PathVariable("username") String username) {
+    public ResponseEntity<UserDetails> findUserByUsername(@PathVariable("username") String username) {
         return ResponseEntity.ok(customerService.findUserByUsername(username));
     }
 
@@ -54,15 +45,16 @@ public class UserController {
 
     @PutMapping(path = "/{id}")
     @LogActivity(
-            sentParameters = "id",
+            sentParameters = "username",
             activityDescription = "User update"
     )
-    public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long id, @RequestBody @Valid UserDto userDto) {
-        return ResponseEntity.ok(customerService.updateUser(id, userDto));
+    public ResponseEntity<UserDetails> updateUser(@PathVariable("id") String id,
+                                                  @RequestBody @Valid UserUpdateRequest userUpdateRequest) {
+        return ResponseEntity.ok(customerService.updateUser(id, userUpdateRequest));
     }
 
     @GetMapping(path = "/count")
-    public ResponseEntity<Long> countUsers() {
+    public ResponseEntity<Integer> countUsers() {
         return ResponseEntity.ok(customerService.countUsers());
     }
 

@@ -11,7 +11,7 @@ public record RegistrationResponse(
         String lastName,
         String email,
         String address,
-        LocalDate datOfBirth,
+        LocalDate dateOfBirth,
         String registrationDate
 ) {
 }

@@ -1,108 +1,153 @@
 package com.swiftwheelshub.customer.service;
 
 import com.swiftwheelshub.customer.mapper.UserMapper;
-import com.swiftwheelshub.dto.CurrentUserDetails;
+import com.swiftwheelshub.dto.UserDetails;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
-import com.swiftwheelshub.dto.UserDto;
-import com.swiftwheelshub.entity.Role;
-import com.swiftwheelshub.entity.User;
+import com.swiftwheelshub.dto.UserUpdateRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
-import com.swiftwheelshub.customer.repository.UserRepository;
+import com.swiftwheelshub.lib.util.HttpRequestUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.admin.client.CreatedResponseUtil;
+import org.keycloak.admin.client.resource.UserResource;
+import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
 
-    private final KeycloakUserService keycloakUserService;
-    private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    private static final String ADDRESS = "address";
+
+    private static final String DATE_OF_BIRTH = "dateOfBirth";
+
+    private final UsersResource usersResource;
+
     private final UserMapper userMapper;
+
+    public UserDetails findUserByUsername(String username) {
+        UserRepresentation userRepresentation = getUserRepresentation(username);
+
+        return userMapper.mapUserToCurrentUserDetails(userRepresentation);
+    }
+
+    public UserDetails getCurrentUser(HttpServletRequest request) {
+        String username = HttpRequestUtil.extractUsername(request);
+
+        return findUserByUsername(username);
+    }
+
+    public Integer countUsers() {
+        return usersResource.count();
+    }
 
     public RegistrationResponse registerCustomer(RegisterRequest request) {
         validateRequest(request);
+        UserRepresentation userRepresentation = createUserRepresentation(request);
 
-        return keycloakUserService.createUser(request);
+        try (Response response = usersResource.create(userRepresentation)) {
+            final int statusCode = response.getStatus();
+
+            if (HttpStatus.CREATED.value() == statusCode) {
+                return getRegistrationResponse(userRepresentation, response, request);
+            }
+
+            throw new SwiftWheelsHubResponseStatusException(
+                    HttpStatusCode.valueOf(statusCode),
+                    "User could not be created: " + response.getStatusInfo().getReasonPhrase()
+            );
+        }
     }
 
-    public CurrentUserDetails getCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public UserDetails updateUser(String id, UserUpdateRequest userUpdateRequest) {
+        UserResource userResource = usersResource.get(id);
 
-        User user = findByUsername(username);
+        UserRepresentation userRepresentation = userMapper.mapToUserRepresentation(userUpdateRequest);
+        userRepresentation.singleAttribute(ADDRESS, userUpdateRequest.address());
+        userRepresentation.singleAttribute(DATE_OF_BIRTH, userUpdateRequest.dateOfBirth().toString());
 
-        return userMapper.mapUserToCurrentUserDto(user);
+        userResource.update(userRepresentation);
+
+        return userMapper.mapUserToCurrentUserDetails(userRepresentation);
     }
 
-    public UserDto findUserByUsername(String username) {
-        User user = findByUsername(username);
-
-        return userMapper.mapEntityToDto(user);
-    }
-
-    public Long countUsers() {
-        return userRepository.count();
-    }
-
-    public User saveUser(RegisterRequest request) {
-
-        User user = new User();
-
-        user.setUsername(request.username());
-        user.setPassword(passwordEncoder.encode(request.password()));
-        user.setFirstName(request.firstName());
-        user.setLastName(request.lastName());
-        user.setEmail(request.email());
-        user.setAddress(request.address());
-        user.setRole(Role.ROLE_USER);
-        user.setDateOfBirth(request.dateOfBirth());
-
-        return userRepository.saveAndFlush(user);
-    }
-
-    public UserDto updateUser(Long id, UserDto userDto) {
-        User user = findEntityById(id);
-
-        user.setPassword(passwordEncoder.encode(userDto.password()));
-        user.setFirstName(userDto.firstName());
-        user.setLastName(userDto.lastName());
-        user.setEmail(userDto.email());
-
-        User savedUser = userRepository.saveAndFlush(user);
-
-        return userMapper.mapEntityToDto(savedUser);
-    }
-
-    @Transactional
     public void deleteUserByUsername(String username) {
-        userRepository.deleteByUsername(username);
+        UserRepresentation userRepresentation = getUserRepresentation(username);
+        UserResource userResource = usersResource.get(userRepresentation.getId());
+        userResource.remove();
     }
 
-    private User findEntityById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("User with id " + id + " doesn't exist"));
+    private CredentialRepresentation createPasswordCredentials(String password) {
+        CredentialRepresentation passwordCredentials = new CredentialRepresentation();
+        passwordCredentials.setTemporary(false);
+        passwordCredentials.setType(CredentialRepresentation.PASSWORD);
+        passwordCredentials.setValue(password);
+
+        return passwordCredentials;
     }
 
-    private User findByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("User with username " + username + " doesn't exist"));
+    private UserRepresentation createUserRepresentation(RegisterRequest request) {
+        UserRepresentation userRepresentation = new UserRepresentation();
+        userRepresentation.setUsername(request.username());
+        userRepresentation.setFirstName(request.firstName());
+        userRepresentation.setLastName(request.lastName());
+        userRepresentation.setEmail(request.email());
+        userRepresentation.setCredentials(List.of(createPasswordCredentials(request.password())));
+        userRepresentation.singleAttribute(ADDRESS, request.address());
+        userRepresentation.singleAttribute(DATE_OF_BIRTH, request.dateOfBirth().toString());
+        userRepresentation.setEmailVerified(false);
+        userRepresentation.setEnabled(true);
+
+        return userRepresentation;
+    }
+
+    private void makeEmailVerification(String userId) {
+        usersResource.get(userId).sendVerifyEmail();
+    }
+
+    private RegistrationResponse getRegistrationResponse(UserRepresentation userRepresentation, Response response,
+                                                         RegisterRequest request) {
+        UserResource userResource = usersResource.get(CreatedResponseUtil.getCreatedId(response));
+        userResource.resetPassword(createPasswordCredentials(request.password()));
+
+        if (request.needsEmailVerification()) {
+            makeEmailVerification(getUserId(userRepresentation.getUsername()));
+        }
+
+        return userMapper.mapToRegistrationResponse(userRepresentation);
+    }
+
+    private UserRepresentation getUserRepresentation(String username) {
+        List<UserRepresentation> userRepresentations = getUserRepresentations(username);
+
+        if (userRepresentations.isEmpty()) {
+            throw new SwiftWheelsHubNotFoundException("User with username " + username + " doesn't exist");
+        }
+
+        return userRepresentations.getFirst();
+    }
+
+    private List<UserRepresentation> getUserRepresentations(String username) {
+        return usersResource.searchByUsername(username, true);
+    }
+
+    private String getUserId(String username) {
+        return getUserRepresentation(username).getId();
     }
 
     private void validateRequest(RegisterRequest request) {
-        if (userRepository.existsByUsername(request.username())) {
-            throw new SwiftWheelsHubResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists");
-        }
-
         if (Optional.ofNullable(request.password()).orElseThrow().length() < 8) {
             throw new SwiftWheelsHubResponseStatusException(HttpStatus.BAD_REQUEST, "Password too short");
         }

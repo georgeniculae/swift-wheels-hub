@@ -1,12 +1,13 @@
 package com.swiftwheelshub.customer.controller;
 
 import com.swiftwheelshub.customer.service.CustomerService;
-import com.swiftwheelshub.customer.service.KeycloakUserService;
 import com.swiftwheelshub.customer.util.TestUtils;
-import com.swiftwheelshub.dto.CurrentUserDetails;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
+import com.swiftwheelshub.dto.UserDetails;
 import com.swiftwheelshub.dto.UserDto;
+import com.swiftwheelshub.dto.UserUpdateRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,7 +24,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -43,15 +43,12 @@ class UserControllerTest {
     @MockBean
     private CustomerService customerService;
 
-    @MockBean
-    private KeycloakUserService keycloakUserService;
-
     @Test
     void getCurrentUserTest_success() throws Exception {
-        CurrentUserDetails currentUserDetails =
-                TestUtils.getResourceAsJson("/data/CurrentUserDto.json", CurrentUserDetails.class);
+        UserDetails userDetails =
+                TestUtils.getResourceAsJson("/data/UserDetails.json", UserDetails.class);
 
-        when(customerService.getCurrentUser()).thenReturn(currentUserDetails);
+        when(customerService.getCurrentUser(any(HttpServletRequest.class))).thenReturn(userDetails);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/current").contextPath(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -159,11 +156,11 @@ class UserControllerTest {
 
     @Test
     void updateUserTest_success() throws Exception {
-        UserDto userDto = TestUtils.getResourceAsJson("/data/UserDto.json", UserDto.class);
+        UserDetails userDetails = TestUtils.getResourceAsJson("/data/UserDetails.json", UserDetails.class);
 
-        String content = TestUtils.writeValueAsString(userDto);
+        String content = TestUtils.writeValueAsString(userDetails);
 
-        when(customerService.updateUser(anyLong(), any(userDto.getClass()))).thenReturn(userDto);
+        when(customerService.updateUser(anyString(), any(UserUpdateRequest.class))).thenReturn(userDetails);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L).contextPath(PATH)
                         .with(csrf())
@@ -222,7 +219,7 @@ class UserControllerTest {
 
     @Test
     void findUserByUsernameTest_success() throws Exception {
-        UserDto userDto = TestUtils.getResourceAsJson("/data/UserDto.json", UserDto.class);
+        UserDetails userDto = TestUtils.getResourceAsJson("/data/UserDetails.json", UserDetails.class);
 
         when(customerService.findUserByUsername(anyString())).thenReturn(userDto);
 
@@ -254,7 +251,7 @@ class UserControllerTest {
 
     @Test
     void countUsersTest_success() throws Exception {
-        when(customerService.countUsers()).thenReturn(1L);
+        when(customerService.countUsers()).thenReturn(1);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count").contextPath(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
