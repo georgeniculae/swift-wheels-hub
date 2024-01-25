@@ -2,9 +2,7 @@ package com.swiftwheelshub.customer.mapper;
 
 import com.swiftwheelshub.dto.UserDetails;
 import com.swiftwheelshub.dto.RegistrationResponse;
-import com.swiftwheelshub.dto.UserDto;
 import com.swiftwheelshub.dto.UserUpdateRequest;
-import com.swiftwheelshub.entity.User;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.mapstruct.InjectionStrategy;
