@@ -19,7 +19,7 @@
 
     <modules>
         <module>swift-wheels-hub-common-model</module>
-        <module>swift-wheels-hub-dto</module>
+        <module>swift-wheels-hub-common-dto</module>
         <module>swift-wheels-hub-common-lib</module>
     </modules>
 
