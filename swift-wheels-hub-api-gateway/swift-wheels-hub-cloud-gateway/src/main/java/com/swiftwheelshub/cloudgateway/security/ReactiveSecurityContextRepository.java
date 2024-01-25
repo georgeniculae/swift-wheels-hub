@@ -3,9 +3,9 @@ package com.swiftwheelshub.cloudgateway.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.server.ServerWebExchange;
@@ -37,10 +37,15 @@ public class ReactiveSecurityContextRepository implements ServerSecurityContextR
     public Mono<SecurityContext> load(ServerWebExchange exchange) {
         return Mono.justOrEmpty(exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION))
                 .filter(authorization -> authorization.startsWith(BEARER))
-                .map(token -> token.substring(BEARER.length()))
-                .flatMap(token -> Mono.just(new UsernamePasswordAuthenticationToken(token, token)))
+                .map(this::getBearerTokenAuthenticationToken)
                 .delayUntil(authenticationManager::authenticate)
                 .map(SecurityContextImpl::new);
+    }
+
+    private BearerTokenAuthenticationToken getBearerTokenAuthenticationToken(String authorizationToken) {
+        String jwtToken = authorizationToken.substring(BEARER.length());
+
+        return new BearerTokenAuthenticationToken(jwtToken);
     }
 
 }

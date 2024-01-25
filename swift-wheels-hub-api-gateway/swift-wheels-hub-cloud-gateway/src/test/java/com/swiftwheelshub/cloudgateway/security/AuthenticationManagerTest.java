@@ -29,9 +29,6 @@ class AuthenticationManagerTest {
     @Mock
     private JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
 
-    @Mock
-    private UserDetailsService userDetailsService;
-
 //    @Test
 //    void authenticateTest_success() {
 //        User user = TestUtils.getResourceAsJson("/data/UserDto.json", User.class);
