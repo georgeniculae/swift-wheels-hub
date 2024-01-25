@@ -18,11 +18,11 @@ public class AssertionUtils {
     public static void assertCar(Car car, CarDto carDto) {
         assertEquals(car.getMake(), carDto.make());
         assertEquals(car.getModel(), carDto.model());
-        assertEquals(car.getBodyType(), Objects.requireNonNull(carDto.bodyType()));
+        assertEquals(car.getBodyType().getDisplayName(), carDto.bodyCategory().getDisplayName());
         assertEquals(car.getYearOfProduction(), carDto.yearOfProduction());
         assertEquals(car.getColor(), carDto.color());
         assertEquals(car.getMileage(), carDto.mileage());
-        assertEquals(car.getCarStatus(), Objects.requireNonNull(carDto.carStatus()));
+        assertEquals(car.getCarStatus().getDisplayName(), carDto.carState().getDisplayName());
         assertEquals(car.getAmount(), Objects.requireNonNull(carDto.amount()).doubleValue());
         assertEquals(car.getUrlOfImage(), carDto.urlOfImage());
     }

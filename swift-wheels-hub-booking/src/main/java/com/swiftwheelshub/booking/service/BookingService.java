@@ -7,6 +7,7 @@ import com.swiftwheelshub.dto.BookingDto;
 import com.swiftwheelshub.dto.CarDetailsForUpdateDto;
 import com.swiftwheelshub.dto.CarDto;
 import com.swiftwheelshub.dto.CarForUpdate;
+import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.EmployeeDto;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.entity.BookingStatus;
@@ -253,8 +254,8 @@ public class BookingService {
     private void getCarsForStatusUpdate(HttpServletRequest request, Long existingCarId, Long newCarId) {
         if (!existingCarId.equals(newCarId)) {
             List<CarForUpdate> carsForUpdate = List.of(
-                    new CarForUpdate(existingCarId, CarStatus.AVAILABLE),
-                    new CarForUpdate(newCarId, CarStatus.NOT_AVAILABLE)
+                    new CarForUpdate(existingCarId, CarState.AVAILABLE),
+                    new CarForUpdate(newCarId, CarState.NOT_AVAILABLE)
             );
 
             carService.updateCarsStatus(request, carsForUpdate);
@@ -265,7 +266,7 @@ public class BookingService {
                                               BookingClosingDetailsDto bookingClosingDetailsDto) {
         CarDetailsForUpdateDto carDetailsForUpdateDto = new CarDetailsForUpdateDto(
                 bookingDto.carId(),
-                bookingClosingDetailsDto.carStatus(),
+                bookingClosingDetailsDto.carState(),
                 bookingClosingDetailsDto.receptionistEmployeeId()
         );
 

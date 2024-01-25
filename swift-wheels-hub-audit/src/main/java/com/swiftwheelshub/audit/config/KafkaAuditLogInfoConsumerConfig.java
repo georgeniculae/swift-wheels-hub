@@ -1,6 +1,6 @@
 package com.swiftwheelshub.audit.config;
 
-import com.swiftwheelshub.dto.UserDto;
+import com.swiftwheelshub.dto.UserDetails;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +26,7 @@ public class KafkaAuditLogInfoConsumerConfig {
     private String groupId;
 
     @Bean
-    public ConsumerFactory<String, UserDto> auditLogInfoConsumerFactory() {
+    public ConsumerFactory<String, UserDetails> auditLogInfoConsumerFactory() {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
@@ -34,12 +34,12 @@ public class KafkaAuditLogInfoConsumerConfig {
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 
-        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(UserDto.class));
+        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(UserDetails.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, UserDto> auditListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, UserDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, UserDetails> auditListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, UserDetails> factory = new ConcurrentKafkaListenerContainerFactory<>();
 
         factory.setConsumerFactory(auditLogInfoConsumerFactory());
 

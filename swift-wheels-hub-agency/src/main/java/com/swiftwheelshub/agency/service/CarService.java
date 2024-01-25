@@ -85,12 +85,12 @@ public class CarService {
 
         existingCar.setMake(updatedCarDto.make());
         existingCar.setModel(updatedCarDto.model());
-        existingCar.setBodyType(Objects.requireNonNull(updatedCarDto.bodyType()));
+        existingCar.setBodyType(BodyType.valueOf(updatedCarDto.bodyCategory().getDisplayName()));
         existingCar.setYearOfProduction(updatedCarDto.yearOfProduction());
         existingCar.setColor(updatedCarDto.color());
         existingCar.setMileage(updatedCarDto.mileage());
         existingCar.setAmount(Objects.requireNonNull(updatedCarDto.amount()));
-        existingCar.setCarStatus(Objects.requireNonNull(updatedCarDto.carStatus()));
+        existingCar.setCarStatus(CarStatus.valueOf(updatedCarDto.carState().getDisplayName()));
         existingCar.setOriginalBranch(branch);
         existingCar.setUrlOfImage(updatedCarDto.urlOfImage());
 
@@ -113,7 +113,7 @@ public class CarService {
                 .stream()
                 .peek(car -> {
                     CarForUpdate carForUpdate = getMatchingCarDetails(carsForUpdate, car);
-                    car.setCarStatus(carForUpdate.carStatus());
+                    car.setCarStatus(CarStatus.valueOf(carForUpdate.carState().getDisplayName()));
                 })
                 .map(this::saveEntity)
                 .map(carMapper::mapEntityToDto)
@@ -175,7 +175,7 @@ public class CarService {
 
     public CarDto updateCarWhenBookingIsClosed(Long id, CarDetailsForUpdateDto carDetailsForUpdateDto) {
         Car car = findEntityById(id);
-        car.setCarStatus(Objects.requireNonNull(carDetailsForUpdateDto.carStatus()));
+        car.setCarStatus(CarStatus.valueOf(carDetailsForUpdateDto.carState().getDisplayName()));
         car.setActualBranch(getActualBranch(carDetailsForUpdateDto));
 
         Car savedCar = saveEntity(car);
