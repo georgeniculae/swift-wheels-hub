@@ -1,4 +1,4 @@
-package com.swiftwheelshub.lib.security.apikey;
+package com.swiftwheelshub.lib.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -18,8 +17,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "authentication", name = "type", havingValue = "apikey")
-public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
+public class AuthenticationFilter extends OncePerRequestFilter {
 
     private final static String API_KEY_HEADER = "X-API-KEY";
     private final AuthenticationManager authenticationManager;

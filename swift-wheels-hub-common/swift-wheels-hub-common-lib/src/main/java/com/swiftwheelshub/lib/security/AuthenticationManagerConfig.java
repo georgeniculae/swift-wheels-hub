@@ -1,19 +1,16 @@
-package com.swiftwheelshub.lib.security.apikey;
+package com.swiftwheelshub.lib.security;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 
-import java.util.Collections;
 import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-@ConditionalOnBean(name = "apiKeyAuthenticationFilter")
-public class ApiKeyAuthenticationManager {
+public class AuthenticationManagerConfig {
 
     private final ApiKeyAuthenticationProvider apiKeyAuthenticationProvider;
 

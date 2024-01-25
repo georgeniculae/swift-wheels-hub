@@ -2,7 +2,6 @@ package com.swiftwheelshub.lib.aspect;
 
 import com.swiftwheelshub.dto.AuditLogInfoDto;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
-import com.swiftwheelshub.lib.security.jwt.JwtService;
 import com.swiftwheelshub.lib.service.AuditLogProducerService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -30,7 +28,8 @@ import java.util.Optional;
 @Slf4j
 public class AuditAspect {
 
-    private final JwtService jwtService;
+    private static final String USERNAME = "X-USERNAME";
+
     private final AuditLogProducerService auditLogProducerService;
 
     @Around("@annotation(LogActivity)")
@@ -58,10 +57,11 @@ public class AuditAspect {
 
     private String getUsername() {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = Optional.ofNullable(requestAttributes).orElseThrow().getRequest();
+        HttpServletRequest request = Optional.ofNullable(requestAttributes)
+                .orElseThrow()
+                .getRequest();
 
-        return Optional.ofNullable(request.getHeader(HttpHeaders.AUTHORIZATION))
-                .map(authenticationToken -> jwtService.extractUsername(authenticationToken.substring(7)))
+        return Optional.ofNullable(request.getHeader(USERNAME))
                 .orElse(StringUtils.EMPTY);
     }
 

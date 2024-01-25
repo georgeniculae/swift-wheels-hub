@@ -1,4 +1,4 @@
-package com.swiftwheelshub.lib.security.apikey;
+package com.swiftwheelshub.lib.security;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Transient;
@@ -7,23 +7,18 @@ import org.springframework.security.core.authority.AuthorityUtils;
 @Transient
 public class ApiKeyAuthenticationToken extends AbstractAuthenticationToken {
 
-    private String apiKey;
+    private final String apiKey;
 
-    public ApiKeyAuthenticationToken(String apiKey, boolean authenticated) {
+    public ApiKeyAuthenticationToken(String apiKey, boolean isAuthenticated) {
         super(AuthorityUtils.NO_AUTHORITIES);
+        super.setAuthenticated(isAuthenticated);
         this.apiKey = apiKey;
-        setAuthenticated(authenticated);
     }
 
     public ApiKeyAuthenticationToken(String apiKey) {
         super(AuthorityUtils.NO_AUTHORITIES);
+        super.setAuthenticated(false);
         this.apiKey = apiKey;
-        setAuthenticated(false);
-    }
-
-    public ApiKeyAuthenticationToken() {
-        super(AuthorityUtils.NO_AUTHORITIES);
-        setAuthenticated(false);
     }
 
     @Override

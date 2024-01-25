@@ -1,7 +1,6 @@
-package com.swiftwheelshub.lib.security.apikey;
+package com.swiftwheelshub.lib.security;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -16,10 +15,9 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
-@ConditionalOnBean(name = "apiKeyAuthenticationFilter")
-public class ApiKeySecurityConfig {
+public class SecurityConfig {
 
-    private final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+    private final AuthenticationFilter authenticationFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -27,7 +25,7 @@ public class ApiKeySecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request.anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(apiKeyAuthenticationFilter, AnonymousAuthenticationFilter.class)
+                .addFilterBefore(authenticationFilter, AnonymousAuthenticationFilter.class)
                 .build();
     }
 
