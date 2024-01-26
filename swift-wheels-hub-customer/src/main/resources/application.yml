@@ -100,6 +100,8 @@ keycloak:
   clientSecret: ${KEYCLOAK_CLIENT_SECRET}
 
 kafka:
+  enabled: true
+  producer: true
   audit-log-topic-name: ${CUSTOMER_AUDIT_LOG_INFO_TOPIC}
 
 audit:
