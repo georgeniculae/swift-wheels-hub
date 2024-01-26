@@ -13,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 @ExtendWith(MockitoExtension.class)
 class UserMapperTest {
 
@@ -26,6 +28,11 @@ class UserMapperTest {
         UserRepresentation userRepresentation = userMapper.mapToUserRepresentation(userUpdateRequest);
 
         AssertionUtils.assertUserRepresentation(userUpdateRequest, userRepresentation);
+    }
+
+    @Test
+    void mapToUserRepresentationTest_null() {
+        assertNull(userMapper.mapToUserRepresentation(null));
     }
 
     @Test
@@ -50,6 +57,11 @@ class UserMapperTest {
     }
 
     @Test
+    void mapUserToUserDetailsTest_null() {
+        assertNull(userMapper.mapUserToUserDetails(null));
+    }
+
+    @Test
     void mapToRegistrationResponseTest_success() {
         CredentialRepresentation passwordCredentials = new CredentialRepresentation();
         passwordCredentials.setTemporary(false);
@@ -68,6 +80,11 @@ class UserMapperTest {
         RegistrationResponse registrationResponse = userMapper.mapToRegistrationResponse(userRepresentation);
 
         AssertionUtils.assertRegistrationResponse(userRepresentation, registrationResponse);
+    }
+
+    @Test
+    void mapToRegistrationResponseTest_null() {
+        assertNull(userMapper.mapToRegistrationResponse(null));
     }
 
 }
