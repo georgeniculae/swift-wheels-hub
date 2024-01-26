@@ -2,42 +2,35 @@ package com.swiftwheelshub.customer.service;
 
 import com.swiftwheelshub.customer.mapper.UserMapper;
 import com.swiftwheelshub.customer.mapper.UserMapperImpl;
-import com.swiftwheelshub.customer.repository.UserRepository;
 import com.swiftwheelshub.customer.util.AssertionUtils;
 import com.swiftwheelshub.customer.util.TestUtils;
-import com.swiftwheelshub.dto.UserDetails;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
-import com.swiftwheelshub.dto.UserDto;
-import com.swiftwheelshub.entity.User;
-import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
+import jakarta.ws.rs.core.Response;
+import org.jboss.resteasy.core.Headers;
+import org.jboss.resteasy.core.ServerResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.keycloak.admin.client.CreatedResponseUtil;
+import org.keycloak.admin.client.resource.UserResource;
+import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -48,65 +41,41 @@ class CustomerServiceTest {
     private CustomerService customerService;
 
     @Mock
-    private UserRepository userRepository;
+    private UsersResource usersResource;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
-
-    @Mock
-    private Authentication authentication;
-
-    @Mock
-    private SecurityContext securityContext;
+    private UserResource userResource;
 
     @Spy
     private UserMapper userMapper = new UserMapperImpl();
 
-    @Captor
-    private ArgumentCaptor<User> argumentCaptor = ArgumentCaptor.forClass(User.class);
-
     @Test
+    @SuppressWarnings("all")
     void registerCustomerTest_success() {
         RegisterRequest registerRequest =
                 TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
-        User user = TestUtils.getResourceAsJson("/data/User.json", User.class);
-        String password = "$2a$10$hadYmhDPuigFKchXrkmmUe6i1L8B50Be.ggbdVuszCbYu7yg14Lqa";
 
-        when(userRepository.existsByUsername(anyString())).thenReturn(false);
-        when(passwordEncoder.encode(any())).thenReturn(password);
-        when(userRepository.saveAndFlush(any(User.class))).thenReturn(user);
+        Headers<Object> headers = new Headers<>();
+        headers.put("test", List.of());
+        Response response = new ServerResponse(null, 201, headers);
 
-        RegistrationResponse registrationResponse =
-                assertDoesNotThrow(() -> customerService.registerCustomer(registerRequest));
+        mockStatic(CreatedResponseUtil.class);
+        when(CreatedResponseUtil.getCreatedId(any())).thenReturn("id");
+        when(usersResource.create(any(UserRepresentation.class))).thenReturn(response);
+        when(usersResource.get(anyString())).thenReturn(userResource);
+        doNothing().when(userResource).resetPassword(any(CredentialRepresentation.class));
+
+        RegistrationResponse registrationResponse = customerService.registerCustomer(registerRequest);
 
         AssertionUtils.assertRegistrationResponse(registerRequest, registrationResponse);
 
-        verify(passwordEncoder).encode(any());
-        verify(userRepository).saveAndFlush(argumentCaptor.capture());
-
-        AssertionUtils.assertUser(registerRequest, argumentCaptor.getValue());
-    }
-
-    @Test
-    void registerCustomerTest_existingUsername() {
-        RegisterRequest registerRequest =
-                TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
-
-        when(userRepository.existsByUsername(anyString())).thenReturn(true);
-
-        SwiftWheelsHubResponseStatusException swiftWheelsHubResponseStatusException =
-                assertThrows(SwiftWheelsHubResponseStatusException.class, () -> customerService.registerCustomer(registerRequest));
-
-        assertNotNull(swiftWheelsHubResponseStatusException);
-        assertThat(swiftWheelsHubResponseStatusException.getMessage()).contains("Username already exists");
+        verify(userMapper).mapToRegistrationResponse(any(UserRepresentation.class));
     }
 
     @Test
     void registerCustomerTest_customerUnderAge() {
         RegisterRequest registerRequest =
                 TestUtils.getResourceAsJson("/data/RegisterRequestAgeBelow18.json", RegisterRequest.class);
-
-        when(userRepository.existsByUsername(anyString())).thenReturn(false);
 
         SwiftWheelsHubResponseStatusException swiftWheelsHubResponseStatusException =
                 assertThrows(SwiftWheelsHubResponseStatusException.class, () -> customerService.registerCustomer(registerRequest));
@@ -119,8 +88,6 @@ class CustomerServiceTest {
     void registerCustomerTest_passwordTooShort() {
         RegisterRequest registerRequest =
                 TestUtils.getResourceAsJson("/data/RegisterRequestPasswordTooShort.json", RegisterRequest.class);
-
-        when(userRepository.existsByUsername(anyString())).thenReturn(false);
 
         SwiftWheelsHubResponseStatusException swiftWheelsHubResponseStatusException =
                 assertThrows(SwiftWheelsHubResponseStatusException.class, () -> customerService.registerCustomer(registerRequest));

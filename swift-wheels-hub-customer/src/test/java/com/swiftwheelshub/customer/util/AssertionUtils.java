@@ -4,20 +4,11 @@ import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserDetails;
 import com.swiftwheelshub.dto.UserUpdateRequest;
-import com.swiftwheelshub.entity.User;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AssertionUtils {
-
-    public static void assertUser(RegisterRequest registerRequest, User user) {
-        assertEquals(registerRequest.username(), user.getUsername());
-        assertEquals(registerRequest.password(), user.getPassword());
-        assertEquals(registerRequest.firstName(), user.getFirstName());
-        assertEquals(registerRequest.lastName(), user.getLastName());
-        assertEquals(registerRequest.email(), user.getEmail());
-    }
 
     public static void assertRegistrationResponse(UserRepresentation userRepresentation, RegistrationResponse registrationResponse) {
         assertEquals(userRepresentation.getUsername(), registrationResponse.username());
@@ -26,6 +17,15 @@ public class AssertionUtils {
         assertEquals(userRepresentation.getEmail(), registrationResponse.email());
         assertEquals(userRepresentation.getAttributes().get("address").getFirst(), registrationResponse.address());
         assertEquals(userRepresentation.getAttributes().get("dateOfBirth").getFirst(), registrationResponse.dateOfBirth().toString());
+    }
+
+    public static void assertRegistrationResponse(RegisterRequest registerRequest, RegistrationResponse registrationResponse) {
+        assertEquals(registerRequest.username(), registrationResponse.username());
+        assertEquals(registerRequest.firstName(), registrationResponse.firstName());
+        assertEquals(registerRequest.lastName(), registrationResponse.lastName());
+        assertEquals(registerRequest.email(), registrationResponse.email());
+        assertEquals(registerRequest.address(), registrationResponse.address());
+        assertEquals(registerRequest.dateOfBirth(), registrationResponse.dateOfBirth());
     }
 
     public static void assertUserRepresentation(UserUpdateRequest userUpdateRequest, UserRepresentation userRepresentation) {

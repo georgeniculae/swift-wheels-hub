@@ -119,7 +119,8 @@ public class CustomerService {
 
     private RegistrationResponse getRegistrationResponse(UserRepresentation userRepresentation, Response response,
                                                          RegisterRequest request) {
-        UserResource userResource = usersResource.get(CreatedResponseUtil.getCreatedId(response));
+        String createdId = CreatedResponseUtil.getCreatedId(response);
+        UserResource userResource = usersResource.get(createdId);
         userResource.resetPassword(createPasswordCredentials(request.password()));
 
         if (request.needsEmailVerification()) {
