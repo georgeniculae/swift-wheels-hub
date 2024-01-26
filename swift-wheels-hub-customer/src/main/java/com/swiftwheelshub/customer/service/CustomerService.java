@@ -1,9 +1,9 @@
 package com.swiftwheelshub.customer.service;
 
 import com.swiftwheelshub.customer.mapper.UserMapper;
-import com.swiftwheelshub.dto.UserDetails;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
+import com.swiftwheelshub.dto.UserDetails;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
@@ -12,10 +12,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.CreatedResponseUtil;
+import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -33,7 +35,10 @@ public class CustomerService {
 
     private static final String DATE_OF_BIRTH = "dateOfBirth";
 
-    private final UsersResource usersResource;
+    @Value("${keycloak.realm}")
+    private String realm;
+
+    private final Keycloak keycloak;
 
     private final UserMapper userMapper;
 
@@ -50,14 +55,14 @@ public class CustomerService {
     }
 
     public Integer countUsers() {
-        return usersResource.count();
+        return getUsersResource().count();
     }
 
     public RegistrationResponse registerCustomer(RegisterRequest request) {
         validateRequest(request);
         UserRepresentation userRepresentation = createUserRepresentation(request);
 
-        try (Response response = usersResource.create(userRepresentation)) {
+        try (Response response = getUsersResource().create(userRepresentation)) {
             final int statusCode = response.getStatus();
 
             if (HttpStatus.CREATED.value() == statusCode) {
@@ -72,7 +77,7 @@ public class CustomerService {
     }
 
     public UserDetails updateUser(String id, UserUpdateRequest userUpdateRequest) {
-        UserResource userResource = usersResource.get(id);
+        UserResource userResource = getUsersResource().get(id);
 
         UserRepresentation userRepresentation = userMapper.mapToUserRepresentation(userUpdateRequest);
         userRepresentation.singleAttribute(ADDRESS, userUpdateRequest.address());
@@ -85,8 +90,12 @@ public class CustomerService {
 
     public void deleteUserByUsername(String username) {
         UserRepresentation userRepresentation = getUserRepresentation(username);
-        UserResource userResource = usersResource.get(userRepresentation.getId());
+        UserResource userResource = getUsersResource().get(userRepresentation.getId());
         userResource.remove();
+    }
+
+    private UsersResource getUsersResource() {
+        return keycloak.realm(realm).users();
     }
 
     private CredentialRepresentation createPasswordCredentials(String password) {
@@ -114,13 +123,13 @@ public class CustomerService {
     }
 
     private void makeEmailVerification(String userId) {
-        usersResource.get(userId).sendVerifyEmail();
+        getUsersResource().get(userId).sendVerifyEmail();
     }
 
     private RegistrationResponse getRegistrationResponse(UserRepresentation userRepresentation, Response response,
                                                          RegisterRequest request) {
         String createdId = CreatedResponseUtil.getCreatedId(response);
-        UserResource userResource = usersResource.get(createdId);
+        UserResource userResource = getUsersResource().get(createdId);
         userResource.resetPassword(createPasswordCredentials(request.password()));
 
         if (request.needsEmailVerification()) {
@@ -141,7 +150,7 @@ public class CustomerService {
     }
 
     private List<UserRepresentation> getUserRepresentations(String username) {
-        return usersResource.searchByUsername(username, true);
+        return getUsersResource().searchByUsername(username, true);
     }
 
     private String getUserId(String username) {

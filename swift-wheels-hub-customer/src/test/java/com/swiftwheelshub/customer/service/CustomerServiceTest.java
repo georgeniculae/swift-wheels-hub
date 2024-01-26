@@ -13,6 +13,8 @@ import org.jboss.resteasy.core.ServerResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.admin.client.CreatedResponseUtil;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
@@ -21,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
@@ -41,10 +44,16 @@ class CustomerServiceTest {
     private CustomerService customerService;
 
     @Mock
+    private Keycloak keycloak;
+
+    @Mock
     private UsersResource usersResource;
 
     @Mock
     private UserResource userResource;
+
+    @Mock
+    private RealmResource realmResource;
 
     @Spy
     private UserMapper userMapper = new UserMapperImpl();
@@ -52,6 +61,8 @@ class CustomerServiceTest {
     @Test
     @SuppressWarnings("all")
     void registerCustomerTest_success() {
+        ReflectionTestUtils.setField(customerService, "realm", "realm");
+
         RegisterRequest registerRequest =
                 TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
 
@@ -61,6 +72,8 @@ class CustomerServiceTest {
 
         mockStatic(CreatedResponseUtil.class);
         when(CreatedResponseUtil.getCreatedId(any())).thenReturn("id");
+        when(keycloak.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
         when(usersResource.create(any(UserRepresentation.class))).thenReturn(response);
         when(usersResource.get(anyString())).thenReturn(userResource);
         doNothing().when(userResource).resetPassword(any(CredentialRepresentation.class));
