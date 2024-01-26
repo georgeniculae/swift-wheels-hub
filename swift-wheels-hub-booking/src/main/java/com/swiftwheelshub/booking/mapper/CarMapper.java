@@ -14,8 +14,13 @@ public interface CarMapper {
 
     @Mapping(target = "originalBranchId", expression = "java(car.getOriginalBranch().getId())")
     @Mapping(target = "actualBranchId", expression = "java(car.getActualBranch().getId())")
+    @Mapping(target = "bodyCategory", source = "bodyType")
+    @Mapping(target = "carState", source = "carStatus")
     CarDto mapEntityToDto(Car car);
 
+    @Mapping(target = "bodyType", source = "bodyCategory")
+    @Mapping(target = "carStatus", source = "carState")
     Car mapDtoToEntity(CarDto carDto);
+
 
 }
