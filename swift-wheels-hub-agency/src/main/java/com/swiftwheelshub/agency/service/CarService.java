@@ -85,12 +85,12 @@ public class CarService {
 
         existingCar.setMake(updatedCarDto.make());
         existingCar.setModel(updatedCarDto.model());
-        existingCar.setBodyType(BodyType.valueOf(updatedCarDto.bodyCategory().getDisplayName()));
+        existingCar.setBodyType(BodyType.valueOf(updatedCarDto.bodyCategory().name()));
         existingCar.setYearOfProduction(updatedCarDto.yearOfProduction());
         existingCar.setColor(updatedCarDto.color());
         existingCar.setMileage(updatedCarDto.mileage());
         existingCar.setAmount(Objects.requireNonNull(updatedCarDto.amount()));
-        existingCar.setCarStatus(CarStatus.valueOf(updatedCarDto.carState().getDisplayName()));
+        existingCar.setCarStatus(CarStatus.valueOf(updatedCarDto.carState().name()));
         existingCar.setOriginalBranch(branch);
         existingCar.setUrlOfImage(updatedCarDto.urlOfImage());
 
