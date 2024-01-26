@@ -52,8 +52,7 @@ management:
     readinessstate:
       enabled: true
 
-authentication:
-  type: apikey
+apikey:
   secret: ${API_KEY_SECRET}
 
 swagger:

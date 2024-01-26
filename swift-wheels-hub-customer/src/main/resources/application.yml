@@ -90,8 +90,7 @@ logging:
             sql:
               BasicBinder: TRACE
 
-authentication:
-  type: apikey
+apikey:
   secret: ${API_KEY_SECRET}
 
 keycloak:
@@ -99,6 +98,9 @@ keycloak:
   realm: ${KEYCLOAK_REALM}
   clientId: ${KEYCLOAK_CLIENT_ID}
   clientSecret: ${KEYCLOAK_CLIENT_SECRET}
+
+kafka:
+  audit-log-topic-name: ${CUSTOMER_AUDIT_LOG_INFO_TOPIC}
 
 audit:
   enabled: true

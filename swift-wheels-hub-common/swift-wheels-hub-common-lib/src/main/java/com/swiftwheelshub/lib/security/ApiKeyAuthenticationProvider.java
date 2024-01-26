@@ -3,15 +3,17 @@ package com.swiftwheelshub.lib.security;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "apikey", name = "secret")
 public class ApiKeyAuthenticationProvider implements AuthenticationProvider {
 
-    @Value("${authentication.secret}")
+    @Value("${apikey.secret}")
     private String apiKeySecret;
 
     @Override

@@ -93,8 +93,7 @@ logging:
             sql:
               BasicBinder: TRACE
 
-authentication:
-  type: apikey
+apikey:
   secret: ${API_KEY_SECRET}
 
 rest-client:

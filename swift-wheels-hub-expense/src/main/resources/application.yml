@@ -38,8 +38,7 @@ spring:
   sendgrid:
     api-key: ${SENDGRID_API_KEY}
 
-authentication:
-  type: apikey
+apikey:
   secret: ${API_KEY_SECRET}
 
 eureka:
