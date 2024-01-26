@@ -7,12 +7,12 @@ import java.time.LocalDate;
 import java.util.Collection;
 
 @Builder
-public record UserDetails(Long id,
-                          String username,
-                          String firstName,
-                          String lastName,
-                          String email,
-                          String address,
-                          LocalDate dateOfBirth,
-                          Collection<? extends GrantedAuthority> authorities) {
+public record UserDetails(
+        String username,
+        String firstName,
+        String lastName,
+        String email,
+        String address,
+        LocalDate dateOfBirth,
+        Collection<? extends GrantedAuthority> authorities) {
 }

@@ -1,8 +1,8 @@
 {
   "username": "admin",
-  "password": "$2a$10$hadYmhDPuigFKchXrkmmUe6i1L8B50Be.ggbdVuszCbYu7yg14Lqa",
-  "role": "ROLE_ADMIN",
   "firstName": "admin",
   "lastName": "admin",
-  "email": "admin@email.com"
+  "email": "admin@email.com",
+  "address": " Ploiesti",
+  "dateOfBirth": "1980-04-04"
 }

@@ -5,7 +5,6 @@ import com.swiftwheelshub.customer.util.TestUtils;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserDetails;
-import com.swiftwheelshub.dto.UserDto;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
@@ -45,8 +44,7 @@ class UserControllerTest {
 
     @Test
     void getCurrentUserTest_success() throws Exception {
-        UserDetails userDetails =
-                TestUtils.getResourceAsJson("/data/UserDetails.json", UserDetails.class);
+        UserDetails userDetails = TestUtils.getResourceAsJson("/data/UserDetails.json", UserDetails.class);
 
         when(customerService.getCurrentUser(any(HttpServletRequest.class))).thenReturn(userDetails);
 
@@ -178,9 +176,9 @@ class UserControllerTest {
 
     @Test
     void updateUserTest_forbidden() throws Exception {
-        UserDto userDto = TestUtils.getResourceAsJson("/data/UserDto.json", UserDto.class);
+        UserDetails userDetails = TestUtils.getResourceAsJson("/data/UserDetails.json", UserDetails.class);
 
-        String content = TestUtils.writeValueAsString(userDto);
+        String content = TestUtils.writeValueAsString(userDetails);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L).contextPath(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -199,9 +197,9 @@ class UserControllerTest {
     @Test
     @WithAnonymousUser
     void updateUserTest_unauthorized() throws Exception {
-        UserDto userDto = TestUtils.getResourceAsJson("/data/UserDto.json", UserDto.class);
+        UserDetails userDetails = TestUtils.getResourceAsJson("/data/UserDetails.json", UserDetails.class);
 
-        String content = TestUtils.writeValueAsString(userDto);
+        String content = TestUtils.writeValueAsString(userDetails);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L).contextPath(PATH)
                         .with(csrf())
@@ -219,9 +217,9 @@ class UserControllerTest {
 
     @Test
     void findUserByUsernameTest_success() throws Exception {
-        UserDetails userDto = TestUtils.getResourceAsJson("/data/UserDetails.json", UserDetails.class);
+        UserDetails userDetails = TestUtils.getResourceAsJson("/data/UserDetails.json", UserDetails.class);
 
-        when(customerService.findUserByUsername(anyString())).thenReturn(userDto);
+        when(customerService.findUserByUsername(anyString())).thenReturn(userDetails);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{username}", "admin").contextPath(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
