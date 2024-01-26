@@ -21,6 +21,7 @@
         <module>swift-wheels-hub-common-model</module>
         <module>swift-wheels-hub-common-dto</module>
         <module>swift-wheels-hub-common-lib</module>
+        <module>swift-wheels-hub-common-exception</module>
     </modules>
 
 </project>

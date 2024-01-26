@@ -96,17 +96,17 @@ class CustomerServiceTest {
         assertThat(swiftWheelsHubResponseStatusException.getMessage()).contains("Password too short");
     }
 
-//    @Test
-//    void getCurrentUserTest_success() {
-//
+    @Test
+    void getCurrentUserTest_success() {
+
 //
 //        when(securityContext.getAuthentication()).thenReturn(authentication);
 //        SecurityContextHolder.setContext(securityContext);
 //
 //        assertDoesNotThrow(() -> customerService.getCurrentUser());
 //
-//        verify(userMapper, times(1)).mapUserToCurrentUserDetails(any(UserRepresentation.class));
-//    }
+//        verify(userMapper).mapUserToUserDetails(any(UserRepresentation.class));
+    }
 
 //    @Test
 //    void getCurrentUserTest_errorOnFindingByUsername() {
