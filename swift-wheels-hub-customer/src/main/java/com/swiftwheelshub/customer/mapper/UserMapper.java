@@ -33,7 +33,7 @@ public interface UserMapper {
 
     @Mapping(target = "address", expression = "java(getAddress(userRepresentation))")
     @Mapping(target = "dateOfBirth", expression = "java(getDateOfBirth(userRepresentation))")
-    UserDetails mapUserToCurrentUserDetails(UserRepresentation userRepresentation);
+    UserDetails mapUserToUserDetails(UserRepresentation userRepresentation);
 
     @Mapping(target = "address", expression = "java(getAddress(userRepresentation))")
     @Mapping(target = "dateOfBirth", expression = "java(getDateOfBirth(userRepresentation))")

@@ -40,7 +40,7 @@ public class CustomerService {
     public UserDetails findUserByUsername(String username) {
         UserRepresentation userRepresentation = getUserRepresentation(username);
 
-        return userMapper.mapUserToCurrentUserDetails(userRepresentation);
+        return userMapper.mapUserToUserDetails(userRepresentation);
     }
 
     public UserDetails getCurrentUser(HttpServletRequest request) {
@@ -80,7 +80,7 @@ public class CustomerService {
 
         userResource.update(userRepresentation);
 
-        return userMapper.mapUserToCurrentUserDetails(userRepresentation);
+        return userMapper.mapUserToUserDetails(userRepresentation);
     }
 
     public void deleteUserByUsername(String username) {
