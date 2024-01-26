@@ -19,11 +19,13 @@ public class AssertionUtils {
         assertEquals(registerRequest.email(), user.getEmail());
     }
 
-    public static void assertRegistrationResponse(RegisterRequest registerRequest, RegistrationResponse registrationResponse) {
-        assertEquals(registerRequest.username(), registrationResponse.username());
-        assertEquals(registerRequest.firstName(), registrationResponse.firstName());
-        assertEquals(registerRequest.lastName(), registrationResponse.lastName());
-        assertEquals(registerRequest.email(), registrationResponse.email());
+    public static void assertRegistrationResponse(UserRepresentation userRepresentation, RegistrationResponse registrationResponse) {
+        assertEquals(userRepresentation.getUsername(), registrationResponse.username());
+        assertEquals(userRepresentation.getFirstName(), registrationResponse.firstName());
+        assertEquals(userRepresentation.getLastName(), registrationResponse.lastName());
+        assertEquals(userRepresentation.getEmail(), registrationResponse.email());
+        assertEquals(userRepresentation.getAttributes().get("address").getFirst(), registrationResponse.address());
+        assertEquals(userRepresentation.getAttributes().get("dateOfBirth").getFirst(), registrationResponse.dateOfBirth().toString());
     }
 
     public static void assertUserRepresentation(UserUpdateRequest userUpdateRequest, UserRepresentation userRepresentation) {

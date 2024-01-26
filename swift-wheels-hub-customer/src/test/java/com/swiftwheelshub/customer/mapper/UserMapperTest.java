@@ -2,6 +2,7 @@ package com.swiftwheelshub.customer.mapper;
 
 import com.swiftwheelshub.customer.util.AssertionUtils;
 import com.swiftwheelshub.customer.util.TestUtils;
+import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserDetails;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,27 @@ class UserMapperTest {
         UserDetails userDetails = userMapper.mapUserToUserDetails(userRepresentation);
 
         AssertionUtils.assertUserDetails(userRepresentation, userDetails);
+    }
+
+    @Test
+    void mapToRegistrationResponseTest_success() {
+        CredentialRepresentation passwordCredentials = new CredentialRepresentation();
+        passwordCredentials.setTemporary(false);
+        passwordCredentials.setType(CredentialRepresentation.PASSWORD);
+        passwordCredentials.setValue("password");
+
+        UserRepresentation userRepresentation = new UserRepresentation();
+        userRepresentation.setUsername("username");
+        userRepresentation.setFirstName("Ion");
+        userRepresentation.setLastName("Popescu");
+        userRepresentation.setEmail("ionpopescu@email.com");
+        userRepresentation.setCredentials(List.of(passwordCredentials));
+        userRepresentation.singleAttribute("address", "Ploiesti");
+        userRepresentation.singleAttribute("dateOfBirth", "1980-03-05");
+
+        RegistrationResponse registrationResponse = userMapper.mapToRegistrationResponse(userRepresentation);
+
+        AssertionUtils.assertRegistrationResponse(userRepresentation, registrationResponse);
     }
 
 }
