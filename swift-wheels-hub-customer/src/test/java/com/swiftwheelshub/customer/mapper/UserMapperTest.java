@@ -1,17 +1,15 @@
 package com.swiftwheelshub.customer.mapper;
 
 import com.swiftwheelshub.customer.util.AssertionUtils;
+import com.swiftwheelshub.customer.util.TestData;
 import com.swiftwheelshub.customer.util.TestUtils;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserDetails;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -37,19 +35,7 @@ class UserMapperTest {
 
     @Test
     void mapUserToUserDetailsTest_success() {
-        CredentialRepresentation passwordCredentials = new CredentialRepresentation();
-        passwordCredentials.setTemporary(false);
-        passwordCredentials.setType(CredentialRepresentation.PASSWORD);
-        passwordCredentials.setValue("password");
-
-        UserRepresentation userRepresentation = new UserRepresentation();
-        userRepresentation.setUsername("username");
-        userRepresentation.setFirstName("Ion");
-        userRepresentation.setLastName("Popescu");
-        userRepresentation.setEmail("ionpopescu@email.com");
-        userRepresentation.setCredentials(List.of(passwordCredentials));
-        userRepresentation.singleAttribute("address", "Ploiesti");
-        userRepresentation.singleAttribute("dateOfBirth", "1980-03-05");
+        UserRepresentation userRepresentation = TestData.getUserRepresentation();
 
         UserDetails userDetails = userMapper.mapUserToUserDetails(userRepresentation);
 
@@ -63,19 +49,7 @@ class UserMapperTest {
 
     @Test
     void mapToRegistrationResponseTest_success() {
-        CredentialRepresentation passwordCredentials = new CredentialRepresentation();
-        passwordCredentials.setTemporary(false);
-        passwordCredentials.setType(CredentialRepresentation.PASSWORD);
-        passwordCredentials.setValue("password");
-
-        UserRepresentation userRepresentation = new UserRepresentation();
-        userRepresentation.setUsername("username");
-        userRepresentation.setFirstName("Ion");
-        userRepresentation.setLastName("Popescu");
-        userRepresentation.setEmail("ionpopescu@email.com");
-        userRepresentation.setCredentials(List.of(passwordCredentials));
-        userRepresentation.singleAttribute("address", "Ploiesti");
-        userRepresentation.singleAttribute("dateOfBirth", "1980-03-05");
+        UserRepresentation userRepresentation = TestData.getUserRepresentation();
 
         RegistrationResponse registrationResponse = userMapper.mapToRegistrationResponse(userRepresentation);
 

@@ -3,9 +3,11 @@ package com.swiftwheelshub.customer.service;
 import com.swiftwheelshub.customer.mapper.UserMapper;
 import com.swiftwheelshub.customer.mapper.UserMapperImpl;
 import com.swiftwheelshub.customer.util.AssertionUtils;
+import com.swiftwheelshub.customer.util.TestData;
 import com.swiftwheelshub.customer.util.TestUtils;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
+import com.swiftwheelshub.dto.UserDetails;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.core.Headers;
@@ -23,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
@@ -31,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mockStatic;
@@ -111,14 +115,22 @@ class CustomerServiceTest {
 
     @Test
     void getCurrentUserTest_success() {
+        ReflectionTestUtils.setField(customerService, "realm", "realm");
 
-//
-//        when(securityContext.getAuthentication()).thenReturn(authentication);
-//        SecurityContextHolder.setContext(securityContext);
-//
-//        assertDoesNotThrow(() -> customerService.getCurrentUser());
-//
-//        verify(userMapper).mapUserToUserDetails(any(UserRepresentation.class));
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader("X-USERNAME", "user");
+
+        UserRepresentation userRepresentation = TestData.getUserRepresentation();
+
+        when(keycloak.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of(userRepresentation));
+
+        UserDetails currentUser = customerService.getCurrentUser(httpServletRequest);
+
+        AssertionUtils.assertUserDetails(userRepresentation, currentUser);
+
+        verify(userMapper).mapUserToUserDetails(any(UserRepresentation.class));
     }
 
 //    @Test
