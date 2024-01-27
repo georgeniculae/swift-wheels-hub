@@ -14,18 +14,6 @@ spring:
   threads:
     virtual:
       enabled: true
-  datasource:
-    url: jdbc:postgresql://localhost:5432/swift_wheels_hub_customer
-    username: ${POSTGRESQL_USERNAME}
-    password: ${POSTGRESQL_PASSWORD}
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: none
-    show-sql: false
-    properties:
-      hibernate:
-        format_sql: true
   kafka:
     bootstrap-servers: localhost:9092
 
