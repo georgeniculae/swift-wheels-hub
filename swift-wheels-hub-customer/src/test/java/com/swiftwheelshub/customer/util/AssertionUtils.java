@@ -44,4 +44,13 @@ public class AssertionUtils {
         assertEquals(userRepresentation.getAttributes().get("dateOfBirth").getFirst(), userDetails.dateOfBirth().toString());
     }
 
+    public static void assertUserDetails(UserUpdateRequest userUpdateRequest, UserDetails userDetails) {
+        assertEquals(userUpdateRequest.username(), userDetails.username());
+        assertEquals(userUpdateRequest.firstName(), userDetails.firstName());
+        assertEquals(userUpdateRequest.lastName(), userDetails.lastName());
+        assertEquals(userUpdateRequest.email(), userDetails.email());
+        assertEquals(userUpdateRequest.address(), userDetails.address());
+        assertEquals(userUpdateRequest.dateOfBirth(), userDetails.dateOfBirth());
+    }
+
 }

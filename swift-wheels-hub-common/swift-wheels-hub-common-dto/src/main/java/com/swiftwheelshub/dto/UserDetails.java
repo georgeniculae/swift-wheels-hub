@@ -8,6 +8,7 @@ import java.util.Collection;
 
 @Builder
 public record UserDetails(
+        String id,
         String username,
         String firstName,
         String lastName,

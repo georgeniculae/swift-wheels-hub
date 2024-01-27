@@ -5,10 +5,12 @@ import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserDetails;
 import com.swiftwheelshub.dto.UserUpdateRequest;
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.CreatedResponseUtil;
@@ -77,25 +79,37 @@ public class CustomerService {
     }
 
     public UserDetails updateUser(String id, UserUpdateRequest userUpdateRequest) {
-        UserResource userResource = getUsersResource().get(id);
+        UserResource userResource = findById(id);
 
         UserRepresentation userRepresentation = userMapper.mapToUserRepresentation(userUpdateRequest);
         userRepresentation.singleAttribute(ADDRESS, userUpdateRequest.address());
         userRepresentation.singleAttribute(DATE_OF_BIRTH, userUpdateRequest.dateOfBirth().toString());
 
-        userResource.update(userRepresentation);
+        try {
+            userResource.update(userRepresentation);
+        } catch (Exception e) {
+            handleRestEasyCall(e);
+        }
 
         return userMapper.mapUserToUserDetails(userRepresentation);
     }
 
-    public void deleteUserByUsername(String username) {
-        UserRepresentation userRepresentation = getUserRepresentation(username);
-        UserResource userResource = getUsersResource().get(userRepresentation.getId());
-        userResource.remove();
+    public void deleteUserByUsername(String id) {
+        UserResource userResource = findById(id);
+
+        try {
+            userResource.remove();
+        } catch (Exception e) {
+            handleRestEasyCall(e);
+        }
     }
 
     private UsersResource getUsersResource() {
         return keycloak.realm(realm).users();
+    }
+
+    private UserResource findById(String id) {
+        return getUsersResource().get(id);
     }
 
     private CredentialRepresentation createPasswordCredentials(String password) {
@@ -123,14 +137,23 @@ public class CustomerService {
     }
 
     private void makeEmailVerification(String userId) {
-        getUsersResource().get(userId).sendVerifyEmail();
+        try {
+            findById(userId).sendVerifyEmail();
+        } catch (Exception e) {
+            handleRestEasyCall(e);
+        }
     }
 
     private RegistrationResponse getRegistrationResponse(UserRepresentation userRepresentation, Response response,
                                                          RegisterRequest request) {
         String createdId = CreatedResponseUtil.getCreatedId(response);
-        UserResource userResource = getUsersResource().get(createdId);
-        userResource.resetPassword(createPasswordCredentials(request.password()));
+        UserResource userResource = findById(createdId);
+
+        try {
+            userResource.resetPassword(createPasswordCredentials(request.password()));
+        } catch (Exception e) {
+            handleRestEasyCall(e);
+        }
 
         if (request.needsEmailVerification()) {
             makeEmailVerification(getUserId(userRepresentation.getUsername()));
@@ -165,6 +188,14 @@ public class CustomerService {
         if (Period.between(Optional.ofNullable(request.dateOfBirth()).orElseThrow(), LocalDate.now()).getYears() < 18) {
             throw new SwiftWheelsHubResponseStatusException(HttpStatus.BAD_REQUEST, "Customer is under 18 years old");
         }
+    }
+
+    private void handleRestEasyCall(Exception e) {
+        if (e instanceof NotFoundException) {
+            throw new SwiftWheelsHubNotFoundException("User not found");
+        }
+
+        throw new SwiftWheelsHubException(e);
     }
 
 }

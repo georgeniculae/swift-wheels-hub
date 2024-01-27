@@ -14,7 +14,7 @@ public class TestData {
         passwordCredentials.setValue("password");
 
         UserRepresentation userRepresentation = new UserRepresentation();
-        userRepresentation.setUsername("username");
+        userRepresentation.setUsername("user");
         userRepresentation.setFirstName("Ion");
         userRepresentation.setLastName("Popescu");
         userRepresentation.setEmail("ionpopescu@email.com");

@@ -45,7 +45,7 @@ public class UserController {
 
     @PutMapping(path = "/{id}")
     @LogActivity(
-            sentParameters = "username",
+            sentParameters = "id",
             activityDescription = "User update"
     )
     public ResponseEntity<UserDetails> updateUser(@PathVariable("id") String id,
@@ -58,13 +58,13 @@ public class UserController {
         return ResponseEntity.ok(customerService.countUsers());
     }
 
-    @DeleteMapping(path = "/{username}")
+    @DeleteMapping(path = "/{id}")
     @LogActivity(
-            sentParameters = "username",
+            sentParameters = "id",
             activityDescription = "User deletion"
     )
-    public ResponseEntity<Void> deleteUserByUsername(@PathVariable("username") String username) {
-        customerService.deleteUserByUsername(username);
+    public ResponseEntity<Void> deleteUserByUsername(@PathVariable("id") String id) {
+        customerService.deleteUserByUsername(id);
 
         return ResponseEntity.noContent().build();
     }

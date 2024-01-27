@@ -261,7 +261,7 @@ class UserControllerTest {
     void deleteUserTest_success() throws Exception {
         doNothing().when(customerService).deleteUserByUsername(anyString());
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{username}", "user").contextPath(PATH)
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", "1").contextPath(PATH)
                         .with(csrf())
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)

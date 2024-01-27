@@ -8,7 +8,10 @@ import com.swiftwheelshub.customer.util.TestUtils;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserDetails;
+import com.swiftwheelshub.dto.UserUpdateRequest;
+import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.core.ServerResponse;
@@ -31,12 +34,14 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -133,58 +138,123 @@ class CustomerServiceTest {
         verify(userMapper).mapUserToUserDetails(any(UserRepresentation.class));
     }
 
-//    @Test
-//    void getCurrentUserTest_errorOnFindingByUsername() {
-//        Authentication authentication = mock(Authentication.class);
-//
-//        when(securityContext.getAuthentication()).thenReturn(authentication);
-//        SecurityContextHolder.setContext(securityContext);
-//
-//        when(userRepository.findByUsername(null)).thenReturn(Optional.empty());
-//
-//        SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException =
-//                assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.getCurrentUser());
-//
-//        assertNotNull(swiftWheelsHubNotFoundException);
-//        assertEquals("User with username null doesn't exist", swiftWheelsHubNotFoundException.getMessage());
-//    }
+    @Test
+    void getCurrentUserTest_errorOnFindingByUsername() {
+        ReflectionTestUtils.setField(customerService, "realm", "realm");
 
-//    @Test
-//    void findUserByUsernameTest_success() {
-//        User user = TestUtils.getResourceAsJson("/data/User.json", User.class);
-//        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
-//
-//        UserDetails userDetails = assertDoesNotThrow(() -> customerService.findUserByUsername("admin"));
-//        AssertionUtils.assertUser(user, userDetails);
-//    }
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader("X-USERNAME", "user");
 
-//    @Test
-//    void updateUserTest_success() {
-//        User user = TestUtils.getResourceAsJson("/data/User.json", User.class);
-//        UserDto userDto = TestUtils.getResourceAsJson("/data/UserDto.json", UserDto.class);
-//
-//        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-//        when(passwordEncoder.encode(anyString())).thenReturn("encoded password");
-//        when(userRepository.saveAndFlush(any(User.class))).thenReturn(user);
-//
-//        UserDto updatedUserDto = assertDoesNotThrow(() -> customerService.updateUser(1L, userDto));
-//
-//        assertEquals(user.getFirstName(), updatedUserDto.firstName());
-//        assertEquals(user.getLastName(), updatedUserDto.lastName());
-//        assertEquals(user.getEmail(), updatedUserDto.email());
-//    }
+        when(keycloak.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.searchByUsername(anyString(), anyBoolean())).thenThrow(new RuntimeException());
 
-//    @Test
-//    void updateUserTest_errorOnFindingById() {
-//        UserDto userDto = TestUtils.getResourceAsJson("/data/UserDto.json", UserDto.class);
-//
-//        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
-//
-//        SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException =
-//                assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.updateUser("1", userDto));
-//
-//        assertNotNull(swiftWheelsHubNotFoundException);
-//        assertEquals("User with id 1 doesn't exist", swiftWheelsHubNotFoundException.getMessage());
-//    }
+        assertThrows(RuntimeException.class, () -> customerService.findUserByUsername("user"));
+    }
+
+    @Test
+    void getCurrentUserTest_noUsersFound() {
+        ReflectionTestUtils.setField(customerService, "realm", "realm");
+
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader("X-USERNAME", "user");
+
+        when(keycloak.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of());
+
+        SwiftWheelsHubNotFoundException notFoundException =
+                assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.getCurrentUser(httpServletRequest));
+
+        assertNotNull(notFoundException);
+    }
+
+    @Test
+    void findUserByUsernameTest_success() {
+        ReflectionTestUtils.setField(customerService, "realm", "realm");
+
+        UserRepresentation userRepresentation = TestData.getUserRepresentation();
+
+        when(keycloak.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of(userRepresentation));
+
+        UserDetails user = customerService.findUserByUsername("user");
+
+        AssertionUtils.assertUserDetails(userRepresentation, user);
+    }
+
+    @Test
+    void findUserByUsernameTest_noUserFound() {
+        ReflectionTestUtils.setField(customerService, "realm", "realm");
+
+        when(keycloak.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of());
+
+        SwiftWheelsHubNotFoundException notFoundException =
+                assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.findUserByUsername("user"));
+
+        assertNotNull(notFoundException);
+    }
+
+    @Test
+    void updateUserTest_success() {
+        ReflectionTestUtils.setField(customerService, "realm", "realm");
+
+        UserUpdateRequest userUpdateRequest =
+                TestUtils.getResourceAsJson("/data/UserUpdateRepresentation.json", UserUpdateRequest.class);
+
+        when(keycloak.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(anyString())).thenReturn(userResource);
+        doNothing().when(userResource).update(any(UserRepresentation.class));
+
+        UserDetails userDetails = customerService.updateUser("user", userUpdateRequest);
+
+        AssertionUtils.assertUserDetails(userUpdateRequest, userDetails);
+    }
+
+    @Test
+    void updateUserTest_errorOnFindingById() {
+        ReflectionTestUtils.setField(customerService, "realm", "realm");
+
+        UserUpdateRequest userUpdateRequest =
+                TestUtils.getResourceAsJson("/data/UserUpdateRepresentation.json", UserUpdateRequest.class);
+
+        when(keycloak.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(anyString())).thenReturn(userResource);
+        doThrow(new NotFoundException()).when(userResource).update(any(UserRepresentation.class));
+
+        SwiftWheelsHubNotFoundException notFoundException =
+                assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.updateUser("user", userUpdateRequest));
+
+        assertNotNull(notFoundException);
+    }
+
+    @Test
+    void deleteUserByUsernameTest_success() {
+        ReflectionTestUtils.setField(customerService, "realm", "realm");
+
+        when(keycloak.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(anyString())).thenReturn(userResource);
+        doNothing().when(userResource).remove();
+
+        assertDoesNotThrow(() -> customerService.deleteUserByUsername("user"));
+    }
+
+    @Test
+    void deleteUserByUsernameTest_userNotFound() {
+        ReflectionTestUtils.setField(customerService, "realm", "realm");
+
+        when(keycloak.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(anyString())).thenReturn(userResource);
+        doThrow(new NotFoundException()).when(userResource).remove();
+
+        assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.deleteUserByUsername("user"));
+    }
 
 }
