@@ -1,9 +1,18 @@
 package com.swiftwheelshub.emailnotification.service;
 
+import com.sendgrid.helpers.mail.Mail;
+import com.swiftwheelshub.dto.InvoiceResponse;
+import com.swiftwheelshub.emailnotification.util.TestUtils;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserNotificationServiceTest {
@@ -13,5 +22,15 @@ class UserNotificationServiceTest {
 
     @Mock
     private EmailService emailService;
+
+    @Test
+    void notifyCustomerTest_success() {
+        InvoiceResponse invoiceResponse =
+                TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
+
+        when(emailService.createMail(anyString(), any(Object.class))).thenReturn(new Mail());
+
+        assertDoesNotThrow(() -> userNotificationService.notifyCustomer(invoiceResponse));
+    }
 
 }
