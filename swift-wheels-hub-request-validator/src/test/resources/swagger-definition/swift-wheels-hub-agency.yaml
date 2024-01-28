@@ -193,7 +193,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CarDetailsForUpdateDto'
+              $ref: '#/components/schemas/CarForUpdateDetails'
         required: true
       responses:
         '200':
@@ -243,7 +243,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/CarForUpdate'
+                $ref: '#/components/schemas/UpdateCarRequest'
         required: true
       responses:
         '200':

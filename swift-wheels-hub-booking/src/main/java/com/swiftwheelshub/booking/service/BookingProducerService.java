@@ -1,6 +1,6 @@
 package com.swiftwheelshub.booking.service;
 
-import com.swiftwheelshub.dto.BookingDto;
+import com.swiftwheelshub.dto.BookingResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -27,31 +27,31 @@ public class BookingProducerService {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public void sendSavedBooking(BookingDto bookingDto) {
-        kafkaTemplate.send(buildMessage(bookingDto, savedBookingProducerTopicName))
+    public void sendSavedBooking(BookingResponse bookingResponse) {
+        kafkaTemplate.send(buildMessage(bookingResponse, savedBookingProducerTopicName))
                 .whenComplete((result, e) -> {
                     if (ObjectUtils.isEmpty(e)) {
-                        log.info("Sent message=[" + bookingDto + "] with offset=["
+                        log.info("Sent message=[" + bookingResponse + "] with offset=["
                                 + result.getRecordMetadata().offset() + "]");
 
                         return;
                     }
 
-                    log.error("Unable to send message=[" + bookingDto + "] due to : " + e.getMessage());
+                    log.error("Unable to send message=[" + bookingResponse + "] due to : " + e.getMessage());
                 });
     }
 
-    public void sendUpdatedBooking(BookingDto bookingDto) {
-        kafkaTemplate.send(buildMessage(bookingDto, updatedBookingProducerTopicName))
+    public void sendUpdatedBooking(BookingResponse bookingResponse) {
+        kafkaTemplate.send(buildMessage(bookingResponse, updatedBookingProducerTopicName))
                 .whenComplete((result, e) -> {
                     if (ObjectUtils.isEmpty(e)) {
-                        log.info("Sent message=[" + bookingDto + "] with offset=["
+                        log.info("Sent message=[" + bookingResponse + "] with offset=["
                                 + result.getRecordMetadata().offset() + "]");
 
                         return;
                     }
 
-                    log.error("Unable to send message=[" + bookingDto + "] due to : " + e.getMessage());
+                    log.error("Unable to send message=[" + bookingResponse + "] due to : " + e.getMessage());
                 });
     }
 

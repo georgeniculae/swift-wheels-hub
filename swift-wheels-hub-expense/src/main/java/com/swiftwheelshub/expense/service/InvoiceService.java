@@ -1,7 +1,8 @@
 package com.swiftwheelshub.expense.service;
 
-import com.swiftwheelshub.dto.BookingClosingDetailsDto;
-import com.swiftwheelshub.dto.BookingDto;
+import com.swiftwheelshub.dto.BookingClosingDetails;
+import com.swiftwheelshub.dto.BookingRequest;
+import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.InvoiceDto;
 import com.swiftwheelshub.entity.Invoice;
@@ -72,14 +73,14 @@ public class InvoiceService {
         return invoiceRepository.countAllActive();
     }
 
-    public InvoiceDto saveInvoice(BookingDto newBookingDto) {
-        if (!invoiceRepository.existsByBookingId(newBookingDto.id())) {
+    public InvoiceDto saveInvoice(BookingResponse newBookingResponse) {
+        if (!invoiceRepository.existsByBookingId(newBookingResponse.id())) {
             Invoice invoice = new Invoice();
 
-            invoice.setCustomerUsername(newBookingDto.customerUsername());
-            invoice.setCustomerEmail(newBookingDto.customerEmail());
-            invoice.setCarId(newBookingDto.carId());
-            invoice.setBookingId(newBookingDto.id());
+            invoice.setCustomerUsername(newBookingResponse.customerUsername());
+            invoice.setCustomerEmail(newBookingResponse.customerEmail());
+            invoice.setCarId(newBookingResponse.carId());
+            invoice.setBookingId(newBookingResponse.id());
 
             Invoice savedBooking = invoiceRepository.saveAndFlush(invoice);
 
@@ -89,9 +90,9 @@ public class InvoiceService {
         throw new SwiftWheelsHubResponseStatusException(HttpStatus.BAD_REQUEST, "Invoice already exists");
     }
 
-    public InvoiceDto updateInvoiceAfterBookingUpdate(BookingDto bookingDto) {
-        Invoice invoice = findInvoiceByBookingId(bookingDto.id());
-        invoice.setCarId(bookingDto.carId());
+    public InvoiceDto updateInvoiceAfterBookingUpdate(BookingResponse bookingResponse) {
+        Invoice invoice = findInvoiceByBookingId(bookingResponse.id());
+        invoice.setCarId(bookingResponse.carId());
 
         Invoice savedInvoice = invoiceRepository.saveAndFlush(invoice);
 
@@ -100,24 +101,24 @@ public class InvoiceService {
 
     public InvoiceDto closeInvoice(HttpServletRequest request, Long id, InvoiceDto invoiceDto) {
         Invoice savedInvoice;
-        BookingClosingDetailsDto bookingClosingDetailsDto;
+        BookingClosingDetails bookingClosingDetails;
 
         try {
             validateInvoice(invoiceDto);
             Invoice existingInvoice = findEntityById(id);
 
-            BookingDto bookingDto = bookingService.findBookingById(request, invoiceDto.bookingId());
-            Invoice existingInvoiceUpdated = updateInvoiceWithBookingDetails(bookingDto, invoiceDto, existingInvoice);
+            BookingRequest bookingRequest = bookingService.findBookingById(request, invoiceDto.bookingId());
+            Invoice existingInvoiceUpdated = updateInvoiceWithBookingDetails(bookingRequest, invoiceDto, existingInvoice);
 
             revenueService.saveInvoiceAndRevenueTransactional(existingInvoiceUpdated);
             savedInvoice = invoiceRepository.saveAndFlush(existingInvoiceUpdated);
 
-            bookingClosingDetailsDto = getBookingClosingDetails(invoiceDto, invoiceDto.receptionistEmployeeId());
+            bookingClosingDetails = getBookingClosingDetails(invoiceDto, invoiceDto.receptionistEmployeeId());
         } catch (Exception e) {
             throw new SwiftWheelsHubException(e);
         }
 
-        bookingService.closeBooking(request, bookingClosingDetailsDto);
+        bookingService.closeBooking(request, bookingClosingDetails);
 
         return invoiceMapper.mapEntityToDto(savedInvoice);
     }
@@ -193,7 +194,7 @@ public class InvoiceService {
         return ObjectUtils.isEmpty(invoiceDto.additionalPayment()) ? 0D : invoiceDto.additionalPayment();
     }
 
-    private Invoice updateInvoiceWithBookingDetails(BookingDto bookingDto, InvoiceDto invoiceDto,
+    private Invoice updateInvoiceWithBookingDetails(BookingRequest bookingRequest, InvoiceDto invoiceDto,
                                                     Invoice existingInvoice) {
         Long receptionistEmployeeId = invoiceDto.receptionistEmployeeId();
         Long carId = invoiceDto.carId();
@@ -201,28 +202,28 @@ public class InvoiceService {
         Invoice existingInvoiceUpdated =
                 updateExistingInvoice(existingInvoice, invoiceDto, carId, receptionistEmployeeId);
 
-        return updateInvoiceAmount(bookingDto, existingInvoiceUpdated);
+        return updateInvoiceAmount(bookingRequest, existingInvoiceUpdated);
     }
 
-    private Invoice updateInvoiceAmount(BookingDto bookingDto, Invoice existingInvoice) {
-        existingInvoice.setTotalAmount(getTotalAmount(existingInvoice, bookingDto));
+    private Invoice updateInvoiceAmount(BookingRequest bookingRequest, Invoice existingInvoice) {
+        existingInvoice.setTotalAmount(getTotalAmount(existingInvoice, bookingRequest));
 
         return existingInvoice;
     }
 
-    private BookingClosingDetailsDto getBookingClosingDetails(InvoiceDto invoiceDto, Long receptionistEmployeeId) {
-        return new BookingClosingDetailsDto(
+    private BookingClosingDetails getBookingClosingDetails(InvoiceDto invoiceDto, Long receptionistEmployeeId) {
+        return new BookingClosingDetails(
                 invoiceDto.bookingId(),
                 receptionistEmployeeId,
                 getCarStatus(invoiceDto.isVehicleDamaged())
         );
     }
 
-    private Double getTotalAmount(Invoice existingInvoice, BookingDto bookingDto) {
+    private Double getTotalAmount(Invoice existingInvoice, BookingRequest bookingRequest) {
         LocalDate carReturnDate = existingInvoice.getCarDateOfReturn();
-        LocalDate bookingDateTo = bookingDto.dateTo();
-        LocalDate bookingDateFrom = bookingDto.dateFrom();
-        double carAmount = bookingDto.rentalCarPrice();
+        LocalDate bookingDateTo = bookingRequest.dateTo();
+        LocalDate bookingDateFrom = bookingRequest.dateFrom();
+        double carAmount = bookingRequest.rentalCarPrice();
 
         boolean isReturnDatePassed = carReturnDate.isAfter(bookingDateTo);
 

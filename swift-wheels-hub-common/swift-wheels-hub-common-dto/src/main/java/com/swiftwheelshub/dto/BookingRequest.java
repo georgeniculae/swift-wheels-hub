@@ -12,7 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @Builder
-public record BookingDto(
+public record BookingRequest(
         Long id,
 
         @NotNull(message = "Date of booking cannot be null")
@@ -54,7 +54,7 @@ public record BookingDto(
 
     @Override
     public String toString() {
-        return "BookingDto{" + "\n" +
+        return "BookingRequest{" + "\n" +
                 "id=" + id + "\n" +
                 "dateOfBooking=" + dateOfBooking + "\n" +
                 "status=" + status +

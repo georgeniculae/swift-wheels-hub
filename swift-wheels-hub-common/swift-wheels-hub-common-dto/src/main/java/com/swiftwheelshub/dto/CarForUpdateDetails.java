@@ -3,16 +3,18 @@ package com.swiftwheelshub.dto;
 import lombok.Builder;
 
 @Builder
-public record CarForUpdate(
+public record CarForUpdateDetails(
         Long carId,
-        CarState carState
+        CarState carState,
+        Long receptionistEmployeeId
 ) {
 
     @Override
     public String toString() {
-        return "CarForUpdate{" + "\n" +
+        return "CarForUpdateDetails{" + "\n" +
                 "carId=" + carId + "\n" +
                 "carState=" + carState + "\n" +
+                "receptionistEmployeeId=" + receptionistEmployeeId + "\n" +
                 "}";
     }
 

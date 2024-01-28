@@ -2,9 +2,9 @@ package com.swiftwheelshub.agency.service;
 
 import com.swiftwheelshub.agency.mapper.CarMapper;
 import com.swiftwheelshub.agency.repository.CarRepository;
-import com.swiftwheelshub.dto.CarDetailsForUpdateDto;
+import com.swiftwheelshub.dto.CarForUpdateDetails;
 import com.swiftwheelshub.dto.CarDto;
-import com.swiftwheelshub.dto.CarForUpdate;
+import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.entity.BodyType;
 import com.swiftwheelshub.entity.Branch;
 import com.swiftwheelshub.entity.Car;
@@ -108,12 +108,12 @@ public class CarService {
         return carMapper.mapEntityToDto(savedCar);
     }
 
-    public List<CarDto> updateCarsStatus(List<CarForUpdate> carsForUpdate) {
+    public List<CarDto> updateCarsStatus(List<UpdateCarRequest> carsForUpdate) {
         return carRepository.findAllById(getIds(carsForUpdate))
                 .stream()
                 .peek(car -> {
-                    CarForUpdate carForUpdate = getMatchingCarDetails(carsForUpdate, car);
-                    car.setCarStatus(CarStatus.valueOf(carForUpdate.carState().getDisplayName()));
+                    UpdateCarRequest updateCarRequest = getMatchingCarDetails(carsForUpdate, car);
+                    car.setCarStatus(CarStatus.valueOf(updateCarRequest.carState().getDisplayName()));
                 })
                 .map(this::saveEntity)
                 .map(carMapper::mapEntityToDto)
@@ -173,10 +173,10 @@ public class CarService {
                 .build();
     }
 
-    public CarDto updateCarWhenBookingIsClosed(Long id, CarDetailsForUpdateDto carDetailsForUpdateDto) {
+    public CarDto updateCarWhenBookingIsClosed(Long id, CarForUpdateDetails carForUpdateDetails) {
         Car car = findEntityById(id);
-        car.setCarStatus(CarStatus.valueOf(carDetailsForUpdateDto.carState().getDisplayName()));
-        car.setActualBranch(getActualBranch(carDetailsForUpdateDto));
+        car.setCarStatus(CarStatus.valueOf(carForUpdateDetails.carState().getDisplayName()));
+        car.setActualBranch(getActualBranch(carForUpdateDetails));
 
         Car savedCar = saveEntity(car);
 
@@ -216,21 +216,21 @@ public class CarService {
         }
     }
 
-    private List<Long> getIds(List<CarForUpdate> carsForUpdate) {
+    private List<Long> getIds(List<UpdateCarRequest> carsForUpdate) {
         return carsForUpdate.stream()
-                .map(CarForUpdate::carId)
+                .map(UpdateCarRequest::carId)
                 .toList();
     }
 
-    private CarForUpdate getMatchingCarDetails(List<CarForUpdate> carsForUpdate, Car car) {
+    private UpdateCarRequest getMatchingCarDetails(List<UpdateCarRequest> carsForUpdate, Car car) {
         return carsForUpdate.stream()
-                .filter(carForUpdate -> car.getId().equals(carForUpdate.carId()))
+                .filter(updateCarRequest -> car.getId().equals(updateCarRequest.carId()))
                 .findAny()
                 .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Car details not found"));
     }
 
-    private Branch getActualBranch(CarDetailsForUpdateDto carDetailsForUpdateDto) {
-        return employeeService.findEntityById(carDetailsForUpdateDto.receptionistEmployeeId()).getWorkingBranch();
+    private Branch getActualBranch(CarForUpdateDetails carForUpdateDetails) {
+        return employeeService.findEntityById(carForUpdateDetails.receptionistEmployeeId()).getWorkingBranch();
     }
 
     private List<CarDto> getCarDtoList(List<Car> cars) {

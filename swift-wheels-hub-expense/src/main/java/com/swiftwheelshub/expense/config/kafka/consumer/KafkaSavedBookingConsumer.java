@@ -1,6 +1,6 @@
 package com.swiftwheelshub.expense.config.kafka.consumer;
 
-import com.swiftwheelshub.dto.BookingDto;
+import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.expense.service.InvoiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -18,8 +18,8 @@ public class KafkaSavedBookingConsumer {
             containerFactory = "bookingListenerContainerFactory",
             groupId = "${kafka.groupId}"
     )
-    public void consumeSavedBooking(@Payload BookingDto bookingDto) {
-        invoiceService.saveInvoice(bookingDto);
+    public void consumeSavedBooking(@Payload BookingResponse bookingResponse) {
+        invoiceService.saveInvoice(bookingResponse);
     }
 
 }

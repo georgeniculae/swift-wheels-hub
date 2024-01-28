@@ -1,9 +1,9 @@
 package com.swiftwheelshub.booking.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiftwheelshub.booking.mapper.BookingMapper;
 import com.swiftwheelshub.booking.service.BookingProducerService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.swiftwheelshub.dto.BookingDto;
+import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.entity.Booking;
 import io.debezium.config.Configuration;
 import io.debezium.embedded.Connect;
@@ -103,18 +103,18 @@ public class DebeziumListener {
 
     private void handleBookings(Map<String, Object> payload, Operation operation) {
         Booking booking = objectMapper.convertValue(payload, Booking.class);
-        BookingDto bookingDto = bookingMapper.mapEntityToDto(booking);
+        BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
 
         if (Operation.CREATE.equals(operation)) {
-            bookingProducerService.sendSavedBooking(bookingDto);
+            bookingProducerService.sendSavedBooking(bookingResponse);
         }
 
         if (Operation.UPDATE.equals(operation)) {
-            bookingProducerService.sendUpdatedBooking(bookingDto);
+            bookingProducerService.sendUpdatedBooking(bookingResponse);
         }
 
         if (Operation.DELETE.equals(operation)) {
-            bookingProducerService.sendDeletedBooking(bookingDto.id());
+            bookingProducerService.sendDeletedBooking(bookingResponse.id());
         }
     }
 

@@ -1,7 +1,7 @@
 package com.swiftwheelshub.expense.service;
 
-import com.swiftwheelshub.dto.BookingClosingDetailsDto;
-import com.swiftwheelshub.dto.BookingDto;
+import com.swiftwheelshub.dto.BookingClosingDetails;
+import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
@@ -26,7 +26,7 @@ public class BookingService {
 
     private final RestClient restClient;
 
-    public BookingDto findBookingById(HttpServletRequest request, Long bookingId) {
+    public BookingRequest findBookingById(HttpServletRequest request, Long bookingId) {
         String finalUrl = url + SEPARATOR + bookingId;
 
         return restClient.get()
@@ -38,22 +38,22 @@ public class BookingService {
                         throw new SwiftWheelsHubResponseStatusException(statusCode, clientResponse.getStatusText());
                     }
 
-                    if (ObjectUtils.isEmpty(clientResponse.bodyTo(BookingDto.class)) ||
+                    if (ObjectUtils.isEmpty(clientResponse.bodyTo(BookingRequest.class)) ||
                             clientResponse.getBody().available() == 0) {
                         throw new SwiftWheelsHubNotFoundException("Booking with id: " + bookingId + " not found");
                     }
 
-                    return Objects.requireNonNull(clientResponse.bodyTo(BookingDto.class));
+                    return Objects.requireNonNull(clientResponse.bodyTo(BookingRequest.class));
                 });
     }
 
-    public void closeBooking(HttpServletRequest request, BookingClosingDetailsDto bookingClosingDetailsDto) {
+    public void closeBooking(HttpServletRequest request, BookingClosingDetails bookingClosingDetails) {
         String finalUrl = url + SEPARATOR + "close-booking";
 
         restClient.post()
                 .uri(finalUrl)
                 .headers(HttpRequestUtil.mutateHeaders(request))
-                .body(bookingClosingDetailsDto)
+                .body(bookingClosingDetails)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (clientRequest, clientResponse) -> {
                     throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());

@@ -1,9 +1,9 @@
 package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.CarService;
-import com.swiftwheelshub.dto.CarDetailsForUpdateDto;
+import com.swiftwheelshub.dto.CarForUpdateDetails;
 import com.swiftwheelshub.dto.CarDto;
-import com.swiftwheelshub.dto.CarForUpdate;
+import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.entity.CarStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -100,7 +100,7 @@ public class CarController {
     }
 
     @PutMapping(path = "/update-cars-status")
-    public ResponseEntity<List<CarDto>> updateCarsStatus(@RequestBody @Valid List<CarForUpdate> carsForUpdate) {
+    public ResponseEntity<List<CarDto>> updateCarsStatus(@RequestBody @Valid List<UpdateCarRequest> carsForUpdate) {
         List<CarDto> updatedCarDtoList = carService.updateCarsStatus(carsForUpdate);
 
         return ResponseEntity.ok(updatedCarDtoList);
@@ -108,8 +108,8 @@ public class CarController {
 
     @PutMapping(path = "/{id}/update-after-closed-booking")
     public ResponseEntity<CarDto> updateCarWhenBookingIsClosed(@PathVariable("id") Long id,
-                                                               @RequestBody @Valid CarDetailsForUpdateDto carDetailsForUpdateDto) {
-        CarDto updatedCarDto = carService.updateCarWhenBookingIsClosed(id, carDetailsForUpdateDto);
+                                                               @RequestBody @Valid CarForUpdateDetails carForUpdateDetails) {
+        CarDto updatedCarDto = carService.updateCarWhenBookingIsClosed(id, carForUpdateDetails);
 
         return ResponseEntity.ok(updatedCarDto);
     }

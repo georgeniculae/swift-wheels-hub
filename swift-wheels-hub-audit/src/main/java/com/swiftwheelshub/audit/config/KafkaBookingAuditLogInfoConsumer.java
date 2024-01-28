@@ -1,7 +1,7 @@
 package com.swiftwheelshub.audit.config;
 
 import com.swiftwheelshub.audit.service.AuditLogInfoService;
-import com.swiftwheelshub.dto.AuditLogInfoDto;
+import com.swiftwheelshub.dto.AuditLogInfoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -18,8 +18,8 @@ public class KafkaBookingAuditLogInfoConsumer {
             containerFactory = "auditListenerContainerFactory",
             groupId = "${kafka.groupId}"
     )
-    public void consumeAuditInfo(@Payload AuditLogInfoDto bookingAuditLogInfoDto) {
-        auditLogInfoService.saveAuditLogInfo(bookingAuditLogInfoDto);
+    public void consumeAuditInfo(@Payload AuditLogInfoRequest bookingAuditLogInfoRequest) {
+        auditLogInfoService.saveAuditLogInfo(bookingAuditLogInfoRequest);
     }
 
 }

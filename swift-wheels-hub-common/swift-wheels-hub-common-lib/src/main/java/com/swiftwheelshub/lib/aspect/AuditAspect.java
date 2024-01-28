@@ -1,6 +1,6 @@
 package com.swiftwheelshub.lib.aspect;
 
-import com.swiftwheelshub.dto.AuditLogInfoDto;
+import com.swiftwheelshub.dto.AuditLogInfoRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.lib.service.AuditLogProducerService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,11 +43,11 @@ public class AuditAspect {
         String username = getUsername();
         List<String> parametersValues = getParametersValues(joinPoint, logActivity, signature);
 
-        AuditLogInfoDto auditLogInfoDto = getAuditLogInfoDto(method.getName(), username, parametersValues);
+        AuditLogInfoRequest auditLogInfoRequest = getAuditLogInfoDto(method.getName(), username, parametersValues);
 
         try {
             Object proceed = joinPoint.proceed();
-            auditLogProducerService.sendAuditLog(auditLogInfoDto);
+            auditLogProducerService.sendAuditLog(auditLogInfoRequest);
 
             return proceed;
         } catch (Throwable e) {
@@ -76,8 +76,8 @@ public class AuditAspect {
                 .toList();
     }
 
-    private AuditLogInfoDto getAuditLogInfoDto(String methodName, String username, List<String> parametersValues) {
-        return new AuditLogInfoDto(methodName, username, parametersValues);
+    private AuditLogInfoRequest getAuditLogInfoDto(String methodName, String username, List<String> parametersValues) {
+        return new AuditLogInfoRequest(methodName, username, parametersValues);
     }
 
 }

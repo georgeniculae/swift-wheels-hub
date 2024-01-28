@@ -6,14 +6,14 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record AuditLogInfoDto(@NotEmpty(message = "Method name cannot be empty")
+public record AuditLogInfoRequest(@NotEmpty(message = "Method name cannot be empty")
                               String methodName,
-                              String username,
-                              List<String> parametersValues) {
+                                  String username,
+                                  List<String> parametersValues) {
 
     @Override
     public String toString() {
-        return "AuditLogInfoDto{" + "\n" +
+        return "AuditLogInfoRequest{" + "\n" +
                 "methodName=" + methodName + "\n" +
                 "username=" + username + "\n" +
                 "parametersValues=" + parametersValues + "\n" +

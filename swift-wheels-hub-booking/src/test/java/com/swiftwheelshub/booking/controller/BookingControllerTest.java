@@ -2,8 +2,9 @@ package com.swiftwheelshub.booking.controller;
 
 import com.swiftwheelshub.booking.service.BookingService;
 import com.swiftwheelshub.booking.util.TestUtils;
-import com.swiftwheelshub.dto.BookingClosingDetailsDto;
-import com.swiftwheelshub.dto.BookingDto;
+import com.swiftwheelshub.dto.BookingClosingDetails;
+import com.swiftwheelshub.dto.BookingRequest;
+import com.swiftwheelshub.dto.BookingResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +47,10 @@ class BookingControllerTest {
 
     @Test
     void findAllBookingTest_success() throws Exception {
-        BookingDto bookingDto = TestUtils.getResourceAsJson("/data/BookingDto.json", BookingDto.class);
+        BookingResponse bookingResponse =
+                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        when(bookingService.findAllBookings()).thenReturn(List.of(bookingDto));
+        when(bookingService.findAllBookings()).thenReturn(List.of(bookingResponse));
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/list").contextPath(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -64,9 +66,10 @@ class BookingControllerTest {
 
     @Test
     void findAllBookingTest_unauthorized() throws Exception {
-        BookingDto bookingDto = TestUtils.getResourceAsJson("/data/BookingDto.json", BookingDto.class);
+        BookingResponse bookingResponse =
+                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        when(bookingService.findAllBookings()).thenReturn(List.of(bookingDto));
+        when(bookingService.findAllBookings()).thenReturn(List.of(bookingResponse));
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH).contextPath(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -82,9 +85,10 @@ class BookingControllerTest {
 
     @Test
     void findBookingByIdTest_success() throws Exception {
-        BookingDto bookingDto = TestUtils.getResourceAsJson("/data/BookingDto.json", BookingDto.class);
+        BookingResponse bookingResponse =
+                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        when(bookingService.findBookingById(anyLong())).thenReturn(bookingDto);
+        when(bookingService.findBookingById(anyLong())).thenReturn(bookingResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L).contextPath(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -223,10 +227,12 @@ class BookingControllerTest {
 
     @Test
     void addBookingTest_success() throws Exception {
-        BookingDto bookingDto = TestUtils.getResourceAsJson("/data/BookingDto.json", BookingDto.class);
-        String content = TestUtils.writeValueAsString(bookingDto);
+        BookingResponse bookingResponse =
+                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        when(bookingService.saveBooking(any(HttpServletRequest.class), any(BookingDto.class))).thenReturn(bookingDto);
+        String content = TestUtils.writeValueAsString(bookingResponse);
+
+        when(bookingService.saveBooking(any(HttpServletRequest.class), any(BookingRequest.class))).thenReturn(bookingResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/new").contextPath(PATH)
                         .with(csrf())
@@ -244,10 +250,12 @@ class BookingControllerTest {
 
     @Test
     void addBookingTest_unauthorized() throws Exception {
-        BookingDto bookingDto = TestUtils.getResourceAsJson("/data/BookingDto.json", BookingDto.class);
-        String content = TestUtils.writeValueAsString(bookingDto);
+        BookingResponse bookingResponse =
+                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        when(bookingService.saveBooking(any(HttpServletRequest.class), any(BookingDto.class))).thenReturn(bookingDto);
+        String content = TestUtils.writeValueAsString(bookingResponse);
+
+        when(bookingService.saveBooking(any(HttpServletRequest.class), any(BookingRequest.class))).thenReturn(bookingResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH).contextPath(PATH)
                         .with(csrf())
@@ -265,10 +273,12 @@ class BookingControllerTest {
 
     @Test
     void addBookingTest_forbidden() throws Exception {
-        BookingDto bookingDto = TestUtils.getResourceAsJson("/data/BookingDto.json", BookingDto.class);
-        String content = TestUtils.writeValueAsString(bookingDto);
+        BookingResponse bookingResponse =
+                TestUtils.getResourceAsJson("/data/BookingRequest.json", BookingResponse.class);
 
-        when(bookingService.saveBooking(any(HttpServletRequest.class), any(BookingDto.class))).thenReturn(bookingDto);
+        String content = TestUtils.writeValueAsString(bookingResponse);
+
+        when(bookingService.saveBooking(any(HttpServletRequest.class), any(BookingRequest.class))).thenReturn(bookingResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH).contextPath(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -285,14 +295,15 @@ class BookingControllerTest {
 
     @Test
     void closeBookingTest_success() throws Exception {
-        BookingDto bookingDto = TestUtils.getResourceAsJson("/data/BookingDto.json", BookingDto.class);
-        BookingClosingDetailsDto bookingClosingDetailsDto =
-                TestUtils.getResourceAsJson("/data/CarForUpdate.json", BookingClosingDetailsDto.class);
+        BookingResponse bookingResponse =
+                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+        BookingClosingDetails bookingClosingDetails =
+                TestUtils.getResourceAsJson("/data/CarForUpdate.json", BookingClosingDetails.class);
 
-        String content = TestUtils.writeValueAsString(bookingClosingDetailsDto);
+        String content = TestUtils.writeValueAsString(bookingClosingDetails);
 
-        when(bookingService.closeBooking(any(HttpServletRequest.class), any(BookingClosingDetailsDto.class)))
-                .thenReturn(bookingDto);
+        when(bookingService.closeBooking(any(HttpServletRequest.class), any(BookingClosingDetails.class)))
+                .thenReturn(bookingResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/close-booking").contextPath(PATH)
                         .with(csrf())
@@ -310,14 +321,15 @@ class BookingControllerTest {
 
     @Test
     void closeBookingTest_unauthorized() throws Exception {
-        BookingDto bookingDto = TestUtils.getResourceAsJson("/data/BookingDto.json", BookingDto.class);
-        BookingClosingDetailsDto bookingClosingDetailsDto =
-                TestUtils.getResourceAsJson("/data/BookingClosingDetailsDto.json", BookingClosingDetailsDto.class);
+        BookingResponse bookingResponse =
+                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+        BookingClosingDetails bookingClosingDetails =
+                TestUtils.getResourceAsJson("/data/BookingClosingDetailsDto.json", BookingClosingDetails.class);
 
-        String content = TestUtils.writeValueAsString(bookingClosingDetailsDto);
+        String content = TestUtils.writeValueAsString(bookingClosingDetails);
 
-        when(bookingService.closeBooking(any(HttpServletRequest.class), any(BookingClosingDetailsDto.class)))
-                .thenReturn(bookingDto);
+        when(bookingService.closeBooking(any(HttpServletRequest.class), any(BookingClosingDetails.class)))
+                .thenReturn(bookingResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/close-booking").contextPath(PATH)
                         .with(csrf())
@@ -335,14 +347,15 @@ class BookingControllerTest {
 
     @Test
     void closeBookingTest_forbidden() throws Exception {
-        BookingDto bookingDto = TestUtils.getResourceAsJson("/data/BookingDto.json", BookingDto.class);
-        BookingClosingDetailsDto bookingClosingDetailsDto =
-                TestUtils.getResourceAsJson("/data/BookingClosingDetailsDto.json", BookingClosingDetailsDto.class);
+        BookingResponse bookingResponse =
+                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+        BookingClosingDetails bookingClosingDetails =
+                TestUtils.getResourceAsJson("/data/BookingClosingDetailsDto.json", BookingClosingDetails.class);
 
-        String content = TestUtils.writeValueAsString(bookingClosingDetailsDto);
+        String content = TestUtils.writeValueAsString(bookingClosingDetails);
 
-        when(bookingService.closeBooking(any(HttpServletRequest.class), any(BookingClosingDetailsDto.class)))
-                .thenReturn(bookingDto);
+        when(bookingService.closeBooking(any(HttpServletRequest.class), any(BookingClosingDetails.class)))
+                .thenReturn(bookingResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/close-booking").contextPath(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -359,11 +372,13 @@ class BookingControllerTest {
 
     @Test
     void updateBookingTest_success() throws Exception {
-        BookingDto bookingDto = TestUtils.getResourceAsJson("/data/BookingDto.json", BookingDto.class);
-        String content = TestUtils.writeValueAsString(bookingDto);
+        BookingResponse bookingResponse =
+                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        when(bookingService.updateBooking(any(HttpServletRequest.class), anyLong(), any(BookingDto.class)))
-                .thenReturn(bookingDto);
+        String content = TestUtils.writeValueAsString(bookingResponse);
+
+        when(bookingService.updateBooking(any(HttpServletRequest.class), anyLong(), any(BookingRequest.class)))
+                .thenReturn(bookingResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L).contextPath(PATH)
                         .with(csrf())
@@ -381,11 +396,13 @@ class BookingControllerTest {
 
     @Test
     void updateBookingTest_unauthorized() throws Exception {
-        BookingDto bookingDto = TestUtils.getResourceAsJson("/data/BookingDto.json", BookingDto.class);
-        String content = TestUtils.writeValueAsString(bookingDto);
+        BookingResponse bookingResponse =
+                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        when(bookingService.updateBooking(any(HttpServletRequest.class), anyLong(), any(BookingDto.class)))
-                .thenReturn(bookingDto);
+        String content = TestUtils.writeValueAsString(bookingResponse);
+
+        when(bookingService.updateBooking(any(HttpServletRequest.class), anyLong(), any(BookingRequest.class)))
+                .thenReturn(bookingResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/edit/{id}", 1L).contextPath(PATH)
                         .with(csrf())
@@ -403,11 +420,13 @@ class BookingControllerTest {
 
     @Test
     void updateBookingTest_forbidden() throws Exception {
-        BookingDto bookingDto = TestUtils.getResourceAsJson("/data/BookingDto.json", BookingDto.class);
-        String content = TestUtils.writeValueAsString(bookingDto);
+        BookingResponse bookingResponse =
+                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        when(bookingService.updateBooking(any(HttpServletRequest.class), anyLong(), any(BookingDto.class)))
-                .thenReturn(bookingDto);
+        String content = TestUtils.writeValueAsString(bookingResponse);
+
+        when(bookingService.updateBooking(any(HttpServletRequest.class), anyLong(), any(BookingRequest.class)))
+                .thenReturn(bookingResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/edit/{id}", 1L).contextPath(PATH)
                         .contentType(MediaType.APPLICATION_JSON)

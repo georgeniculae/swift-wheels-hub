@@ -1,8 +1,9 @@
 package com.swiftwheelshub.booking.controller;
 
 import com.swiftwheelshub.booking.service.BookingService;
-import com.swiftwheelshub.dto.BookingClosingDetailsDto;
-import com.swiftwheelshub.dto.BookingDto;
+import com.swiftwheelshub.dto.BookingClosingDetails;
+import com.swiftwheelshub.dto.BookingRequest;
+import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.lib.aspect.LogActivity;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -26,17 +27,17 @@ public class BookingController {
     private final BookingService bookingService;
 
     @GetMapping(path = "/list")
-    public ResponseEntity<List<BookingDto>> findAllBookings() {
-        List<BookingDto> bookingDtoList = bookingService.findAllBookings();
+    public ResponseEntity<List<BookingResponse>> findAllBookings() {
+        List<BookingResponse> bookingResponses = bookingService.findAllBookings();
 
-        return ResponseEntity.ok(bookingDtoList);
+        return ResponseEntity.ok(bookingResponses);
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<BookingDto> findBookingById(@PathVariable("id") Long id) {
-        BookingDto bookingDto = bookingService.findBookingById(id);
+    public ResponseEntity<BookingResponse> findBookingById(@PathVariable("id") Long id) {
+        BookingResponse bookingResponse = bookingService.findBookingById(id);
 
-        return ResponseEntity.ok(bookingDto);
+        return ResponseEntity.ok(bookingResponse);
     }
 
     @GetMapping(path = "/count")
@@ -62,34 +63,35 @@ public class BookingController {
 
     @PostMapping("/new")
     @LogActivity(
-            sentParameters = "bookingDto",
+            sentParameters = "bookingRequest",
             activityDescription = "Booking add"
     )
-    public ResponseEntity<BookingDto> addBooking(HttpServletRequest request, @RequestBody @Valid BookingDto bookingDto) {
-        BookingDto saveBookingDto = bookingService.saveBooking(request, bookingDto);
+    public ResponseEntity<BookingResponse> addBooking(HttpServletRequest request,
+                                                     @RequestBody @Valid BookingRequest bookingRequest) {
+        BookingResponse saveBookingResponse = bookingService.saveBooking(request, bookingRequest);
 
-        return ResponseEntity.ok(saveBookingDto);
+        return ResponseEntity.ok(saveBookingResponse);
     }
 
     @PostMapping(path = "/close-booking")
-    public ResponseEntity<BookingDto> closeBooking(HttpServletRequest request,
-                                                   @RequestBody @Valid BookingClosingDetailsDto bookingUpdateDetailsDto) {
-        BookingDto updatedBookingDto = bookingService.closeBooking(request, bookingUpdateDetailsDto);
+    public ResponseEntity<BookingResponse> closeBooking(HttpServletRequest request,
+                                                       @RequestBody @Valid BookingClosingDetails bookingClosingDetails) {
+        BookingResponse updatedBookingResponse = bookingService.closeBooking(request, bookingClosingDetails);
 
-        return ResponseEntity.ok(updatedBookingDto);
+        return ResponseEntity.ok(updatedBookingResponse);
     }
 
     @PutMapping(path = "/{id}")
     @LogActivity(
-            sentParameters = "bookingDto",
+            sentParameters = "bookingRequest",
             activityDescription = "Booking update"
     )
-    public ResponseEntity<BookingDto> updateBooking(HttpServletRequest request,
-                                                    @PathVariable("id") Long id,
-                                                    @RequestBody @Valid BookingDto bookingDto) {
-        BookingDto updatedBookingDto = bookingService.updateBooking(request, id, bookingDto);
+    public ResponseEntity<BookingResponse> updateBooking(HttpServletRequest request,
+                                                        @PathVariable("id") Long id,
+                                                        @RequestBody @Valid BookingRequest bookingRequest) {
+        BookingResponse updatedBookingResponse = bookingService.updateBooking(request, id, bookingRequest);
 
-        return ResponseEntity.ok(updatedBookingDto);
+        return ResponseEntity.ok(updatedBookingResponse);
     }
 
     @DeleteMapping(path = "/{id}")

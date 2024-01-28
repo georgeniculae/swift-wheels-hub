@@ -5,15 +5,15 @@ import com.swiftwheelshub.booking.mapper.BookingMapperImpl;
 import com.swiftwheelshub.booking.repository.BookingRepository;
 import com.swiftwheelshub.booking.util.AssertionUtils;
 import com.swiftwheelshub.booking.util.TestUtils;
-import com.swiftwheelshub.dto.BookingClosingDetailsDto;
-import com.swiftwheelshub.dto.BookingDto;
+import com.swiftwheelshub.dto.BookingClosingDetails;
+import com.swiftwheelshub.dto.BookingRequest;
+import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.dto.CarDto;
 import com.swiftwheelshub.dto.EmployeeDto;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.entity.CarStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -63,8 +64,8 @@ class BookingServiceTest {
 
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
-        BookingDto actualBookingDto = Assertions.assertDoesNotThrow(() -> bookingService.findBookingById(1L));
-        assertNotNull(actualBookingDto);
+        BookingResponse actualBookingResponse = assertDoesNotThrow(() -> bookingService.findBookingById(1L));
+        assertNotNull(actualBookingResponse);
     }
 
     @Test
@@ -81,7 +82,7 @@ class BookingServiceTest {
     @Test
     void saveBookingTest_success() {
         Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
-        BookingDto bookingDto = TestUtils.getResourceAsJson("/data/BookingDto.json", BookingDto.class);
+        BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
         CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -90,9 +91,10 @@ class BookingServiceTest {
         when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(booking);
         doNothing().when(carService).changeCarStatus(any(HttpServletRequest.class), anyLong(), any(CarStatus.class));
 
-        BookingDto actualBookingDto = Assertions.assertDoesNotThrow(() -> bookingService.saveBooking(request, bookingDto));
+        BookingResponse actualBookingResponse =
+                assertDoesNotThrow(() -> bookingService.saveBooking(request, bookingRequest));
 
-        assertNotNull(actualBookingDto);
+        assertNotNull(actualBookingResponse);
 
         verify(bookingMapper, times(1)).mapEntityToDto(any(Booking.class));
     }
@@ -101,8 +103,8 @@ class BookingServiceTest {
     void closeBookingTest_success() {
         Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
         EmployeeDto employeeDto = TestUtils.getResourceAsJson("/data/EmployeeDto.json", EmployeeDto.class);
-        BookingClosingDetailsDto bookingClosingDetailsDto =
-                TestUtils.getResourceAsJson("/data/BookingClosingDetailsDto.json", BookingClosingDetailsDto.class);
+        BookingClosingDetails bookingClosingDetails =
+                TestUtils.getResourceAsJson("/data/BookingClosingDetailsDto.json", BookingClosingDetails.class);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
 
@@ -110,29 +112,30 @@ class BookingServiceTest {
         when(employeeService.findEmployeeById(any(HttpServletRequest.class), anyLong())).thenReturn(employeeDto);
         when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(booking);
 
-        Assertions.assertDoesNotThrow(() -> bookingService.closeBooking(request, bookingClosingDetailsDto));
+        assertDoesNotThrow(() -> bookingService.closeBooking(request, bookingClosingDetails));
     }
 
     @Test
     void updateBookingTest_success() {
         Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
-        BookingDto bookingDto = TestUtils.getResourceAsJson("/data/BookingDto.json", BookingDto.class);
+        BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
         when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(booking);
 
-        BookingDto updatedBookingDto = Assertions.assertDoesNotThrow(() -> bookingService.updateBooking(request, 1L, bookingDto));
+        BookingResponse updatedBookingResponse =
+                assertDoesNotThrow(() -> bookingService.updateBooking(request, 1L, bookingRequest));
 
-        assertNotNull(updatedBookingDto);
+        assertNotNull(updatedBookingResponse);
     }
 
     @Test
     void updateBookingTest_updatedCar_success() {
         Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
         Booking updatedBooking = TestUtils.getResourceAsJson("/data/UpdatedBooking.json", Booking.class);
-        BookingDto bookingDto = TestUtils.getResourceAsJson("/data/UpdatedBookingDto.json", BookingDto.class);
+        BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/UpdatedBookingDto.json", BookingRequest.class);
         CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -141,10 +144,10 @@ class BookingServiceTest {
         when(carService.findAvailableCarById(any(HttpServletRequest.class), anyLong())).thenReturn(carDto);
         when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(updatedBooking);
 
-        BookingDto updatedBookingDto =
-                Assertions.assertDoesNotThrow(() -> bookingService.updateBooking(request, 1L, bookingDto));
+        BookingResponse updatedBookingResponse =
+                assertDoesNotThrow(() -> bookingService.updateBooking(request, 1L, bookingRequest));
 
-        assertNotNull(updatedBookingDto);
+        assertNotNull(updatedBookingResponse);
     }
 
     @Test
@@ -156,7 +159,7 @@ class BookingServiceTest {
 
         when(bookingRepository.findBookingsByUser(anyString())).thenReturn(List.of(booking));
 
-        Double amount = Assertions.assertDoesNotThrow(() -> bookingService.getAmountSpentByLoggedInUser(request));
+        Double amount = assertDoesNotThrow(() -> bookingService.getAmountSpentByLoggedInUser(request));
         assertEquals(500, amount);
     }
 
@@ -166,7 +169,7 @@ class BookingServiceTest {
 
         when(bookingRepository.findAll()).thenReturn(List.of(booking));
 
-        Double sumOfAllBookingAmount = Assertions.assertDoesNotThrow(() -> bookingService.getSumOfAllBookingAmount());
+        Double sumOfAllBookingAmount = assertDoesNotThrow(() -> bookingService.getSumOfAllBookingAmount());
         assertEquals(500, sumOfAllBookingAmount);
     }
 
@@ -176,7 +179,7 @@ class BookingServiceTest {
 
         when(bookingRepository.findAll()).thenReturn(List.of(booking));
 
-        Assertions.assertDoesNotThrow(() -> bookingService.countUsersWithBookings());
+        assertDoesNotThrow(() -> bookingService.countUsersWithBookings());
         assertEquals(1, bookingService.countUsersWithBookings());
     }
 
@@ -187,8 +190,10 @@ class BookingServiceTest {
         when(bookingRepository.findByDateOfBooking(LocalDate.of(2050, Month.FEBRUARY, 20)))
                 .thenReturn(Optional.of(booking));
 
-        BookingDto bookingDto = Assertions.assertDoesNotThrow(() -> bookingService.findBookingByDateOfBooking("2050-02-20"));
-        AssertionUtils.assertBooking(booking, bookingDto);
+        BookingResponse bookingResponse =
+                assertDoesNotThrow(() -> bookingService.findBookingByDateOfBooking("2050-02-20"));
+
+        AssertionUtils.assertBooking(booking, bookingResponse);
     }
 
     @Test

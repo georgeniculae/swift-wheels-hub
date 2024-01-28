@@ -1,6 +1,6 @@
 package com.swiftwheelshub.lib.service;
 
-import com.swiftwheelshub.dto.AuditLogInfoDto;
+import com.swiftwheelshub.dto.AuditLogInfoRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -23,7 +23,7 @@ public class AuditLogProducerService {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public void sendAuditLog(AuditLogInfoDto auditLogInfo) {
+    public void sendAuditLog(AuditLogInfoRequest auditLogInfo) {
         kafkaTemplate.send(buildMessage(auditLogInfo, topic))
                 .whenComplete((result, e) -> {
                     if (ObjectUtils.isEmpty(e)) {
@@ -37,8 +37,8 @@ public class AuditLogProducerService {
                 });
     }
 
-    private Message<AuditLogInfoDto> buildMessage(AuditLogInfoDto auditLogInfoDto, String topicName) {
-        return MessageBuilder.withPayload(auditLogInfoDto)
+    private Message<AuditLogInfoRequest> buildMessage(AuditLogInfoRequest auditLogInfoRequest, String topicName) {
+        return MessageBuilder.withPayload(auditLogInfoRequest)
                 .setHeader(KafkaHeaders.TOPIC, topicName)
                 .build();
     }

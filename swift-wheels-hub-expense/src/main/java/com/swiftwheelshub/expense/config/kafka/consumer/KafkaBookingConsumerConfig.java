@@ -1,6 +1,6 @@
 package com.swiftwheelshub.expense.config.kafka.consumer;
 
-import com.swiftwheelshub.dto.BookingDto;
+import com.swiftwheelshub.dto.BookingResponse;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +26,7 @@ public class KafkaBookingConsumerConfig {
     private String groupId;
 
     @Bean
-    public ConsumerFactory<String, BookingDto> bookingConsumerFactory() {
+    public ConsumerFactory<String, BookingResponse> bookingConsumerFactory() {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
@@ -34,12 +34,12 @@ public class KafkaBookingConsumerConfig {
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 
-        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(BookingDto.class));
+        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(BookingResponse.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, BookingDto> bookingListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, BookingDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, BookingResponse> bookingListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, BookingResponse> factory = new ConcurrentKafkaListenerContainerFactory<>();
 
         factory.setConsumerFactory(bookingConsumerFactory());
 

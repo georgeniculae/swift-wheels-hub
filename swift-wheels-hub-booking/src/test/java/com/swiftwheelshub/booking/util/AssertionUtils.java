@@ -1,6 +1,7 @@
 package com.swiftwheelshub.booking.util;
 
-import com.swiftwheelshub.dto.BookingDto;
+import com.swiftwheelshub.dto.BookingRequest;
+import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.dto.BranchDto;
 import com.swiftwheelshub.dto.CarDto;
 import com.swiftwheelshub.entity.Booking;
@@ -13,11 +14,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AssertionUtils {
 
-    public static void assertBooking(Booking booking, BookingDto bookingDto) {
-        assertEquals(booking.getDateOfBooking(), bookingDto.dateOfBooking());
-        assertEquals(booking.getDateFrom(), bookingDto.dateFrom());
-        assertEquals(booking.getDateTo(), bookingDto.dateTo());
-        assertEquals(booking.getAmount(), Objects.requireNonNull(bookingDto.amount()).doubleValue());
+    public static void assertBooking(Booking booking, BookingRequest bookingRequest) {
+        assertEquals(booking.getDateOfBooking(), bookingRequest.dateOfBooking());
+        assertEquals(booking.getDateFrom(), bookingRequest.dateFrom());
+        assertEquals(booking.getDateTo(), bookingRequest.dateTo());
+        assertEquals(booking.getAmount(), Objects.requireNonNull(bookingRequest.amount()).doubleValue());
+    }
+
+    public static void assertBooking(Booking booking, BookingResponse bookingResponse) {
+        assertEquals(booking.getDateOfBooking(), bookingResponse.dateOfBooking());
+        assertEquals(booking.getDateFrom(), bookingResponse.dateFrom());
+        assertEquals(booking.getDateTo(), bookingResponse.dateTo());
+        assertEquals(booking.getAmount(), Objects.requireNonNull(bookingResponse.amount()).doubleValue());
     }
 
     public static void assertCar(Car car, CarDto carDto) {

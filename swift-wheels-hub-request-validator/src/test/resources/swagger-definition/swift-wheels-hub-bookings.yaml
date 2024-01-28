@@ -24,7 +24,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/BookingDto'
+                $ref: '#/components/schemas/BookingRequest'
     put:
       tags:
         - booking-controller
@@ -40,7 +40,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BookingDto'
+              $ref: '#/components/schemas/BookingRequest'
         required: true
       responses:
         '200':
@@ -48,7 +48,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/BookingDto'
+                $ref: '#/components/schemas/BookingRequest'
     delete:
       tags:
         - booking-controller
@@ -72,7 +72,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BookingDto'
+              $ref: '#/components/schemas/BookingRequest'
         required: true
       responses:
         '200':
@@ -80,7 +80,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/BookingDto'
+                $ref: '#/components/schemas/BookingRequest'
   /close-booking:
     post:
       tags:
@@ -90,7 +90,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BookingClosingDetailsDto'
+              $ref: '#/components/schemas/BookingClosingDetails'
         required: true
       responses:
         '200':
@@ -98,7 +98,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/BookingDto'
+                $ref: '#/components/schemas/BookingRequest'
   /list:
     get:
       tags:
@@ -112,7 +112,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BookingDto'
+                  $ref: '#/components/schemas/BookingRequest'
   /current-date:
     get:
       tags:

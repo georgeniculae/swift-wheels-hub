@@ -1,8 +1,8 @@
 package com.swiftwheelshub.booking.service;
 
-import com.swiftwheelshub.dto.CarDetailsForUpdateDto;
+import com.swiftwheelshub.dto.CarForUpdateDetails;
 import com.swiftwheelshub.dto.CarDto;
-import com.swiftwheelshub.dto.CarForUpdate;
+import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.entity.CarStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
@@ -74,13 +74,13 @@ public class CarService {
     }
 
     public void updateCarWhenBookingIsFinished(HttpServletRequest request,
-                                               CarDetailsForUpdateDto carDetailsForUpdateDto) {
-        String finalUrl = url + SEPARATOR + carDetailsForUpdateDto.carId() + SEPARATOR + "update-after-closed-booking";
+                                               CarForUpdateDetails carForUpdateDetails) {
+        String finalUrl = url + SEPARATOR + carForUpdateDetails.carId() + SEPARATOR + "update-after-closed-booking";
 
         restClient.put()
                 .uri(finalUrl)
                 .headers(HttpRequestUtil.mutateHeaders(request))
-                .body(carDetailsForUpdateDto)
+                .body(carForUpdateDetails)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (clientRequest, clientResponse) -> {
                     throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());
@@ -88,7 +88,7 @@ public class CarService {
                 .toBodilessEntity();
     }
 
-    public void updateCarsStatus(HttpServletRequest request, List<CarForUpdate> carsForUpdate) {
+    public void updateCarsStatus(HttpServletRequest request, List<UpdateCarRequest> carsForUpdate) {
         String finalUrl = url + SEPARATOR + "update-cars-status";
 
         restClient.put()
