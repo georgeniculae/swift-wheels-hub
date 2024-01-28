@@ -6,7 +6,7 @@ import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.dto.CarForUpdateDetails;
-import com.swiftwheelshub.dto.CarDto;
+import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.EmployeeDto;
@@ -116,13 +116,13 @@ public class BookingService {
 
     public BookingResponse saveBooking(HttpServletRequest request, BookingRequest newBookingRequest) {
         BookingResponse bookingResponse;
-        CarDto carDto;
+        CarRequest carRequest;
 
         try {
             validateBookingDates(newBookingRequest);
 
-            carDto = carService.findAvailableCarById(request, newBookingRequest.carId());
-            Booking newBooking = setupNewBooking(newBookingRequest, carDto);
+            carRequest = carService.findAvailableCarById(request, newBookingRequest.carId());
+            Booking newBooking = setupNewBooking(newBookingRequest, carRequest);
 
             Booking savedBooking = bookingRepository.saveAndFlush(newBooking);
             bookingResponse = bookingMapper.mapEntityToDto(savedBooking);
@@ -130,7 +130,7 @@ public class BookingService {
             throw new SwiftWheelsHubException(e);
         }
 
-        carService.changeCarStatus(request, carDto.id(), CarStatus.NOT_AVAILABLE);
+        carService.changeCarStatus(request, carRequest.id(), CarStatus.NOT_AVAILABLE);
 
         return bookingResponse;
     }
@@ -207,11 +207,11 @@ public class BookingService {
         }
     }
 
-    private Optional<CarDto> getCarIfIsChanged(HttpServletRequest request, Long existingCarId, Long newCarId) {
+    private Optional<CarRequest> getCarIfIsChanged(HttpServletRequest request, Long existingCarId, Long newCarId) {
         if (!existingCarId.equals(newCarId)) {
-            CarDto newCarDto = carService.findAvailableCarById(request, newCarId);
+            CarRequest newCarRequest = carService.findAvailableCarById(request, newCarId);
 
-            return Optional.of(newCarDto);
+            return Optional.of(newCarRequest);
         }
 
         return Optional.empty();
@@ -235,19 +235,19 @@ public class BookingService {
                 .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Booking with id " + id + " does not exist"));
     }
 
-    private Booking setupNewBooking(BookingRequest newBookingRequest, CarDto carDto) {
+    private Booking setupNewBooking(BookingRequest newBookingRequest, CarRequest carRequest) {
         Booking newBooking = bookingMapper.mapDtoToEntity(newBookingRequest);
-        double amount = carDto.amount();
+        double amount = carRequest.amount();
 
         newBooking.setDateTo(newBookingRequest.dateTo());
         newBooking.setDateFrom(newBookingRequest.dateFrom());
         newBooking.setCustomerUsername(newBookingRequest.customerUsername());
-        newBooking.setCarId(carDto.id());
+        newBooking.setCarId(carRequest.id());
         newBooking.setDateOfBooking(LocalDate.now());
-        newBooking.setRentalBranchId(carDto.actualBranchId());
+        newBooking.setRentalBranchId(carRequest.actualBranchId());
         newBooking.setStatus(BookingStatus.IN_PROGRESS);
         newBooking.setAmount(getAmount(newBookingRequest, amount));
-        newBooking.setRentalCarPrice(carDto.amount());
+        newBooking.setRentalCarPrice(carRequest.amount());
 
         return newBooking;
     }

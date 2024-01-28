@@ -1,7 +1,8 @@
 package com.swiftwheelshub.agency.util;
 
 import com.swiftwheelshub.dto.BranchDto;
-import com.swiftwheelshub.dto.CarDto;
+import com.swiftwheelshub.dto.CarRequest;
+import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.EmployeeDto;
 import com.swiftwheelshub.dto.RentalOfficeDto;
 import com.swiftwheelshub.entity.Branch;
@@ -15,16 +16,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AssertionUtils {
 
-    public static void assertCar(Car car, CarDto carDto) {
-        assertEquals(car.getMake(), carDto.make());
-        assertEquals(car.getModel(), carDto.model());
-        assertEquals(car.getBodyType().getDisplayName(), carDto.bodyCategory().getDisplayName());
-        assertEquals(car.getYearOfProduction(), carDto.yearOfProduction());
-        assertEquals(car.getColor(), carDto.color());
-        assertEquals(car.getMileage(), carDto.mileage());
-        assertEquals(car.getCarStatus().getDisplayName(), carDto.carState().getDisplayName());
-        assertEquals(car.getAmount(), Objects.requireNonNull(carDto.amount()).doubleValue());
-        assertEquals(car.getUrlOfImage(), carDto.urlOfImage());
+    public static void assertCarRequest(Car car, CarRequest carRequest) {
+        assertEquals(car.getMake(), carRequest.make());
+        assertEquals(car.getModel(), carRequest.model());
+        assertEquals(car.getBodyType().getDisplayName(), carRequest.bodyCategory().getDisplayName());
+        assertEquals(car.getYearOfProduction(), carRequest.yearOfProduction());
+        assertEquals(car.getColor(), carRequest.color());
+        assertEquals(car.getMileage(), carRequest.mileage());
+        assertEquals(car.getCarStatus().getDisplayName(), carRequest.carState().getDisplayName());
+        assertEquals(car.getAmount(), Objects.requireNonNull(carRequest.amount()).doubleValue());
+        assertEquals(car.getUrlOfImage(), carRequest.urlOfImage());
+    }
+
+    public static void assertCarResponse(Car car, CarResponse carResponse) {
+        assertEquals(car.getMake(), carResponse.make());
+        assertEquals(car.getModel(), carResponse.model());
+        assertEquals(car.getBodyType().getDisplayName(), carResponse.bodyCategory().getDisplayName());
+        assertEquals(car.getYearOfProduction(), carResponse.yearOfProduction());
+        assertEquals(car.getColor(), carResponse.color());
+        assertEquals(car.getMileage(), carResponse.mileage());
+        assertEquals(car.getCarStatus().getDisplayName(), carResponse.carState().getDisplayName());
+        assertEquals(car.getAmount(), Objects.requireNonNull(carResponse.amount()).doubleValue());
+        assertEquals(car.getUrlOfImage(), carResponse.urlOfImage());
     }
 
     public static void assertBranch(Branch branch, BranchDto branchDto) {

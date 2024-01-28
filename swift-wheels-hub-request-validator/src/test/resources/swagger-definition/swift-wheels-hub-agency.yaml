@@ -138,7 +138,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CarDto'
+                $ref: '#/components/schemas/CarRequest'
     put:
       tags:
         - car-controller
@@ -154,7 +154,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CarDto'
+              $ref: '#/components/schemas/CarRequest'
         required: true
       responses:
         '200':
@@ -162,7 +162,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CarDto'
+                $ref: '#/components/schemas/CarRequest'
     delete:
       tags:
         - car-controller
@@ -201,7 +201,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CarDto'
+                $ref: '#/components/schemas/CarRequest'
   '/cars/{id}/change-car-status':
     put:
       tags:
@@ -231,7 +231,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CarDto'
+                $ref: '#/components/schemas/CarRequest'
   /cars/update-cars-status:
     put:
       tags:
@@ -253,7 +253,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CarDto'
+                  $ref: '#/components/schemas/CarRequest'
   '/branches/{id}':
     get:
       tags:
@@ -386,7 +386,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CarDto'
+                  $ref: '#/components/schemas/CarRequest'
     post:
       tags:
         - car-controller
@@ -395,7 +395,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CarDto'
+              $ref: '#/components/schemas/CarRequest'
         required: true
       responses:
         '200':
@@ -403,7 +403,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CarDto'
+                $ref: '#/components/schemas/CarRequest'
   /cars/upload:
     post:
       tags:
@@ -428,7 +428,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CarDto'
+                  $ref: '#/components/schemas/CarRequest'
   /cars/add:
     post:
       tags:
@@ -440,7 +440,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/CarDto'
+                $ref: '#/components/schemas/CarRequest'
         required: true
       responses:
         '200':
@@ -450,7 +450,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CarDto'
+                  $ref: '#/components/schemas/CarRequest'
   /branches:
     get:
       tags:
@@ -547,7 +547,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CarDto'
+                $ref: '#/components/schemas/CarRequest'
   '/cars/make/{make}':
     get:
       tags:
@@ -567,7 +567,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CarDto'
+                  $ref: '#/components/schemas/CarRequest'
   /cars/count:
     get:
       tags:

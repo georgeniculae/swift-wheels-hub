@@ -3,7 +3,8 @@ package com.swiftwheelshub.agency.controler;
 import com.swiftwheelshub.agency.controller.CarController;
 import com.swiftwheelshub.agency.service.CarService;
 import com.swiftwheelshub.agency.util.TestUtils;
-import com.swiftwheelshub.dto.CarDto;
+import com.swiftwheelshub.dto.CarRequest;
+import com.swiftwheelshub.dto.CarResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -45,9 +46,9 @@ class CarControllerTest {
 
     @Test
     void findAllCarsTest_success() throws Exception {
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
-        when(carService.findAllCars()).thenReturn(List.of(carDto));
+        when(carService.findAllCars()).thenReturn(List.of(carResponse));
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -77,9 +78,9 @@ class CarControllerTest {
 
     @Test
     void findCarByIdTest_success() throws Exception {
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
-        when(carService.findCarById(anyLong())).thenReturn(carDto);
+        when(carService.findCarById(anyLong())).thenReturn(carResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -109,9 +110,9 @@ class CarControllerTest {
 
     @Test
     void findCarsByMakeTest_success() throws Exception {
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
-        when(carService.findCarsByMake(anyString())).thenReturn(List.of(carDto));
+        when(carService.findCarsByMake(anyString())).thenReturn(List.of(carResponse));
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/make/{make}", "Test")
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -127,9 +128,9 @@ class CarControllerTest {
 
     @Test
     void findCarsByMakeTest_unauthorized() throws Exception {
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
-        when(carService.findCarsByMake(anyString())).thenReturn(List.of(carDto));
+        when(carService.findCarsByMake(anyString())).thenReturn(List.of(carResponse));
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/make/{make}", "Test")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -177,10 +178,10 @@ class CarControllerTest {
 
     @Test
     void addCarTest_success() throws Exception {
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
-        String valueAsString = TestUtils.writeValueAsString(carDto);
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        String valueAsString = TestUtils.writeValueAsString(carResponse);
 
-        when(carService.saveCar(any(CarDto.class))).thenReturn(carDto);
+        when(carService.saveCar(any(CarRequest.class))).thenReturn(carResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(csrf())
@@ -198,8 +199,8 @@ class CarControllerTest {
 
     @Test
     void addCarTest_unauthorized() throws Exception {
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
-        String valueAsString = TestUtils.writeValueAsString(carDto);
+        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
+        String valueAsString = TestUtils.writeValueAsString(carRequest);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(csrf())
@@ -217,8 +218,8 @@ class CarControllerTest {
 
     @Test
     void addCarTest_forbidden() throws Exception {
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
-        String valueAsString = TestUtils.writeValueAsString(carDto);
+        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
+        String valueAsString = TestUtils.writeValueAsString(carRequest);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -235,11 +236,11 @@ class CarControllerTest {
 
     @Test
     void addAllCarsTest_success() throws Exception {
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
-        List<CarDto> carDtoList = List.of(carDto);
-        String valueAsString = TestUtils.writeValueAsString(carDtoList);
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        List<CarResponse> carResponses = List.of(carResponse);
+        String valueAsString = TestUtils.writeValueAsString(carResponses);
 
-        when(carService.saveAllCars(anyList())).thenReturn(carDtoList);
+        when(carService.saveAllCars(anyList())).thenReturn(carResponses);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/add")
                         .with(csrf())
@@ -257,11 +258,11 @@ class CarControllerTest {
 
     @Test
     void addAllCarsTest_unauthorized() throws Exception {
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
-        List<CarDto> carDtoList = List.of(carDto);
-        String valueAsString = TestUtils.writeValueAsString(carDtoList);
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        List<CarResponse> carResponses = List.of(carResponse);
+        String valueAsString = TestUtils.writeValueAsString(carResponses);
 
-        when(carService.saveAllCars(anyList())).thenReturn(carDtoList);
+        when(carService.saveAllCars(anyList())).thenReturn(carResponses);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/add")
                         .with(csrf())
@@ -279,11 +280,11 @@ class CarControllerTest {
 
     @Test
     void addAllCarsTest_forbidden() throws Exception {
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
-        List<CarDto> carDtoList = List.of(carDto);
-        String valueAsString = TestUtils.writeValueAsString(carDtoList);
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        List<CarResponse> carResponses = List.of(carResponse);
+        String valueAsString = TestUtils.writeValueAsString(carResponses);
 
-        when(carService.saveAllCars(anyList())).thenReturn(carDtoList);
+        when(carService.saveAllCars(anyList())).thenReturn(carResponses);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/add")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -300,10 +301,10 @@ class CarControllerTest {
 
     @Test
     void updateCarTest_success() throws Exception {
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
-        String valueAsString = TestUtils.writeValueAsString(carDto);
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        String valueAsString = TestUtils.writeValueAsString(carResponse);
 
-        when(carService.updateCar(anyLong(), any(CarDto.class))).thenReturn(carDto);
+        when(carService.updateCar(anyLong(), any(CarRequest.class))).thenReturn(carResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .with(csrf())
@@ -321,8 +322,8 @@ class CarControllerTest {
 
     @Test
     void updateCarTest_unauthorized() throws Exception {
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
-        String valueAsString = TestUtils.writeValueAsString(carDto);
+        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
+        String valueAsString = TestUtils.writeValueAsString(carRequest);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .with(csrf())
@@ -340,8 +341,8 @@ class CarControllerTest {
 
     @Test
     void updateCarTest_forbidden() throws Exception {
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
-        String valueAsString = TestUtils.writeValueAsString(carDto);
+        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
+        String valueAsString = TestUtils.writeValueAsString(carRequest);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN"))

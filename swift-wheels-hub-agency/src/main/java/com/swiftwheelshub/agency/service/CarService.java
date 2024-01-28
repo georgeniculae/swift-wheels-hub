@@ -3,7 +3,8 @@ package com.swiftwheelshub.agency.service;
 import com.swiftwheelshub.agency.mapper.CarMapper;
 import com.swiftwheelshub.agency.repository.CarRepository;
 import com.swiftwheelshub.dto.CarForUpdateDetails;
-import com.swiftwheelshub.dto.CarDto;
+import com.swiftwheelshub.dto.CarRequest;
+import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.entity.BodyType;
 import com.swiftwheelshub.entity.Branch;
@@ -38,68 +39,68 @@ public class CarService {
     private final EmployeeService employeeService;
     private final CarMapper carMapper;
 
-    public List<CarDto> findAllCars() {
+    public List<CarResponse> findAllCars() {
         return getCarDtoList(carRepository.findAll());
     }
 
-    public CarDto findCarById(Long id) {
+    public CarResponse findCarById(Long id) {
         Car car = findEntityById(id);
 
         return carMapper.mapEntityToDto(car);
     }
 
-    public CarDto getAvailableCar(Long id) {
+    public CarResponse getAvailableCar(Long id) {
         Car car = findEntityById(id);
         checkCarAvailability(car);
 
         return carMapper.mapEntityToDto(car);
     }
 
-    public List<CarDto> findCarsByMake(String make) {
+    public List<CarResponse> findCarsByMake(String make) {
         return getCarDtoList(carRepository.findCarsByMake(make));
     }
 
-    public CarDto saveCar(CarDto carDto) {
-        Car car = carMapper.mapDtoToEntity(carDto);
+    public CarResponse saveCar(CarRequest carRequest) {
+        Car car = carMapper.mapDtoToEntity(carRequest);
 
-        car.setOriginalBranch(branchService.findEntityById(carDto.originalBranchId()));
+        car.setOriginalBranch(branchService.findEntityById(carRequest.originalBranchId()));
 
         Car savedCar = saveEntity(car);
 
         return carMapper.mapEntityToDto(savedCar);
     }
 
-    public List<CarDto> saveAllCars(List<CarDto> carDtoList) {
-        List<Car> carList = carDtoList.stream()
+    public List<CarResponse> saveAllCars(List<CarRequest> carRequests) {
+        List<Car> cars = carRequests.stream()
                 .map(carMapper::mapDtoToEntity)
                 .toList();
 
-        return getCarDtoList(saveAllEntities(carList));
+        return getCarDtoList(saveAllEntities(cars));
     }
 
-    public CarDto updateCar(Long id, CarDto updatedCarDto) {
+    public CarResponse updateCar(Long id, CarRequest updatedCarRequest) {
         Car existingCar = findEntityById(id);
 
-        Long branchId = updatedCarDto.originalBranchId();
+        Long branchId = updatedCarRequest.originalBranchId();
         Branch branch = branchService.findEntityById(branchId);
 
-        existingCar.setMake(updatedCarDto.make());
-        existingCar.setModel(updatedCarDto.model());
-        existingCar.setBodyType(BodyType.valueOf(updatedCarDto.bodyCategory().name()));
-        existingCar.setYearOfProduction(updatedCarDto.yearOfProduction());
-        existingCar.setColor(updatedCarDto.color());
-        existingCar.setMileage(updatedCarDto.mileage());
-        existingCar.setAmount(Objects.requireNonNull(updatedCarDto.amount()));
-        existingCar.setCarStatus(CarStatus.valueOf(updatedCarDto.carState().name()));
+        existingCar.setMake(updatedCarRequest.make());
+        existingCar.setModel(updatedCarRequest.model());
+        existingCar.setBodyType(BodyType.valueOf(updatedCarRequest.bodyCategory().name()));
+        existingCar.setYearOfProduction(updatedCarRequest.yearOfProduction());
+        existingCar.setColor(updatedCarRequest.color());
+        existingCar.setMileage(updatedCarRequest.mileage());
+        existingCar.setAmount(Objects.requireNonNull(updatedCarRequest.amount()));
+        existingCar.setCarStatus(CarStatus.valueOf(updatedCarRequest.carState().name()));
         existingCar.setOriginalBranch(branch);
-        existingCar.setUrlOfImage(updatedCarDto.urlOfImage());
+        existingCar.setUrlOfImage(updatedCarRequest.urlOfImage());
 
         Car savedCar = saveEntity(existingCar);
 
         return carMapper.mapEntityToDto(savedCar);
     }
 
-    public CarDto updateCarStatus(Long id, CarStatus carStatus) {
+    public CarResponse updateCarStatus(Long id, CarStatus carStatus) {
         Car car = findEntityById(id);
         car.setCarStatus(carStatus);
 
@@ -108,7 +109,7 @@ public class CarService {
         return carMapper.mapEntityToDto(savedCar);
     }
 
-    public List<CarDto> updateCarsStatus(List<UpdateCarRequest> carsForUpdate) {
+    public List<CarResponse> updateCarsStatus(List<UpdateCarRequest> carsForUpdate) {
         return carRepository.findAllById(getIds(carsForUpdate))
                 .stream()
                 .peek(car -> {
@@ -120,7 +121,7 @@ public class CarService {
                 .toList();
     }
 
-    public List<CarDto> uploadCars(MultipartFile file) {
+    public List<CarResponse> uploadCars(MultipartFile file) {
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
 
@@ -173,7 +174,7 @@ public class CarService {
                 .build();
     }
 
-    public CarDto updateCarWhenBookingIsClosed(Long id, CarForUpdateDetails carForUpdateDetails) {
+    public CarResponse updateCarWhenBookingIsClosed(Long id, CarForUpdateDetails carForUpdateDetails) {
         Car car = findEntityById(id);
         car.setCarStatus(CarStatus.valueOf(carForUpdateDetails.carState().getDisplayName()));
         car.setActualBranch(getActualBranch(carForUpdateDetails));
@@ -187,7 +188,7 @@ public class CarService {
         carRepository.deleteById(id);
     }
 
-    public CarDto findCarByFilter(String searchString) {
+    public CarResponse findCarByFilter(String searchString) {
         return carRepository.findByFilter(searchString)
                 .map(carMapper::mapEntityToDto)
                 .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Car with filter: " + searchString + " does not exist"));
@@ -233,7 +234,7 @@ public class CarService {
         return employeeService.findEntityById(carForUpdateDetails.receptionistEmployeeId()).getWorkingBranch();
     }
 
-    private List<CarDto> getCarDtoList(List<Car> cars) {
+    private List<CarResponse> getCarDtoList(List<Car> cars) {
         return cars.stream()
                 .map(carMapper::mapEntityToDto)
                 .toList();

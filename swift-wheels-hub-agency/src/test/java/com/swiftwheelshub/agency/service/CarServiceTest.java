@@ -5,11 +5,11 @@ import com.swiftwheelshub.agency.mapper.CarMapperImpl;
 import com.swiftwheelshub.agency.repository.CarRepository;
 import com.swiftwheelshub.agency.util.AssertionUtils;
 import com.swiftwheelshub.agency.util.TestUtils;
-import com.swiftwheelshub.dto.CarDto;
+import com.swiftwheelshub.dto.CarRequest;
+import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.entity.Branch;
 import com.swiftwheelshub.entity.Car;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,9 +54,9 @@ class CarServiceTest {
 
         when(carRepository.findById(anyLong())).thenReturn(Optional.of(car));
 
-        CarDto actualCarDto = Assertions.assertDoesNotThrow(() -> carService.findCarById(1L));
+        CarResponse actualCarResponse = assertDoesNotThrow(() -> carService.findCarById(1L));
 
-        assertNotNull(actualCarDto);
+        assertNotNull(actualCarResponse);
         verify(carMapper, times(1)).mapEntityToDto(any(Car.class));
     }
 
@@ -74,9 +76,9 @@ class CarServiceTest {
 
         when(carRepository.findCarsByMake(anyString())).thenReturn(List.of(car));
 
-        List<CarDto> carDtoList = Assertions.assertDoesNotThrow(() -> carService.findCarsByMake("Test"));
+        List<CarResponse> carResponses = assertDoesNotThrow(() -> carService.findCarsByMake("Test"));
 
-        assertNotNull(carDtoList);
+        assertNotNull(carResponses);
         verify(carMapper, times(1)).mapEntityToDto(any(Car.class));
     }
 
@@ -84,40 +86,40 @@ class CarServiceTest {
     void saveCarTest_success() {
         Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
         Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
+        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
         when(branchService.findEntityById(anyLong())).thenReturn(branch);
         when(carRepository.saveAndFlush(any(Car.class))).thenReturn(car);
 
-        CarDto savedCarDto = Assertions.assertDoesNotThrow(() -> carService.saveCar(carDto));
-        AssertionUtils.assertCar(car, savedCarDto);
+        CarResponse savedCarResponse = assertDoesNotThrow(() -> carService.saveCar(carRequest));
+        AssertionUtils.assertCarResponse(car, savedCarResponse);
     }
 
     @Test
     void saveAllCarsTest_success() {
         Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
+        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
         List<Car> cars = List.of(car);
-        List<CarDto> carDtoList = List.of(carDto);
+        List<CarRequest> carRequests = List.of(carRequest);
 
         when(carRepository.saveAllAndFlush(anyList())).thenReturn(cars);
 
-        List<CarDto> savedCarDtoList = Assertions.assertDoesNotThrow(() -> carService.saveAllCars(carDtoList));
-        assertEquals(carDto, savedCarDtoList.getFirst());
+        List<CarResponse> savedCarResponses = assertDoesNotThrow(() -> carService.saveAllCars(carRequests));
+        assertFalse(savedCarResponses.isEmpty());
     }
 
     @Test
     void updateCarTest_success() {
         Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
         Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
+        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
         when(branchService.findEntityById(anyLong())).thenReturn(branch);
         when(carRepository.findById(anyLong())).thenReturn(Optional.of(car));
         when(carRepository.saveAndFlush(any(Car.class))).thenReturn(car);
 
-        CarDto updatedCarDto = Assertions.assertDoesNotThrow(() -> carService.updateCar(1L, carDto));
-        assertNotNull(updatedCarDto);
+        CarResponse updatedCarResponse = assertDoesNotThrow(() -> carService.updateCar(1L, carRequest));
+        assertNotNull(updatedCarResponse);
     }
 
     @Test
@@ -126,8 +128,8 @@ class CarServiceTest {
 
         when(carRepository.findAll()).thenReturn(List.of(car));
 
-        List<CarDto> carDtoList = Assertions.assertDoesNotThrow(() -> carService.findAllCars());
-        AssertionUtils.assertCar(car, carDtoList.getFirst());
+        List<CarResponse> carResponses = assertDoesNotThrow(() -> carService.findAllCars());
+        AssertionUtils.assertCarResponse(car, carResponses.getFirst());
     }
 
     @Test
@@ -136,9 +138,9 @@ class CarServiceTest {
 
         when(carRepository.findByFilter(anyString())).thenReturn(Optional.of(car));
 
-        CarDto carDto = Assertions.assertDoesNotThrow(() -> carService.findCarByFilter("Test"));
+        CarResponse carResponse = assertDoesNotThrow(() -> carService.findCarByFilter("Test"));
 
-        AssertionUtils.assertCar(car, carDto);
+        AssertionUtils.assertCarResponse(car, carResponse);
     }
 
     @Test

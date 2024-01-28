@@ -1,6 +1,7 @@
 package com.swiftwheelshub.agency.mapper;
 
-import com.swiftwheelshub.dto.CarDto;
+import com.swiftwheelshub.dto.CarRequest;
+import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.entity.Car;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -16,10 +17,10 @@ public interface CarMapper {
     @Mapping(target = "actualBranchId", expression = "java(car.getActualBranch().getId())")
     @Mapping(target = "bodyCategory", source = "bodyType")
     @Mapping(target = "carState", source = "carStatus")
-    CarDto mapEntityToDto(Car car);
+    CarResponse mapEntityToDto(Car car);
 
     @Mapping(target = "bodyType", source = "bodyCategory")
     @Mapping(target = "carStatus", source = "carState")
-    Car mapDtoToEntity(CarDto carDto);
+    Car mapDtoToEntity(CarRequest carRequest);
 
 }

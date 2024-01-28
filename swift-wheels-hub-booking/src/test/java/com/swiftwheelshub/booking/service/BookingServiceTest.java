@@ -8,7 +8,7 @@ import com.swiftwheelshub.booking.util.TestUtils;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.CarDto;
+import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.EmployeeDto;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.entity.CarStatus;
@@ -83,11 +83,11 @@ class BookingServiceTest {
     void saveBookingTest_success() {
         Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
         BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
+        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarDto.json", CarRequest.class);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        when(carService.findAvailableCarById(any(HttpServletRequest.class), anyLong())).thenReturn(carDto);
+        when(carService.findAvailableCarById(any(HttpServletRequest.class), anyLong())).thenReturn(carRequest);
         when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(booking);
         doNothing().when(carService).changeCarStatus(any(HttpServletRequest.class), anyLong(), any(CarStatus.class));
 
@@ -136,12 +136,12 @@ class BookingServiceTest {
         Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
         Booking updatedBooking = TestUtils.getResourceAsJson("/data/UpdatedBooking.json", Booking.class);
         BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/UpdatedBookingDto.json", BookingRequest.class);
-        CarDto carDto = TestUtils.getResourceAsJson("/data/CarDto.json", CarDto.class);
+        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarDto.json", CarRequest.class);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
-        when(carService.findAvailableCarById(any(HttpServletRequest.class), anyLong())).thenReturn(carDto);
+        when(carService.findAvailableCarById(any(HttpServletRequest.class), anyLong())).thenReturn(carRequest);
         when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(updatedBooking);
 
         BookingResponse updatedBookingResponse =

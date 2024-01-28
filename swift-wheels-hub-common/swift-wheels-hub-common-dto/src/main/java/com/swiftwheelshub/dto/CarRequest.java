@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 
 @Builder
-public record CarDto(
+public record CarRequest(
         Long id,
 
         @NotEmpty(message = "Make cannot be empty")
@@ -38,7 +38,7 @@ public record CarDto(
 
     @Override
     public String toString() {
-        return "CarDto{" + "\n" +
+        return "CarRequest{" + "\n" +
                 "id=" + id +
                 "make='" + make + "\n" +
                 "model='" + model + "\n" +

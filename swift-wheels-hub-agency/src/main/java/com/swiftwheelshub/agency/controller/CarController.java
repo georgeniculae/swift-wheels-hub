@@ -2,7 +2,8 @@ package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.CarService;
 import com.swiftwheelshub.dto.CarForUpdateDetails;
-import com.swiftwheelshub.dto.CarDto;
+import com.swiftwheelshub.dto.CarRequest;
+import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.entity.CarStatus;
 import jakarta.validation.Valid;
@@ -30,24 +31,24 @@ public class CarController {
     private final CarService carService;
 
     @GetMapping
-    public ResponseEntity<List<CarDto>> findAllCars() {
-        List<CarDto> carDtoList = carService.findAllCars();
+    public ResponseEntity<List<CarResponse>> findAllCars() {
+        List<CarResponse> carResponses = carService.findAllCars();
 
-        return ResponseEntity.ok(carDtoList);
+        return ResponseEntity.ok(carResponses);
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<CarDto> findCarById(@PathVariable("id") Long id) {
-        CarDto carDto = carService.findCarById(id);
+    public ResponseEntity<CarResponse> findCarById(@PathVariable("id") Long id) {
+        CarResponse carResponse = carService.findCarById(id);
 
-        return ResponseEntity.ok(carDto);
+        return ResponseEntity.ok(carResponse);
     }
 
     @GetMapping(path = "/make/{make}")
-    public ResponseEntity<List<CarDto>> findCarsByMake(@PathVariable("make") String make) {
-        List<CarDto> carDtoList = carService.findCarsByMake(make);
+    public ResponseEntity<List<CarResponse>> findCarsByMake(@PathVariable("make") String make) {
+        List<CarResponse> carResponses = carService.findCarsByMake(make);
 
-        return ResponseEntity.ok(carDtoList);
+        return ResponseEntity.ok(carResponses);
     }
 
     @GetMapping(path = "/count")
@@ -58,60 +59,60 @@ public class CarController {
     }
 
     @PostMapping
-    public ResponseEntity<CarDto> addCar(@RequestBody @Valid CarDto carDto) {
-        CarDto savedCarDto = carService.saveCar(carDto);
+    public ResponseEntity<CarResponse> addCar(@RequestBody @Valid CarRequest carRequest) {
+        CarResponse savedCarResponse = carService.saveCar(carRequest);
 
-        return ResponseEntity.ok(savedCarDto);
+        return ResponseEntity.ok(savedCarResponse);
     }
 
     @PostMapping(path = "/add")
-    public ResponseEntity<List<CarDto>> addCars(@RequestBody @Valid List<CarDto> carDtoList) {
-        List<CarDto> savedCarDtoList = carService.saveAllCars(carDtoList);
+    public ResponseEntity<List<CarResponse>> addCars(@RequestBody @Valid List<CarRequest> carRequestList) {
+        List<CarResponse> savedCarResponses = carService.saveAllCars(carRequestList);
 
-        return ResponseEntity.ok(savedCarDtoList);
+        return ResponseEntity.ok(savedCarResponses);
     }
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<List<CarDto>> uploadCars(@RequestParam("file") MultipartFile file) {
-        List<CarDto> savedCarDtoList = carService.uploadCars(file);
+    public ResponseEntity<List<CarResponse>> uploadCars(@RequestParam("file") MultipartFile file) {
+        List<CarResponse> savedCarResponses = carService.uploadCars(file);
 
-        return ResponseEntity.ok(savedCarDtoList);
+        return ResponseEntity.ok(savedCarResponses);
     }
 
     @GetMapping(path = "/{id}/availability")
-    public ResponseEntity<CarDto> getAvailableCar(@PathVariable("id") Long id) {
-        CarDto availableCarDto = carService.getAvailableCar(id);
+    public ResponseEntity<CarResponse> getAvailableCar(@PathVariable("id") Long id) {
+        CarResponse availableCarResponse = carService.getAvailableCar(id);
 
-        return ResponseEntity.ok(availableCarDto);
+        return ResponseEntity.ok(availableCarResponse);
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<CarDto> updateCar(@PathVariable("id") Long id, @RequestBody @Valid CarDto carDto) {
-        CarDto updatedCarDto = carService.updateCar(id, carDto);
+    public ResponseEntity<CarResponse> updateCar(@PathVariable("id") Long id, @RequestBody @Valid CarRequest carRequest) {
+        CarResponse updatedCarResponse = carService.updateCar(id, carRequest);
 
-        return ResponseEntity.ok(updatedCarDto);
+        return ResponseEntity.ok(updatedCarResponse);
     }
 
     @PutMapping(path = "/{id}/change-car-status")
-    public ResponseEntity<CarDto> updateCarStatus(@PathVariable("id") Long id, @RequestParam CarStatus carStatus) {
-        CarDto updatedCarDto = carService.updateCarStatus(id, carStatus);
+    public ResponseEntity<CarResponse> updateCarStatus(@PathVariable("id") Long id, @RequestParam CarStatus carStatus) {
+        CarResponse updatedCarResponse = carService.updateCarStatus(id, carStatus);
 
-        return ResponseEntity.ok(updatedCarDto);
+        return ResponseEntity.ok(updatedCarResponse);
     }
 
     @PutMapping(path = "/update-cars-status")
-    public ResponseEntity<List<CarDto>> updateCarsStatus(@RequestBody @Valid List<UpdateCarRequest> carsForUpdate) {
-        List<CarDto> updatedCarDtoList = carService.updateCarsStatus(carsForUpdate);
+    public ResponseEntity<List<CarResponse>> updateCarsStatus(@RequestBody @Valid List<UpdateCarRequest> carsForUpdate) {
+        List<CarResponse> updatedCarResponses = carService.updateCarsStatus(carsForUpdate);
 
-        return ResponseEntity.ok(updatedCarDtoList);
+        return ResponseEntity.ok(updatedCarResponses);
     }
 
     @PutMapping(path = "/{id}/update-after-closed-booking")
-    public ResponseEntity<CarDto> updateCarWhenBookingIsClosed(@PathVariable("id") Long id,
-                                                               @RequestBody @Valid CarForUpdateDetails carForUpdateDetails) {
-        CarDto updatedCarDto = carService.updateCarWhenBookingIsClosed(id, carForUpdateDetails);
+    public ResponseEntity<CarResponse> updateCarWhenBookingIsClosed(@PathVariable("id") Long id,
+                                                                    @RequestBody @Valid CarForUpdateDetails carForUpdateDetails) {
+        CarResponse updatedCarResponse = carService.updateCarWhenBookingIsClosed(id, carForUpdateDetails);
 
-        return ResponseEntity.ok(updatedCarDto);
+        return ResponseEntity.ok(updatedCarResponse);
     }
 
     @DeleteMapping(path = "/{id}")
