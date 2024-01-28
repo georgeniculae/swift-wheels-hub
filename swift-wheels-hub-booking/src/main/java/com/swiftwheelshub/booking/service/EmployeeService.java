@@ -1,6 +1,6 @@
 package com.swiftwheelshub.booking.service;
 
-import com.swiftwheelshub.dto.EmployeeDto;
+import com.swiftwheelshub.dto.EmployeeResponse;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
@@ -25,7 +25,7 @@ public class EmployeeService {
 
     private final RestClient restClient;
 
-    public EmployeeDto findEmployeeById(HttpServletRequest request, Long receptionistEmployeeId) {
+    public EmployeeResponse findEmployeeById(HttpServletRequest request, Long receptionistEmployeeId) {
         return restClient.get()
                 .uri(url)
                 .headers(HttpRequestUtil.mutateHeaders(request))
@@ -35,12 +35,12 @@ public class EmployeeService {
                         throw new SwiftWheelsHubResponseStatusException(statusCode, clientResponse.getStatusText());
                     }
 
-                    if (ObjectUtils.isEmpty(clientResponse.bodyTo(EmployeeDto.class)) ||
+                    if (ObjectUtils.isEmpty(clientResponse.bodyTo(EmployeeResponse.class)) ||
                             clientResponse.getBody().available() == 0) {
                         throw new SwiftWheelsHubNotFoundException("Employee with id: " + receptionistEmployeeId + " not found");
                     }
 
-                    return Objects.requireNonNull(clientResponse.bodyTo(EmployeeDto.class));
+                    return Objects.requireNonNull(clientResponse.bodyTo(EmployeeResponse.class));
                 });
     }
 

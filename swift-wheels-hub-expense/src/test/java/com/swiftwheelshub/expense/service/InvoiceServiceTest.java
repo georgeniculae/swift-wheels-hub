@@ -1,7 +1,6 @@
 package com.swiftwheelshub.expense.service;
 
 import com.swiftwheelshub.dto.BookingClosingDetails;
-import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.dto.InvoiceRequest;
 import com.swiftwheelshub.dto.InvoiceResponse;
@@ -102,14 +101,18 @@ class InvoiceServiceTest {
     @Test
     void closeInvoiceTest_success() {
         Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
-        InvoiceRequest invoiceRequest = TestUtils.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
-        BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingRequest.class);
+
+        InvoiceRequest invoiceRequest =
+                TestUtils.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
+
+        BookingResponse bookingResponse =
+                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("X-USERNAME", "user");
 
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
-        when(bookingService.findBookingById(any(HttpServletRequest.class), anyLong())).thenReturn(bookingRequest);
+        when(bookingService.findBookingById(any(HttpServletRequest.class), anyLong())).thenReturn(bookingResponse);
         doNothing().when(revenueService).saveInvoiceAndRevenueTransactional(any(Invoice.class));
         when(invoiceRepository.saveAndFlush(any(Invoice.class))).thenReturn(invoice);
         doNothing().when(bookingService).closeBooking(any(HttpServletRequest.class), any(BookingClosingDetails.class));

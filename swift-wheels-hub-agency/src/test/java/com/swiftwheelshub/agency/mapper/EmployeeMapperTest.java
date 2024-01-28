@@ -2,7 +2,8 @@ package com.swiftwheelshub.agency.mapper;
 
 import com.swiftwheelshub.agency.util.AssertionUtils;
 import com.swiftwheelshub.agency.util.TestUtils;
-import com.swiftwheelshub.dto.EmployeeDto;
+import com.swiftwheelshub.dto.EmployeeRequest;
+import com.swiftwheelshub.dto.EmployeeResponse;
 import com.swiftwheelshub.entity.Employee;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,34 +22,31 @@ class EmployeeMapperTest {
     void mapEntityToDtoTest_success() {
         Employee employee = TestUtils.getResourceAsJson("/data/Employee.json", Employee.class);
 
-        EmployeeDto employeeDto = assertDoesNotThrow(() -> employeeMapper.mapEntityToDto(employee));
+        EmployeeResponse employeeResponse = assertDoesNotThrow(() -> employeeMapper.mapEntityToDto(employee));
 
-        assertNotNull(employeeDto);
-        AssertionUtils.assertEmployee(employee, employeeDto);
+        assertNotNull(employeeResponse);
+        AssertionUtils.assertEmployeeResponse(employee, employeeResponse);
     }
 
     @Test
     void mapEntityToDtoTest_null() {
-        EmployeeDto employeeDto = assertDoesNotThrow(() -> employeeMapper.mapEntityToDto(null));
-
-        assertNull(employeeDto);
+        assertNull(employeeMapper.mapEntityToDto(null));
     }
 
     @Test
     void mapDtoToEntityTest_success() {
-        EmployeeDto employeeDto = TestUtils.getResourceAsJson("/data/EmployeeDto.json", EmployeeDto.class);
+        EmployeeRequest employeeRequest =
+                TestUtils.getResourceAsJson("/data/EmployeeRequest.json", EmployeeRequest.class);
 
-        Employee employee = assertDoesNotThrow(() -> employeeMapper.mapDtoToEntity(employeeDto));
+        Employee employee = assertDoesNotThrow(() -> employeeMapper.mapDtoToEntity(employeeRequest));
 
-        assertNotNull(employeeDto);
-        AssertionUtils.assertEmployee(employee, employeeDto);
+        assertNotNull(employeeRequest);
+        AssertionUtils.assertEmployeeRequest(employee, employeeRequest);
     }
 
     @Test
     void mapDtoToEntityTest_null() {
-        Employee employee = assertDoesNotThrow(() -> employeeMapper.mapDtoToEntity(null));
-
-        assertNull(employee);
+        assertNull(employeeMapper.mapDtoToEntity(null));
     }
 
 }

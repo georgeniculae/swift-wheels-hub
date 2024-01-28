@@ -1,7 +1,7 @@
 package com.swiftwheelshub.booking.service;
 
 import com.swiftwheelshub.dto.CarForUpdateDetails;
-import com.swiftwheelshub.dto.CarRequest;
+import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.entity.CarStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
@@ -33,7 +33,7 @@ public class CarService {
 
     private final RestClient restClient;
 
-    public CarRequest findAvailableCarById(HttpServletRequest request, Long carId) {
+    public CarResponse findAvailableCarById(HttpServletRequest request, Long carId) {
         String finalUrl = url + SEPARATOR + carId + SEPARATOR + "availability";
 
         return restClient.get()
@@ -45,12 +45,12 @@ public class CarService {
                         throw new SwiftWheelsHubResponseStatusException(statusCode, clientResponse.getStatusText());
                     }
 
-                    if (ObjectUtils.isEmpty(clientResponse.bodyTo(CarRequest.class)) ||
+                    if (ObjectUtils.isEmpty(clientResponse.bodyTo(CarResponse.class)) ||
                             clientResponse.getBody().available() == 0) {
                         throw new SwiftWheelsHubNotFoundException("Car with id: " + carId + " not found");
                     }
 
-                    return Objects.requireNonNull(clientResponse.bodyTo(CarRequest.class));
+                    return Objects.requireNonNull(clientResponse.bodyTo(CarResponse.class));
                 });
     }
 

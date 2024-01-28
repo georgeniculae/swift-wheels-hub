@@ -1,6 +1,7 @@
 package com.swiftwheelshub.agency.mapper;
 
-import com.swiftwheelshub.dto.EmployeeDto;
+import com.swiftwheelshub.dto.EmployeeRequest;
+import com.swiftwheelshub.dto.EmployeeResponse;
 import com.swiftwheelshub.entity.Employee;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -13,8 +14,8 @@ import org.mapstruct.ReportingPolicy;
 public interface EmployeeMapper {
 
     @Mapping(target = "workingBranchId", expression = "java(employee.getWorkingBranch().getId())")
-    EmployeeDto mapEntityToDto(Employee employee);
+    EmployeeResponse mapEntityToDto(Employee employee);
 
-    Employee mapDtoToEntity(EmployeeDto employeeDto);
+    Employee mapDtoToEntity(EmployeeRequest employeeRequest);
 
 }

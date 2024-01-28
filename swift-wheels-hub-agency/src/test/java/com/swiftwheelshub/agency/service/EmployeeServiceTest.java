@@ -5,11 +5,11 @@ import com.swiftwheelshub.agency.mapper.EmployeeMapperImpl;
 import com.swiftwheelshub.agency.repository.EmployeeRepository;
 import com.swiftwheelshub.agency.util.AssertionUtils;
 import com.swiftwheelshub.agency.util.TestUtils;
-import com.swiftwheelshub.dto.EmployeeDto;
+import com.swiftwheelshub.dto.EmployeeRequest;
+import com.swiftwheelshub.dto.EmployeeResponse;
 import com.swiftwheelshub.entity.Branch;
 import com.swiftwheelshub.entity.Employee;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -51,8 +52,8 @@ class EmployeeServiceTest {
 
         when(employeeRepository.findAll()).thenReturn(List.of(employee));
 
-        List<EmployeeDto> employeeDtoList = Assertions.assertDoesNotThrow(() -> employeeService.findAllEmployees());
-        AssertionUtils.assertEmployee(employee, employeeDtoList.getFirst());
+        List<EmployeeResponse> employeeResponses = assertDoesNotThrow(() -> employeeService.findAllEmployees());
+        AssertionUtils.assertEmployeeResponse(employee, employeeResponses.getFirst());
     }
 
     @Test
@@ -61,8 +62,8 @@ class EmployeeServiceTest {
 
         when(employeeRepository.findById(anyLong())).thenReturn(Optional.of(employee));
 
-        EmployeeDto employeeDto = Assertions.assertDoesNotThrow(() -> employeeService.findEmployeeById(1L));
-        AssertionUtils.assertEmployee(employee, employeeDto);
+        EmployeeResponse employeeResponse = assertDoesNotThrow(() -> employeeService.findEmployeeById(1L));
+        AssertionUtils.assertEmployeeResponse(employee, employeeResponse);
     }
 
     @Test
@@ -79,14 +80,17 @@ class EmployeeServiceTest {
     @Test
     void saveEmployeeTest_success() {
         Employee employee = TestUtils.getResourceAsJson("/data/Employee.json", Employee.class);
-        EmployeeDto employeeDto = TestUtils.getResourceAsJson("/data/EmployeeDto.json", EmployeeDto.class);
+
+        EmployeeRequest employeeRequest =
+                TestUtils.getResourceAsJson("/data/EmployeeRequest.json", EmployeeRequest.class);
+
         Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
 
         when(branchService.findEntityById(anyLong())).thenReturn(branch);
         when(employeeRepository.saveAndFlush(any(Employee.class))).thenReturn(employee);
 
-        EmployeeDto savedEmployeeDto = Assertions.assertDoesNotThrow(() -> employeeService.saveEmployee(employeeDto));
-        AssertionUtils.assertEmployee(employee, savedEmployeeDto);
+        EmployeeResponse savedEmployeeResponse = assertDoesNotThrow(() -> employeeService.saveEmployee(employeeRequest));
+        AssertionUtils.assertEmployeeResponse(employee, savedEmployeeResponse);
 
         verify(employeeMapper, times(1)).mapEntityToDto(any(Employee.class));
     }
@@ -94,15 +98,18 @@ class EmployeeServiceTest {
     @Test
     void updateEmployeeTest_success() {
         Employee employee = TestUtils.getResourceAsJson("/data/Employee.json", Employee.class);
-        EmployeeDto employeeDto = TestUtils.getResourceAsJson("/data/EmployeeDto.json", EmployeeDto.class);
+
+        EmployeeRequest employeeRequest =
+                TestUtils.getResourceAsJson("/data/EmployeeRequest.json", EmployeeRequest.class);
+
         Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
 
         when(branchService.findEntityById(anyLong())).thenReturn(branch);
         when(employeeRepository.findById(anyLong())).thenReturn(Optional.of(employee));
         when(employeeRepository.saveAndFlush(any(Employee.class))).thenReturn(employee);
 
-        EmployeeDto updatedEmployeeDto = Assertions.assertDoesNotThrow(() -> employeeService.updateEmployee(1L, employeeDto));
-        AssertionUtils.assertEmployee(employee, updatedEmployeeDto);
+        EmployeeResponse employeeResponse = assertDoesNotThrow(() -> employeeService.updateEmployee(1L, employeeRequest));
+        AssertionUtils.assertEmployeeResponse(employee, employeeResponse);
     }
 
     @Test
@@ -111,8 +118,8 @@ class EmployeeServiceTest {
 
         when(employeeRepository.findAllEmployeesByBranchId(anyLong())).thenReturn(List.of(employee));
 
-        List<EmployeeDto> employeeDtoList = Assertions.assertDoesNotThrow(() -> employeeService.findEmployeesByBranchId(1L));
-        AssertionUtils.assertEmployee(employee, employeeDtoList.getFirst());
+        List<EmployeeResponse> employeeResponses = assertDoesNotThrow(() -> employeeService.findEmployeesByBranchId(1L));
+        AssertionUtils.assertEmployeeResponse(employee, employeeResponses.getFirst());
     }
 
     @Test
@@ -121,8 +128,8 @@ class EmployeeServiceTest {
 
         when(employeeRepository.findByFilter(anyString())).thenReturn(Optional.of(employee));
 
-        EmployeeDto employeeDto = Assertions.assertDoesNotThrow(() -> employeeService.findEmployeeByFilter("Ion"));
-        AssertionUtils.assertEmployee(employee, employeeDto);
+        EmployeeResponse employeeResponse = assertDoesNotThrow(() -> employeeService.findEmployeeByFilter("Ion"));
+        AssertionUtils.assertEmployeeResponse(employee, employeeResponse);
     }
 
     @Test

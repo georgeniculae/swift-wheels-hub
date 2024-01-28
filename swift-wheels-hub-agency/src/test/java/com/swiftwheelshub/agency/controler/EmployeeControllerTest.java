@@ -3,7 +3,8 @@ package com.swiftwheelshub.agency.controler;
 import com.swiftwheelshub.agency.controller.EmployeeController;
 import com.swiftwheelshub.agency.service.EmployeeService;
 import com.swiftwheelshub.agency.util.TestUtils;
-import com.swiftwheelshub.dto.EmployeeDto;
+import com.swiftwheelshub.dto.EmployeeRequest;
+import com.swiftwheelshub.dto.EmployeeResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -43,9 +44,10 @@ class EmployeeControllerTest {
 
     @Test
     void findAllEmployeesTest_success() throws Exception {
-        EmployeeDto employeeDto = TestUtils.getResourceAsJson("/data/EmployeeDto.json", EmployeeDto.class);
+        EmployeeResponse employeeResponse =
+                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
 
-        when(employeeService.findAllEmployees()).thenReturn(List.of(employeeDto));
+        when(employeeService.findAllEmployees()).thenReturn(List.of(employeeResponse));
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -75,9 +77,10 @@ class EmployeeControllerTest {
 
     @Test
     void findEmployeeByIdTest_success() throws Exception {
-        EmployeeDto employeeDto = TestUtils.getResourceAsJson("/data/EmployeeDto.json", EmployeeDto.class);
+        EmployeeResponse employeeResponse =
+                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
 
-        when(employeeService.findEmployeeById(anyLong())).thenReturn(employeeDto);
+        when(employeeService.findEmployeeById(anyLong())).thenReturn(employeeResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -107,9 +110,10 @@ class EmployeeControllerTest {
 
     @Test
     void findEmployeesByBranchIdTest_success() throws Exception {
-        EmployeeDto employeeDto = TestUtils.getResourceAsJson("/data/EmployeeDto.json", EmployeeDto.class);
+        EmployeeResponse employeeResponse =
+                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
 
-        when(employeeService.findEmployeesByBranchId(anyLong())).thenReturn(List.of(employeeDto));
+        when(employeeService.findEmployeesByBranchId(anyLong())).thenReturn(List.of(employeeResponse));
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/branch/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -171,10 +175,12 @@ class EmployeeControllerTest {
 
     @Test
     void addEmployeeTest_success() throws Exception {
-        EmployeeDto employeeDto = TestUtils.getResourceAsJson("/data/EmployeeDto.json", EmployeeDto.class);
-        String valueAsString = TestUtils.writeValueAsString(employeeDto);
+        EmployeeResponse employeeResponse =
+                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
 
-        when(employeeService.saveEmployee(any(EmployeeDto.class))).thenReturn(employeeDto);
+        String valueAsString = TestUtils.writeValueAsString(employeeResponse);
+
+        when(employeeService.saveEmployee(any(EmployeeRequest.class))).thenReturn(employeeResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(csrf())
@@ -192,8 +198,8 @@ class EmployeeControllerTest {
 
     @Test
     void addEmployeeTest_unauthorized() throws Exception {
-        EmployeeDto employeeDto = TestUtils.getResourceAsJson("/data/EmployeeDto.json", EmployeeDto.class);
-        String valueAsString = TestUtils.writeValueAsString(employeeDto);
+        EmployeeRequest employeeRequest = TestUtils.getResourceAsJson("/data/EmployeeRequest.json", EmployeeRequest.class);
+        String valueAsString = TestUtils.writeValueAsString(employeeRequest);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(csrf())
@@ -211,8 +217,8 @@ class EmployeeControllerTest {
 
     @Test
     void addEmployeeTest_forbidden() throws Exception {
-        EmployeeDto employeeDto = TestUtils.getResourceAsJson("/data/EmployeeDto.json", EmployeeDto.class);
-        String valueAsString = TestUtils.writeValueAsString(employeeDto);
+        EmployeeRequest employeeRequest = TestUtils.getResourceAsJson("/data/EmployeeRequest.json", EmployeeRequest.class);
+        String valueAsString = TestUtils.writeValueAsString(employeeRequest);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -230,10 +236,12 @@ class EmployeeControllerTest {
 
     @Test
     void updateEmployeeTest_success() throws Exception {
-        EmployeeDto employeeDto = TestUtils.getResourceAsJson("/data/EmployeeDto.json", EmployeeDto.class);
-        String valueAsString = TestUtils.writeValueAsString(employeeDto);
+        EmployeeResponse employeeResponse =
+                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
 
-        when(employeeService.updateEmployee(anyLong(), any(EmployeeDto.class))).thenReturn(employeeDto);
+        String valueAsString = TestUtils.writeValueAsString(employeeResponse);
+
+        when(employeeService.updateEmployee(anyLong(), any(EmployeeRequest.class))).thenReturn(employeeResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .with(csrf())
@@ -251,8 +259,10 @@ class EmployeeControllerTest {
 
     @Test
     void updateEmployeeTest_unauthorized() throws Exception {
-        EmployeeDto employeeDto = TestUtils.getResourceAsJson("/data/EmployeeDto.json", EmployeeDto.class);
-        String valueAsString = TestUtils.writeValueAsString(employeeDto);
+        EmployeeResponse employeeResponse =
+                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
+
+        String valueAsString = TestUtils.writeValueAsString(employeeResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .with(csrf())
@@ -270,8 +280,10 @@ class EmployeeControllerTest {
 
     @Test
     void updateEmployeeTest_forbidden() throws Exception {
-        EmployeeDto employeeDto = TestUtils.getResourceAsJson("/data/EmployeeDto.json", EmployeeDto.class);
-        String valueAsString = TestUtils.writeValueAsString(employeeDto);
+        EmployeeResponse employeeResponse =
+                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
+
+        String valueAsString = TestUtils.writeValueAsString(employeeResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)

@@ -2,6 +2,7 @@ package com.swiftwheelshub.expense.service;
 
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
+import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
@@ -26,7 +27,7 @@ public class BookingService {
 
     private final RestClient restClient;
 
-    public BookingRequest findBookingById(HttpServletRequest request, Long bookingId) {
+    public BookingResponse findBookingById(HttpServletRequest request, Long bookingId) {
         String finalUrl = url + SEPARATOR + bookingId;
 
         return restClient.get()
@@ -43,7 +44,7 @@ public class BookingService {
                         throw new SwiftWheelsHubNotFoundException("Booking with id: " + bookingId + " not found");
                     }
 
-                    return Objects.requireNonNull(clientResponse.bodyTo(BookingRequest.class));
+                    return Objects.requireNonNull(clientResponse.bodyTo(BookingResponse.class));
                 });
     }
 

@@ -1,7 +1,8 @@
 package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.EmployeeService;
-import com.swiftwheelshub.dto.EmployeeDto;
+import com.swiftwheelshub.dto.EmployeeRequest;
+import com.swiftwheelshub.dto.EmployeeResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,24 +25,24 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @GetMapping
-    public ResponseEntity<List<EmployeeDto>> findAllEmployees() {
-        List<EmployeeDto> employeeDtoList = employeeService.findAllEmployees();
+    public ResponseEntity<List<EmployeeResponse>> findAllEmployees() {
+        List<EmployeeResponse> employeeResponses = employeeService.findAllEmployees();
 
-        return ResponseEntity.ok(employeeDtoList);
+        return ResponseEntity.ok(employeeResponses);
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<EmployeeDto> findEmployeeById(@PathVariable("id") Long id) {
-        EmployeeDto employeeDto = employeeService.findEmployeeById(id);
+    public ResponseEntity<EmployeeResponse> findEmployeeById(@PathVariable("id") Long id) {
+        EmployeeResponse employeeResponse = employeeService.findEmployeeById(id);
 
-        return ResponseEntity.ok(employeeDto);
+        return ResponseEntity.ok(employeeResponse);
     }
 
     @GetMapping(path = "/branch/{id}")
-    public ResponseEntity<List<EmployeeDto>> findEmployeesByBranchId(@PathVariable("id") Long id) {
-        List<EmployeeDto> employeeDtoList = employeeService.findEmployeesByBranchId(id);
+    public ResponseEntity<List<EmployeeResponse>> findEmployeesByBranchId(@PathVariable("id") Long id) {
+        List<EmployeeResponse> employeeResponses = employeeService.findEmployeesByBranchId(id);
 
-        return ResponseEntity.ok(employeeDtoList);
+        return ResponseEntity.ok(employeeResponses);
     }
 
     @GetMapping(path = "/count")
@@ -52,18 +53,18 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeDto> addEmployee(@RequestBody @Valid EmployeeDto employeeDto) {
-        EmployeeDto savedEmployeeDto = employeeService.saveEmployee(employeeDto);
+    public ResponseEntity<EmployeeResponse> addEmployee(@RequestBody @Valid EmployeeRequest employeeRequest) {
+        EmployeeResponse savedEmployeeResponse = employeeService.saveEmployee(employeeRequest);
 
-        return ResponseEntity.ok(savedEmployeeDto);
+        return ResponseEntity.ok(savedEmployeeResponse);
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable("id") Long id,
-                                                      @RequestBody @Valid EmployeeDto employeeDto) {
-        EmployeeDto updatedEmployeeDto = employeeService.updateEmployee(id, employeeDto);
+    public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable("id") Long id,
+                                                           @RequestBody @Valid EmployeeRequest employeeRequest) {
+        EmployeeResponse updatedEmployeeResponse = employeeService.updateEmployee(id, employeeRequest);
 
-        return ResponseEntity.ok(updatedEmployeeDto);
+        return ResponseEntity.ok(updatedEmployeeResponse);
     }
 
     @DeleteMapping(path = "/{id}")

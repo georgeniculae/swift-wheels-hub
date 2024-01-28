@@ -1,7 +1,6 @@
 package com.swiftwheelshub.expense.service;
 
 import com.swiftwheelshub.dto.BookingClosingDetails;
-import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.InvoiceRequest;
@@ -108,8 +107,8 @@ public class InvoiceService {
             validateInvoice(invoiceRequest);
             Invoice existingInvoice = findEntityById(id);
 
-            BookingRequest bookingRequest = bookingService.findBookingById(request, invoiceRequest.bookingId());
-            Invoice existingInvoiceUpdated = updateInvoiceWithBookingDetails(bookingRequest, invoiceRequest, existingInvoice);
+            BookingResponse bookingResponse = bookingService.findBookingById(request, invoiceRequest.bookingId());
+            Invoice existingInvoiceUpdated = updateInvoiceWithBookingDetails(bookingResponse, invoiceRequest, existingInvoice);
 
             revenueService.saveInvoiceAndRevenueTransactional(existingInvoiceUpdated);
             savedInvoice = invoiceRepository.saveAndFlush(existingInvoiceUpdated);
@@ -195,7 +194,7 @@ public class InvoiceService {
         return ObjectUtils.isEmpty(invoiceRequest.additionalPayment()) ? 0D : invoiceRequest.additionalPayment();
     }
 
-    private Invoice updateInvoiceWithBookingDetails(BookingRequest bookingRequest, InvoiceRequest invoiceRequest,
+    private Invoice updateInvoiceWithBookingDetails(BookingResponse bookingResponse, InvoiceRequest invoiceRequest,
                                                     Invoice existingInvoice) {
         Long receptionistEmployeeId = invoiceRequest.receptionistEmployeeId();
         Long carId = invoiceRequest.carId();
@@ -203,11 +202,11 @@ public class InvoiceService {
         Invoice existingInvoiceUpdated =
                 updateExistingInvoice(existingInvoice, invoiceRequest, carId, receptionistEmployeeId);
 
-        return updateInvoiceAmount(bookingRequest, existingInvoiceUpdated);
+        return updateInvoiceAmount(bookingResponse, existingInvoiceUpdated);
     }
 
-    private Invoice updateInvoiceAmount(BookingRequest bookingRequest, Invoice existingInvoice) {
-        existingInvoice.setTotalAmount(getTotalAmount(existingInvoice, bookingRequest));
+    private Invoice updateInvoiceAmount(BookingResponse bookingResponse, Invoice existingInvoice) {
+        existingInvoice.setTotalAmount(getTotalAmount(existingInvoice, bookingResponse));
 
         return existingInvoice;
     }
@@ -220,11 +219,11 @@ public class InvoiceService {
         );
     }
 
-    private Double getTotalAmount(Invoice existingInvoice, BookingRequest bookingRequest) {
+    private Double getTotalAmount(Invoice existingInvoice, BookingResponse bookingResponse) {
         LocalDate carReturnDate = existingInvoice.getCarDateOfReturn();
-        LocalDate bookingDateTo = bookingRequest.dateTo();
-        LocalDate bookingDateFrom = bookingRequest.dateFrom();
-        double carAmount = bookingRequest.rentalCarPrice();
+        LocalDate bookingDateTo = bookingResponse.dateTo();
+        LocalDate bookingDateFrom = bookingResponse.dateFrom();
+        double carAmount = bookingResponse.rentalCarPrice();
 
         boolean isReturnDatePassed = carReturnDate.isAfter(bookingDateTo);
 

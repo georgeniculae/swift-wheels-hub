@@ -81,7 +81,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/EmployeeDto'
+                $ref: '#/components/schemas/EmployeeRequest'
     put:
       tags:
         - employee-controller
@@ -97,7 +97,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EmployeeDto'
+              $ref: '#/components/schemas/EmployeeRequest'
         required: true
       responses:
         '200':
@@ -105,7 +105,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/EmployeeDto'
+                $ref: '#/components/schemas/EmployeeRequest'
     delete:
       tags:
         - employee-controller
@@ -355,7 +355,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/EmployeeDto'
+                  $ref: '#/components/schemas/EmployeeRequest'
     post:
       tags:
         - employee-controller
@@ -364,7 +364,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EmployeeDto'
+              $ref: '#/components/schemas/EmployeeRequest'
         required: true
       responses:
         '200':
@@ -372,7 +372,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/EmployeeDto'
+                $ref: '#/components/schemas/EmployeeRequest'
   /cars:
     get:
       tags:
@@ -528,7 +528,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/EmployeeDto'
+                  $ref: '#/components/schemas/EmployeeRequest'
   '/cars/{id}/availability':
     get:
       tags:

@@ -4,7 +4,8 @@ import com.swiftwheelshub.dto.BranchRequest;
 import com.swiftwheelshub.dto.BranchResponse;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
-import com.swiftwheelshub.dto.EmployeeDto;
+import com.swiftwheelshub.dto.EmployeeRequest;
+import com.swiftwheelshub.dto.EmployeeResponse;
 import com.swiftwheelshub.dto.RentalOfficeRequest;
 import com.swiftwheelshub.dto.RentalOfficeResponse;
 import com.swiftwheelshub.entity.Branch;
@@ -64,11 +65,18 @@ public class AssertionUtils {
         assertEquals(rentalOffice.getLogoType(), rentalOfficeResponse.logoType());
     }
 
-    public static void assertEmployee(Employee employee, EmployeeDto employeeDto) {
-        assertEquals(employee.getFirstName(), employeeDto.firstName());
-        assertEquals(employee.getLastName(), employeeDto.lastName());
-        assertEquals(employee.getJobPosition(), employeeDto.jobPosition());
-        assertEquals(employee.getFirstName(), employeeDto.firstName());
+    public static void assertEmployeeRequest(Employee employee, EmployeeRequest employeeRequest) {
+        assertEquals(employee.getFirstName(), employeeRequest.firstName());
+        assertEquals(employee.getLastName(), employeeRequest.lastName());
+        assertEquals(employee.getJobPosition(), employeeRequest.jobPosition());
+        assertEquals(employee.getFirstName(), employeeRequest.firstName());
+    }
+
+    public static void assertEmployeeResponse(Employee employee, EmployeeResponse employeeResponse) {
+        assertEquals(employee.getFirstName(), employeeResponse.firstName());
+        assertEquals(employee.getLastName(), employeeResponse.lastName());
+        assertEquals(employee.getJobPosition(), employeeResponse.jobPosition());
+        assertEquals(employee.getFirstName(), employeeResponse.firstName());
     }
 
 }
