@@ -3,6 +3,7 @@ package com.swiftwheelshub.audit.service;
 import com.swiftwheelshub.audit.mapper.AuditLogInfoMapper;
 import com.swiftwheelshub.audit.repository.AuditLogInfoRepository;
 import com.swiftwheelshub.dto.AuditLogInfoRequest;
+import com.swiftwheelshub.entity.AuditLogInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,8 @@ public class AuditLogInfoService {
     private final AuditLogInfoRepository auditLogInfoRepository;
 
     public void saveAuditLogInfo(AuditLogInfoRequest auditLogInfoRequest) {
-        auditLogInfoRepository.save(auditLogInfoMapper.mapDtoToEntity(auditLogInfoRequest));
+        AuditLogInfo auditLogInfo = auditLogInfoMapper.mapDtoToEntity(auditLogInfoRequest);
+        auditLogInfoRepository.save(auditLogInfo);
     }
 
 }

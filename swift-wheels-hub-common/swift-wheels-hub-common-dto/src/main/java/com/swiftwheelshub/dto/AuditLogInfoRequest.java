@@ -7,7 +7,7 @@ import java.util.List;
 
 @Builder
 public record AuditLogInfoRequest(@NotEmpty(message = "Method name cannot be empty")
-                              String methodName,
+                                  String methodName,
                                   String username,
                                   List<String> parametersValues) {
 
