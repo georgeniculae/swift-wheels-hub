@@ -1,5 +1,6 @@
 package com.swiftwheelshub.emailnotification.service;
 
+import com.sendgrid.helpers.mail.Mail;
 import com.swiftwheelshub.dto.InvoiceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,8 @@ public class UserNotificationService {
     private final EmailService emailService;
 
     public void notifyCustomer(InvoiceResponse invoiceResponse) {
-        emailService.sendEmail(emailService.createMail(invoiceResponse.customerEmail(), invoiceResponse));
+        Mail mail = emailService.createMail(invoiceResponse.customerEmail(), invoiceResponse);
+        emailService.sendEmail(mail);
     }
 
 }
