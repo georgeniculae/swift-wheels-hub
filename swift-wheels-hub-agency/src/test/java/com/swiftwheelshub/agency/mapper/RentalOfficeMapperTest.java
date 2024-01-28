@@ -2,13 +2,14 @@ package com.swiftwheelshub.agency.mapper;
 
 import com.swiftwheelshub.agency.util.AssertionUtils;
 import com.swiftwheelshub.agency.util.TestUtils;
-import com.swiftwheelshub.dto.RentalOfficeDto;
+import com.swiftwheelshub.dto.RentalOfficeRequest;
+import com.swiftwheelshub.dto.RentalOfficeResponse;
 import com.swiftwheelshub.entity.RentalOffice;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -21,34 +22,30 @@ class RentalOfficeMapperTest {
     void mapEntityToDtoTest_success() {
         RentalOffice rentalOffice = TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
-        RentalOfficeDto rentalOfficeDto = Assertions.assertDoesNotThrow(() -> rentalOfficeMapper.mapEntityToDto(rentalOffice));
+        RentalOfficeResponse rentalOfficeResponse = rentalOfficeMapper.mapEntityToDto(rentalOffice);
 
-        assertNotNull(rentalOfficeDto);
-        AssertionUtils.assertRentalOffice(rentalOffice, rentalOfficeDto);
+        assertNotNull(rentalOfficeResponse);
+        AssertionUtils.assertRentalOfficeResponse(rentalOffice, rentalOfficeResponse);
     }
 
     @Test
     void mapEntityToDtoTest_null() {
-        RentalOfficeDto rentalOfficeDto = Assertions.assertDoesNotThrow(() -> rentalOfficeMapper.mapEntityToDto(null));
-
-        assertNull(rentalOfficeDto);
+        assertNull(rentalOfficeMapper.mapEntityToDto(null));
     }
 
     @Test
     void mapDtoToEntityTest_success() {
-        RentalOfficeDto rentalOfficeDto = TestUtils.getResourceAsJson("/data/RentalOfficeDto.json", RentalOfficeDto.class);
+        RentalOfficeRequest rentalOfficeRequest = TestUtils.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
 
-        RentalOffice rentalOffice = Assertions.assertDoesNotThrow(() -> rentalOfficeMapper.mapDtoToEntity(rentalOfficeDto));
+        RentalOffice rentalOffice = assertDoesNotThrow(() -> rentalOfficeMapper.mapDtoToEntity(rentalOfficeRequest));
 
         assertNotNull(rentalOffice);
-        AssertionUtils.assertRentalOffice(rentalOffice, rentalOfficeDto);
+        AssertionUtils.assertRentalOfficeRequest(rentalOffice, rentalOfficeRequest);
     }
 
     @Test
     void mapDtoToEntityTest_null() {
-        RentalOffice rentalOffice = Assertions.assertDoesNotThrow(() -> rentalOfficeMapper.mapDtoToEntity(null));
-
-        assertNull(rentalOffice);
+        assertNull(rentalOfficeMapper.mapDtoToEntity(null));
     }
 
 }

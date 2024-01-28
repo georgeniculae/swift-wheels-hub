@@ -1,7 +1,8 @@
 package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.RentalOfficeService;
-import com.swiftwheelshub.dto.RentalOfficeDto;
+import com.swiftwheelshub.dto.RentalOfficeRequest;
+import com.swiftwheelshub.dto.RentalOfficeResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,17 +25,17 @@ public class RentalOfficeController {
     private final RentalOfficeService rentalOfficeService;
 
     @GetMapping
-    public ResponseEntity<List<RentalOfficeDto>> findAllRentalOffices() {
-        List<RentalOfficeDto> rentalOfficeDtoList = rentalOfficeService.findAllRentalOffices();
+    public ResponseEntity<List<RentalOfficeResponse>> findAllRentalOffices() {
+        List<RentalOfficeResponse> allRentalOffices = rentalOfficeService.findAllRentalOffices();
 
-        return ResponseEntity.ok(rentalOfficeDtoList);
+        return ResponseEntity.ok(allRentalOffices);
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<RentalOfficeDto> findRentalOfficeById(@PathVariable("id") Long id) {
-        RentalOfficeDto rentalOfficeDto = rentalOfficeService.findRentalOfficeById(id);
+    public ResponseEntity<RentalOfficeResponse> findRentalOfficeById(@PathVariable("id") Long id) {
+        RentalOfficeResponse rentalOfficeResponse = rentalOfficeService.findRentalOfficeById(id);
 
-        return ResponseEntity.ok(rentalOfficeDto);
+        return ResponseEntity.ok(rentalOfficeResponse);
     }
 
     @GetMapping(path = "/count")
@@ -45,18 +46,18 @@ public class RentalOfficeController {
     }
 
     @PostMapping
-    public ResponseEntity<RentalOfficeDto> addRentalOffice(@RequestBody @Valid RentalOfficeDto rentalOfficeDto) {
-        RentalOfficeDto savedRentalOfficeDto = rentalOfficeService.saveRentalOffice(rentalOfficeDto);
+    public ResponseEntity<RentalOfficeResponse> addRentalOffice(@RequestBody @Valid RentalOfficeRequest rentalOfficeRequest) {
+        RentalOfficeResponse savedRentalOfficeResponse = rentalOfficeService.saveRentalOffice(rentalOfficeRequest);
 
-        return ResponseEntity.ok(savedRentalOfficeDto);
+        return ResponseEntity.ok(savedRentalOfficeResponse);
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<RentalOfficeDto> updateRentalOffice(@PathVariable("id") Long id,
-                                                              @RequestBody @Valid RentalOfficeDto rentalOfficeDto) {
-        RentalOfficeDto updatedRentalOfficeDto = rentalOfficeService.updateRentalOffice(id, rentalOfficeDto);
+    public ResponseEntity<RentalOfficeResponse> updateRentalOffice(@PathVariable("id") Long id,
+                                                                   @RequestBody @Valid RentalOfficeRequest rentalOfficeRequest) {
+        RentalOfficeResponse updatedRentalOfficeResponse = rentalOfficeService.updateRentalOffice(id, rentalOfficeRequest);
 
-        return ResponseEntity.ok(updatedRentalOfficeDto);
+        return ResponseEntity.ok(updatedRentalOfficeResponse);
     }
 
     @DeleteMapping(path = "/{id}")

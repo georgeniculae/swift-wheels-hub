@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 
 @Builder
-public record RentalOfficeDto(
+public record RentalOfficeResponse(
         Long id,
 
         @NotEmpty(message = "Name cannot be empty")
@@ -18,7 +18,7 @@ public record RentalOfficeDto(
 
     @Override
     public String toString() {
-        return "RentalOfficeDto{" + "\n" +
+        return "RentalOfficeResponse{" + "\n" +
                 "id=" + id + "\n" +
                 "name='" + name + "\n" +
                 "contactAddress='" + contactAddress + "\n" +

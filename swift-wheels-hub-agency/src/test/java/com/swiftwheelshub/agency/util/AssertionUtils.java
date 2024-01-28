@@ -5,7 +5,8 @@ import com.swiftwheelshub.dto.BranchResponse;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.EmployeeDto;
-import com.swiftwheelshub.dto.RentalOfficeDto;
+import com.swiftwheelshub.dto.RentalOfficeRequest;
+import com.swiftwheelshub.dto.RentalOfficeResponse;
 import com.swiftwheelshub.entity.Branch;
 import com.swiftwheelshub.entity.Car;
 import com.swiftwheelshub.entity.Employee;
@@ -51,10 +52,16 @@ public class AssertionUtils {
         assertEquals(branch.getAddress(), branchResponse.address());
     }
 
-    public static void assertRentalOffice(RentalOffice rentalOffice, RentalOfficeDto rentalOfficeDto) {
-        assertEquals(rentalOffice.getName(), rentalOfficeDto.name());
-        assertEquals(rentalOffice.getContactAddress(), rentalOfficeDto.contactAddress());
-        assertEquals(rentalOffice.getLogoType(), rentalOfficeDto.logoType());
+    public static void assertRentalOfficeRequest(RentalOffice rentalOffice, RentalOfficeRequest rentalOfficeRequest) {
+        assertEquals(rentalOffice.getName(), rentalOfficeRequest.name());
+        assertEquals(rentalOffice.getContactAddress(), rentalOfficeRequest.contactAddress());
+        assertEquals(rentalOffice.getLogoType(), rentalOfficeRequest.logoType());
+    }
+
+    public static void assertRentalOfficeResponse(RentalOffice rentalOffice, RentalOfficeResponse rentalOfficeResponse) {
+        assertEquals(rentalOffice.getName(), rentalOfficeResponse.name());
+        assertEquals(rentalOffice.getContactAddress(), rentalOfficeResponse.contactAddress());
+        assertEquals(rentalOffice.getLogoType(), rentalOfficeResponse.logoType());
     }
 
     public static void assertEmployee(Employee employee, EmployeeDto employeeDto) {

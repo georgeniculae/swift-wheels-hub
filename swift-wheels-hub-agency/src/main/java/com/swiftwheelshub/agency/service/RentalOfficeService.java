@@ -2,7 +2,8 @@ package com.swiftwheelshub.agency.service;
 
 import com.swiftwheelshub.agency.mapper.RentalOfficeMapper;
 import com.swiftwheelshub.agency.repository.RentalOfficeRepository;
-import com.swiftwheelshub.dto.RentalOfficeDto;
+import com.swiftwheelshub.dto.RentalOfficeRequest;
+import com.swiftwheelshub.dto.RentalOfficeResponse;
 import com.swiftwheelshub.entity.RentalOffice;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class RentalOfficeService {
     private final RentalOfficeRepository rentalOfficeRepository;
     private final RentalOfficeMapper rentalOfficeMapper;
 
-    public List<RentalOfficeDto> findAllRentalOffices() {
+    public List<RentalOfficeResponse> findAllRentalOffices() {
         return rentalOfficeRepository.findAll()
                 .stream()
                 .map(rentalOfficeMapper::mapEntityToDto)
@@ -28,7 +29,7 @@ public class RentalOfficeService {
         rentalOfficeRepository.deleteById(id);
     }
 
-    public RentalOfficeDto findRentalOfficeById(Long id) {
+    public RentalOfficeResponse findRentalOfficeById(Long id) {
         RentalOffice rentalOffice = findEntityById(id);
 
         return rentalOfficeMapper.mapEntityToDto(rentalOffice);
@@ -39,26 +40,26 @@ public class RentalOfficeService {
                 .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Rental office with id " + id + " does not exist"));
     }
 
-    public RentalOfficeDto saveRentalOffice(RentalOfficeDto rentalOfficeDto) {
-        RentalOffice rentalOffice = rentalOfficeMapper.mapDtoToEntity(rentalOfficeDto);
+    public RentalOfficeResponse saveRentalOffice(RentalOfficeRequest rentalOfficeRequest) {
+        RentalOffice rentalOffice = rentalOfficeMapper.mapDtoToEntity(rentalOfficeRequest);
         RentalOffice savedRentalOffice = saveEntity(rentalOffice);
 
         return rentalOfficeMapper.mapEntityToDto(savedRentalOffice);
     }
 
-    public RentalOfficeDto updateRentalOffice(Long id, RentalOfficeDto updatedRentalOfficeDto) {
+    public RentalOfficeResponse updateRentalOffice(Long id, RentalOfficeRequest updatedRentalOfficeRequest) {
         RentalOffice existingRentalOffice = findEntityById(id);
 
-        existingRentalOffice.setName(updatedRentalOfficeDto.name());
-        existingRentalOffice.setContactAddress(updatedRentalOfficeDto.contactAddress());
-        existingRentalOffice.setLogoType(updatedRentalOfficeDto.logoType());
+        existingRentalOffice.setName(updatedRentalOfficeRequest.name());
+        existingRentalOffice.setContactAddress(updatedRentalOfficeRequest.contactAddress());
+        existingRentalOffice.setLogoType(updatedRentalOfficeRequest.logoType());
 
         RentalOffice savedRentalOffice = saveEntity(existingRentalOffice);
 
         return rentalOfficeMapper.mapEntityToDto(savedRentalOffice);
     }
 
-    public RentalOfficeDto findRentalOfficeByName(String searchString) {
+    public RentalOfficeResponse findRentalOfficeByName(String searchString) {
         return rentalOfficeRepository.findRentalOfficeByName(searchString)
                 .map(rentalOfficeMapper::mapEntityToDto)
                 .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Rental office with name: " + searchString + " does not exist"));

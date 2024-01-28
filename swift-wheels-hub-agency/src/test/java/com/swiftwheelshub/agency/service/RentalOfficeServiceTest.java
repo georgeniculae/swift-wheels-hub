@@ -5,7 +5,8 @@ import com.swiftwheelshub.agency.mapper.RentalOfficeMapperImpl;
 import com.swiftwheelshub.agency.repository.RentalOfficeRepository;
 import com.swiftwheelshub.agency.util.AssertionUtils;
 import com.swiftwheelshub.agency.util.TestUtils;
-import com.swiftwheelshub.dto.RentalOfficeDto;
+import com.swiftwheelshub.dto.RentalOfficeRequest;
+import com.swiftwheelshub.dto.RentalOfficeResponse;
 import com.swiftwheelshub.entity.RentalOffice;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -53,8 +54,10 @@ class RentalOfficeServiceTest {
 
         when(rentalOfficeRepository.findAll()).thenReturn(List.of(rentalOffice));
 
-        List<RentalOfficeDto> rentalOfficeDtoList = assertDoesNotThrow(() -> rentalOfficeService.findAllRentalOffices());
-        AssertionUtils.assertRentalOffice(rentalOffice, rentalOfficeDtoList.getFirst());
+        List<RentalOfficeResponse> rentalOfficeResponses =
+                assertDoesNotThrow(() -> rentalOfficeService.findAllRentalOffices());
+
+        AssertionUtils.assertRentalOfficeResponse(rentalOffice, rentalOfficeResponses.getFirst());
     }
 
     @Test
@@ -64,8 +67,10 @@ class RentalOfficeServiceTest {
 
         when(rentalOfficeRepository.findById(anyLong())).thenReturn(Optional.of(rentalOffice));
 
-        RentalOfficeDto rentalOfficeDto = assertDoesNotThrow(() -> rentalOfficeService.findRentalOfficeById(1L));
-        AssertionUtils.assertRentalOffice(rentalOffice, rentalOfficeDto);
+        RentalOfficeResponse rentalOfficeResponse =
+                assertDoesNotThrow(() -> rentalOfficeService.findRentalOfficeById(1L));
+
+        AssertionUtils.assertRentalOfficeResponse(rentalOffice, rentalOfficeResponse);
     }
 
     @Test
@@ -83,13 +88,15 @@ class RentalOfficeServiceTest {
     void saveRentalOfficeTest_success() {
         RentalOffice rentalOffice =
                 TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
-        RentalOfficeDto rentalOfficeDto =
-                TestUtils.getResourceAsJson("/data/RentalOfficeDto.json", RentalOfficeDto.class);
+        RentalOfficeRequest rentalOfficeRequest =
+                TestUtils.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
 
         when(rentalOfficeRepository.saveAndFlush(any(RentalOffice.class))).thenReturn(rentalOffice);
 
-        RentalOfficeDto savedRentalOfficeDto = assertDoesNotThrow(() -> rentalOfficeService.saveRentalOffice(rentalOfficeDto));
-        AssertionUtils.assertRentalOffice(rentalOffice, savedRentalOfficeDto);
+        RentalOfficeResponse savedRentalOfficeResponse =
+                assertDoesNotThrow(() -> rentalOfficeService.saveRentalOffice(rentalOfficeRequest));
+
+        AssertionUtils.assertRentalOfficeResponse(rentalOffice, savedRentalOfficeResponse);
 
         verify(rentalOfficeRepository, times(1)).saveAndFlush(argumentCaptor.capture());
         verify(rentalOfficeMapper, times(1)).mapEntityToDto(any(RentalOffice.class));
@@ -98,15 +105,15 @@ class RentalOfficeServiceTest {
     @Test
     void updateRentalOfficeTest_success() {
         RentalOffice rentalOffice = TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
-        RentalOfficeDto rentalOfficeDto = TestUtils.getResourceAsJson("/data/RentalOfficeDto.json", RentalOfficeDto.class);
+        RentalOfficeRequest rentalOfficeRequest = TestUtils.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
 
         when(rentalOfficeRepository.findById(anyLong())).thenReturn(Optional.of(rentalOffice));
         when(rentalOfficeRepository.saveAndFlush(any(RentalOffice.class))).thenReturn(rentalOffice);
 
-        RentalOfficeDto updatedRentalOfficeDto =
-                assertDoesNotThrow(() -> rentalOfficeService.updateRentalOffice(1L, rentalOfficeDto));
+        RentalOfficeResponse updatedRentalOfficeResponse =
+                assertDoesNotThrow(() -> rentalOfficeService.updateRentalOffice(1L, rentalOfficeRequest));
 
-        AssertionUtils.assertRentalOffice(rentalOffice, updatedRentalOfficeDto);
+        AssertionUtils.assertRentalOfficeResponse(rentalOffice, updatedRentalOfficeResponse);
     }
 
     @Test
@@ -115,10 +122,10 @@ class RentalOfficeServiceTest {
 
         when(rentalOfficeRepository.findRentalOfficeByName(anyString())).thenReturn(Optional.of(rentalOffice));
 
-        RentalOfficeDto rentalOfficeDto =
+        RentalOfficeResponse rentalOfficeResponse =
                 assertDoesNotThrow(() -> rentalOfficeService.findRentalOfficeByName("Test Rental Office"));
 
-        AssertionUtils.assertRentalOffice(rentalOffice, rentalOfficeDto);
+        AssertionUtils.assertRentalOfficeResponse(rentalOffice, rentalOfficeResponse);
     }
 
     @Test

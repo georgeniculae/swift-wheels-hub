@@ -24,7 +24,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/RentalOfficeDto'
+                $ref: '#/components/schemas/RentalOfficeRequest'
     put:
       tags:
         - rental-office-controller
@@ -40,7 +40,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RentalOfficeDto'
+              $ref: '#/components/schemas/RentalOfficeRequest'
         required: true
       responses:
         '200':
@@ -48,7 +48,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/RentalOfficeDto'
+                $ref: '#/components/schemas/RentalOfficeRequest'
     delete:
       tags:
         - rental-office-controller
@@ -324,7 +324,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/RentalOfficeDto'
+                  $ref: '#/components/schemas/RentalOfficeRequest'
     post:
       tags:
         - rental-office-controller
@@ -333,7 +333,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RentalOfficeDto'
+              $ref: '#/components/schemas/RentalOfficeRequest'
         required: true
       responses:
         '200':
@@ -341,7 +341,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/RentalOfficeDto'
+                $ref: '#/components/schemas/RentalOfficeRequest'
   /employees:
     get:
       tags:
