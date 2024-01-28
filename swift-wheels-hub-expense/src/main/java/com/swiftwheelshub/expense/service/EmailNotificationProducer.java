@@ -1,6 +1,6 @@
 package com.swiftwheelshub.expense.service;
 
-import com.swiftwheelshub.dto.InvoiceDto;
+import com.swiftwheelshub.dto.InvoiceResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -21,22 +21,22 @@ public class EmailNotificationProducer {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public void sendMessage(InvoiceDto invoiceDto) {
-        kafkaTemplate.send(buildMessage(invoiceDto, emailNotificationProducerTopicName))
+    public void sendMessage(InvoiceResponse invoiceResponse) {
+        kafkaTemplate.send(buildMessage(invoiceResponse, emailNotificationProducerTopicName))
                 .whenComplete((result, e) -> {
                     if (ObjectUtils.isEmpty(e)) {
-                        log.info("Sent invoice=[" + invoiceDto + "] with offset=["
+                        log.info("Sent invoice=[" + invoiceResponse + "] with offset=["
                                 + result.getRecordMetadata().offset() + "]");
 
                         return;
                     }
 
-                    log.error("Unable to send invoice=[" + invoiceDto + "] due to : " + e.getMessage());
+                    log.error("Unable to send invoice=[" + invoiceResponse + "] due to : " + e.getMessage());
                 });
     }
 
-    private Message<InvoiceDto> buildMessage(InvoiceDto invoiceDto, String topicName) {
-        return MessageBuilder.withPayload(invoiceDto)
+    private Message<InvoiceResponse> buildMessage(InvoiceResponse invoiceResponse, String topicName) {
+        return MessageBuilder.withPayload(invoiceResponse)
                 .setHeader(KafkaHeaders.TOPIC, topicName)
                 .build();
     }

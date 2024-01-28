@@ -1,6 +1,6 @@
 package com.swiftwheelshub.emailnotification.config.kafka;
 
-import com.swiftwheelshub.dto.InvoiceDto;
+import com.swiftwheelshub.dto.InvoiceRequest;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +26,7 @@ public class KafkaEmailNotificationConsumerConfig {
     private String groupId;
 
     @Bean
-    public ConsumerFactory<String, InvoiceDto> emailNotificationConsumerFactory() {
+    public ConsumerFactory<String, InvoiceRequest> emailNotificationConsumerFactory() {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
@@ -34,12 +34,12 @@ public class KafkaEmailNotificationConsumerConfig {
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 
-        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(InvoiceDto.class));
+        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(InvoiceRequest.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, InvoiceDto> emailNotificationListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, InvoiceDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, InvoiceRequest> emailNotificationListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, InvoiceRequest> factory = new ConcurrentKafkaListenerContainerFactory<>();
 
         factory.setConsumerFactory(emailNotificationConsumerFactory());
 

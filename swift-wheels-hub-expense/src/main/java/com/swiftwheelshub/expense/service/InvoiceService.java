@@ -4,7 +4,8 @@ import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.dto.CarState;
-import com.swiftwheelshub.dto.InvoiceDto;
+import com.swiftwheelshub.dto.InvoiceRequest;
+import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
@@ -31,34 +32,34 @@ public class InvoiceService {
     private final BookingService bookingService;
     private final InvoiceMapper invoiceMapper;
 
-    public List<InvoiceDto> findAllInvoices() {
+    public List<InvoiceResponse> findAllInvoices() {
         return invoiceRepository.findAll()
                 .stream()
                 .map(invoiceMapper::mapEntityToDto)
                 .toList();
     }
 
-    public List<InvoiceDto> findAllActiveInvoices() {
+    public List<InvoiceResponse> findAllActiveInvoices() {
         return invoiceRepository.findAllActive()
                 .stream()
                 .map(invoiceMapper::mapEntityToDto)
                 .toList();
     }
 
-    public List<InvoiceDto> findAllInvoicesByCustomerId(String customerUsername) {
+    public List<InvoiceResponse> findAllInvoicesByCustomerId(String customerUsername) {
         return invoiceRepository.findByCustomerUsername(customerUsername)
                 .stream()
                 .map(invoiceMapper::mapEntityToDto)
                 .toList();
     }
 
-    public InvoiceDto findInvoiceById(Long id) {
+    public InvoiceResponse findInvoiceById(Long id) {
         Invoice invoice = findEntityById(id);
 
         return invoiceMapper.mapEntityToDto(invoice);
     }
 
-    public List<InvoiceDto> findInvoiceByComments(String searchString) {
+    public List<InvoiceResponse> findInvoiceByComments(String searchString) {
         return invoiceRepository.findByComments(searchString)
                 .stream()
                 .map(invoiceMapper::mapEntityToDto)
@@ -73,7 +74,7 @@ public class InvoiceService {
         return invoiceRepository.countAllActive();
     }
 
-    public InvoiceDto saveInvoice(BookingResponse newBookingResponse) {
+    public InvoiceResponse saveInvoice(BookingResponse newBookingResponse) {
         if (!invoiceRepository.existsByBookingId(newBookingResponse.id())) {
             Invoice invoice = new Invoice();
 
@@ -90,7 +91,7 @@ public class InvoiceService {
         throw new SwiftWheelsHubResponseStatusException(HttpStatus.BAD_REQUEST, "Invoice already exists");
     }
 
-    public InvoiceDto updateInvoiceAfterBookingUpdate(BookingResponse bookingResponse) {
+    public InvoiceResponse updateInvoiceAfterBookingUpdate(BookingResponse bookingResponse) {
         Invoice invoice = findInvoiceByBookingId(bookingResponse.id());
         invoice.setCarId(bookingResponse.carId());
 
@@ -99,21 +100,21 @@ public class InvoiceService {
         return invoiceMapper.mapEntityToDto(savedInvoice);
     }
 
-    public InvoiceDto closeInvoice(HttpServletRequest request, Long id, InvoiceDto invoiceDto) {
+    public InvoiceResponse closeInvoice(HttpServletRequest request, Long id, InvoiceRequest invoiceRequest) {
         Invoice savedInvoice;
         BookingClosingDetails bookingClosingDetails;
 
         try {
-            validateInvoice(invoiceDto);
+            validateInvoice(invoiceRequest);
             Invoice existingInvoice = findEntityById(id);
 
-            BookingRequest bookingRequest = bookingService.findBookingById(request, invoiceDto.bookingId());
-            Invoice existingInvoiceUpdated = updateInvoiceWithBookingDetails(bookingRequest, invoiceDto, existingInvoice);
+            BookingRequest bookingRequest = bookingService.findBookingById(request, invoiceRequest.bookingId());
+            Invoice existingInvoiceUpdated = updateInvoiceWithBookingDetails(bookingRequest, invoiceRequest, existingInvoice);
 
             revenueService.saveInvoiceAndRevenueTransactional(existingInvoiceUpdated);
             savedInvoice = invoiceRepository.saveAndFlush(existingInvoiceUpdated);
 
-            bookingClosingDetails = getBookingClosingDetails(invoiceDto, invoiceDto.receptionistEmployeeId());
+            bookingClosingDetails = getBookingClosingDetails(invoiceRequest, invoiceRequest.receptionistEmployeeId());
         } catch (Exception e) {
             throw new SwiftWheelsHubException(e);
         }
@@ -138,10 +139,10 @@ public class InvoiceService {
         );
     }
 
-    private void validateInvoice(InvoiceDto invoiceDto) {
-        validateDateOfReturnOfTheCar(Objects.requireNonNull(invoiceDto.carDateOfReturn()));
+    private void validateInvoice(InvoiceRequest invoiceRequest) {
+        validateDateOfReturnOfTheCar(Objects.requireNonNull(invoiceRequest.carDateOfReturn()));
 
-        if (Boolean.TRUE.equals(invoiceDto.isVehicleDamaged()) && ObjectUtils.isEmpty(invoiceDto.damageCost())) {
+        if (Boolean.TRUE.equals(invoiceRequest.isVehicleDamaged()) && ObjectUtils.isEmpty(invoiceRequest.damageCost())) {
             throw new SwiftWheelsHubResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "If the vehicle is damaged, the damage cost cannot be null/empty"
@@ -173,34 +174,34 @@ public class InvoiceService {
         }
     }
 
-    private Invoice updateExistingInvoice(Invoice existingInvoice, InvoiceDto invoiceDto, Long carId,
+    private Invoice updateExistingInvoice(Invoice existingInvoice, InvoiceRequest invoiceRequest, Long carId,
                                           Long receptionistEmployeeId) {
-        existingInvoice.setCarDateOfReturn(invoiceDto.carDateOfReturn());
+        existingInvoice.setCarDateOfReturn(invoiceRequest.carDateOfReturn());
         existingInvoice.setReceptionistEmployeeId(receptionistEmployeeId);
         existingInvoice.setCarId(carId);
-        existingInvoice.setIsVehicleDamaged(invoiceDto.isVehicleDamaged());
-        existingInvoice.setDamageCost(getDamageCost(invoiceDto));
-        existingInvoice.setAdditionalPayment(getAdditionalPayment(invoiceDto));
-        existingInvoice.setComments(invoiceDto.comments());
+        existingInvoice.setIsVehicleDamaged(invoiceRequest.isVehicleDamaged());
+        existingInvoice.setDamageCost(getDamageCost(invoiceRequest));
+        existingInvoice.setAdditionalPayment(getAdditionalPayment(invoiceRequest));
+        existingInvoice.setComments(invoiceRequest.comments());
 
         return existingInvoice;
     }
 
-    private double getDamageCost(InvoiceDto invoiceDto) {
-        return ObjectUtils.isEmpty(invoiceDto.damageCost()) ? 0D : invoiceDto.damageCost();
+    private double getDamageCost(InvoiceRequest invoiceRequest) {
+        return ObjectUtils.isEmpty(invoiceRequest.damageCost()) ? 0D : invoiceRequest.damageCost();
     }
 
-    private double getAdditionalPayment(InvoiceDto invoiceDto) {
-        return ObjectUtils.isEmpty(invoiceDto.additionalPayment()) ? 0D : invoiceDto.additionalPayment();
+    private double getAdditionalPayment(InvoiceRequest invoiceRequest) {
+        return ObjectUtils.isEmpty(invoiceRequest.additionalPayment()) ? 0D : invoiceRequest.additionalPayment();
     }
 
-    private Invoice updateInvoiceWithBookingDetails(BookingRequest bookingRequest, InvoiceDto invoiceDto,
+    private Invoice updateInvoiceWithBookingDetails(BookingRequest bookingRequest, InvoiceRequest invoiceRequest,
                                                     Invoice existingInvoice) {
-        Long receptionistEmployeeId = invoiceDto.receptionistEmployeeId();
-        Long carId = invoiceDto.carId();
+        Long receptionistEmployeeId = invoiceRequest.receptionistEmployeeId();
+        Long carId = invoiceRequest.carId();
 
         Invoice existingInvoiceUpdated =
-                updateExistingInvoice(existingInvoice, invoiceDto, carId, receptionistEmployeeId);
+                updateExistingInvoice(existingInvoice, invoiceRequest, carId, receptionistEmployeeId);
 
         return updateInvoiceAmount(bookingRequest, existingInvoiceUpdated);
     }
@@ -211,11 +212,11 @@ public class InvoiceService {
         return existingInvoice;
     }
 
-    private BookingClosingDetails getBookingClosingDetails(InvoiceDto invoiceDto, Long receptionistEmployeeId) {
+    private BookingClosingDetails getBookingClosingDetails(InvoiceRequest invoiceRequest, Long receptionistEmployeeId) {
         return new BookingClosingDetails(
-                invoiceDto.bookingId(),
+                invoiceRequest.bookingId(),
                 receptionistEmployeeId,
-                getCarStatus(invoiceDto.isVehicleDamaged())
+                getCarStatus(invoiceRequest.isVehicleDamaged())
         );
     }
 

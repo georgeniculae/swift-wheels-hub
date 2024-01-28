@@ -1,6 +1,6 @@
 package com.swiftwheelshub.emailnotification.config.kafka;
 
-import com.swiftwheelshub.dto.InvoiceDto;
+import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.emailnotification.service.UserNotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -18,8 +18,8 @@ public class KafkaEmailNotificationConsumer {
             containerFactory = "emailNotificationListenerContainerFactory",
             groupId = "${kafka.groupId}"
     )
-    public void consumeInvoice(@Payload InvoiceDto invoiceDto) {
-        userNotificationService.notifyCustomer(invoiceDto);
+    public void consumeInvoice(@Payload InvoiceResponse invoiceResponse) {
+        userNotificationService.notifyCustomer(invoiceResponse);
     }
 
 }

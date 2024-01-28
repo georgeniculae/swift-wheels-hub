@@ -1,6 +1,7 @@
 package com.swiftwheelshub.expense.mapper;
 
-import com.swiftwheelshub.dto.InvoiceDto;
+import com.swiftwheelshub.dto.InvoiceRequest;
+import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.entity.Invoice;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -11,8 +12,8 @@ import org.mapstruct.ReportingPolicy;
         injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface InvoiceMapper {
 
-    InvoiceDto mapEntityToDto(Invoice invoice);
+    InvoiceResponse mapEntityToDto(Invoice invoice);
 
-    Invoice mapDtoToEntity(InvoiceDto invoiceDto);
+    Invoice mapDtoToEntity(InvoiceRequest invoiceRequest);
 
 }

@@ -24,7 +24,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/InvoiceDto'
+                $ref: '#/components/schemas/InvoiceRequest'
     put:
       tags:
         - invoice-controller
@@ -40,7 +40,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/InvoiceDto'
+              $ref: '#/components/schemas/InvoiceRequest'
         required: true
       responses:
         '200':
@@ -48,7 +48,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/InvoiceDto'
+                $ref: '#/components/schemas/InvoiceRequest'
   /revenues:
     get:
       tags:
@@ -110,7 +110,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/InvoiceDto'
+                  $ref: '#/components/schemas/InvoiceRequest'
   /invoices/count:
     get:
       tags:
@@ -143,7 +143,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/InvoiceDto'
+                  $ref: '#/components/schemas/InvoiceRequest'
   /invoices/active:
     get:
       tags:
@@ -157,7 +157,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/InvoiceDto'
+                  $ref: '#/components/schemas/InvoiceRequest'
   /invoices/active-count:
     get:
       tags:

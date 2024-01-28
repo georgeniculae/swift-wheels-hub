@@ -10,7 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @Builder
-public record InvoiceDto(
+public record InvoiceRequest(
         Long id,
 
         @NotEmpty(message = "Username cannot be empty")
@@ -44,7 +44,7 @@ public record InvoiceDto(
 
     @Override
     public String toString() {
-        return "InvoiceDto{" + "\n" +
+        return "InvoiceRequest{" + "\n" +
                 "id=" + id + "\n" +
                 "customerUsername='" + customerUsername + "\n" +
                 "customerEmail='" + customerEmail + "\n" +

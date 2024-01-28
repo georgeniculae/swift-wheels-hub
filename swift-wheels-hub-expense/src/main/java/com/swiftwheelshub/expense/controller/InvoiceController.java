@@ -1,6 +1,7 @@
 package com.swiftwheelshub.expense.controller;
 
-import com.swiftwheelshub.dto.InvoiceDto;
+import com.swiftwheelshub.dto.InvoiceRequest;
+import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.expense.service.InvoiceService;
 import com.swiftwheelshub.lib.aspect.LogActivity;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,44 +25,44 @@ public class InvoiceController {
     private final InvoiceService invoiceService;
 
     @GetMapping
-    public ResponseEntity<List<InvoiceDto>> findAllInvoices() {
-        List<InvoiceDto> allInvoices = invoiceService.findAllInvoices();
+    public ResponseEntity<List<InvoiceResponse>> findAllInvoices() {
+        List<InvoiceResponse> allInvoiceResponses = invoiceService.findAllInvoices();
 
-        return ResponseEntity.ok(allInvoices);
+        return ResponseEntity.ok(allInvoiceResponses);
     }
 
     @GetMapping(path = "/active")
-    public ResponseEntity<List<InvoiceDto>> findAllActiveInvoices() {
-        List<InvoiceDto> allInvoices = invoiceService.findAllActiveInvoices();
+    public ResponseEntity<List<InvoiceResponse>> findAllActiveInvoices() {
+        List<InvoiceResponse> allInvoiceResponses = invoiceService.findAllActiveInvoices();
 
-        return ResponseEntity.ok(allInvoices);
+        return ResponseEntity.ok(allInvoiceResponses);
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<InvoiceDto> findInvoiceById(@PathVariable("id") Long id) {
-        InvoiceDto invoice = invoiceService.findInvoiceById(id);
+    public ResponseEntity<InvoiceResponse> findInvoiceById(@PathVariable("id") Long id) {
+        InvoiceResponse invoiceResponse = invoiceService.findInvoiceById(id);
 
-        return ResponseEntity.ok(invoice);
+        return ResponseEntity.ok(invoiceResponse);
     }
 
     @GetMapping(path = "/by-customer/{customerUsername}")
-    public ResponseEntity<List<InvoiceDto>> findAllInvoicesByCustomerId(@PathVariable("customerUsername") String customerUsername) {
-        List<InvoiceDto> allInvoices = invoiceService.findAllInvoicesByCustomerId(customerUsername);
+    public ResponseEntity<List<InvoiceResponse>> findAllInvoicesByCustomerId(@PathVariable("customerUsername") String customerUsername) {
+        List<InvoiceResponse> allInvoiceResponses = invoiceService.findAllInvoicesByCustomerId(customerUsername);
 
-        return ResponseEntity.ok(allInvoices);
+        return ResponseEntity.ok(allInvoiceResponses);
     }
 
     @PutMapping("/{id}")
     @LogActivity(
-            sentParameters = {"id", "invoiceDto"},
+            sentParameters = {"id", "invoiceRequest"},
             activityDescription = "Invoice closing"
     )
-    public ResponseEntity<InvoiceDto> closeInvoice(HttpServletRequest request,
-                                                   @PathVariable("id") Long id,
-                                                   @RequestBody @Valid InvoiceDto invoiceDto) {
-        InvoiceDto undatedinvoiceDto = invoiceService.closeInvoice(request, id, invoiceDto);
+    public ResponseEntity<InvoiceResponse> closeInvoice(HttpServletRequest request,
+                                                        @PathVariable("id") Long id,
+                                                        @RequestBody @Valid InvoiceRequest invoiceRequest) {
+        InvoiceResponse undatedinvoiceResponse = invoiceService.closeInvoice(request, id, invoiceRequest);
 
-        return ResponseEntity.ok(undatedinvoiceDto);
+        return ResponseEntity.ok(undatedinvoiceResponse);
     }
 
     @GetMapping(path = "/count")

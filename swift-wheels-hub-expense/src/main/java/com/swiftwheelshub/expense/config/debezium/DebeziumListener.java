@@ -1,10 +1,10 @@
 package com.swiftwheelshub.expense.config.debezium;
 
-import com.swiftwheelshub.dto.InvoiceDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.expense.mapper.InvoiceMapper;
 import com.swiftwheelshub.expense.service.EmailNotificationProducer;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.debezium.config.Configuration;
 import io.debezium.embedded.Connect;
 import io.debezium.engine.DebeziumEngine;
@@ -83,9 +83,9 @@ public class DebeziumListener {
                         .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
 
                 Invoice invoice = objectMapper.convertValue(payload, Invoice.class);
-                InvoiceDto invoiceDto = invoiceMapper.mapEntityToDto(invoice);
+                InvoiceResponse invoiceResponse = invoiceMapper.mapEntityToDto(invoice);
 
-                notifyCustomer(operation, invoiceDto);
+                notifyCustomer(operation, invoiceResponse);
 
                 log.info("Updated Data: {} with Operation: {}", payload, operation.name());
             }
@@ -137,9 +137,9 @@ public class DebeziumListener {
         return updatedFieldName.toString().replace(UNDERSCORE, StringUtils.EMPTY);
     }
 
-    private void notifyCustomer(Operation operation, InvoiceDto invoiceDto) {
-        if (Operation.UPDATE.equals(operation) && ObjectUtils.isNotEmpty(invoiceDto.totalAmount())) {
-            emailNotificationProducer.sendMessage(invoiceDto);
+    private void notifyCustomer(Operation operation, InvoiceResponse invoiceResponse) {
+        if (Operation.UPDATE.equals(operation) && ObjectUtils.isNotEmpty(invoiceResponse.totalAmount())) {
+            emailNotificationProducer.sendMessage(invoiceResponse);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.swiftwheelshub.emailnotification.service;
 
-import com.swiftwheelshub.dto.InvoiceDto;
+import com.swiftwheelshub.dto.InvoiceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,8 +10,8 @@ public class UserNotificationService {
 
     private final EmailService emailService;
 
-    public void notifyCustomer(InvoiceDto invoiceDto) {
-        emailService.sendEmail(emailService.createMail(invoiceDto.customerEmail(), invoiceDto));
+    public void notifyCustomer(InvoiceResponse invoiceResponse) {
+        emailService.sendEmail(emailService.createMail(invoiceResponse.customerEmail(), invoiceResponse));
     }
 
 }

@@ -3,7 +3,8 @@ package com.swiftwheelshub.expense.service;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.InvoiceDto;
+import com.swiftwheelshub.dto.InvoiceRequest;
+import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
@@ -65,8 +66,8 @@ class InvoiceServiceTest {
         when(invoiceRepository.existsByBookingId(anyLong())).thenReturn(false);
         when(invoiceRepository.saveAndFlush(any(Invoice.class))).thenReturn(invoice);
 
-        InvoiceDto invoiceDto = assertDoesNotThrow(() -> invoiceService.saveInvoice(bookingResponse));
-        assertNotNull(invoiceDto);
+        InvoiceResponse invoiceResponse = assertDoesNotThrow(() -> invoiceService.saveInvoice(bookingResponse));
+        assertNotNull(invoiceResponse);
     }
 
     @Test
@@ -92,14 +93,16 @@ class InvoiceServiceTest {
         when(invoiceRepository.findByBookingId(anyLong())).thenReturn(Optional.ofNullable(invoice));
         when(invoiceRepository.saveAndFlush(any(Invoice.class))).thenReturn(invoice);
 
-        InvoiceDto invoiceDto = assertDoesNotThrow(() -> invoiceService.updateInvoiceAfterBookingUpdate(bookingResponse));
-        assertNotNull(invoiceDto);
+        InvoiceResponse invoiceResponse =
+                assertDoesNotThrow(() -> invoiceService.updateInvoiceAfterBookingUpdate(bookingResponse));
+
+        assertNotNull(invoiceResponse);
     }
 
     @Test
     void closeInvoiceTest_success() {
         Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
-        InvoiceDto invoiceDto = TestUtils.getResourceAsJson("/data/InvoiceDto.json", InvoiceDto.class);
+        InvoiceRequest invoiceRequest = TestUtils.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
         BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingRequest.class);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -111,7 +114,7 @@ class InvoiceServiceTest {
         when(invoiceRepository.saveAndFlush(any(Invoice.class))).thenReturn(invoice);
         doNothing().when(bookingService).closeBooking(any(HttpServletRequest.class), any(BookingClosingDetails.class));
 
-        assertDoesNotThrow(() -> invoiceService.closeInvoice(request, 1L, invoiceDto));
+        assertDoesNotThrow(() -> invoiceService.closeInvoice(request, 1L, invoiceRequest));
 
         verify(invoiceMapper, times(1)).mapEntityToDto(any(Invoice.class));
     }
@@ -123,9 +126,9 @@ class InvoiceServiceTest {
         when(invoiceRepository.findAll()).thenReturn(List.of(invoice));
 
         assertDoesNotThrow(() -> invoiceService.findAllInvoices());
-        List<InvoiceDto> invoiceDtoList = invoiceService.findAllInvoices();
+        List<InvoiceResponse> invoiceResponses = invoiceService.findAllInvoices();
 
-        AssertionUtils.assertInvoice(invoice, invoiceDtoList.getFirst());
+        AssertionUtils.assertInvoiceResponse(invoice, invoiceResponses.getFirst());
     }
 
     @Test
@@ -135,9 +138,9 @@ class InvoiceServiceTest {
         when(invoiceRepository.findAllActive()).thenReturn(List.of(invoice));
 
         assertDoesNotThrow(() -> invoiceService.findAllInvoices());
-        List<InvoiceDto> invoiceDtoList = invoiceService.findAllActiveInvoices();
+        List<InvoiceResponse> allActiveInvoices = invoiceService.findAllActiveInvoices();
 
-        AssertionUtils.assertInvoice(invoice, invoiceDtoList.getFirst());
+        AssertionUtils.assertInvoiceResponse(invoice, allActiveInvoices.getFirst());
     }
 
     @Test
@@ -147,9 +150,9 @@ class InvoiceServiceTest {
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
 
         assertDoesNotThrow(() -> invoiceService.findInvoiceById(1L));
-        InvoiceDto invoiceDto = invoiceService.findInvoiceById(1L);
+        InvoiceResponse invoiceResponse = invoiceService.findInvoiceById(1L);
 
-        AssertionUtils.assertInvoice(invoice, invoiceDto);
+        AssertionUtils.assertInvoiceResponse(invoice, invoiceResponse);
     }
 
     @Test
@@ -169,10 +172,10 @@ class InvoiceServiceTest {
 
         when(invoiceRepository.findByComments(anyString())).thenReturn(List.of(invoice));
 
-        List<InvoiceDto> invoiceDtoList =
+        List<InvoiceResponse> invoiceResponses =
                 assertDoesNotThrow(() -> invoiceService.findInvoiceByComments("comment"));
 
-        AssertionUtils.assertInvoice(invoice, invoiceDtoList.getFirst());
+        AssertionUtils.assertInvoiceResponse(invoice, invoiceResponses.getFirst());
     }
 
     @Test
