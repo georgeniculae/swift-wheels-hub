@@ -104,6 +104,17 @@ public class CustomerService {
         }
     }
 
+    public void logout(HttpServletRequest request) {
+        String username = HttpRequestUtil.extractUsername(request);
+        UserRepresentation userRepresentation = getUserRepresentation(username);
+
+        try {
+            findById(userRepresentation.getId()).logout();
+        } catch (Exception e) {
+            handleRestEasyCall(e);
+        }
+    }
+
     private UsersResource getUsersResource() {
         return keycloak.realm(realm).users();
     }

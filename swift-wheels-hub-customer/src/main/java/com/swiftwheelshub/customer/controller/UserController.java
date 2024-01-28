@@ -69,4 +69,11 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping(path = "/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+        customerService.logout(request);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }

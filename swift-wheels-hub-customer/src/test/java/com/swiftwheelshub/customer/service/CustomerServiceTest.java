@@ -257,4 +257,43 @@ class CustomerServiceTest {
         assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.deleteUserByUsername("user"));
     }
 
+    @Test
+    void logoutTest_success() {
+        ReflectionTestUtils.setField(customerService, "realm", "realm");
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("X-USERNAME", "user");
+
+        UserRepresentation userRepresentation = TestData.getUserRepresentation();
+
+        when(keycloak.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of(userRepresentation));
+        when(usersResource.get(anyString())).thenReturn(userResource);
+        doNothing().when(userResource).logout();
+
+        assertDoesNotThrow(() -> customerService.logout(request));
+    }
+
+    @Test
+    void logoutTest_errorOnLogout() {
+        ReflectionTestUtils.setField(customerService, "realm", "realm");
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("X-USERNAME", "user");
+
+        UserRepresentation userRepresentation = TestData.getUserRepresentation();
+
+        when(keycloak.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of(userRepresentation));
+        when(usersResource.get(anyString())).thenReturn(userResource);
+        doThrow(new NotFoundException()).when(userResource).logout();
+
+        SwiftWheelsHubNotFoundException notFoundException =
+                assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.logout(request));
+
+        assertNotNull(notFoundException);
+    }
+
 }

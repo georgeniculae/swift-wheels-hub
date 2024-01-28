@@ -14,6 +14,7 @@ public class TestData {
         passwordCredentials.setValue("password");
 
         UserRepresentation userRepresentation = new UserRepresentation();
+        userRepresentation.setId("1");
         userRepresentation.setUsername("user");
         userRepresentation.setFirstName("Ion");
         userRepresentation.setLastName("Popescu");
