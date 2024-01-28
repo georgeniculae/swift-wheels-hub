@@ -272,7 +272,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/BranchDto'
+                $ref: '#/components/schemas/BranchRequest'
     put:
       tags:
         - branch-controller
@@ -288,7 +288,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BranchDto'
+              $ref: '#/components/schemas/BranchRequest'
         required: true
       responses:
         '200':
@@ -296,7 +296,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/BranchDto'
+                $ref: '#/components/schemas/BranchRequest'
     delete:
       tags:
         - branch-controller
@@ -464,7 +464,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BranchDto'
+                  $ref: '#/components/schemas/BranchRequest'
     post:
       tags:
         - branch-controller
@@ -473,7 +473,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BranchDto'
+              $ref: '#/components/schemas/BranchRequest'
         required: true
       responses:
         '200':
@@ -481,7 +481,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/BranchDto'
+                $ref: '#/components/schemas/BranchRequest'
   /rental-offices/count:
     get:
       tags:

@@ -3,7 +3,8 @@ package com.swiftwheelshub.agency.controler;
 import com.swiftwheelshub.agency.controller.BranchController;
 import com.swiftwheelshub.agency.service.BranchService;
 import com.swiftwheelshub.agency.util.TestUtils;
-import com.swiftwheelshub.dto.BranchDto;
+import com.swiftwheelshub.dto.BranchRequest;
+import com.swiftwheelshub.dto.BranchResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -45,9 +46,10 @@ class BranchControllerTest {
 
     @Test
     void findAllBranchesTest_success() throws Exception {
-        BranchDto branchDto = TestUtils.getResourceAsJson("/data/BranchDto.json", BranchDto.class);
+        BranchResponse branchResponse =
+                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
-        when(branchService.findAllBranches()).thenReturn(List.of(branchDto));
+        when(branchService.findAllBranches()).thenReturn(List.of(branchResponse));
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -77,9 +79,10 @@ class BranchControllerTest {
 
     @Test
     void findBranchByIdTest_success() throws Exception {
-        BranchDto branchDto = TestUtils.getResourceAsJson("/data/BranchDto.json", BranchDto.class);
+        BranchResponse branchResponse =
+                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
-        when(branchService.findBranchById(anyLong())).thenReturn(branchDto);
+        when(branchService.findBranchById(anyLong())).thenReturn(branchResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -154,10 +157,12 @@ class BranchControllerTest {
 
     @Test
     void addBranchTest_success() throws Exception {
-        BranchDto branchDto = TestUtils.getResourceAsJson("/data/BranchDto.json", BranchDto.class);
-        String content = TestUtils.writeValueAsString(branchDto);
+        BranchResponse branchResponse =
+                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
-        when(branchService.saveBranch(any(BranchDto.class))).thenReturn(branchDto);
+        String content = TestUtils.writeValueAsString(branchResponse);
+
+        when(branchService.saveBranch(any(BranchRequest.class))).thenReturn(branchResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(csrf())
@@ -175,8 +180,10 @@ class BranchControllerTest {
 
     @Test
     void addBranchTest_unauthorized() throws Exception {
-        BranchDto branchDto = TestUtils.getResourceAsJson("/data/BranchDto.json", BranchDto.class);
-        String content = TestUtils.writeValueAsString(branchDto);
+        BranchResponse branchResponse =
+                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
+
+        String content = TestUtils.writeValueAsString(branchResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(csrf())
@@ -194,8 +201,8 @@ class BranchControllerTest {
 
     @Test
     void addBranchTest_forbidden() throws Exception {
-        BranchDto branchDto = TestUtils.getResourceAsJson("/data/BranchDto.json", BranchDto.class);
-        String content = TestUtils.writeValueAsString(branchDto);
+        BranchRequest branchRequest = TestUtils.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
+        String content = TestUtils.writeValueAsString(branchRequest);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -213,10 +220,12 @@ class BranchControllerTest {
 
     @Test
     void updateBranchTest_success() throws Exception {
-        BranchDto branchDto = TestUtils.getResourceAsJson("/data/BranchDto.json", BranchDto.class);
-        String content = TestUtils.writeValueAsString(branchDto);
+        BranchResponse branchRequest =
+                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
-        when(branchService.updateBranch(anyLong(), any(BranchDto.class))).thenReturn(branchDto);
+        String content = TestUtils.writeValueAsString(branchRequest);
+
+        when(branchService.updateBranch(anyLong(), any(BranchRequest.class))).thenReturn(branchRequest);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .with(csrf())
@@ -234,8 +243,8 @@ class BranchControllerTest {
 
     @Test
     void updateBranchTest_forbidden() throws Exception {
-        BranchDto branchDto = TestUtils.getResourceAsJson("/data/BranchDto.json", BranchDto.class);
-        String content = TestUtils.writeValueAsString(branchDto);
+        BranchRequest branchRequest = TestUtils.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
+        String content = TestUtils.writeValueAsString(branchRequest);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN"))

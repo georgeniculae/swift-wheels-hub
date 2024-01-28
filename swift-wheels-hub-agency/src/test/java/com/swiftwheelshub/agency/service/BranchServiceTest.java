@@ -5,7 +5,8 @@ import com.swiftwheelshub.agency.mapper.BranchMapperImpl;
 import com.swiftwheelshub.agency.repository.BranchRepository;
 import com.swiftwheelshub.agency.util.AssertionUtils;
 import com.swiftwheelshub.agency.util.TestUtils;
-import com.swiftwheelshub.dto.BranchDto;
+import com.swiftwheelshub.dto.BranchRequest;
+import com.swiftwheelshub.dto.BranchResponse;
 import com.swiftwheelshub.entity.Branch;
 import com.swiftwheelshub.entity.RentalOffice;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
@@ -19,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -52,9 +52,9 @@ class BranchServiceTest {
 
         when(branchRepository.findById(anyLong())).thenReturn(Optional.of(branch));
 
-        BranchDto actualBranchDto = assertDoesNotThrow(() -> branchService.findBranchById(1L));
+        BranchResponse actualBranchResponse = assertDoesNotThrow(() -> branchService.findBranchById(1L));
 
-        assertNotNull(actualBranchDto);
+        assertNotNull(actualBranchResponse);
         verify(branchMapper, times(1)).mapEntityToDto(any(Branch.class));
     }
 
@@ -62,7 +62,8 @@ class BranchServiceTest {
     void findBranchByIdTest_errorOnFindingById() {
         when(branchRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException = assertThrows(SwiftWheelsHubNotFoundException.class, () -> branchService.findBranchById(1L));
+        SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException =
+                assertThrows(SwiftWheelsHubNotFoundException.class, () -> branchService.findBranchById(1L));
 
         assertNotNull(swiftWheelsHubNotFoundException);
     }
@@ -70,28 +71,28 @@ class BranchServiceTest {
     @Test
     void updateBranchTest_success() {
         Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
-        BranchDto branchDto = TestUtils.getResourceAsJson("/data/BranchDto.json", BranchDto.class);
+        BranchRequest branchRequest = TestUtils.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
         RentalOffice rentalOffice = TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
         when(rentalOfficeService.findEntityById(anyLong())).thenReturn(rentalOffice);
         when(branchRepository.findById(anyLong())).thenReturn(Optional.of(branch));
         when(branchRepository.save(branch)).thenReturn(branch);
 
-        BranchDto updatedBranchDto = assertDoesNotThrow(() -> branchService.updateBranch(1L, branchDto));
-        assertNotNull(updatedBranchDto);
+        BranchResponse updatedBranchResponse = assertDoesNotThrow(() -> branchService.updateBranch(1L, branchRequest));
+        assertNotNull(updatedBranchResponse);
     }
 
     @Test
     void saveBranchTest_success() {
         Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
-        BranchDto branchDto = TestUtils.getResourceAsJson("/data/BranchDto.json", BranchDto.class);
+        BranchRequest branchRequest = TestUtils.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
         RentalOffice rentalOffice = TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
         when(rentalOfficeService.findEntityById(anyLong())).thenReturn(rentalOffice);
         when(branchRepository.save(any(Branch.class))).thenReturn(branch);
 
-        BranchDto savedBranchDto = assertDoesNotThrow(() -> branchService.saveBranch(branchDto));
-        assertThat(savedBranchDto).usingRecursiveAssertion().isEqualTo(branchDto);
+        BranchResponse savedBranchResponse = assertDoesNotThrow(() -> branchService.saveBranch(branchRequest));
+        AssertionUtils.assertBranchResponse(branch, savedBranchResponse);
     }
 
     @Test
@@ -100,8 +101,8 @@ class BranchServiceTest {
 
         when(branchRepository.findAll()).thenReturn(List.of(branch));
 
-        List<BranchDto> branchDtoList = assertDoesNotThrow(() -> branchService.findAllBranches());
-        AssertionUtils.assertBranch(branch, branchDtoList.getFirst());
+        List<BranchResponse> branchResponses = assertDoesNotThrow(() -> branchService.findAllBranches());
+        AssertionUtils.assertBranchResponse(branch, branchResponses.getFirst());
     }
 
     @Test
@@ -110,8 +111,8 @@ class BranchServiceTest {
 
         when(branchRepository.findByFilter(anyString())).thenReturn(Optional.of(branch));
 
-        BranchDto branchDto = assertDoesNotThrow(() -> branchService.findBranchByFilter("Test"));
-        AssertionUtils.assertBranch(branch, branchDto);
+        BranchResponse branchRequest = assertDoesNotThrow(() -> branchService.findBranchByFilter("Test"));
+        AssertionUtils.assertBranchResponse(branch, branchRequest);
     }
 
     @Test

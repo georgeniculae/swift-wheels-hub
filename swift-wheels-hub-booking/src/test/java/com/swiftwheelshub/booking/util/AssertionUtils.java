@@ -2,7 +2,7 @@ package com.swiftwheelshub.booking.util;
 
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.BranchDto;
+import com.swiftwheelshub.dto.BranchRequest;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.entity.Branch;
@@ -40,9 +40,9 @@ public class AssertionUtils {
         assertEquals(car.getUrlOfImage(), carRequest.urlOfImage());
     }
 
-    public static void assertBranch(Branch branch, BranchDto branchDto) {
-        assertEquals(branch.getName(), branchDto.name());
-        assertEquals(branch.getAddress(), branchDto.address());
+    public static void assertBranch(Branch branch, BranchRequest branchRequest) {
+        assertEquals(branch.getName(), branchRequest.name());
+        assertEquals(branch.getAddress(), branchRequest.address());
     }
 
 }

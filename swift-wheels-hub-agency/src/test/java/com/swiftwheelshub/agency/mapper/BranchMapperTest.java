@@ -2,13 +2,14 @@ package com.swiftwheelshub.agency.mapper;
 
 import com.swiftwheelshub.agency.util.AssertionUtils;
 import com.swiftwheelshub.agency.util.TestUtils;
-import com.swiftwheelshub.dto.BranchDto;
+import com.swiftwheelshub.dto.BranchRequest;
+import com.swiftwheelshub.dto.BranchResponse;
 import com.swiftwheelshub.entity.Branch;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -21,34 +22,30 @@ class BranchMapperTest {
     void mapEntityToDtoTest_success() {
         Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
 
-        BranchDto branchDto = Assertions.assertDoesNotThrow(() -> branchMapper.mapEntityToDto(branch));
+        BranchResponse branchResponse = assertDoesNotThrow(() -> branchMapper.mapEntityToDto(branch));
 
-        assertNotNull(branchDto);
-        AssertionUtils.assertBranch(branch, branchDto);
+        assertNotNull(branchResponse);
+        AssertionUtils.assertBranchResponse(branch, branchResponse);
     }
 
     @Test
     void mapEntityToDtoTest_null() {
-        BranchDto branchDto = Assertions.assertDoesNotThrow(() -> branchMapper.mapEntityToDto(null));
-
-        assertNull(branchDto);
+        assertNull(branchMapper.mapEntityToDto(null));
     }
 
     @Test
     void mapDtoToEntityTest_success() {
-        BranchDto branchDto = TestUtils.getResourceAsJson("/data/BranchDto.json", BranchDto.class);
+        BranchRequest branchRequest = TestUtils.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
 
-        Branch branch = Assertions.assertDoesNotThrow(() -> branchMapper.mapDtoToEntity(branchDto));
+        Branch branch = assertDoesNotThrow(() -> branchMapper.mapDtoToEntity(branchRequest));
 
         assertNotNull(branch);
-        AssertionUtils.assertBranch(branch, branchDto);
+        AssertionUtils.assertBranchRequest(branch, branchRequest);
     }
 
     @Test
     void mapDtoToEntityTest_null() {
-        Branch branch = Assertions.assertDoesNotThrow(() -> branchMapper.mapDtoToEntity(null));
-
-        assertNull(branch);
+        assertNull(branchMapper.mapDtoToEntity(null));
     }
 
 }

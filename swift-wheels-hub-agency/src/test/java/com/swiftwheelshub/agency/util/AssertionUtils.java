@@ -1,6 +1,7 @@
 package com.swiftwheelshub.agency.util;
 
-import com.swiftwheelshub.dto.BranchDto;
+import com.swiftwheelshub.dto.BranchRequest;
+import com.swiftwheelshub.dto.BranchResponse;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.EmployeeDto;
@@ -40,9 +41,14 @@ public class AssertionUtils {
         assertEquals(car.getUrlOfImage(), carResponse.urlOfImage());
     }
 
-    public static void assertBranch(Branch branch, BranchDto branchDto) {
-        assertEquals(branch.getName(), branchDto.name());
-        assertEquals(branch.getAddress(), branchDto.address());
+    public static void assertBranchRequest(Branch branch, BranchRequest branchRequest) {
+        assertEquals(branch.getName(), branchRequest.name());
+        assertEquals(branch.getAddress(), branchRequest.address());
+    }
+
+    public static void assertBranchResponse(Branch branch, BranchResponse branchResponse) {
+        assertEquals(branch.getName(), branchResponse.name());
+        assertEquals(branch.getAddress(), branchResponse.address());
     }
 
     public static void assertRentalOffice(RentalOffice rentalOffice, RentalOfficeDto rentalOfficeDto) {

@@ -2,7 +2,8 @@ package com.swiftwheelshub.agency.service;
 
 import com.swiftwheelshub.agency.mapper.BranchMapper;
 import com.swiftwheelshub.agency.repository.BranchRepository;
-import com.swiftwheelshub.dto.BranchDto;
+import com.swiftwheelshub.dto.BranchRequest;
+import com.swiftwheelshub.dto.BranchResponse;
 import com.swiftwheelshub.entity.Branch;
 import com.swiftwheelshub.entity.RentalOffice;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
@@ -20,14 +21,14 @@ public class BranchService {
     private final RentalOfficeService rentalOfficeService;
     private final BranchMapper branchMapper;
 
-    public List<BranchDto> findAllBranches() {
+    public List<BranchResponse> findAllBranches() {
         return branchRepository.findAll()
                 .stream()
                 .map(branchMapper::mapEntityToDto)
                 .toList();
     }
 
-    public BranchDto findBranchById(Long id) {
+    public BranchResponse findBranchById(Long id) {
         Branch branch = findEntityById(id);
 
         return branchMapper.mapEntityToDto(branch);
@@ -38,23 +39,23 @@ public class BranchService {
                 .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Branch with id " + id + " does not exist"));
     }
 
-    public BranchDto saveBranch(BranchDto branchDto) {
-        Branch newBranch = branchMapper.mapDtoToEntity(branchDto);
+    public BranchResponse saveBranch(BranchRequest branchRequest) {
+        Branch newBranch = branchMapper.mapDtoToEntity(branchRequest);
 
-        newBranch.setRentalOffice(rentalOfficeService.findEntityById(branchDto.rentalOfficeId()));
+        newBranch.setRentalOffice(rentalOfficeService.findEntityById(branchRequest.rentalOfficeId()));
         Branch savedBranch = saveEntity(newBranch);
 
         return branchMapper.mapEntityToDto(savedBranch);
     }
 
-    public BranchDto updateBranch(Long id, BranchDto updatedBranchDto) {
+    public BranchResponse updateBranch(Long id, BranchRequest updatedBranchRequest) {
         Branch exitingBranch = findEntityById(id);
 
-        Long rentalOfficeId = Objects.requireNonNull(updatedBranchDto.rentalOfficeId());
+        Long rentalOfficeId = Objects.requireNonNull(updatedBranchRequest.rentalOfficeId());
         RentalOffice rentalOffice = rentalOfficeService.findEntityById(rentalOfficeId);
 
-        exitingBranch.setName(updatedBranchDto.name());
-        exitingBranch.setAddress(updatedBranchDto.address());
+        exitingBranch.setName(updatedBranchRequest.name());
+        exitingBranch.setAddress(updatedBranchRequest.address());
         exitingBranch.setRentalOffice(rentalOffice);
 
         Branch savedBranch = saveEntity(exitingBranch);
@@ -66,7 +67,7 @@ public class BranchService {
         branchRepository.deleteById(id);
     }
 
-    public BranchDto findBranchByFilter(String searchString) {
+    public BranchResponse findBranchByFilter(String searchString) {
         return branchRepository.findByFilter(searchString)
                 .map(branchMapper::mapEntityToDto)
                 .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Branch with filter: " + searchString + " does not exist"));

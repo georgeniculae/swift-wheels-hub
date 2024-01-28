@@ -1,7 +1,8 @@
 package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.BranchService;
-import com.swiftwheelshub.dto.BranchDto;
+import com.swiftwheelshub.dto.BranchRequest;
+import com.swiftwheelshub.dto.BranchResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,17 +25,17 @@ public class BranchController {
     private final BranchService branchService;
 
     @GetMapping
-    public ResponseEntity<List<BranchDto>> findAllBranches() {
-        List<BranchDto> branchDtoList = branchService.findAllBranches();
+    public ResponseEntity<List<BranchResponse>> findAllBranches() {
+        List<BranchResponse> branchResponses = branchService.findAllBranches();
 
-        return ResponseEntity.ok(branchDtoList);
+        return ResponseEntity.ok(branchResponses);
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<BranchDto> findBranchById(@PathVariable("id") Long id) {
-        BranchDto branchDto = branchService.findBranchById(id);
+    public ResponseEntity<BranchResponse> findBranchById(@PathVariable("id") Long id) {
+        BranchResponse branchResponse = branchService.findBranchById(id);
 
-        return ResponseEntity.ok(branchDto);
+        return ResponseEntity.ok(branchResponse);
     }
 
     @GetMapping(path = "/count")
@@ -45,17 +46,17 @@ public class BranchController {
     }
 
     @PostMapping
-    public ResponseEntity<BranchDto> addBranch(@RequestBody @Valid BranchDto branchDto) {
-        BranchDto savedBranchDto = branchService.saveBranch(branchDto);
+    public ResponseEntity<BranchResponse> addBranch(@RequestBody @Valid BranchRequest branchRequest) {
+        BranchResponse savedBranchResponse = branchService.saveBranch(branchRequest);
 
-        return ResponseEntity.ok(savedBranchDto);
+        return ResponseEntity.ok(savedBranchResponse);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BranchDto> updateBranch(@PathVariable("id") Long id, @RequestBody @Valid BranchDto branchDto) {
-        BranchDto updatedBranchDto = branchService.updateBranch(id, branchDto);
+    public ResponseEntity<BranchResponse> updateBranch(@PathVariable("id") Long id, @RequestBody @Valid BranchRequest branchRequest) {
+        BranchResponse updatedBranchResponse = branchService.updateBranch(id, branchRequest);
 
-        return ResponseEntity.ok(updatedBranchDto);
+        return ResponseEntity.ok(updatedBranchResponse);
     }
 
     @DeleteMapping(path = "/{id}")
