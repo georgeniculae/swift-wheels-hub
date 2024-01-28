@@ -62,7 +62,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/RevenueDto'
+                  $ref: '#/components/schemas/RevenueRequest'
   '/revenues/{date}':
     get:
       tags:
@@ -83,7 +83,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/RevenueDto'
+                  $ref: '#/components/schemas/RevenueRequest'
   /revenues/total:
     get:
       tags:

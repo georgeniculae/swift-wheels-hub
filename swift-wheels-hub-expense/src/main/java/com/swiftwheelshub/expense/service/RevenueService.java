@@ -1,6 +1,6 @@
 package com.swiftwheelshub.expense.service;
 
-import com.swiftwheelshub.dto.RevenueDto;
+import com.swiftwheelshub.dto.RevenueResponse;
 import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.entity.Revenue;
 import com.swiftwheelshub.expense.mapper.RevenueMapper;
@@ -25,14 +25,14 @@ public class RevenueService {
         return revenueRepository.getTotalAmount();
     }
 
-    public List<RevenueDto> findAllRevenues() {
+    public List<RevenueResponse> findAllRevenues() {
         return revenueRepository.findAll()
                 .stream()
                 .map(revenueMapper::mapEntityToDto)
                 .toList();
     }
 
-    public List<RevenueDto> findRevenuesByDate(LocalDate dateOfRevenue) {
+    public List<RevenueResponse> findRevenuesByDate(LocalDate dateOfRevenue) {
         return revenueRepository.findByDateOfRevenue(dateOfRevenue)
                 .stream()
                 .map(revenueMapper::mapEntityToDto)

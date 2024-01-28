@@ -1,13 +1,12 @@
 package com.swiftwheelshub.expense.service;
 
-import com.swiftwheelshub.dto.RevenueDto;
+import com.swiftwheelshub.dto.RevenueResponse;
 import com.swiftwheelshub.entity.Revenue;
 import com.swiftwheelshub.expense.mapper.RevenueMapper;
 import com.swiftwheelshub.expense.mapper.RevenueMapperImpl;
 import com.swiftwheelshub.expense.repository.RevenueRepository;
 import com.swiftwheelshub.expense.util.AssertionUtils;
 import com.swiftwheelshub.expense.util.TestUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -41,10 +41,10 @@ class RevenueServiceTest {
 
         when(revenueRepository.findAll()).thenReturn(List.of(revenue));
 
-        Assertions.assertDoesNotThrow(() -> revenueService.findAllRevenues());
-        List<RevenueDto> revenueDtoList = revenueService.findAllRevenues();
+        assertDoesNotThrow(() -> revenueService.findAllRevenues());
+        List<RevenueResponse> revenueResponses = revenueService.findAllRevenues();
 
-        AssertionUtils.assertRevenue(revenue, revenueDtoList.get(0));
+        AssertionUtils.assertRevenueResponse(revenue, revenueResponses.getFirst());
 
         verify(revenueMapper, times(2)).mapEntityToDto(any(Revenue.class));
     }
@@ -55,10 +55,10 @@ class RevenueServiceTest {
 
         when(revenueRepository.findByDateOfRevenue(any(LocalDate.class))).thenReturn(List.of(revenue));
 
-        List<RevenueDto> revenueDtoList =
-                Assertions.assertDoesNotThrow(() -> revenueService.findRevenuesByDate(LocalDate.parse("2050-02-20")));
+        List<RevenueResponse> revenueResponses =
+                assertDoesNotThrow(() -> revenueService.findRevenuesByDate(LocalDate.parse("2050-02-20")));
 
-        AssertionUtils.assertRevenue(revenue, revenueDtoList.get(0));
+        AssertionUtils.assertRevenueResponse(revenue, revenueResponses.getFirst());
 
         verify(revenueMapper, times(1)).mapEntityToDto(any(Revenue.class));
     }

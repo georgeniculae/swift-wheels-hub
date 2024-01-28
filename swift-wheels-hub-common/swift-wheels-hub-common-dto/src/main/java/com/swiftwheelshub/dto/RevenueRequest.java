@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.time.LocalDate;
 
 @Builder
-public record RevenueDto(
+public record RevenueRequest(
         Long id,
 
         @NotNull(message = "Date of revenue cannot be null")
@@ -18,7 +18,7 @@ public record RevenueDto(
 
     @Override
     public String toString() {
-        return "RevenueDto{" + "\n" +
+        return "RevenueRequest{" + "\n" +
                 "id=" + id + "\n" +
                 "dateOfRevenue=" + dateOfRevenue + "\n" +
                 "amountFromBooking=" + amountFromBooking + "\n" +

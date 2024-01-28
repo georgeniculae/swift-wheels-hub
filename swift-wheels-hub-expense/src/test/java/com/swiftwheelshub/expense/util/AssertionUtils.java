@@ -1,7 +1,8 @@
 package com.swiftwheelshub.expense.util;
 
 import com.swiftwheelshub.dto.InvoiceDto;
-import com.swiftwheelshub.dto.RevenueDto;
+import com.swiftwheelshub.dto.RevenueRequest;
+import com.swiftwheelshub.dto.RevenueResponse;
 import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.entity.Revenue;
 
@@ -20,9 +21,14 @@ public class AssertionUtils {
         assertEquals(invoice.getComments(), invoiceDto.comments());
     }
 
-    public static void assertRevenue(Revenue revenue, RevenueDto revenueDto) {
-        assertEquals(revenue.getDateOfRevenue(), revenueDto.dateOfRevenue());
-        assertEquals(revenue.getAmountFromBooking(), Objects.requireNonNull(revenueDto.amountFromBooking()).doubleValue());
+    public static void assertRevenueRequest(Revenue revenue, RevenueRequest revenueRequest) {
+        assertEquals(revenue.getDateOfRevenue(), revenueRequest.dateOfRevenue());
+        assertEquals(revenue.getAmountFromBooking(), Objects.requireNonNull(revenueRequest.amountFromBooking()).doubleValue());
+    }
+
+    public static void assertRevenueResponse(Revenue revenue, RevenueResponse revenueResponse) {
+        assertEquals(revenue.getDateOfRevenue(), revenueResponse.dateOfRevenue());
+        assertEquals(revenue.getAmountFromBooking(), Objects.requireNonNull(revenueResponse.amountFromBooking()).doubleValue());
     }
 
 }

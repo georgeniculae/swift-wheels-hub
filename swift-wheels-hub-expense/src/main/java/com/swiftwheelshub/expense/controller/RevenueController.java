@@ -1,6 +1,6 @@
 package com.swiftwheelshub.expense.controller;
 
-import com.swiftwheelshub.dto.RevenueDto;
+import com.swiftwheelshub.dto.RevenueResponse;
 import com.swiftwheelshub.expense.service.RevenueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +20,10 @@ public class RevenueController {
     private final RevenueService revenueService;
 
     @GetMapping
-    public ResponseEntity<List<RevenueDto>> findAllRevenues() {
-        List<RevenueDto> revenueDtoList = revenueService.findAllRevenues();
+    public ResponseEntity<List<RevenueResponse>> findAllRevenues() {
+        List<RevenueResponse> revenueResponses = revenueService.findAllRevenues();
 
-        return ResponseEntity.ok(revenueDtoList);
+        return ResponseEntity.ok(revenueResponses);
     }
 
     @GetMapping(path = "/total")
@@ -34,10 +34,10 @@ public class RevenueController {
     }
 
     @GetMapping(path = "/{date}")
-    public ResponseEntity<List<RevenueDto>> findRevenuesByDate(@PathVariable("date") LocalDate date) {
-        List<RevenueDto> revenues = revenueService.findRevenuesByDate(date);
+    public ResponseEntity<List<RevenueResponse>> findRevenuesByDate(@PathVariable("date") LocalDate date) {
+        List<RevenueResponse> revenueResponses = revenueService.findRevenuesByDate(date);
 
-        return ResponseEntity.ok(revenues);
+        return ResponseEntity.ok(revenueResponses);
     }
 
 }
