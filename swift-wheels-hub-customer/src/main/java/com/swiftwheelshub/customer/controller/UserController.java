@@ -69,9 +69,9 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(path = "/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest request) {
-        customerService.logout(request);
+    @GetMapping(path = "/sign-out")
+    public ResponseEntity<Void> signOut(HttpServletRequest request) {
+        customerService.signOut(request);
 
         return ResponseEntity.noContent().build();
     }

@@ -104,7 +104,7 @@ public class CustomerService {
         }
     }
 
-    public void logout(HttpServletRequest request) {
+    public void signOut(HttpServletRequest request) {
         String username = HttpRequestUtil.extractUsername(request);
         UserRepresentation userRepresentation = getUserRepresentation(username);
 

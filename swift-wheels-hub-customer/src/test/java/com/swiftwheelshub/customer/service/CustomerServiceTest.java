@@ -272,7 +272,7 @@ class CustomerServiceTest {
         when(usersResource.get(anyString())).thenReturn(userResource);
         doNothing().when(userResource).logout();
 
-        assertDoesNotThrow(() -> customerService.logout(request));
+        assertDoesNotThrow(() -> customerService.signOut(request));
     }
 
     @Test
@@ -291,7 +291,7 @@ class CustomerServiceTest {
         doThrow(new NotFoundException()).when(userResource).logout();
 
         SwiftWheelsHubNotFoundException notFoundException =
-                assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.logout(request));
+                assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.signOut(request));
 
         assertNotNull(notFoundException);
     }
