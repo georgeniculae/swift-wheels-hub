@@ -75,7 +75,7 @@ public class CarService {
 
     public void updateCarWhenBookingIsFinished(HttpServletRequest request,
                                                CarForUpdateDetails carForUpdateDetails) {
-        String finalUrl = url + SEPARATOR + carForUpdateDetails.carId() + SEPARATOR + "update-after-closed-booking";
+        String finalUrl = url + SEPARATOR + carForUpdateDetails.carId() + SEPARATOR + "update-after-return";
 
         restClient.put()
                 .uri(finalUrl)
@@ -89,7 +89,7 @@ public class CarService {
     }
 
     public void updateCarsStatus(HttpServletRequest request, List<UpdateCarRequest> carsForUpdate) {
-        String finalUrl = url + SEPARATOR + "update-cars-status";
+        String finalUrl = url + SEPARATOR + "update-statuses";
 
         restClient.put()
                 .uri(finalUrl)

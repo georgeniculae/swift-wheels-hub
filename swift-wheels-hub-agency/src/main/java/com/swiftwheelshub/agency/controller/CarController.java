@@ -100,14 +100,14 @@ public class CarController {
         return ResponseEntity.ok(updatedCarResponse);
     }
 
-    @PutMapping(path = "/update-cars-status")
+    @PutMapping(path = "/update-statuses")
     public ResponseEntity<List<CarResponse>> updateCarsStatus(@RequestBody @Valid List<UpdateCarRequest> carsForUpdate) {
         List<CarResponse> updatedCarResponses = carService.updateCarsStatus(carsForUpdate);
 
         return ResponseEntity.ok(updatedCarResponses);
     }
 
-    @PutMapping(path = "/{id}/update-after-closed-booking")
+    @PutMapping(path = "/{id}/update-after-return")
     public ResponseEntity<CarResponse> updateCarWhenBookingIsClosed(@PathVariable("id") Long id,
                                                                     @RequestBody @Valid CarForUpdateDetails carForUpdateDetails) {
         CarResponse updatedCarResponse = carService.updateCarWhenBookingIsClosed(id, carForUpdateDetails);
