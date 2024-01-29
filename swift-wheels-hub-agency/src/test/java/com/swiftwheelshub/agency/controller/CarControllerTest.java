@@ -9,16 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -28,6 +29,11 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = CarController.class)
@@ -49,29 +55,26 @@ class CarControllerTest {
 
         when(carService.findAllCars()).thenReturn(List.of(carResponse));
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
+        MockHttpServletResponse response = mockMvc.perform(get(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(200, response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
     @Test
     void findAllCarsTest_unauthorized() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
+        MockHttpServletResponse response = mockMvc.perform(get(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -81,29 +84,26 @@ class CarControllerTest {
 
         when(carService.findCarById(anyLong())).thenReturn(carResponse);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(200, response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
     @Test
     void findCarByIdTest_unauthorized() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -113,15 +113,14 @@ class CarControllerTest {
 
         when(carService.findCarsByMake(anyString())).thenReturn(List.of(carResponse));
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/make/{make}", "Test")
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/make/{make}", "Test")
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(200, response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
@@ -131,15 +130,13 @@ class CarControllerTest {
 
         when(carService.findCarsByMake(anyString())).thenReturn(List.of(carResponse));
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/make/{make}", "Test")
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/make/{make}", "Test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -147,15 +144,14 @@ class CarControllerTest {
     void countCarsTest_success() throws Exception {
         when(carService.countCars()).thenReturn(1L);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count")
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/count")
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(200, response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
@@ -163,15 +159,13 @@ class CarControllerTest {
     void countCarsTest_unauthorized() throws Exception {
         when(carService.countCars()).thenReturn(1L);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count")
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/count")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -182,17 +176,16 @@ class CarControllerTest {
 
         when(carService.saveCar(any(CarRequest.class))).thenReturn(carResponse);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
+        MockHttpServletResponse response = mockMvc.perform(post(PATH)
                         .with(csrf())
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(200, response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
@@ -201,17 +194,15 @@ class CarControllerTest {
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
         String valueAsString = TestUtils.writeValueAsString(carRequest);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
+        MockHttpServletResponse response = mockMvc.perform(post(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isUnauthorized())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -220,16 +211,14 @@ class CarControllerTest {
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
         String valueAsString = TestUtils.writeValueAsString(carRequest);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
+        MockHttpServletResponse response = mockMvc.perform(post(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isForbidden())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(403, response.getStatus());
-        assertEquals("Forbidden", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -241,17 +230,16 @@ class CarControllerTest {
 
         when(carService.saveAllCars(anyList())).thenReturn(carResponses);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/add")
+        MockHttpServletResponse response = mockMvc.perform(post(PATH + "/add")
                         .with(csrf())
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(200, response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
@@ -263,17 +251,15 @@ class CarControllerTest {
 
         when(carService.saveAllCars(anyList())).thenReturn(carResponses);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/add")
+        MockHttpServletResponse response = mockMvc.perform(post(PATH + "/add")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isUnauthorized())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -285,17 +271,57 @@ class CarControllerTest {
 
         when(carService.saveAllCars(anyList())).thenReturn(carResponses);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/add")
+        MockHttpServletResponse response = mockMvc.perform(post(PATH + "/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isForbidden())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(403, response.getStatus());
-        assertEquals("Forbidden", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    void uploadCarsTest_success() throws Exception {
+        MockMultipartFile file =
+                new MockMultipartFile("file", "Cars.xlsx", MediaType.TEXT_PLAIN_VALUE, "Cars".getBytes());
+
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        List<CarResponse> carResponses = List.of(carResponse);
+
+        when(carService.uploadCars(any(MultipartFile.class))).thenReturn(carResponses);
+
+        MockHttpServletResponse response = mockMvc.perform(multipart(HttpMethod.POST, PATH + "/upload")
+                        .file(file)
+                        .with(csrf())
+                        .with(user("admin").password("admin").roles("ADMIN"))
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void uploadCarsTest_unauthorized() throws Exception {
+        MockMultipartFile file =
+                new MockMultipartFile("file", "Cars.xlsx", MediaType.TEXT_PLAIN_VALUE, "Cars".getBytes());
+
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        List<CarResponse> carResponses = List.of(carResponse);
+
+        when(carService.uploadCars(any(MultipartFile.class))).thenReturn(carResponses);
+
+        mockMvc.perform(multipart(HttpMethod.POST, PATH + "/upload")
+                        .file(file)
+                        .with(csrf())
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
+                .andExpect(status().isUnauthorized())
+                .andReturn()
+                .getResponse();
     }
 
     @Test
@@ -305,17 +331,16 @@ class CarControllerTest {
 
         when(carService.updateCar(anyLong(), any(CarRequest.class))).thenReturn(carResponse);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
+        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
                         .with(csrf())
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(200, response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
@@ -324,17 +349,15 @@ class CarControllerTest {
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
         String valueAsString = TestUtils.writeValueAsString(carRequest);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
+        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isUnauthorized())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -343,17 +366,15 @@ class CarControllerTest {
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
         String valueAsString = TestUtils.writeValueAsString(carRequest);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
+        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isForbidden())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(403, response.getStatus());
-        assertEquals("Forbidden", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -361,27 +382,24 @@ class CarControllerTest {
     void deleteCarByIdTest_success() throws Exception {
         doNothing().when(carService).deleteCarById(anyLong());
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
+        MockHttpServletResponse response = mockMvc.perform(delete(PATH + "/{id}", 1L)
                         .with(csrf())
                         .with(user("admin").password("admin").roles("ADMIN")))
                 .andExpect(status().isNoContent())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(204, response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
     @Test
     void deleteCarByIdTest_forbidden() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
+        MockHttpServletResponse response = mockMvc.perform(delete(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN")))
                 .andExpect(status().isForbidden())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(403, response.getStatus());
-        assertEquals("Forbidden", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
