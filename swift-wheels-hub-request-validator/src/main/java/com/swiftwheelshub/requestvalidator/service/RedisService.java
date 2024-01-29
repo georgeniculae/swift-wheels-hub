@@ -5,6 +5,9 @@ import com.swiftwheelshub.requestvalidator.model.SwaggerFolder;
 import com.swiftwheelshub.requestvalidator.repository.SwaggerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +21,11 @@ public class RedisService {
     private final SwaggerRepository swaggerRepository;
     private final SwaggerExtractorService swaggerExtractorService;
 
+    @Retryable(
+            retryFor = SwiftWheelsHubException.class,
+            maxAttempts = 10, backoff = @Backoff(value = 6000L),
+            listeners = "loadSwaggerCacheAtStartup"
+    )
     public void addSwaggerFolderToRedis() {
         try {
             Map<String, String> swaggerIdentifierAndContent = swaggerExtractorService.getSwaggerIdentifierAndContent();
@@ -57,6 +65,11 @@ public class RedisService {
         }
 
         swaggerRepository.save(swaggerFolder);
+    }
+
+    @Recover
+    public void recover() {
+        log.info("Connection re-established");
     }
 
 }
