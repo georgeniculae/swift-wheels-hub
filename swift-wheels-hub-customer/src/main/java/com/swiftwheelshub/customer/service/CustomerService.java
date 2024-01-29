@@ -147,7 +147,7 @@ public class CustomerService {
         return userRepresentation;
     }
 
-    private void makeEmailVerification(String userId) {
+    private void verifyEmail(String userId) {
         try {
             findById(userId).sendVerifyEmail();
         } catch (Exception e) {
@@ -167,7 +167,7 @@ public class CustomerService {
         }
 
         if (request.needsEmailVerification()) {
-            makeEmailVerification(getUserId(userRepresentation.getUsername()));
+            verifyEmail(getUserId(userRepresentation.getUsername()));
         }
 
         return userMapper.mapToRegistrationResponse(userRepresentation);
