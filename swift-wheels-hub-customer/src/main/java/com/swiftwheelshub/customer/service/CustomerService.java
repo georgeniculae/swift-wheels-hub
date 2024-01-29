@@ -141,7 +141,7 @@ public class CustomerService {
         userRepresentation.setCredentials(List.of(createPasswordCredentials(request.password())));
         userRepresentation.singleAttribute(ADDRESS, request.address());
         userRepresentation.singleAttribute(DATE_OF_BIRTH, request.dateOfBirth().toString());
-        userRepresentation.setEmailVerified(false);
+        userRepresentation.setEmailVerified(!request.needsEmailVerification());
         userRepresentation.setEnabled(true);
 
         return userRepresentation;
