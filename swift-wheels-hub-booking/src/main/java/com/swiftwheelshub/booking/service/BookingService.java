@@ -129,18 +129,13 @@ public class BookingService {
 
         BookingResponse bookingResponse;
         try {
-            getCarIfIsChanged(request, existingCarId, newCarId)
-                    .ifPresentOrElse(carDto -> {
-                                existingBooking.setCarId(carDto.id());
-                                existingBooking.setRentalBranchId(carDto.actualBranchId());
-                                existingBooking.setAmount(getAmount(updatedBookingRequest, carDto.amount()));
-                            },
-                            () -> existingBooking.setAmount(getAmount(updatedBookingRequest, existingBooking.getRentalCarPrice())));
+            Booking updatedExistingBooking =
+                    updateExistingBooking(request, updatedBookingRequest, existingCarId, newCarId, existingBooking);
 
-            existingBooking.setDateFrom(updatedBookingRequest.dateFrom());
-            existingBooking.setDateTo(updatedBookingRequest.dateTo());
+            updatedExistingBooking.setDateFrom(updatedBookingRequest.dateFrom());
+            updatedExistingBooking.setDateTo(updatedBookingRequest.dateTo());
 
-            Booking updatedBooking = bookingRepository.saveAndFlush(existingBooking);
+            Booking updatedBooking = bookingRepository.saveAndFlush(updatedExistingBooking);
             bookingResponse = bookingMapper.mapEntityToDto(updatedBooking);
         } catch (Exception e) {
             throw new SwiftWheelsHubException(e);
@@ -200,6 +195,19 @@ public class BookingService {
         if (dateFrom.isAfter(dateTo)) {
             throw new SwiftWheelsHubResponseStatusException(HttpStatus.BAD_REQUEST, "Date from is after date to");
         }
+    }
+
+    private Booking updateExistingBooking(HttpServletRequest request, BookingRequest updatedBookingRequest,
+                                          Long existingCarId, Long newCarId, Booking existingBooking) {
+        getCarIfIsChanged(request, existingCarId, newCarId)
+                .ifPresentOrElse(carDto -> {
+                            existingBooking.setCarId(carDto.id());
+                            existingBooking.setRentalBranchId(carDto.actualBranchId());
+                            existingBooking.setAmount(getAmount(updatedBookingRequest, carDto.amount()));
+                        },
+                        () -> existingBooking.setAmount(getAmount(updatedBookingRequest, existingBooking.getRentalCarPrice())));
+
+        return existingBooking;
     }
 
     private Optional<CarResponse> getCarIfIsChanged(HttpServletRequest request, Long existingCarId, Long newCarId) {
