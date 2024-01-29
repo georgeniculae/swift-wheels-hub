@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServic
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.lang.annotation.Documented;
@@ -25,5 +26,6 @@ import java.lang.annotation.Target;
 @EntityScan("com.swiftwheelshub")
 @EnableDiscoveryClient
 @EnableScheduling
+@EnableRetry
 public @interface SwiftWheelsHubMicroservice {
 }
