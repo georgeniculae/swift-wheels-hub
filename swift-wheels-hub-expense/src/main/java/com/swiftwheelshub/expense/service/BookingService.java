@@ -1,7 +1,6 @@
 package com.swiftwheelshub.expense.service;
 
 import com.swiftwheelshub.dto.BookingClosingDetails;
-import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
@@ -13,8 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -39,12 +36,13 @@ public class BookingService {
                         throw new SwiftWheelsHubResponseStatusException(statusCode, clientResponse.getStatusText());
                     }
 
-                    if (ObjectUtils.isEmpty(clientResponse.bodyTo(BookingRequest.class)) ||
-                            clientResponse.getBody().available() == 0) {
+                    BookingResponse bookingResponse = clientResponse.bodyTo(BookingResponse.class);
+
+                    if (ObjectUtils.isEmpty(bookingResponse)) {
                         throw new SwiftWheelsHubNotFoundException("Booking with id: " + bookingId + " not found");
                     }
 
-                    return Objects.requireNonNull(clientResponse.bodyTo(BookingResponse.class));
+                    return bookingResponse;
                 });
     }
 

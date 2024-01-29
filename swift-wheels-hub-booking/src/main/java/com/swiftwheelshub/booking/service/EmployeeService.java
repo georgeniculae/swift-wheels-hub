@@ -13,8 +13,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import java.util.Objects;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -35,12 +33,13 @@ public class EmployeeService {
                         throw new SwiftWheelsHubResponseStatusException(statusCode, clientResponse.getStatusText());
                     }
 
-                    if (ObjectUtils.isEmpty(clientResponse.bodyTo(EmployeeResponse.class)) ||
-                            clientResponse.getBody().available() == 0) {
+                    EmployeeResponse employeeResponse = clientResponse.bodyTo(EmployeeResponse.class);
+
+                    if (ObjectUtils.isEmpty(employeeResponse)) {
                         throw new SwiftWheelsHubNotFoundException("Employee with id: " + receptionistEmployeeId + " not found");
                     }
 
-                    return Objects.requireNonNull(clientResponse.bodyTo(EmployeeResponse.class));
+                    return employeeResponse;
                 });
     }
 

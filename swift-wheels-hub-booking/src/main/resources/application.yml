@@ -29,6 +29,31 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml
+  cloud:
+    discovery:
+      enabled: true
+    stream:
+      bindings:
+        savedBookingProducer-out-0:
+          destination: ${SAVED_BOOKING_REACTIVE_TOPIC}
+          contentType: application/json
+        updatedBookingProducer-out-0:
+          destination: ${UPDATED_BOOKING_REACTIVE_TOPIC}
+          contentType: application/json
+        deletedBookingProducer-out-0:
+          destination: ${DELETED_BOOKING_REACTIVE_TOPIC}
+          contentType: application/json
+        auditLogInfoProducer-out-0:
+          destination: ${BOOKING_AUDIT_LOG_INFO_REACTIVE_TOPIC}
+          contentType: application/json
+      kafka:
+        binder:
+          auto-create-topics: false
+          auto-add-partitions: false
+          consumer-properties:
+            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            allow.auto.create.topics: false
   kafka:
     bootstrap-servers: localhost:9092
 

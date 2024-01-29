@@ -50,19 +50,6 @@ public class BookingService {
         return bookingMapper.mapEntityToDto(booking);
     }
 
-    public void deleteBookingById(HttpServletRequest request, Long id) {
-        Booking existingBooking;
-
-        try {
-            existingBooking = findEntityById(id);
-            bookingRepository.deleteById(id);
-        } catch (Exception e) {
-            throw new SwiftWheelsHubException(e);
-        }
-
-        carService.changeCarStatus(request, existingBooking.getCarId(), CarStatus.AVAILABLE);
-    }
-
     public Long countBookings() {
         return bookingRepository.count();
     }
@@ -186,6 +173,19 @@ public class BookingService {
         updateCarWhenBookingIsClosed(request, bookingResponse, bookingUpdateDetailsDto);
 
         return bookingResponse;
+    }
+
+    public void deleteBookingById(HttpServletRequest request, Long id) {
+        Booking existingBooking;
+
+        try {
+            existingBooking = findEntityById(id);
+            bookingRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new SwiftWheelsHubException(e);
+        }
+
+        carService.changeCarStatus(request, existingBooking.getCarId(), CarStatus.AVAILABLE);
     }
 
     private void validateBookingDates(BookingRequest newBookingRequest) {

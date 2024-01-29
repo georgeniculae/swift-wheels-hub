@@ -18,7 +18,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -45,12 +44,13 @@ public class CarService {
                         throw new SwiftWheelsHubResponseStatusException(statusCode, clientResponse.getStatusText());
                     }
 
-                    if (ObjectUtils.isEmpty(clientResponse.bodyTo(CarResponse.class)) ||
-                            clientResponse.getBody().available() == 0) {
+                    CarResponse carResponse = clientResponse.bodyTo(CarResponse.class);
+
+                    if (ObjectUtils.isEmpty(carResponse)) {
                         throw new SwiftWheelsHubNotFoundException("Car with id: " + carId + " not found");
                     }
 
-                    return Objects.requireNonNull(clientResponse.bodyTo(CarResponse.class));
+                    return carResponse;
                 });
     }
 
