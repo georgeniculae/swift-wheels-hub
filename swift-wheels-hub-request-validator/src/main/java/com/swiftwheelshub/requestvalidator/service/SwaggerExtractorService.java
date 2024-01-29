@@ -84,7 +84,7 @@ public class SwaggerExtractorService {
 
         String openApiContent = Optional.ofNullable(body)
                 .filter(StringUtils::isNotBlank)
-                .orElseThrow(() -> new SwiftWheelsHubException("Car Rental Agency swagger is empty"));
+                .orElseThrow(() -> new SwiftWheelsHubException("Swift Wheels Hub Agency swagger is empty"));
 
         return Map.of(AGENCY, openApiContent);
     }
@@ -94,7 +94,7 @@ public class SwaggerExtractorService {
 
         String openApiContent = Optional.ofNullable(body)
                 .filter(StringUtils::isNotBlank)
-                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Car Rental Booking swagger is empty"));
+                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Swift Wheels Hub Booking swagger is empty"));
 
         return Map.of(BOOKINGS, openApiContent);
     }
@@ -104,7 +104,7 @@ public class SwaggerExtractorService {
 
         String openApiContent = Optional.ofNullable(body)
                 .filter(StringUtils::isNotBlank)
-                .orElseThrow(() -> new SwiftWheelsHubException("Car Rental Customers swagger is empty"));
+                .orElseThrow(() -> new SwiftWheelsHubException("Swift Wheels Hub Customers swagger is empty"));
 
         return Map.of(CUSTOMERS, openApiContent);
     }
@@ -114,7 +114,7 @@ public class SwaggerExtractorService {
 
         String openApiContent = Optional.ofNullable(body)
                 .filter(StringUtils::isNotBlank)
-                .orElseThrow(() -> new SwiftWheelsHubException("Car Rental Customers swagger is empty"));
+                .orElseThrow(() -> new SwiftWheelsHubException("Swift Wheels Hub Customers swagger is empty"));
 
         return Map.of(EXPENSE, openApiContent);
     }
