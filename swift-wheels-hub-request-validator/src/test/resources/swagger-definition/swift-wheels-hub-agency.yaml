@@ -202,7 +202,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/CarRequest'
-  '/cars/{id}/change-car-status':
+  '/cars/{id}/change-status':
     put:
       tags:
         - car-controller

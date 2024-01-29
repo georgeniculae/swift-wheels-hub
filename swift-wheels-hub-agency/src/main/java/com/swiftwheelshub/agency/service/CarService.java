@@ -5,6 +5,7 @@ import com.swiftwheelshub.agency.repository.CarRepository;
 import com.swiftwheelshub.dto.CarForUpdateDetails;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
+import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.entity.BodyType;
 import com.swiftwheelshub.entity.Branch;
@@ -100,9 +101,9 @@ public class CarService {
         return carMapper.mapEntityToDto(savedCar);
     }
 
-    public CarResponse updateCarStatus(Long id, CarStatus carStatus) {
+    public CarResponse updateCarStatus(Long id, CarState carState) {
         Car car = findEntityById(id);
-        car.setCarStatus(carStatus);
+        car.setCarStatus(CarStatus.valueOf(carState.name()));
 
         Car savedCar = saveEntity(car);
 

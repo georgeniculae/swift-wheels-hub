@@ -9,9 +9,9 @@ import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.dto.CarResponse;
+import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.EmployeeResponse;
 import com.swiftwheelshub.entity.Booking;
-import com.swiftwheelshub.entity.CarStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
@@ -89,7 +89,7 @@ class BookingServiceTest {
 
         when(carService.findAvailableCarById(any(HttpServletRequest.class), anyLong())).thenReturn(carResponse);
         when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(booking);
-        doNothing().when(carService).changeCarStatus(any(HttpServletRequest.class), anyLong(), any(CarStatus.class));
+        doNothing().when(carService).changeCarStatus(any(HttpServletRequest.class), anyLong(), any(CarState.class));
 
         BookingResponse actualBookingResponse =
                 assertDoesNotThrow(() -> bookingService.saveBooking(request, bookingRequest));

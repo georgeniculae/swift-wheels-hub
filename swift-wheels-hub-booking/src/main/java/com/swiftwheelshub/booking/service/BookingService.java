@@ -12,7 +12,6 @@ import com.swiftwheelshub.dto.EmployeeResponse;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.entity.BookingStatus;
-import com.swiftwheelshub.entity.CarStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
@@ -116,7 +115,7 @@ public class BookingService {
             throw new SwiftWheelsHubException(e);
         }
 
-        carService.changeCarStatus(request, carResponse.id(), CarStatus.NOT_AVAILABLE);
+        carService.changeCarStatus(request, carResponse.id(), CarState.NOT_AVAILABLE);
 
         return bookingResponse;
     }
@@ -185,7 +184,7 @@ public class BookingService {
             throw new SwiftWheelsHubException(e);
         }
 
-        carService.changeCarStatus(request, existingBooking.getCarId(), CarStatus.AVAILABLE);
+        carService.changeCarStatus(request, existingBooking.getCarId(), CarState.AVAILABLE);
     }
 
     private void validateBookingDates(BookingRequest newBookingRequest) {

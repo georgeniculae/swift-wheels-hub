@@ -2,8 +2,8 @@ package com.swiftwheelshub.booking.service;
 
 import com.swiftwheelshub.dto.CarForUpdateDetails;
 import com.swiftwheelshub.dto.CarResponse;
+import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.UpdateCarRequest;
-import com.swiftwheelshub.entity.CarStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
@@ -54,16 +54,16 @@ public class CarService {
                 });
     }
 
-    public void changeCarStatus(HttpServletRequest request, Long carId, CarStatus carStatus) {
-        String finalUrl = url + SEPARATOR + carId + SEPARATOR + "change-car-status";
+    public void changeCarStatus(HttpServletRequest request, Long carId, CarState carState) {
+        String finalUrl = url + SEPARATOR + carId + SEPARATOR + "change-status";
 
         URI uri = UriComponentsBuilder
                 .fromUri(URI.create(finalUrl))
-                .queryParam(CAR_STATUS, carStatus.name())
+                .queryParam(CAR_STATUS, carState.name())
                 .build()
                 .toUri();
 
-        restClient.post()
+        restClient.put()
                 .uri(uri)
                 .headers(HttpRequestUtil.mutateHeaders(request))
                 .retrieve()

@@ -4,8 +4,8 @@ import com.swiftwheelshub.agency.service.CarService;
 import com.swiftwheelshub.dto.CarForUpdateDetails;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
+import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.UpdateCarRequest;
-import com.swiftwheelshub.entity.CarStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -93,9 +93,9 @@ public class CarController {
         return ResponseEntity.ok(updatedCarResponse);
     }
 
-    @PutMapping(path = "/{id}/change-car-status")
-    public ResponseEntity<CarResponse> updateCarStatus(@PathVariable("id") Long id, @RequestParam CarStatus carStatus) {
-        CarResponse updatedCarResponse = carService.updateCarStatus(id, carStatus);
+    @PutMapping(path = "/{id}/change-status")
+    public ResponseEntity<CarResponse> updateCarStatus(@PathVariable("id") Long id, @RequestParam CarState carState) {
+        CarResponse updatedCarResponse = carService.updateCarStatus(id, carState);
 
         return ResponseEntity.ok(updatedCarResponse);
     }

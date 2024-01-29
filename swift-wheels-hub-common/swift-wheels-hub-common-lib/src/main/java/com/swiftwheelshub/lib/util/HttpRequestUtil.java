@@ -17,7 +17,7 @@ public class HttpRequestUtil {
     private static final String HEADERS = "headers";
 
     public static HttpEntity<String> getHttpEntity(HttpServletRequest request) {
-        final String authenticationHeader = extractAuthenticationTokenFromRequest(request);
+        final String authenticationHeader = extractAuthenticationToken(request);
 
         HttpHeaders headers = new HttpHeaders();
 
@@ -32,12 +32,12 @@ public class HttpRequestUtil {
         return httpHeaders -> {
             httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
             httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-            httpHeaders.add(X_API_KEY, HttpRequestUtil.extractAuthenticationTokenFromRequest(request));
+            httpHeaders.add(X_API_KEY, HttpRequestUtil.extractAuthenticationToken(request));
         };
     }
 
     public static HttpEntity<Object> getHttpEntityWithBody(HttpServletRequest request, Object o) {
-        final String authenticationHeader = extractAuthenticationTokenFromRequest(request);
+        final String authenticationHeader = extractAuthenticationToken(request);
 
         HttpHeaders headers = new HttpHeaders();
 
@@ -48,7 +48,7 @@ public class HttpRequestUtil {
         return new HttpEntity<>(o, headers);
     }
 
-    public static String extractAuthenticationTokenFromRequest(HttpServletRequest request) {
+    public static String extractAuthenticationToken(HttpServletRequest request) {
         return request.getHeader(X_API_KEY);
     }
 

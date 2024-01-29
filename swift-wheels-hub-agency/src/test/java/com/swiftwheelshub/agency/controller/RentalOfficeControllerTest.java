@@ -1,10 +1,9 @@
-package com.swiftwheelshub.agency.controler;
+package com.swiftwheelshub.agency.controller;
 
-import com.swiftwheelshub.agency.controller.EmployeeController;
-import com.swiftwheelshub.agency.service.EmployeeService;
+import com.swiftwheelshub.agency.service.RentalOfficeService;
 import com.swiftwheelshub.agency.util.TestUtils;
-import com.swiftwheelshub.dto.EmployeeRequest;
-import com.swiftwheelshub.dto.EmployeeResponse;
+import com.swiftwheelshub.dto.RentalOfficeRequest;
+import com.swiftwheelshub.dto.RentalOfficeResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,25 +28,25 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = EmployeeController.class)
+@SpringBootTest(classes = RentalOfficeController.class)
 @AutoConfigureMockMvc
 @EnableWebMvc
-class EmployeeControllerTest {
+class RentalOfficeControllerTest {
 
-    private static final String PATH = "/employees";
+    private static final String PATH = "/rental-offices";
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private EmployeeService employeeService;
+    private RentalOfficeService rentalOfficeService;
 
     @Test
-    void findAllEmployeesTest_success() throws Exception {
-        EmployeeResponse employeeResponse =
-                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
+    void findAllRentalOfficesTest_success() throws Exception {
+        RentalOfficeResponse rentalOfficeResponse =
+                TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
-        when(employeeService.findAllEmployees()).thenReturn(List.of(employeeResponse));
+        when(rentalOfficeService.findAllRentalOffices()).thenReturn(List.of(rentalOfficeResponse));
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -62,7 +61,7 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void findAllEmployeesTest_forbidden() throws Exception {
+    void findAllRentalOfficesTest_unauthorized() throws Exception {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -76,11 +75,11 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void findEmployeeByIdTest_success() throws Exception {
-        EmployeeResponse employeeResponse =
-                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
+    void findRentalOfficeByIdTest_success() throws Exception {
+        RentalOfficeResponse rentalOfficeRequest =
+                TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
-        when(employeeService.findEmployeeById(anyLong())).thenReturn(employeeResponse);
+        when(rentalOfficeService.findRentalOfficeById(anyLong())).thenReturn(rentalOfficeRequest);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -95,7 +94,7 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void findEmployeeByIdTest_unauthorized() throws Exception {
+    void findRentalOfficeByIdTest_unauthorized() throws Exception {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -109,41 +108,8 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void findEmployeesByBranchIdTest_success() throws Exception {
-        EmployeeResponse employeeResponse =
-                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
-
-        when(employeeService.findEmployeesByBranchId(anyLong())).thenReturn(List.of(employeeResponse));
-
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/branch/{id}", 1L)
-                        .with(user("admin").password("admin").roles("ADMIN"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(200, response.getStatus());
-        assertNotNull(response.getContentAsString());
-    }
-
-    @Test
-    void findEmployeesByBranchIdTest_unauthorized() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/branch/{id}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn();
-
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
-        assertNotNull(response.getContentAsString());
-    }
-
-    @Test
-    void countEmployeesTest_success() throws Exception {
-        when(employeeService.countEmployees()).thenReturn(1L);
+    void countRentalOfficesTest_success() throws Exception {
+        when(rentalOfficeService.countRentalOffices()).thenReturn(1L);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count")
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -158,8 +124,8 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void countEmployeesTest_unauthorized() throws Exception {
-        when(employeeService.countEmployees()).thenReturn(1L);
+    void countRentalOfficesTest_unauthorized() throws Exception {
+        when(rentalOfficeService.countRentalOffices()).thenReturn(1L);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -174,13 +140,13 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void addEmployeeTest_success() throws Exception {
-        EmployeeResponse employeeResponse =
-                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
+    void addRentalOfficeTest_success() throws Exception {
+        RentalOfficeResponse rentalOfficeResponse =
+                TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
-        String valueAsString = TestUtils.writeValueAsString(employeeResponse);
+        String valueAsString = TestUtils.writeValueAsString(rentalOfficeResponse);
 
-        when(employeeService.saveEmployee(any(EmployeeRequest.class))).thenReturn(employeeResponse);
+        when(rentalOfficeService.saveRentalOffice(any(RentalOfficeRequest.class))).thenReturn(rentalOfficeResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(csrf())
@@ -197,9 +163,11 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void addEmployeeTest_unauthorized() throws Exception {
-        EmployeeRequest employeeRequest = TestUtils.getResourceAsJson("/data/EmployeeRequest.json", EmployeeRequest.class);
-        String valueAsString = TestUtils.writeValueAsString(employeeRequest);
+    void addRentalOfficeTest_unauthorized() throws Exception {
+        RentalOfficeResponse rentalOfficeResponse =
+                TestUtils.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeResponse.class);
+
+        String valueAsString = TestUtils.writeValueAsString(rentalOfficeResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(csrf())
@@ -216,12 +184,13 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void addEmployeeTest_forbidden() throws Exception {
-        EmployeeRequest employeeRequest = TestUtils.getResourceAsJson("/data/EmployeeRequest.json", EmployeeRequest.class);
-        String valueAsString = TestUtils.writeValueAsString(employeeRequest);
+    void addRentalOfficeTest_forbidden() throws Exception {
+        RentalOfficeResponse rentalOfficeResponse =
+                TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
+
+        String valueAsString = TestUtils.writeValueAsString(rentalOfficeResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
@@ -235,13 +204,13 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void updateEmployeeTest_success() throws Exception {
-        EmployeeResponse employeeResponse =
-                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
+    void updateRentalOfficeTest_success() throws Exception {
+        RentalOfficeResponse rentalOfficeResponse =
+                TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
-        String valueAsString = TestUtils.writeValueAsString(employeeResponse);
+        String valueAsString = TestUtils.writeValueAsString(rentalOfficeResponse);
 
-        when(employeeService.updateEmployee(anyLong(), any(EmployeeRequest.class))).thenReturn(employeeResponse);
+        when(rentalOfficeService.saveRentalOffice(any(RentalOfficeRequest.class))).thenReturn(rentalOfficeResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .with(csrf())
@@ -258,11 +227,11 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void updateEmployeeTest_unauthorized() throws Exception {
-        EmployeeResponse employeeResponse =
-                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
+    void updateRentalOfficeTest_unauthorized() throws Exception {
+        RentalOfficeResponse rentalOfficeRequest =
+                TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
-        String valueAsString = TestUtils.writeValueAsString(employeeResponse);
+        String valueAsString = TestUtils.writeValueAsString(rentalOfficeRequest);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .with(csrf())
@@ -279,11 +248,11 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void updateEmployeeTest_forbidden() throws Exception {
-        EmployeeResponse employeeResponse =
-                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
+    void updateRentalOfficeTest_forbidden() throws Exception {
+        RentalOfficeResponse rentalOfficeResponse =
+                TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
-        String valueAsString = TestUtils.writeValueAsString(employeeResponse);
+        String valueAsString = TestUtils.writeValueAsString(rentalOfficeResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -299,8 +268,8 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void deleteEmployeeByIdTest_success() throws Exception {
-        doNothing().when(employeeService).deleteEmployeeById(anyLong());
+    void deleteRentalOfficeByIdTest_success() throws Exception {
+        doNothing().when(rentalOfficeService).deleteRentalOfficeById(anyLong());
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
                         .with(csrf())
@@ -314,8 +283,8 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void deleteEmployeeByIdTest_forbidden() throws Exception {
-        doNothing().when(employeeService).deleteEmployeeById(anyLong());
+    void deleteRentalOfficeByIdTest_forbidden() throws Exception {
+        doNothing().when(rentalOfficeService).deleteRentalOfficeById(anyLong());
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN")))

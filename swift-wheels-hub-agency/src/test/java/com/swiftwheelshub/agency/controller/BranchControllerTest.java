@@ -1,10 +1,9 @@
-package com.swiftwheelshub.agency.controler;
+package com.swiftwheelshub.agency.controller;
 
-import com.swiftwheelshub.agency.controller.CarController;
-import com.swiftwheelshub.agency.service.CarService;
+import com.swiftwheelshub.agency.service.BranchService;
 import com.swiftwheelshub.agency.util.TestUtils;
-import com.swiftwheelshub.dto.CarRequest;
-import com.swiftwheelshub.dto.CarResponse;
+import com.swiftwheelshub.dto.BranchRequest;
+import com.swiftwheelshub.dto.BranchResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -12,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -22,33 +23,32 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = CarController.class)
+@SpringBootTest(classes = BranchController.class)
 @AutoConfigureMockMvc
 @EnableWebMvc
-class CarControllerTest {
+class BranchControllerTest {
 
-    private static final String PATH = "/cars";
+    private static final String PATH = "/branches";
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private CarService carService;
+    private BranchService branchService;
 
     @Test
-    void findAllCarsTest_success() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+    void findAllBranchesTest_success() throws Exception {
+        BranchResponse branchResponse =
+                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
-        when(carService.findAllCars()).thenReturn(List.of(carResponse));
+        when(branchService.findAllBranches()).thenReturn(List.of(branchResponse));
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -63,7 +63,7 @@ class CarControllerTest {
     }
 
     @Test
-    void findAllCarsTest_unauthorized() throws Exception {
+    void findAllBranchesTest_unauthorized() throws Exception {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -77,10 +77,11 @@ class CarControllerTest {
     }
 
     @Test
-    void findCarByIdTest_success() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+    void findBranchByIdTest_success() throws Exception {
+        BranchResponse branchResponse =
+                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
-        when(carService.findCarById(anyLong())).thenReturn(carResponse);
+        when(branchService.findBranchById(anyLong())).thenReturn(branchResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -95,29 +96,11 @@ class CarControllerTest {
     }
 
     @Test
-    void findCarByIdTest_unauthorized() throws Exception {
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    void findBranchByIdTest_successWithMockUser() throws Exception {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn();
-
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
-        assertNotNull(response.getContentAsString());
-    }
-
-    @Test
-    void findCarsByMakeTest_success() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
-
-        when(carService.findCarsByMake(anyString())).thenReturn(List.of(carResponse));
-
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/make/{make}", "Test")
-                        .with(user("admin").password("admin").roles("ADMIN"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -127,26 +110,23 @@ class CarControllerTest {
     }
 
     @Test
-    void findCarsByMakeTest_unauthorized() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
-
-        when(carService.findCarsByMake(anyString())).thenReturn(List.of(carResponse));
-
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/make/{make}", "Test")
+    @WithAnonymousUser()
+    void findBranchByIdTest_unauthorized() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
                 .andReturn();
 
         MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
         assertEquals("Unauthorized", response.getErrorMessage());
+        assertEquals(401, response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
     @Test
-    void countCarsTest_success() throws Exception {
-        when(carService.countCars()).thenReturn(1L);
+    void countBranchesTest_success() throws Exception {
+        when(branchService.countBranches()).thenReturn(1L);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count")
                         .with(user("admin").password("admin").roles("ADMIN"))
@@ -161,9 +141,7 @@ class CarControllerTest {
     }
 
     @Test
-    void countCarsTest_unauthorized() throws Exception {
-        when(carService.countCars()).thenReturn(1L);
-
+    void countBranchesTest_unauthorized() throws Exception {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -177,18 +155,20 @@ class CarControllerTest {
     }
 
     @Test
-    void addCarTest_success() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
-        String valueAsString = TestUtils.writeValueAsString(carResponse);
+    void addBranchTest_success() throws Exception {
+        BranchResponse branchResponse =
+                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
-        when(carService.saveCar(any(CarRequest.class))).thenReturn(carResponse);
+        String content = TestUtils.writeValueAsString(branchResponse);
+
+        when(branchService.saveBranch(any(BranchRequest.class))).thenReturn(branchResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(csrf())
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
+                        .content(content))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -198,15 +178,17 @@ class CarControllerTest {
     }
 
     @Test
-    void addCarTest_unauthorized() throws Exception {
-        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
-        String valueAsString = TestUtils.writeValueAsString(carRequest);
+    void addBranchTest_unauthorized() throws Exception {
+        BranchResponse branchResponse =
+                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
+
+        String content = TestUtils.writeValueAsString(branchResponse);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
+                        .content(content))
                 .andExpect(status().isUnauthorized())
                 .andReturn();
 
@@ -217,14 +199,15 @@ class CarControllerTest {
     }
 
     @Test
-    void addCarTest_forbidden() throws Exception {
-        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
-        String valueAsString = TestUtils.writeValueAsString(carRequest);
+    void addBranchTest_forbidden() throws Exception {
+        BranchRequest branchRequest = TestUtils.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
+        String content = TestUtils.writeValueAsString(branchRequest);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
+                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
+                        .content(content))
                 .andExpect(status().isForbidden())
                 .andReturn();
 
@@ -235,19 +218,20 @@ class CarControllerTest {
     }
 
     @Test
-    void addAllCarsTest_success() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
-        List<CarResponse> carResponses = List.of(carResponse);
-        String valueAsString = TestUtils.writeValueAsString(carResponses);
+    void updateBranchTest_success() throws Exception {
+        BranchResponse branchRequest =
+                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
-        when(carService.saveAllCars(anyList())).thenReturn(carResponses);
+        String content = TestUtils.writeValueAsString(branchRequest);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/add")
+        when(branchService.updateBranch(anyLong(), any(BranchRequest.class))).thenReturn(branchRequest);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .with(csrf())
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
+                        .content(content))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -257,39 +241,15 @@ class CarControllerTest {
     }
 
     @Test
-    void addAllCarsTest_unauthorized() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
-        List<CarResponse> carResponses = List.of(carResponse);
-        String valueAsString = TestUtils.writeValueAsString(carResponses);
+    void updateBranchTest_forbidden() throws Exception {
+        BranchRequest branchRequest = TestUtils.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
+        String content = TestUtils.writeValueAsString(branchRequest);
 
-        when(carService.saveAllCars(anyList())).thenReturn(carResponses);
-
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/add")
-                        .with(csrf())
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
+                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
-                .andExpect(status().isUnauthorized())
-                .andReturn();
-
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
-        assertNotNull(response.getContentAsString());
-    }
-
-    @Test
-    void addAllCarsTest_forbidden() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
-        List<CarResponse> carResponses = List.of(carResponse);
-        String valueAsString = TestUtils.writeValueAsString(carResponses);
-
-        when(carService.saveAllCars(anyList())).thenReturn(carResponses);
-
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/add")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
+                        .content(content))
                 .andExpect(status().isForbidden())
                 .andReturn();
 
@@ -300,67 +260,8 @@ class CarControllerTest {
     }
 
     @Test
-    void updateCarTest_success() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
-        String valueAsString = TestUtils.writeValueAsString(carResponse);
-
-        when(carService.updateCar(anyLong(), any(CarRequest.class))).thenReturn(carResponse);
-
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
-                        .with(csrf())
-                        .with(user("admin").password("admin").roles("ADMIN"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(200, response.getStatus());
-        assertNotNull(response.getContentAsString());
-    }
-
-    @Test
-    void updateCarTest_unauthorized() throws Exception {
-        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
-        String valueAsString = TestUtils.writeValueAsString(carRequest);
-
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
-                .andExpect(status().isUnauthorized())
-                .andReturn();
-
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
-        assertNotNull(response.getContentAsString());
-    }
-
-    @Test
-    void updateCarTest_forbidden() throws Exception {
-        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
-        String valueAsString = TestUtils.writeValueAsString(carRequest);
-
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
-                        .with(user("admin").password("admin").roles("ADMIN"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
-                .andExpect(status().isForbidden())
-                .andReturn();
-
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(403, response.getStatus());
-        assertEquals("Forbidden", response.getErrorMessage());
-        assertNotNull(response.getContentAsString());
-    }
-
-    @Test
-    void deleteCarByIdTest_success() throws Exception {
-        doNothing().when(carService).deleteCarById(anyLong());
+    void deleteBranchByIdTest_success() throws Exception {
+        doNothing().when(branchService).deleteBranchById(anyLong());
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
                         .with(csrf())
@@ -374,7 +275,7 @@ class CarControllerTest {
     }
 
     @Test
-    void deleteCarByIdTest_forbidden() throws Exception {
+    void deleteBranchByIdTest_forbidden() throws Exception {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN")))
                 .andExpect(status().isForbidden())
@@ -382,7 +283,6 @@ class CarControllerTest {
 
         MockHttpServletResponse response = mvcResult.getResponse();
         assertEquals(403, response.getStatus());
-        assertEquals("Forbidden", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
