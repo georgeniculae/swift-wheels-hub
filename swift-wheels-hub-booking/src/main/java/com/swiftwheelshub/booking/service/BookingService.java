@@ -164,7 +164,7 @@ public class BookingService {
             throw new SwiftWheelsHubException(e);
         }
 
-        updateCarWhenBookingIsClosed(request, bookingResponse, bookingUpdateDetailsDto);
+        updateCarWhenIsReturned(request, bookingResponse, bookingUpdateDetailsDto);
 
         return bookingResponse;
     }
@@ -266,8 +266,8 @@ public class BookingService {
         }
     }
 
-    private void updateCarWhenBookingIsClosed(HttpServletRequest request, BookingResponse bookingResponse,
-                                              BookingClosingDetails bookingClosingDetails) {
+    private void updateCarWhenIsReturned(HttpServletRequest request, BookingResponse bookingResponse,
+                                         BookingClosingDetails bookingClosingDetails) {
         CarForUpdateDetails carForUpdateDetails = new CarForUpdateDetails(
                 bookingResponse.carId(),
                 bookingClosingDetails.carState(),
