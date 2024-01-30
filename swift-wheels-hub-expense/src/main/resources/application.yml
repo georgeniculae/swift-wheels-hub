@@ -38,8 +38,8 @@ spring:
       definition: savedBookingConsumer;updatedBookingConsumer;deletedBookingConsumer
     stream:
       bindings:
-        auditLogInfoConsumer-in-0:
-          destination: ${BOOKING_AUDIT_LOG_INFO_REACTIVE_TOPIC}
+        auditLogInfoProducer-out-0:
+          destination: ${BOOKING_AUDIT_LOG_INFO_TOPIC}
           contentType: application/json
         savedBookingConsumer-in-0:
           binder: kafka
