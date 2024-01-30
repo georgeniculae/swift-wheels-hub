@@ -1,4 +1,4 @@
-package com.swiftwheelshub.emailnotification.config.email;
+package com.swiftwheelshub.emailnotification.config;
 
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.MustacheFactory;

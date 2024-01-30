@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 @Configuration
 @RequiredArgsConstructor
-public class KafkaEmailNotificationConsumer {
+public class EmailNotificationMessageConsumer {
 
     private final UserNotificationService userNotificationService;
 

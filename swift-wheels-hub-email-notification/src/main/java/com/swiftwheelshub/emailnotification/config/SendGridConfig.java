@@ -1,4 +1,4 @@
-package com.swiftwheelshub.emailnotification.config.email;
+package com.swiftwheelshub.emailnotification.config;
 
 import com.sendgrid.SendGrid;
 import org.springframework.beans.factory.annotation.Value;
