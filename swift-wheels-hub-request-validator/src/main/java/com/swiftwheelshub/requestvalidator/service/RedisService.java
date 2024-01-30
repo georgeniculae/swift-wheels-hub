@@ -69,7 +69,7 @@ public class RedisService {
 
     @Recover
     public void recover() {
-        log.info("Connection re-established");
+        log.info("Connection established");
     }
 
 }
