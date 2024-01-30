@@ -16,13 +16,13 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class BookingProducerService {
 
-    @Value("${kafka.saved-booking-producer-topic-name}")
+    @Value("${spring.cloud.stream.bindings.savedBookingProducer-out-0.destination}")
     private String savedBookingProducerTopicName;
 
-    @Value("${kafka.updated-booking-producer-topic-name}")
+    @Value("${spring.cloud.stream.bindings.updatedBookingProducer-out-0.destination}")
     private String updatedBookingProducerTopicName;
 
-    @Value("${kafka.deleted-booking-producer-topic-name}")
+    @Value("${spring.cloud.stream.bindings.deletedBookingProducer-out-0.destination}")
     private String deletedBookingProducerTopicName;
 
     private final KafkaTemplate<String, Object> kafkaTemplate;

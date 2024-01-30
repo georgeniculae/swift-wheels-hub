@@ -35,16 +35,16 @@ spring:
     stream:
       bindings:
         savedBookingProducer-out-0:
-          destination: ${SAVED_BOOKING_REACTIVE_TOPIC}
+          destination: ${SAVED_BOOKING_TOPIC}
           contentType: application/json
         updatedBookingProducer-out-0:
-          destination: ${UPDATED_BOOKING_REACTIVE_TOPIC}
+          destination: ${UPDATED_BOOKING_TOPIC}
           contentType: application/json
         deletedBookingProducer-out-0:
-          destination: ${DELETED_BOOKING_REACTIVE_TOPIC}
+          destination: ${DELETED_BOOKING_TOPIC}
           contentType: application/json
         auditLogInfoProducer-out-0:
-          destination: ${BOOKING_AUDIT_LOG_INFO_REACTIVE_TOPIC}
+          destination: ${BOOKING_AUDIT_LOG_INFO_TOPIC}
           contentType: application/json
       kafka:
         binder:
@@ -128,17 +128,6 @@ rest-client:
     swift-wheels-hub-agency-employees: lb://swift-wheels-hub-agency/agency/employees
     swift-wheels-hub-customer: lb://swift-wheels-hub-customer/customers
     swift-wheels-hub-expense: lb://swift-wheels-hub-expense/expense/invoices
-
-kafka:
-  enabled: true
-  producer: true
-  booking-producer: true
-  saved-booking-producer-topic-name: ${SAVED_BOOKING_TOPIC}
-  updated-booking-producer-topic-name: ${UPDATED_BOOKING_TOPIC}
-  deleted-booking-producer-topic-name: ${DELETED_BOOKING_TOPIC}
-  deleted-user-topic-name: ${DELETED_USER_TOPIC}
-  audit-log-topic-name: ${BOOKING_AUDIT_LOG_INFO_TOPIC}
-  groupId: ${BOOKING_CONSUMER_GROUP}
 
 debezium:
   enabled: true

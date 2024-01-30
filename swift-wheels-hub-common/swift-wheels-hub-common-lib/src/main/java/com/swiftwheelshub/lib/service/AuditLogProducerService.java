@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class AuditLogProducerService {
 
-    @Value("${kafka.audit-log-topic-name}")
+    @Value("${spring.cloud.stream.bindings.auditLogInfoProducer-out-0.destination}")
     private String topic;
 
     private final KafkaTemplate<String, Object> kafkaTemplate;

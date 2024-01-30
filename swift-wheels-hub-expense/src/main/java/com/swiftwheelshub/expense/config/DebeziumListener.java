@@ -1,4 +1,4 @@
-package com.swiftwheelshub.expense.config.debezium;
+package com.swiftwheelshub.expense.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiftwheelshub.dto.InvoiceResponse;
