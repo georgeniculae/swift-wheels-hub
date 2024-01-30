@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class EmailNotificationProducer {
 
-    @Value("${spring.cloud.stream.bindings.auditLogInfoProducer-out-0.destination}")
+    @Value("${spring.cloud.stream.bindings.emailNotificationProducer-out-0.destination}")
     private String emailNotificationProducerTopicName;
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
