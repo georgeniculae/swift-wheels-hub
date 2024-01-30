@@ -14,6 +14,22 @@ spring:
   threads:
     virtual:
       enabled: true
+  cloud:
+    discovery:
+      enabled: true
+    stream:
+      bindings:
+        auditLogInfoProducer-out-0:
+          destination: ${CUSTOMER_AUDIT_LOG_INFO_TOPIC}
+          contentType: application/json
+      kafka:
+        binder:
+          auto-create-topics: false
+          auto-add-partitions: false
+          consumer-properties:
+            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            allow.auto.create.topics: false
   kafka:
     bootstrap-servers: localhost:9092
 
@@ -86,11 +102,6 @@ keycloak:
   realm: ${KEYCLOAK_REALM}
   clientId: ${KEYCLOAK_CLIENT_ID}
   clientSecret: ${KEYCLOAK_CLIENT_SECRET}
-
-kafka:
-  enabled: true
-  producer: true
-  audit-log-topic-name: ${CUSTOMER_AUDIT_LOG_INFO_TOPIC}
 
 audit:
   enabled: true
