@@ -14,6 +14,26 @@ spring:
       enabled: true
   mvc:
     throw-exception-if-no-handler-found: true
+  cloud:
+    discovery:
+      enabled: true
+    function:
+      definition: invoiceConsumer
+    stream:
+      bindings:
+        emailNotificationConsumer-in-0:
+          binder: kafka
+          destination: ${EMAIL_NOTIFICATION_TOPIC}
+          contentType: application/json
+          group: ${EMAIL_NOTIFICATION_CONSUMER_GROUP}
+      kafka:
+        binder:
+          auto-create-topics: true
+          auto-add-partitions: false
+          consumer-properties:
+            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            allow.auto.create.topics: true
   kafka:
     bootstrap-servers: localhost:9092
     listener:
@@ -54,11 +74,6 @@ management:
       enabled: true
     readinessstate:
       enabled: true
-
-kafka:
-  enabled: true
-  email-notification-producer-topic-name: ${EMAIL_NOTIFICATION_TOPIC}
-  groupId: ${EMAIL_NOTIFICATION_CONSUMER_GROUP}
 
 sendgrid:
   enabled: true
