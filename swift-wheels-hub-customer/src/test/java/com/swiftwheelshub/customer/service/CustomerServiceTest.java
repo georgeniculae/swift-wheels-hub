@@ -20,9 +20,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.RoleMappingResource;
+import org.keycloak.admin.client.resource.RoleResource;
+import org.keycloak.admin.client.resource.RoleScopeResource;
+import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -39,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -64,6 +70,21 @@ class CustomerServiceTest {
     @Mock
     private RealmResource realmResource;
 
+    @Mock
+    private RolesResource rolesResource;
+
+    @Mock
+    private RoleResource roleResource;
+
+    @Mock
+    private RoleRepresentation roleRepresentation;
+
+    @Mock
+    private RoleMappingResource roleMappingResource;
+
+    @Mock
+    private RoleScopeResource roleScopeResource;
+
     @Spy
     private UserMapper userMapper = new UserMapperImpl();
 
@@ -82,10 +103,19 @@ class CustomerServiceTest {
         mockStatic(CreatedResponseUtil.class);
         when(CreatedResponseUtil.getCreatedId(any())).thenReturn("id");
         when(keycloak.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.roles()).thenReturn(rolesResource);
+        when(rolesResource.list()).thenReturn(List.of(roleRepresentation));
+        when(rolesResource.get(anyString())).thenReturn(roleResource);
         when(realmResource.users()).thenReturn(usersResource);
         when(usersResource.create(any(UserRepresentation.class))).thenReturn(response);
         when(usersResource.get(anyString())).thenReturn(userResource);
+        when(rolesResource.get(anyString())).thenReturn(roleResource);
+        doNothing().when(roleResource).addComposites(anyList());
+        when(roleResource.toRepresentation()).thenReturn(roleRepresentation);
         doNothing().when(userResource).resetPassword(any(CredentialRepresentation.class));
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+        doNothing().when(roleScopeResource).add(anyList());
 
         RegistrationResponse registrationResponse = customerService.registerCustomer(registerRequest);
 
