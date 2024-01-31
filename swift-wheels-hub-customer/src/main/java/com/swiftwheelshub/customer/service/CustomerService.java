@@ -15,9 +15,13 @@ import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.RoleResource;
+import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -37,7 +41,19 @@ public class CustomerService {
 
     private static final String DATE_OF_BIRTH = "dateOfBirth";
 
-    @Value("${keycloak.realm}")
+    private static final String USER = "user";
+
+    private static final String OFFLINE_ACCESS = "offline_access";
+
+    private static final String OPENING_BRACE = "{";
+
+    private static final String CLOSE_BRACE = "}";
+
+    private static final String ROLE = "role_";
+
+    private static final String $ = "$";
+
+    @Value($ + OPENING_BRACE + "keycloak.realm}")
     private String realm;
 
     private final Keycloak keycloak;
@@ -116,7 +132,7 @@ public class CustomerService {
     }
 
     private UsersResource getUsersResource() {
-        return keycloak.realm(realm).users();
+        return getRealmResource().users();
     }
 
     private UserResource findById(String id) {
@@ -159,9 +175,12 @@ public class CustomerService {
                                                          RegisterRequest request) {
         String createdId = CreatedResponseUtil.getCreatedId(response);
         UserResource userResource = findById(createdId);
+        handleUserRole();
 
         try {
             userResource.resetPassword(createPasswordCredentials(request.password()));
+            RoleRepresentation roleRepresentation = getUserRoleRepresentation();
+            userResource.roles().realmLevel().add(List.of(roleRepresentation));
         } catch (Exception e) {
             handleRestEasyCall(e);
         }
@@ -189,6 +208,41 @@ public class CustomerService {
 
     private String getUserId(String username) {
         return getUserRepresentation(username).getId();
+    }
+
+    private void handleUserRole() {
+        boolean isRoleNonexistent = getRealmResource().roles()
+                .list()
+                .stream()
+                .map(RoleRepresentation::getName)
+                .noneMatch(USER::equals);
+
+        if (isRoleNonexistent) {
+            RoleRepresentation roleRepresentation = new RoleRepresentation();
+            roleRepresentation.setName(USER);
+            roleRepresentation.setDescription($ + OPENING_BRACE + ROLE + USER + CLOSE_BRACE);
+
+            RolesResource rolesResource = getRolesResource();
+            rolesResource.create(roleRepresentation);
+
+            getRoleResource().addComposites(List.of(rolesResource.get(OFFLINE_ACCESS).toRepresentation()));
+        }
+    }
+
+    private RoleRepresentation getUserRoleRepresentation() {
+        return getRoleResource().toRepresentation();
+    }
+
+    private RoleResource getRoleResource() {
+        return getRolesResource().get(USER);
+    }
+
+    private RolesResource getRolesResource() {
+        return getRealmResource().roles();
+    }
+
+    private RealmResource getRealmResource() {
+        return keycloak.realm(realm);
     }
 
     private void validateRequest(RegisterRequest request) {
