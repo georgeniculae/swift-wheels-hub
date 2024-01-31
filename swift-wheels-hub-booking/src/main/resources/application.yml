@@ -46,16 +46,11 @@ spring:
         auditLogInfoProducer-out-0:
           destination: ${BOOKING_AUDIT_LOG_INFO_TOPIC}
           contentType: application/json
-      kafka:
-        binder:
-          auto-create-topics: false
-          auto-add-partitions: false
-          consumer-properties:
-            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-            allow.auto.create.topics: false
   kafka:
     bootstrap-servers: localhost:9092
+    producer:
+      keySerializer: org.apache.kafka.common.serialization.StringSerializer
+      valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 eureka:
   client:

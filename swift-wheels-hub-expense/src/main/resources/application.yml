@@ -39,7 +39,10 @@ spring:
     stream:
       bindings:
         auditLogInfoProducer-out-0:
-          destination: ${BOOKING_AUDIT_LOG_INFO_TOPIC}
+          destination: ${EXPENSE_AUDIT_LOG_INFO_TOPIC}
+          contentType: application/json
+        emailNotificationProducer-out-0:
+          destination: ${EMAIL_NOTIFICATION_TOPIC}
           contentType: application/json
         savedBookingConsumer-in-0:
           binder: kafka
@@ -68,6 +71,9 @@ spring:
     bootstrap-servers: localhost:9092
     listener:
       missing-topics-fatal: false
+    producer:
+      keySerializer: org.apache.kafka.common.serialization.StringSerializer
+      valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer
   sendgrid:
     api-key: ${SENDGRID_API_KEY}
 
