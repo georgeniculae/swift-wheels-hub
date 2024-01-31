@@ -25,12 +25,12 @@ public class JwtAuthenticationTokenConverter implements Converter<Jwt, Mono<Abst
                 .map(authorities -> new JwtAuthenticationToken(source, authorities, extractUsername(source)));
     }
 
-    private Flux<GrantedAuthority> getGrantedAuthoritiesFlux(Jwt source) {
-        return jwtGrantedAuthoritiesConverter.convert(source);
-    }
-
     public String extractUsername(Jwt source) {
         return (String) source.getClaims().get(USERNAME_CLAIM);
+    }
+
+    private Flux<GrantedAuthority> getGrantedAuthoritiesFlux(Jwt source) {
+        return jwtGrantedAuthoritiesConverter.convert(source);
     }
 
 }
