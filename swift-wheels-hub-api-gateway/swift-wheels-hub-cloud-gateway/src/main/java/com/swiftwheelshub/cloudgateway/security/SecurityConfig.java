@@ -37,7 +37,7 @@ public class SecurityConfig {
                                 .pathMatchers("/agency/**",
                                         "/bookings/**",
                                         "/customers/**",
-                                        "/expense/**").hasAuthority("admin")
+                                        "/expense/**").authenticated()
                                 .anyExchange().authenticated())
                 .exceptionHandling(request ->
                         request.authenticationEntryPoint((response, error) -> getResponse(response, HttpStatus.UNAUTHORIZED))
