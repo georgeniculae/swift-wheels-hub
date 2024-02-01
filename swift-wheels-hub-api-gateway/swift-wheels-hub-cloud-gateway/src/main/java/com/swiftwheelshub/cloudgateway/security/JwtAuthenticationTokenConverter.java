@@ -20,7 +20,7 @@ public class JwtAuthenticationTokenConverter implements Converter<Jwt, Mono<Abst
 
     @Override
     public Mono<AbstractAuthenticationToken> convert(@NonNull Jwt source) {
-        return getGrantedAuthoritiesFlux(source)
+        return extractGrantedAuthorities(source)
                 .collectList()
                 .map(authorities -> new JwtAuthenticationToken(source, authorities, extractUsername(source)));
     }
@@ -29,7 +29,7 @@ public class JwtAuthenticationTokenConverter implements Converter<Jwt, Mono<Abst
         return (String) source.getClaims().get(USERNAME_CLAIM);
     }
 
-    private Flux<GrantedAuthority> getGrantedAuthoritiesFlux(Jwt source) {
+    public Flux<GrantedAuthority> extractGrantedAuthorities(Jwt source) {
         return jwtGrantedAuthoritiesConverter.convert(source);
     }
 

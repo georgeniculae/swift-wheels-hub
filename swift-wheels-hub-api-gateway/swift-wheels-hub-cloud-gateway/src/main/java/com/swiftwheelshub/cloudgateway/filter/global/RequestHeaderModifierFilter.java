@@ -12,11 +12,14 @@ import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -27,6 +30,8 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     private static final String X_API_KEY_HEADER = "X-API-KEY";
 
     private static final String X_USERNAME = "X-USERNAME";
+
+    private static final String X_ROLES = "X-ROLES";
 
     private static final String REGISTER_PATH = "/register";
 
@@ -52,13 +57,8 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
 
     private Mono<ServerWebExchange> modifyHeaders(ServerWebExchange exchange) {
         return getUsername(exchange.getRequest())
-                .map(username -> mutateServerWebExchange(exchange, username));
-    }
-
-    private boolean doesPathContainPattern(ServerHttpRequest serverHttpRequest) {
-        String path = serverHttpRequest.getPath().value();
-
-        return !path.contains(REGISTER_PATH) && !path.contains(DEFINITION_PATH);
+                .zipWith(getRoles(exchange.getRequest()))
+                .map(usernameAndAuthorities -> mutateServerWebExchange(exchange, usernameAndAuthorities));
     }
 
     private Mono<String> getUsername(ServerHttpRequest request) {
@@ -67,6 +67,22 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
                 .flatMap(serverHttpRequest -> nimbusReactiveJwtDecoder.decode(getAuthorizationToken(request)))
                 .map(jwtAuthenticationTokenConverter::extractUsername)
                 .switchIfEmpty(Mono.defer(() -> Mono.just(StringUtils.EMPTY)));
+    }
+
+    private Mono<List<String>> getRoles(ServerHttpRequest request) {
+        return Mono.just(request)
+                .filter(this::doesPathContainPattern)
+                .flatMap(serverHttpRequest -> nimbusReactiveJwtDecoder.decode(getAuthorizationToken(request)))
+                .flatMapMany(jwtAuthenticationTokenConverter::extractGrantedAuthorities)
+                .map(GrantedAuthority::getAuthority)
+                .collectList()
+                .switchIfEmpty(Mono.defer(() -> Mono.just(List.of())));
+    }
+
+    private boolean doesPathContainPattern(ServerHttpRequest serverHttpRequest) {
+        String path = serverHttpRequest.getPath().value();
+
+        return !path.contains(REGISTER_PATH) && !path.contains(DEFINITION_PATH);
     }
 
     private String getAuthorizationToken(ServerHttpRequest request) {
@@ -79,18 +95,25 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
                 .substring(7);
     }
 
-    private ServerWebExchange mutateServerWebExchange(ServerWebExchange exchange, String username) {
+    private ServerWebExchange mutateServerWebExchange(ServerWebExchange exchange,
+                                                      Tuple2<String, List<String>> usernameAndAuthorities) {
         return exchange.mutate()
-                .request(mutateHeaders(username))
+                .request(mutateHeaders(usernameAndAuthorities))
                 .build();
     }
 
-    private Consumer<ServerHttpRequest.Builder> mutateHeaders(String username) {
+    private Consumer<ServerHttpRequest.Builder> mutateHeaders(Tuple2<String, List<String>> usernameAndAuthorities) {
         return requestBuilder -> {
             requestBuilder.header(X_API_KEY_HEADER, apikey);
 
+            String username = usernameAndAuthorities.getT1();
             if (ObjectUtils.isNotEmpty(username)) {
                 requestBuilder.header(X_USERNAME, username);
+            }
+
+            List<String> roles = usernameAndAuthorities.getT2();
+            if (ObjectUtils.isNotEmpty(roles)) {
+                requestBuilder.header(X_ROLES, roles.toArray(new String[]{}));
             }
 
             requestBuilder.headers(headers -> headers.remove(HttpHeaders.AUTHORIZATION));

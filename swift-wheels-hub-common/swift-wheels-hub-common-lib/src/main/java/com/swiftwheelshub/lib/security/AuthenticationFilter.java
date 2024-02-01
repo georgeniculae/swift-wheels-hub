@@ -10,33 +10,50 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 @ConditionalOnBean(ApiKeyAuthenticationProvider.class)
 public class AuthenticationFilter extends OncePerRequestFilter {
 
-    private final static String API_KEY_HEADER = "X-API-KEY";
+    private final static String X_API_KEY = "X-API-KEY";
+    private static final String X_ROLES = "X-ROLES";
     private final AuthenticationManager authenticationManager;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        String authorization = request.getHeader(API_KEY_HEADER);
+        String authorization = request.getHeader(X_API_KEY);
 
         if (ObjectUtils.isNotEmpty(authorization)) {
-            ApiKeyAuthenticationToken apiKeyAuthenticationToken = new ApiKeyAuthenticationToken(authorization);
+            List<SimpleGrantedAuthority> roles = getRoles(request);
+
+            ApiKeyAuthenticationToken apiKeyAuthenticationToken = new ApiKeyAuthenticationToken(roles, authorization);
             Authentication authenticate = authenticationManager.authenticate(apiKeyAuthenticationToken);
             SecurityContextHolder.getContext().setAuthentication(authenticate);
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private List<SimpleGrantedAuthority> getRoles(HttpServletRequest request) {
+        if (ObjectUtils.isEmpty(request.getHeader(X_ROLES))) {
+            return List.of();
+        }
+
+        return Collections.list(request.getHeaders(X_ROLES))
+                .stream()
+                .map(SimpleGrantedAuthority::new)
+                .toList();
     }
 
 }

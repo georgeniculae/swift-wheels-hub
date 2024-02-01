@@ -9,6 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -26,7 +28,9 @@ class ApiKeyAuthenticationProviderTest {
     void authenticateTest_success() {
         String apikey = "apikey";
         ReflectionTestUtils.setField(apiKeyAuthenticationProvider, "apiKeySecret", apikey);
-        ApiKeyAuthenticationToken apiKeyAuthenticationToken = new ApiKeyAuthenticationToken(apikey, true);
+
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(), apikey, true);
 
         when(authentication.getPrincipal()).thenReturn(apikey);
 
