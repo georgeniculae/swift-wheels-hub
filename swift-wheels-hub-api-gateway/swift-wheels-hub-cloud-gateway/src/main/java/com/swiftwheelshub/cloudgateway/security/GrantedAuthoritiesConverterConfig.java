@@ -28,7 +28,8 @@ public class GrantedAuthoritiesConverterConfig {
     @Bean
     @SuppressWarnings("unchecked")
     public JwtGrantedAuthorityConverter authoritiesConverter() {
-        return source -> ((LinkedTreeMap<String, List<String>>) source.getClaims().get(REALM_ACCESS))
+        return source -> ((LinkedTreeMap<String, List<String>>) source.getClaims()
+                .get(REALM_ACCESS))
                 .get(ROLES)
                 .stream()
                 .map(SimpleGrantedAuthority::new)
