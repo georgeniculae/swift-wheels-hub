@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,11 +31,13 @@ public class UserController {
     }
 
     @GetMapping(path = "/{username}")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<UserDetails> findUserByUsername(@PathVariable("username") String username) {
         return ResponseEntity.ok(customerService.findUserByUsername(username));
     }
 
     @PostMapping("/register")
+    @PreAuthorize("hasAuthority('admin')")
     @LogActivity(
             sentParameters = "registerRequest",
             activityDescription = "User registration"
@@ -44,6 +47,7 @@ public class UserController {
     }
 
     @PutMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('admin')")
     @LogActivity(
             sentParameters = "id",
             activityDescription = "User update"
@@ -54,11 +58,13 @@ public class UserController {
     }
 
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<Integer> countUsers() {
         return ResponseEntity.ok(customerService.countUsers());
     }
 
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('admin')")
     @LogActivity(
             sentParameters = "id",
             activityDescription = "User deletion"
@@ -70,6 +76,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/sign-out")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<Void> signOut(HttpServletRequest request) {
         customerService.signOut(request);
 

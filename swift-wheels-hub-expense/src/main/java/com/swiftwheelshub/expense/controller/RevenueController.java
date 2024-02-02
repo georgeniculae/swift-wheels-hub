@@ -4,6 +4,7 @@ import com.swiftwheelshub.dto.RevenueResponse;
 import com.swiftwheelshub.expense.service.RevenueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ public class RevenueController {
     private final RevenueService revenueService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<List<RevenueResponse>> findAllRevenues() {
         List<RevenueResponse> revenueResponses = revenueService.findAllRevenues();
 
@@ -27,6 +29,7 @@ public class RevenueController {
     }
 
     @GetMapping(path = "/total")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<Double> getTotalAmount() {
         Double totalAmount = revenueService.getTotalAmount();
 
@@ -34,6 +37,7 @@ public class RevenueController {
     }
 
     @GetMapping(path = "/{date}")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<List<RevenueResponse>> findRevenuesByDate(@PathVariable("date") LocalDate date) {
         List<RevenueResponse> revenueResponses = revenueService.findRevenuesByDate(date);
 
