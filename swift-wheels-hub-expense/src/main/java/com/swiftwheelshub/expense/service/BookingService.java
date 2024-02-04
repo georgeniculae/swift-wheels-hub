@@ -32,6 +32,7 @@ public class BookingService {
                 .headers(HttpRequestUtil.mutateHeaders(request))
                 .exchange((clientRequest, clientResponse) -> {
                     HttpStatusCode statusCode = clientResponse.getStatusCode();
+
                     if (statusCode.isError()) {
                         throw new SwiftWheelsHubResponseStatusException(statusCode, clientResponse.getStatusText());
                     }
