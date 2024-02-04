@@ -6,6 +6,7 @@ import com.swiftwheelshub.dto.EmployeeResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +54,7 @@ public class EmployeeController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<EmployeeResponse> addEmployee(@RequestBody @Valid EmployeeRequest employeeRequest) {
         EmployeeResponse savedEmployeeResponse = employeeService.saveEmployee(employeeRequest);
 
@@ -60,6 +62,7 @@ public class EmployeeController {
     }
 
     @PutMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable("id") Long id,
                                                            @RequestBody @Valid EmployeeRequest employeeRequest) {
         EmployeeResponse updatedEmployeeResponse = employeeService.updateEmployee(id, employeeRequest);
@@ -68,6 +71,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<Void> deleteEmployeeById(@PathVariable("id") Long id) {
         employeeService.deleteEmployeeById(id);
 

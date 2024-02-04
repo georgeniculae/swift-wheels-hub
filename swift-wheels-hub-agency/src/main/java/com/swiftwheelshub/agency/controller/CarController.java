@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,6 +60,7 @@ public class CarController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<CarResponse> addCar(@RequestBody @Valid CarRequest carRequest) {
         CarResponse savedCarResponse = carService.saveCar(carRequest);
 
@@ -66,6 +68,7 @@ public class CarController {
     }
 
     @PostMapping(path = "/add")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<List<CarResponse>> addCars(@RequestBody @Valid List<CarRequest> carRequestList) {
         List<CarResponse> savedCarResponses = carService.saveAllCars(carRequestList);
 
@@ -73,6 +76,7 @@ public class CarController {
     }
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<List<CarResponse>> uploadCars(@RequestParam("file") MultipartFile file) {
         List<CarResponse> savedCarResponses = carService.uploadCars(file);
 
@@ -87,6 +91,7 @@ public class CarController {
     }
 
     @PutMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<CarResponse> updateCar(@PathVariable("id") Long id, @RequestBody @Valid CarRequest carRequest) {
         CarResponse updatedCarResponse = carService.updateCar(id, carRequest);
 
@@ -116,6 +121,7 @@ public class CarController {
     }
 
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<Void> deleteCarById(@PathVariable("id") Long id) {
         carService.deleteCarById(id);
 

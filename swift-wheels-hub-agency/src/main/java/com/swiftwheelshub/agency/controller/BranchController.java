@@ -6,6 +6,7 @@ import com.swiftwheelshub.dto.BranchResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ public class BranchController {
     private final BranchService branchService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<List<BranchResponse>> findAllBranches() {
         List<BranchResponse> branchResponses = branchService.findAllBranches();
 
@@ -32,6 +34,7 @@ public class BranchController {
     }
 
     @GetMapping(path = "/{id}")
+
     public ResponseEntity<BranchResponse> findBranchById(@PathVariable("id") Long id) {
         BranchResponse branchResponse = branchService.findBranchById(id);
 
@@ -46,6 +49,7 @@ public class BranchController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<BranchResponse> addBranch(@RequestBody @Valid BranchRequest branchRequest) {
         BranchResponse savedBranchResponse = branchService.saveBranch(branchRequest);
 
@@ -53,6 +57,7 @@ public class BranchController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<BranchResponse> updateBranch(@PathVariable("id") Long id, @RequestBody @Valid BranchRequest branchRequest) {
         BranchResponse updatedBranchResponse = branchService.updateBranch(id, branchRequest);
 
@@ -60,6 +65,7 @@ public class BranchController {
     }
 
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<Void> deleteBranchById(@PathVariable("id") Long id) {
         branchService.deleteBranchById(id);
 

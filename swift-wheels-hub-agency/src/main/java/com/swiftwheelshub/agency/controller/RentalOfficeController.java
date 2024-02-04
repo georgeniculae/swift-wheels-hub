@@ -6,6 +6,7 @@ import com.swiftwheelshub.dto.RentalOfficeResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +47,7 @@ public class RentalOfficeController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<RentalOfficeResponse> addRentalOffice(@RequestBody @Valid RentalOfficeRequest rentalOfficeRequest) {
         RentalOfficeResponse savedRentalOfficeResponse = rentalOfficeService.saveRentalOffice(rentalOfficeRequest);
 
@@ -53,6 +55,7 @@ public class RentalOfficeController {
     }
 
     @PutMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<RentalOfficeResponse> updateRentalOffice(@PathVariable("id") Long id,
                                                                    @RequestBody @Valid RentalOfficeRequest rentalOfficeRequest) {
         RentalOfficeResponse updatedRentalOfficeResponse = rentalOfficeService.updateRentalOffice(id, rentalOfficeRequest);
@@ -61,6 +64,7 @@ public class RentalOfficeController {
     }
 
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<Void> deleteRentalOfficeById(@PathVariable("id") Long id) {
         rentalOfficeService.deleteRentalOfficeById(id);
 

@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,12 +63,13 @@ public class BookingController {
     }
 
     @PostMapping("/new")
+    @PreAuthorize("hasAuthority('user')")
     @LogActivity(
             sentParameters = "bookingRequest",
             activityDescription = "Booking add"
     )
     public ResponseEntity<BookingResponse> addBooking(HttpServletRequest request,
-                                                     @RequestBody @Valid BookingRequest bookingRequest) {
+                                                      @RequestBody @Valid BookingRequest bookingRequest) {
         BookingResponse saveBookingResponse = bookingService.saveBooking(request, bookingRequest);
 
         return ResponseEntity.ok(saveBookingResponse);
@@ -75,7 +77,7 @@ public class BookingController {
 
     @PostMapping(path = "/close-booking")
     public ResponseEntity<BookingResponse> closeBooking(HttpServletRequest request,
-                                                       @RequestBody @Valid BookingClosingDetails bookingClosingDetails) {
+                                                        @RequestBody @Valid BookingClosingDetails bookingClosingDetails) {
         BookingResponse updatedBookingResponse = bookingService.closeBooking(request, bookingClosingDetails);
 
         return ResponseEntity.ok(updatedBookingResponse);
@@ -87,8 +89,8 @@ public class BookingController {
             activityDescription = "Booking update"
     )
     public ResponseEntity<BookingResponse> updateBooking(HttpServletRequest request,
-                                                        @PathVariable("id") Long id,
-                                                        @RequestBody @Valid BookingRequest bookingRequest) {
+                                                         @PathVariable("id") Long id,
+                                                         @RequestBody @Valid BookingRequest bookingRequest) {
         BookingResponse updatedBookingResponse = bookingService.updateBooking(request, id, bookingRequest);
 
         return ResponseEntity.ok(updatedBookingResponse);
