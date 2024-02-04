@@ -28,6 +28,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     @GetMapping(path = "/list")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<List<BookingResponse>> findAllBookings() {
         List<BookingResponse> bookingResponses = bookingService.findAllBookings();
 
@@ -35,6 +36,7 @@ public class BookingController {
     }
 
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<BookingResponse> findBookingById(@PathVariable("id") Long id) {
         BookingResponse bookingResponse = bookingService.findBookingById(id);
 
@@ -49,6 +51,7 @@ public class BookingController {
     }
 
     @GetMapping(path = "/count-by-current-user")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<Long> countByLoggedInUser(HttpServletRequest request) {
         Long numberOfBookings = bookingService.countByLoggedInUser(request);
 
@@ -56,6 +59,7 @@ public class BookingController {
     }
 
     @GetMapping(path = "/current-date")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<LocalDate> getCurrentDate() {
         LocalDate currentDate = bookingService.getCurrentDate();
 
@@ -76,6 +80,7 @@ public class BookingController {
     }
 
     @PostMapping(path = "/close-booking")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<BookingResponse> closeBooking(HttpServletRequest request,
                                                         @RequestBody @Valid BookingClosingDetails bookingClosingDetails) {
         BookingResponse updatedBookingResponse = bookingService.closeBooking(request, bookingClosingDetails);
@@ -84,6 +89,7 @@ public class BookingController {
     }
 
     @PutMapping(path = "/{id}")
+
     @LogActivity(
             sentParameters = "bookingRequest",
             activityDescription = "Booking update"

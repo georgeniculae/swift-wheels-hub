@@ -32,6 +32,7 @@ public class CarController {
     private final CarService carService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<List<CarResponse>> findAllCars() {
         List<CarResponse> carResponses = carService.findAllCars();
 
@@ -39,6 +40,7 @@ public class CarController {
     }
 
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<CarResponse> findCarById(@PathVariable("id") Long id) {
         CarResponse carResponse = carService.findCarById(id);
 
@@ -46,6 +48,7 @@ public class CarController {
     }
 
     @GetMapping(path = "/make/{make}")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<List<CarResponse>> findCarsByMake(@PathVariable("make") String make) {
         List<CarResponse> carResponses = carService.findCarsByMake(make);
 
@@ -53,6 +56,7 @@ public class CarController {
     }
 
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<Long> countCars() {
         Long numberOfCars = carService.countCars();
 
@@ -84,6 +88,7 @@ public class CarController {
     }
 
     @GetMapping(path = "/{id}/availability")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<CarResponse> getAvailableCar(@PathVariable("id") Long id) {
         CarResponse availableCarResponse = carService.getAvailableCar(id);
 
@@ -99,6 +104,7 @@ public class CarController {
     }
 
     @PutMapping(path = "/{id}/change-status")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<CarResponse> updateCarStatus(@PathVariable("id") Long id, @RequestParam CarState carState) {
         CarResponse updatedCarResponse = carService.updateCarStatus(id, carState);
 
@@ -106,6 +112,7 @@ public class CarController {
     }
 
     @PutMapping(path = "/update-statuses")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<List<CarResponse>> updateCarsStatus(@RequestBody @Valid List<UpdateCarRequest> carsForUpdate) {
         List<CarResponse> updatedCarResponses = carService.updateCarsStatus(carsForUpdate);
 
@@ -113,6 +120,7 @@ public class CarController {
     }
 
     @PutMapping(path = "/{id}/update-after-return")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<CarResponse> updateCarWhenBookingIsClosed(@PathVariable("id") Long id,
                                                                     @RequestBody @Valid CarForUpdateDetails carForUpdateDetails) {
         CarResponse updatedCarResponse = carService.updateCarWhenBookingIsClosed(id, carForUpdateDetails);

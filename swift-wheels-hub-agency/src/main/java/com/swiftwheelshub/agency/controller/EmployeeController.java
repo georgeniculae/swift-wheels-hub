@@ -26,6 +26,7 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<List<EmployeeResponse>> findAllEmployees() {
         List<EmployeeResponse> employeeResponses = employeeService.findAllEmployees();
 
@@ -33,6 +34,7 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<EmployeeResponse> findEmployeeById(@PathVariable("id") Long id) {
         EmployeeResponse employeeResponse = employeeService.findEmployeeById(id);
 
@@ -40,6 +42,7 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/branch/{id}")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<List<EmployeeResponse>> findEmployeesByBranchId(@PathVariable("id") Long id) {
         List<EmployeeResponse> employeeResponses = employeeService.findEmployeesByBranchId(id);
 
@@ -47,6 +50,7 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<Long> countEmployees() {
         Long numberOfEmployees = employeeService.countEmployees();
 

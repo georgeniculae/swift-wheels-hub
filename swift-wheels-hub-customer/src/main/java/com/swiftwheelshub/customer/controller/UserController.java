@@ -26,6 +26,7 @@ public class UserController {
     private final CustomerService customerService;
 
     @GetMapping(path = "/current")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<UserDetails> getCurrentUser(HttpServletRequest request) {
         return ResponseEntity.ok(customerService.getCurrentUser(request));
     }

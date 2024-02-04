@@ -34,7 +34,7 @@ public class BranchController {
     }
 
     @GetMapping(path = "/{id}")
-
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<BranchResponse> findBranchById(@PathVariable("id") Long id) {
         BranchResponse branchResponse = branchService.findBranchById(id);
 
@@ -42,6 +42,7 @@ public class BranchController {
     }
 
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<Long> countBranches() {
         Long numberOfBranches = branchService.countBranches();
 

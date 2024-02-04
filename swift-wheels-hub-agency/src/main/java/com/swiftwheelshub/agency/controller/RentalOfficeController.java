@@ -26,6 +26,7 @@ public class RentalOfficeController {
     private final RentalOfficeService rentalOfficeService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<List<RentalOfficeResponse>> findAllRentalOffices() {
         List<RentalOfficeResponse> allRentalOffices = rentalOfficeService.findAllRentalOffices();
 
@@ -33,6 +34,7 @@ public class RentalOfficeController {
     }
 
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<RentalOfficeResponse> findRentalOfficeById(@PathVariable("id") Long id) {
         RentalOfficeResponse rentalOfficeResponse = rentalOfficeService.findRentalOfficeById(id);
 
@@ -40,6 +42,7 @@ public class RentalOfficeController {
     }
 
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<Long> countRentalOffices() {
         Long numberOfRentalOffices = rentalOfficeService.countRentalOffices();
 

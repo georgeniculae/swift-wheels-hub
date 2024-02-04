@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,6 +26,7 @@ public class InvoiceController {
     private final InvoiceService invoiceService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<List<InvoiceResponse>> findAllInvoices() {
         List<InvoiceResponse> allInvoiceResponses = invoiceService.findAllInvoices();
 
@@ -32,6 +34,7 @@ public class InvoiceController {
     }
 
     @GetMapping(path = "/active")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<List<InvoiceResponse>> findAllActiveInvoices() {
         List<InvoiceResponse> allInvoiceResponses = invoiceService.findAllActiveInvoices();
 
@@ -39,6 +42,7 @@ public class InvoiceController {
     }
 
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<InvoiceResponse> findInvoiceById(@PathVariable("id") Long id) {
         InvoiceResponse invoiceResponse = invoiceService.findInvoiceById(id);
 
@@ -46,6 +50,7 @@ public class InvoiceController {
     }
 
     @GetMapping(path = "/by-customer/{customerUsername}")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<List<InvoiceResponse>> findAllInvoicesByCustomerId(@PathVariable("customerUsername") String customerUsername) {
         List<InvoiceResponse> allInvoiceResponses = invoiceService.findAllInvoicesByCustomerId(customerUsername);
 
@@ -53,6 +58,7 @@ public class InvoiceController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('user')")
     @LogActivity(
             sentParameters = {"id", "invoiceRequest"},
             activityDescription = "Invoice closing"
@@ -66,6 +72,7 @@ public class InvoiceController {
     }
 
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<Long> countInvoices() {
         Long invoices = invoiceService.countInvoices();
 
@@ -73,6 +80,7 @@ public class InvoiceController {
     }
 
     @GetMapping(path = "/active-count")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<Long> countActiveInvoices() {
         Long invoices = invoiceService.countAllActiveInvoices();
 
