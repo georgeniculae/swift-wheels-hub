@@ -18,6 +18,8 @@ import org.springframework.web.client.RestClient;
 @Slf4j
 public class EmployeeService {
 
+    private static final String SEPARATOR = "/";
+
     @Value("${rest-client.url.swift-wheels-hub-agency-employees}")
     private String url;
 
@@ -25,7 +27,7 @@ public class EmployeeService {
 
     public EmployeeResponse findEmployeeById(HttpServletRequest request, Long receptionistEmployeeId) {
         return restClient.get()
-                .uri(url)
+                .uri(url + SEPARATOR + receptionistEmployeeId)
                 .headers(HttpRequestUtil.mutateHeaders(request))
                 .exchange((clientRequest, clientResponse) -> {
                     HttpStatusCode statusCode = clientResponse.getStatusCode();
