@@ -177,7 +177,7 @@ public class CarService {
 
     public CarResponse updateCarWhenBookingIsClosed(Long id, CarForUpdateDetails carForUpdateDetails) {
         Car car = findEntityById(id);
-        car.setCarStatus(CarStatus.valueOf(carForUpdateDetails.carState().getDisplayName()));
+        car.setCarStatus(CarStatus.valueOf(carForUpdateDetails.carState().name()));
         car.setActualBranch(getActualBranch(carForUpdateDetails));
 
         Car savedCar = saveEntity(car);
