@@ -34,7 +34,7 @@ public class HttpRequestUtil {
 
     public static Consumer<HttpHeaders> mutateHeaders(HttpServletRequest request) {
         return httpHeaders -> {
-            httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+            httpHeaders.setAccept(List.of(MediaType.APPLICATION_JSON));
             httpHeaders.setContentType(MediaType.APPLICATION_JSON);
             httpHeaders.add(X_API_KEY, extractAuthenticationToken(request));
             httpHeaders.addAll(X_ROLES, extractRoles(request));
