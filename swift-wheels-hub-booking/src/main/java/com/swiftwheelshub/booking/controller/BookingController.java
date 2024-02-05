@@ -44,6 +44,7 @@ public class BookingController {
     }
 
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<Long> countBookings() {
         Long numberOfBookings = bookingService.countBookings();
 

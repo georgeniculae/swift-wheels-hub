@@ -168,5 +168,8 @@ sendgrid:
     mailFrom: ${SENDGRID_MAIL_FROM}
     name: Swift Wheels Hub
 
+audit:
+  enabled: true
+
 mustache-template:
   enabled: true
