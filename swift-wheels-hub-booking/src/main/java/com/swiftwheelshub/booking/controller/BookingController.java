@@ -89,7 +89,7 @@ public class BookingController {
     }
 
     @PutMapping(path = "/{id}")
-
+    @PreAuthorize("hasAuthority('user')")
     @LogActivity(
             sentParameters = "bookingRequest",
             activityDescription = "Booking update"
@@ -103,6 +103,7 @@ public class BookingController {
     }
 
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('user')")
     @LogActivity(
             sentParameters = "id",
             activityDescription = "Booking deletion"
