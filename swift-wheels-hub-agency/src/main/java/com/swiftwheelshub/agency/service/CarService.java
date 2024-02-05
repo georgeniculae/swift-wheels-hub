@@ -115,7 +115,7 @@ public class CarService {
                 .stream()
                 .peek(car -> {
                     UpdateCarRequest updateCarRequest = getMatchingCarDetails(carsForUpdate, car);
-                    car.setCarStatus(CarStatus.valueOf(updateCarRequest.carState().getDisplayName()));
+                    car.setCarStatus(CarStatus.valueOf(updateCarRequest.carState().name()));
                 })
                 .map(this::saveEntity)
                 .map(carMapper::mapEntityToDto)
