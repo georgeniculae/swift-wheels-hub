@@ -5,10 +5,10 @@ import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.expense.service.InvoiceService;
 import com.swiftwheelshub.lib.aspect.LogActivity;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -65,7 +65,7 @@ public class InvoiceController {
     )
     public ResponseEntity<InvoiceResponse> closeInvoice(HttpServletRequest request,
                                                         @PathVariable("id") Long id,
-                                                        @RequestBody @Valid InvoiceRequest invoiceRequest) {
+                                                        @RequestBody @Validated InvoiceRequest invoiceRequest) {
         InvoiceResponse undatedinvoiceResponse = invoiceService.closeInvoice(request, id, invoiceRequest);
 
         return ResponseEntity.ok(undatedinvoiceResponse);

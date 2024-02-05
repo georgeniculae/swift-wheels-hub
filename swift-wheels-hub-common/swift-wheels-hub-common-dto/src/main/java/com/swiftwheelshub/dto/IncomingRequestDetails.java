@@ -7,10 +7,10 @@ import java.util.Map;
 
 @Builder
 public record IncomingRequestDetails(
-        @NotBlank
+        @NotBlank(message = "Path cannot be blank")
         String path,
 
-        @NotBlank
+        @NotBlank(message = "Method cannot be blank")
         String method,
 
         Map<String, String> headers,

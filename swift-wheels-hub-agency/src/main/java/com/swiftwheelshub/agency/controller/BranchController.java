@@ -3,10 +3,10 @@ package com.swiftwheelshub.agency.controller;
 import com.swiftwheelshub.agency.service.BranchService;
 import com.swiftwheelshub.dto.BranchRequest;
 import com.swiftwheelshub.dto.BranchResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,7 +51,7 @@ public class BranchController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<BranchResponse> addBranch(@RequestBody @Valid BranchRequest branchRequest) {
+    public ResponseEntity<BranchResponse> addBranch(@RequestBody @Validated BranchRequest branchRequest) {
         BranchResponse savedBranchResponse = branchService.saveBranch(branchRequest);
 
         return ResponseEntity.ok(savedBranchResponse);
@@ -59,7 +59,8 @@ public class BranchController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<BranchResponse> updateBranch(@PathVariable("id") Long id, @RequestBody @Valid BranchRequest branchRequest) {
+    public ResponseEntity<BranchResponse> updateBranch(@PathVariable("id") Long id,
+                                                       @RequestBody @Validated BranchRequest branchRequest) {
         BranchResponse updatedBranchResponse = branchService.updateBranch(id, branchRequest);
 
         return ResponseEntity.ok(updatedBranchResponse);

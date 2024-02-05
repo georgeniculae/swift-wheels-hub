@@ -6,11 +6,11 @@ import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.UpdateCarRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,6 +55,14 @@ public class CarController {
         return ResponseEntity.ok(carResponses);
     }
 
+    @GetMapping(path = "/{id}/availability")
+    @PreAuthorize("hasAuthority('user')")
+    public ResponseEntity<CarResponse> findAvailableCar(@PathVariable("id") Long id) {
+        CarResponse availableCarResponse = carService.findAvailableCar(id);
+
+        return ResponseEntity.ok(availableCarResponse);
+    }
+
     @GetMapping(path = "/count")
     @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<Long> countCars() {
@@ -65,7 +73,7 @@ public class CarController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<CarResponse> addCar(@RequestBody @Valid CarRequest carRequest) {
+    public ResponseEntity<CarResponse> addCar(@RequestBody @Validated CarRequest carRequest) {
         CarResponse savedCarResponse = carService.saveCar(carRequest);
 
         return ResponseEntity.ok(savedCarResponse);
@@ -73,7 +81,7 @@ public class CarController {
 
     @PostMapping(path = "/add")
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<List<CarResponse>> addCars(@RequestBody @Valid List<CarRequest> carRequestList) {
+    public ResponseEntity<List<CarResponse>> addCars(@RequestBody @Validated List<CarRequest> carRequestList) {
         List<CarResponse> savedCarResponses = carService.saveAllCars(carRequestList);
 
         return ResponseEntity.ok(savedCarResponses);
@@ -87,17 +95,10 @@ public class CarController {
         return ResponseEntity.ok(savedCarResponses);
     }
 
-    @GetMapping(path = "/{id}/availability")
-    @PreAuthorize("hasAuthority('user')")
-    public ResponseEntity<CarResponse> getAvailableCar(@PathVariable("id") Long id) {
-        CarResponse availableCarResponse = carService.getAvailableCar(id);
-
-        return ResponseEntity.ok(availableCarResponse);
-    }
-
     @PutMapping(path = "/{id}")
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<CarResponse> updateCar(@PathVariable("id") Long id, @RequestBody @Valid CarRequest carRequest) {
+    public ResponseEntity<CarResponse> updateCar(@PathVariable("id") Long id,
+                                                 @RequestBody @Validated CarRequest carRequest) {
         CarResponse updatedCarResponse = carService.updateCar(id, carRequest);
 
         return ResponseEntity.ok(updatedCarResponse);
@@ -113,7 +114,7 @@ public class CarController {
 
     @PutMapping(path = "/update-statuses")
     @PreAuthorize("hasAuthority('user')")
-    public ResponseEntity<List<CarResponse>> updateCarsStatus(@RequestBody @Valid List<UpdateCarRequest> carsForUpdate) {
+    public ResponseEntity<List<CarResponse>> updateCarsStatus(@RequestBody @Validated List<UpdateCarRequest> carsForUpdate) {
         List<CarResponse> updatedCarResponses = carService.updateCarsStatus(carsForUpdate);
 
         return ResponseEntity.ok(updatedCarResponses);
@@ -122,7 +123,7 @@ public class CarController {
     @PutMapping(path = "/{id}/update-after-return")
     @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<CarResponse> updateCarWhenBookingIsClosed(@PathVariable("id") Long id,
-                                                                    @RequestBody @Valid CarForUpdateDetails carForUpdateDetails) {
+                                                                    @RequestBody @Validated CarForUpdateDetails carForUpdateDetails) {
         CarResponse updatedCarResponse = carService.updateCarWhenBookingIsClosed(id, carForUpdateDetails);
 
         return ResponseEntity.ok(updatedCarResponse);

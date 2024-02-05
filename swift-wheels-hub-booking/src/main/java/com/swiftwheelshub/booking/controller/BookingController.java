@@ -6,10 +6,10 @@ import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.lib.aspect.LogActivity;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,7 +73,7 @@ public class BookingController {
             activityDescription = "Booking add"
     )
     public ResponseEntity<BookingResponse> addBooking(HttpServletRequest request,
-                                                      @RequestBody @Valid BookingRequest bookingRequest) {
+                                                      @RequestBody @Validated BookingRequest bookingRequest) {
         BookingResponse saveBookingResponse = bookingService.saveBooking(request, bookingRequest);
 
         return ResponseEntity.ok(saveBookingResponse);
@@ -82,7 +82,7 @@ public class BookingController {
     @PostMapping(path = "/close-booking")
     @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<BookingResponse> closeBooking(HttpServletRequest request,
-                                                        @RequestBody @Valid BookingClosingDetails bookingClosingDetails) {
+                                                        @RequestBody @Validated BookingClosingDetails bookingClosingDetails) {
         BookingResponse updatedBookingResponse = bookingService.closeBooking(request, bookingClosingDetails);
 
         return ResponseEntity.ok(updatedBookingResponse);
@@ -96,7 +96,7 @@ public class BookingController {
     )
     public ResponseEntity<BookingResponse> updateBooking(HttpServletRequest request,
                                                          @PathVariable("id") Long id,
-                                                         @RequestBody @Valid BookingRequest bookingRequest) {
+                                                         @RequestBody @Validated BookingRequest bookingRequest) {
         BookingResponse updatedBookingResponse = bookingService.updateBooking(request, id, bookingRequest);
 
         return ResponseEntity.ok(updatedBookingResponse);

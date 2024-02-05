@@ -3,10 +3,10 @@ package com.swiftwheelshub.agency.controller;
 import com.swiftwheelshub.agency.service.RentalOfficeService;
 import com.swiftwheelshub.dto.RentalOfficeRequest;
 import com.swiftwheelshub.dto.RentalOfficeResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,7 +51,7 @@ public class RentalOfficeController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<RentalOfficeResponse> addRentalOffice(@RequestBody @Valid RentalOfficeRequest rentalOfficeRequest) {
+    public ResponseEntity<RentalOfficeResponse> addRentalOffice(@RequestBody @Validated RentalOfficeRequest rentalOfficeRequest) {
         RentalOfficeResponse savedRentalOfficeResponse = rentalOfficeService.saveRentalOffice(rentalOfficeRequest);
 
         return ResponseEntity.ok(savedRentalOfficeResponse);
@@ -60,7 +60,7 @@ public class RentalOfficeController {
     @PutMapping(path = "/{id}")
     @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<RentalOfficeResponse> updateRentalOffice(@PathVariable("id") Long id,
-                                                                   @RequestBody @Valid RentalOfficeRequest rentalOfficeRequest) {
+                                                                   @RequestBody @Validated RentalOfficeRequest rentalOfficeRequest) {
         RentalOfficeResponse updatedRentalOfficeResponse = rentalOfficeService.updateRentalOffice(id, rentalOfficeRequest);
 
         return ResponseEntity.ok(updatedRentalOfficeResponse);

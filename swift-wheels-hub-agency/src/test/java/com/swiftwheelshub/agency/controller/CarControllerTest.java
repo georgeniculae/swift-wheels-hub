@@ -2,8 +2,11 @@ package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.CarService;
 import com.swiftwheelshub.agency.util.TestUtils;
+import com.swiftwheelshub.dto.CarForUpdateDetails;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
+import com.swiftwheelshub.dto.CarState;
+import com.swiftwheelshub.dto.UpdateCarRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -67,6 +70,7 @@ class CarControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void findAllCarsTest_unauthorized() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -96,6 +100,7 @@ class CarControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void findCarByIdTest_unauthorized() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -125,12 +130,47 @@ class CarControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void findCarsByMakeTest_unauthorized() throws Exception {
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.findCarsByMake(anyString())).thenReturn(List.of(carResponse));
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/make/{make}", "Test")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    void findAvailableCarTest_success() throws Exception {
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+
+        when(carService.findAvailableCar(anyLong())).thenReturn(carResponse);
+
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{id}/availability", 1L)
+                        .with(user("admin").password("admin").roles("ADMIN"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void findAvailableCarTest_unauthorized() throws Exception {
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+
+        when(carService.findAvailableCar(anyLong())).thenReturn(carResponse);
+
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{id}/availability", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
@@ -327,7 +367,7 @@ class CarControllerTest {
     @Test
     void updateCarTest_success() throws Exception {
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
-        String valueAsString = TestUtils.writeValueAsString(carResponse);
+        String content = TestUtils.writeValueAsString(carResponse);
 
         when(carService.updateCar(anyLong(), any(CarRequest.class))).thenReturn(carResponse);
 
@@ -336,7 +376,7 @@ class CarControllerTest {
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
+                        .content(content))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -372,6 +412,142 @@ class CarControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isForbidden())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    void updateCarsStatusTest_success() throws Exception {
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+
+        UpdateCarRequest carRequest = UpdateCarRequest.builder()
+                .carId(1L)
+                .carState(CarState.NOT_AVAILABLE)
+                .build();
+
+        String content = TestUtils.writeValueAsString(List.of(carRequest));
+
+        when(carService.updateCarsStatus(anyList())).thenReturn(List.of(carResponse));
+
+        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/update-statuses")
+                        .with(csrf())
+                        .with(user("admin").password("admin").roles("ADMIN"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void updateCarsStatusTest_unauthorized() throws Exception {
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+
+        UpdateCarRequest carRequest = UpdateCarRequest.builder()
+                .carId(1L)
+                .carState(CarState.NOT_AVAILABLE)
+                .build();
+
+        String content = TestUtils.writeValueAsString(List.of(carRequest));
+
+        when(carService.updateCarsStatus(anyList())).thenReturn(List.of(carResponse));
+
+        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/update-statuses")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isUnauthorized())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    void updateCarWhenBookingIsClosedTest_success() throws Exception {
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+
+        CarForUpdateDetails carForUpdateDetails = CarForUpdateDetails.builder()
+                .carId(1L)
+                .carState(CarState.NOT_AVAILABLE)
+                .build();
+
+        String content = TestUtils.writeValueAsString(carForUpdateDetails);
+
+        when(carService.updateCarWhenBookingIsClosed(anyLong(), any(CarForUpdateDetails.class))).thenReturn(carResponse);
+
+        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}/update-after-return", 1L)
+                        .with(csrf())
+                        .with(user("admin").password("admin").roles("ADMIN"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void updateCarWhenBookingIsClosedTest_unauthorized() throws Exception {
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+
+        CarForUpdateDetails carForUpdateDetails = CarForUpdateDetails.builder()
+                .carId(1L)
+                .carState(CarState.NOT_AVAILABLE)
+                .build();
+
+        String content = TestUtils.writeValueAsString(carForUpdateDetails);
+
+        when(carService.updateCarWhenBookingIsClosed(anyLong(), any(CarForUpdateDetails.class))).thenReturn(carResponse);
+
+        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}/update-after-return", 1L)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isUnauthorized())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    void updateCarStatusTest_success() throws Exception {
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+
+        when(carService.updateCarStatus(anyLong(), any(CarState.class))).thenReturn(carResponse);
+
+        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}/change-status?carState=NOT_AVAILABLE", 1L)
+                        .with(csrf())
+                        .with(user("admin").password("admin").roles("ADMIN"))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    void updateCarStatusTest_unauthorized() throws Exception {
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+
+        when(carService.updateCarStatus(anyLong(), any(CarState.class))).thenReturn(carResponse);
+
+        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}/change-status?carState=NOT_AVAILABLE", 1L)
+                        .with(csrf())
+                        .with(user("admin").password("admin").roles("ADMIN"))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
 

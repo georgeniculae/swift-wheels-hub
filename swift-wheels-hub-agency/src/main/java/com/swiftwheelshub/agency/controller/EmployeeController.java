@@ -3,10 +3,10 @@ package com.swiftwheelshub.agency.controller;
 import com.swiftwheelshub.agency.service.EmployeeService;
 import com.swiftwheelshub.dto.EmployeeRequest;
 import com.swiftwheelshub.dto.EmployeeResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,7 +59,7 @@ public class EmployeeController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<EmployeeResponse> addEmployee(@RequestBody @Valid EmployeeRequest employeeRequest) {
+    public ResponseEntity<EmployeeResponse> addEmployee(@RequestBody @Validated EmployeeRequest employeeRequest) {
         EmployeeResponse savedEmployeeResponse = employeeService.saveEmployee(employeeRequest);
 
         return ResponseEntity.ok(savedEmployeeResponse);
@@ -68,7 +68,7 @@ public class EmployeeController {
     @PutMapping(path = "/{id}")
     @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable("id") Long id,
-                                                           @RequestBody @Valid EmployeeRequest employeeRequest) {
+                                                           @RequestBody @Validated EmployeeRequest employeeRequest) {
         EmployeeResponse updatedEmployeeResponse = employeeService.updateEmployee(id, employeeRequest);
 
         return ResponseEntity.ok(updatedEmployeeResponse);

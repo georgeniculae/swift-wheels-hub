@@ -50,7 +50,7 @@ public class CarService {
         return carMapper.mapEntityToDto(car);
     }
 
-    public CarResponse getAvailableCar(Long id) {
+    public CarResponse findAvailableCar(Long id) {
         Car car = findEntityById(id);
         checkCarAvailability(car);
 

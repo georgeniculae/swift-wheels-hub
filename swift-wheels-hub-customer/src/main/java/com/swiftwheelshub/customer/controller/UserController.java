@@ -7,10 +7,10 @@ import com.swiftwheelshub.dto.UserDetails;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import com.swiftwheelshub.lib.aspect.LogActivity;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,7 +43,7 @@ public class UserController {
             sentParameters = "registerRequest",
             activityDescription = "User registration"
     )
-    public ResponseEntity<RegistrationResponse> registerUser(@RequestBody @Valid RegisterRequest registerRequest) {
+    public ResponseEntity<RegistrationResponse> registerUser(@RequestBody @Validated RegisterRequest registerRequest) {
         return ResponseEntity.ok(customerService.registerCustomer(registerRequest));
     }
 
@@ -54,7 +54,7 @@ public class UserController {
             activityDescription = "User update"
     )
     public ResponseEntity<UserDetails> updateUser(@PathVariable("id") String id,
-                                                  @RequestBody @Valid UserUpdateRequest userUpdateRequest) {
+                                                  @RequestBody @Validated UserUpdateRequest userUpdateRequest) {
         return ResponseEntity.ok(customerService.updateUser(id, userUpdateRequest));
     }
 
