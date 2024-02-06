@@ -15,7 +15,6 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.List;
@@ -28,6 +27,10 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = BranchController.class)
@@ -50,7 +53,7 @@ class BranchControllerTest {
 
         when(branchService.findAllBranches()).thenReturn(List.of(branchResponse));
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
+        MvcResult mvcResult = mockMvc.perform(get(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -64,7 +67,7 @@ class BranchControllerTest {
 
     @Test
     void findAllBranchesTest_unauthorized() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
+        MvcResult mvcResult = mockMvc.perform(get(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
@@ -83,7 +86,7 @@ class BranchControllerTest {
 
         when(branchService.findBranchById(anyLong())).thenReturn(branchResponse);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
+        MvcResult mvcResult = mockMvc.perform(get(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -98,7 +101,7 @@ class BranchControllerTest {
     @Test
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findBranchByIdTest_successWithMockUser() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
+        MvcResult mvcResult = mockMvc.perform(get(PATH + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -112,7 +115,7 @@ class BranchControllerTest {
     @Test
     @WithAnonymousUser()
     void findBranchByIdTest_unauthorized() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1)
+        MvcResult mvcResult = mockMvc.perform(get(PATH + "/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
@@ -128,7 +131,7 @@ class BranchControllerTest {
     void countBranchesTest_success() throws Exception {
         when(branchService.countBranches()).thenReturn(1L);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count")
+        MvcResult mvcResult = mockMvc.perform(get(PATH + "/count")
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -142,7 +145,7 @@ class BranchControllerTest {
 
     @Test
     void countBranchesTest_unauthorized() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count")
+        MvcResult mvcResult = mockMvc.perform(get(PATH + "/count")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
@@ -163,7 +166,7 @@ class BranchControllerTest {
 
         when(branchService.saveBranch(any(BranchRequest.class))).thenReturn(branchResponse);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
+        MvcResult mvcResult = mockMvc.perform(post(PATH)
                         .with(csrf())
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -184,7 +187,7 @@ class BranchControllerTest {
 
         String content = TestUtils.writeValueAsString(branchResponse);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
+        MvcResult mvcResult = mockMvc.perform(post(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -203,7 +206,7 @@ class BranchControllerTest {
         BranchRequest branchRequest = TestUtils.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
         String content = TestUtils.writeValueAsString(branchRequest);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
+        MvcResult mvcResult = mockMvc.perform(post(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -226,7 +229,7 @@ class BranchControllerTest {
 
         when(branchService.updateBranch(anyLong(), any(BranchRequest.class))).thenReturn(branchRequest);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
+        MvcResult mvcResult = mockMvc.perform(put(PATH + "/{id}", 1L)
                         .with(csrf())
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -245,7 +248,7 @@ class BranchControllerTest {
         BranchRequest branchRequest = TestUtils.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
         String content = TestUtils.writeValueAsString(branchRequest);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
+        MvcResult mvcResult = mockMvc.perform(put(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -263,7 +266,7 @@ class BranchControllerTest {
     void deleteBranchByIdTest_success() throws Exception {
         doNothing().when(branchService).deleteBranchById(anyLong());
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
+        MvcResult mvcResult = mockMvc.perform(delete(PATH + "/{id}", 1L)
                         .with(csrf())
                         .with(user("admin").password("admin").roles("ADMIN")))
                 .andExpect(status().isNoContent())
@@ -276,7 +279,7 @@ class BranchControllerTest {
 
     @Test
     void deleteBranchByIdTest_forbidden() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
+        MvcResult mvcResult = mockMvc.perform(delete(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN")))
                 .andExpect(status().isForbidden())
                 .andReturn();
