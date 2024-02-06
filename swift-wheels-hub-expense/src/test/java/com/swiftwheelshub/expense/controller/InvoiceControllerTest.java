@@ -105,15 +105,12 @@ public class InvoiceControllerTest {
 
         when(invoiceService.findAllActiveInvoices()).thenReturn(List.of(invoiceResponse));
 
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/active")
+        mockMvc.perform(get(PATH + "/active")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response);
+                .andReturn();
     }
 
     @Test
@@ -179,15 +176,12 @@ public class InvoiceControllerTest {
 
         when(invoiceService.findAllInvoicesByCustomerId(anyString())).thenReturn(List.of(invoiceResponse));
 
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/by-customer/{customerUsername}", "user")
+        mockMvc.perform(get(PATH + "/by-customer/{customerUsername}", "user")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response);
+                .andReturn();
     }
 
     @Test
@@ -211,15 +205,12 @@ public class InvoiceControllerTest {
     void countInvoicesTest_unauthorized() throws Exception {
         when(invoiceService.countInvoices()).thenReturn(1L);
 
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/count")
+        mockMvc.perform(get(PATH + "/count")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response);
+                .andReturn();
     }
 
     @Test
@@ -236,6 +227,19 @@ public class InvoiceControllerTest {
                 .getResponse();
 
         assertNotNull(response);
+    }
+
+    @Test
+    @WithAnonymousUser
+    void countActiveInvoicesTest_unauthorized() throws Exception {
+        when(invoiceService.countAllActiveInvoices()).thenReturn(1L);
+
+        mockMvc.perform(get(PATH + "/active-count")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andReturn();
     }
 
     @Test
