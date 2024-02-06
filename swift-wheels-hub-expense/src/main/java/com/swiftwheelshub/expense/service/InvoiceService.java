@@ -73,7 +73,7 @@ public class InvoiceService {
         return invoiceRepository.countAllActive();
     }
 
-    public InvoiceResponse saveInvoice(BookingResponse newBookingResponse) {
+    public void saveInvoice(BookingResponse newBookingResponse) {
         if (!invoiceRepository.existsByBookingId(newBookingResponse.id())) {
             Invoice invoice = new Invoice();
 
@@ -82,21 +82,17 @@ public class InvoiceService {
             invoice.setCarId(newBookingResponse.carId());
             invoice.setBookingId(newBookingResponse.id());
 
-            Invoice savedBooking = invoiceRepository.saveAndFlush(invoice);
-
-            return invoiceMapper.mapEntityToDto(savedBooking);
+            invoiceRepository.saveAndFlush(invoice);
         }
 
         throw new SwiftWheelsHubResponseStatusException(HttpStatus.BAD_REQUEST, "Invoice already exists");
     }
 
-    public InvoiceResponse updateInvoiceAfterBookingUpdate(BookingResponse bookingResponse) {
+    public void updateInvoiceAfterBookingUpdate(BookingResponse bookingResponse) {
         Invoice invoice = findInvoiceByBookingId(bookingResponse.id());
         invoice.setCarId(bookingResponse.carId());
 
-        Invoice savedInvoice = invoiceRepository.saveAndFlush(invoice);
-
-        return invoiceMapper.mapEntityToDto(savedInvoice);
+        invoiceRepository.saveAndFlush(invoice);
     }
 
     public InvoiceResponse closeInvoice(HttpServletRequest request, Long id, InvoiceRequest invoiceRequest) {

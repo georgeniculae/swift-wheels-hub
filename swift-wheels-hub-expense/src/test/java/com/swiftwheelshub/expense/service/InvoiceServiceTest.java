@@ -65,8 +65,7 @@ class InvoiceServiceTest {
         when(invoiceRepository.existsByBookingId(anyLong())).thenReturn(false);
         when(invoiceRepository.saveAndFlush(any(Invoice.class))).thenReturn(invoice);
 
-        InvoiceResponse invoiceResponse = assertDoesNotThrow(() -> invoiceService.saveInvoice(bookingResponse));
-        assertNotNull(invoiceResponse);
+        assertDoesNotThrow(() -> invoiceService.saveInvoice(bookingResponse));
     }
 
     @Test
@@ -92,10 +91,7 @@ class InvoiceServiceTest {
         when(invoiceRepository.findByBookingId(anyLong())).thenReturn(Optional.ofNullable(invoice));
         when(invoiceRepository.saveAndFlush(any(Invoice.class))).thenReturn(invoice);
 
-        InvoiceResponse invoiceResponse =
-                assertDoesNotThrow(() -> invoiceService.updateInvoiceAfterBookingUpdate(bookingResponse));
-
-        assertNotNull(invoiceResponse);
+        assertDoesNotThrow(() -> invoiceService.updateInvoiceAfterBookingUpdate(bookingResponse));
     }
 
     @Test
