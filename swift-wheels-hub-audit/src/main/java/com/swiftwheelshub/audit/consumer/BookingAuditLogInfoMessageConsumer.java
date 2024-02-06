@@ -17,7 +17,7 @@ public class BookingAuditLogInfoMessageConsumer {
 
     @Bean
     public Consumer<Message<AuditLogInfoRequest>> bookingAuditInfoConsumer() {
-        return auditLogInfoRequestMessage -> auditLogInfoService.saveAuditLogInfo(auditLogInfoRequestMessage.getPayload());
+        return auditLogInfoRequestMessage -> auditLogInfoService.saveBookingAuditLogInfo(auditLogInfoRequestMessage.getPayload());
     }
 
 }

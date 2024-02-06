@@ -15,13 +15,13 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
-@Table(name = "audit_log_info", schema = "public")
+@Table(name = "customer_audit_log_info", schema = "public")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Setter
-public class AuditLogInfo {
+public class CustomerAuditLogInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

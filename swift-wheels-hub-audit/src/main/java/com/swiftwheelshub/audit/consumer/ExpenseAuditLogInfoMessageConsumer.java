@@ -17,7 +17,7 @@ public class ExpenseAuditLogInfoMessageConsumer {
 
     @Bean
     public Consumer<Message<AuditLogInfoRequest>> expenseAuditInfoConsumer() {
-        return auditLogInfoRequestMessage -> auditLogInfoService.saveAuditLogInfo(auditLogInfoRequestMessage.getPayload());
+        return auditLogInfoRequestMessage -> auditLogInfoService.saveExpenseAuditLogInfo(auditLogInfoRequestMessage.getPayload());
     }
 
 }

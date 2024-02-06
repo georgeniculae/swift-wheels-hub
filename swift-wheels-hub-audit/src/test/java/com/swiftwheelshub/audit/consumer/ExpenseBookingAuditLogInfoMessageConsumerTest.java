@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
-class ExpenseAuditLogInfoMessageConsumerTest {
+class ExpenseBookingAuditLogInfoMessageConsumerTest {
 
     @InjectMocks
     private ExpenseAuditLogInfoMessageConsumer expenseAuditLogInfoMessageConsumer;
@@ -30,7 +30,7 @@ class ExpenseAuditLogInfoMessageConsumerTest {
 
         Message<AuditLogInfoRequest> message = new GenericMessage<>(auditLogInfoRequest);
 
-        doNothing().when(auditLogInfoService).saveAuditLogInfo(any(AuditLogInfoRequest.class));
+        doNothing().when(auditLogInfoService).saveBookingAuditLogInfo(any(AuditLogInfoRequest.class));
 
         expenseAuditLogInfoMessageConsumer.expenseAuditInfoConsumer().accept(message);
     }

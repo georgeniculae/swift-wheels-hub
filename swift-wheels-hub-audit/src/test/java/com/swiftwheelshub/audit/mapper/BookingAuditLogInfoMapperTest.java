@@ -3,14 +3,14 @@ package com.swiftwheelshub.audit.mapper;
 import com.swiftwheelshub.audit.util.AssertionUtils;
 import com.swiftwheelshub.audit.util.TestUtils;
 import com.swiftwheelshub.dto.AuditLogInfoRequest;
-import com.swiftwheelshub.entity.AuditLogInfo;
+import com.swiftwheelshub.entity.BookingAuditLogInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class AuditLogInfoMapperTest {
+class BookingAuditLogInfoMapperTest {
 
     @Spy
     private AuditLogInfoMapper auditLogInfoMapper = new AuditLogInfoMapperImpl();
@@ -20,9 +20,9 @@ class AuditLogInfoMapperTest {
         AuditLogInfoRequest auditLogInfoRequest =
                 TestUtils.getResourceAsJson("/data/AuditLogInfoRequest.json", AuditLogInfoRequest.class);
 
-        AuditLogInfo auditLogInfo = auditLogInfoMapper.mapDtoToEntity(auditLogInfoRequest);
+        BookingAuditLogInfo bookingAuditLogInfo = auditLogInfoMapper.mapDtoToBookingEntity(auditLogInfoRequest);
 
-        AssertionUtils.assertAuditLogInfo(auditLogInfoRequest, auditLogInfo);
+        AssertionUtils.assertAuditLogInfo(auditLogInfoRequest, bookingAuditLogInfo);
     }
 
 }
