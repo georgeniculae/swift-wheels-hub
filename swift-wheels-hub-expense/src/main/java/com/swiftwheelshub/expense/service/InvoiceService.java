@@ -83,6 +83,8 @@ public class InvoiceService {
             invoice.setBookingId(newBookingResponse.id());
 
             invoiceRepository.saveAndFlush(invoice);
+
+            return;
         }
 
         throw new SwiftWheelsHubResponseStatusException(HttpStatus.BAD_REQUEST, "Invoice already exists");
