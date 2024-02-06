@@ -57,20 +57,6 @@ public class InvoiceController {
         return ResponseEntity.ok(allInvoiceResponses);
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('user')")
-    @LogActivity(
-            sentParameters = {"id", "invoiceRequest"},
-            activityDescription = "Invoice closing"
-    )
-    public ResponseEntity<InvoiceResponse> closeInvoice(HttpServletRequest request,
-                                                        @PathVariable("id") Long id,
-                                                        @RequestBody @Validated InvoiceRequest invoiceRequest) {
-        InvoiceResponse undatedinvoiceResponse = invoiceService.closeInvoice(request, id, invoiceRequest);
-
-        return ResponseEntity.ok(undatedinvoiceResponse);
-    }
-
     @GetMapping(path = "/count")
     @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<Long> countInvoices() {
@@ -85,6 +71,20 @@ public class InvoiceController {
         Long invoices = invoiceService.countAllActiveInvoices();
 
         return ResponseEntity.ok(invoices);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('user')")
+    @LogActivity(
+            sentParameters = {"id", "invoiceRequest"},
+            activityDescription = "Invoice closing"
+    )
+    public ResponseEntity<InvoiceResponse> closeInvoice(HttpServletRequest request,
+                                                        @PathVariable("id") Long id,
+                                                        @RequestBody @Validated InvoiceRequest invoiceRequest) {
+        InvoiceResponse undatedinvoiceResponse = invoiceService.closeInvoice(request, id, invoiceRequest);
+
+        return ResponseEntity.ok(undatedinvoiceResponse);
     }
 
 }
