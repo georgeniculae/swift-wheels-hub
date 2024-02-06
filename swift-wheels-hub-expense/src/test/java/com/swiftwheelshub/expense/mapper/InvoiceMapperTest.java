@@ -1,6 +1,5 @@
 package com.swiftwheelshub.expense.mapper;
 
-import com.swiftwheelshub.dto.InvoiceRequest;
 import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.expense.util.AssertionUtils;
@@ -24,17 +23,6 @@ class InvoiceMapperTest {
 
         assertNotNull(invoiceResponse);
         AssertionUtils.assertInvoiceResponse(invoice, invoiceResponse);
-    }
-
-    @Test
-    void mapDtoToEntityTest_success() {
-        InvoiceRequest invoiceRequest =
-                TestUtils.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
-
-        Invoice invoice = invoiceMapper.mapDtoToEntity(invoiceRequest);
-
-        assertNotNull(invoice);
-        AssertionUtils.assertInvoiceRequest(invoice, invoiceRequest);
     }
 
 }

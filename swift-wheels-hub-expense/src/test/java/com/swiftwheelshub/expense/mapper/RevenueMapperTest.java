@@ -1,6 +1,5 @@
 package com.swiftwheelshub.expense.mapper;
 
-import com.swiftwheelshub.dto.RevenueRequest;
 import com.swiftwheelshub.dto.RevenueResponse;
 import com.swiftwheelshub.entity.Revenue;
 import com.swiftwheelshub.expense.util.AssertionUtils;
@@ -24,16 +23,6 @@ class RevenueMapperTest {
 
         assertNotNull(revenueResponse);
         AssertionUtils.assertRevenueResponse(revenue, revenueResponse);
-    }
-
-    @Test
-    void mapDtoToEntityTest_success() {
-        RevenueRequest revenueRequest = TestUtils.getResourceAsJson("/data/RevenueRequest.json", RevenueRequest.class);
-
-        Revenue revenue = rentalOfficeMapper.mapDtoToEntity(revenueRequest);
-
-        assertNotNull(revenue);
-        AssertionUtils.assertRevenueRequest(revenue, revenueRequest);
     }
 
 }

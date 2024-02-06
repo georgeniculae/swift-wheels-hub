@@ -1,6 +1,5 @@
 package com.swiftwheelshub.expense.mapper;
 
-import com.swiftwheelshub.dto.InvoiceRequest;
 import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.entity.Invoice;
 import org.mapstruct.InjectionStrategy;
@@ -13,7 +12,5 @@ import org.mapstruct.ReportingPolicy;
 public interface InvoiceMapper {
 
     InvoiceResponse mapEntityToDto(Invoice invoice);
-
-    Invoice mapDtoToEntity(InvoiceRequest invoiceRequest);
 
 }
