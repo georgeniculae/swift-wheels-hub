@@ -15,7 +15,7 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
-@Table(name = "booking_audit_log_info", schema = "public")
+@Table(name = "expense_audit_log_info", schema = "public")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
