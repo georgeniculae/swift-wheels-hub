@@ -7,12 +7,12 @@
     <changeSet id="create-table-audit-log-info" author="George Niculae">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists schemaName="swift-wheels-hub-audit" catalogName="swift-wheels-hub-audit"
-                             tableName="audit_log_info"/>
+                <tableExists schemaName="swift_wheels_hub_audit" catalogName="swift_wheels_hub_audit"
+                             tableName="booking_audit_log_info"/>
             </not>
         </preConditions>
 
-        <createTable tableName="audit_log_info">
+        <createTable tableName="booking_audit_log_info">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
