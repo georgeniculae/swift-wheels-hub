@@ -24,13 +24,13 @@ class CustomerBookingAuditLogInfoMessageConsumerTest {
     private AuditLogInfoService auditLogInfoService;
 
     @Test
-    void bookingAuditInfoConsumerTest_success() {
+    void customerAuditInfoConsumerTest_success() {
         AuditLogInfoRequest auditLogInfoRequest =
                 TestUtils.getResourceAsJson("/data/AuditLogInfoRequest.json", AuditLogInfoRequest.class);
 
         Message<AuditLogInfoRequest> message = new GenericMessage<>(auditLogInfoRequest);
 
-        doNothing().when(auditLogInfoService).saveBookingAuditLogInfo(any(AuditLogInfoRequest.class));
+        doNothing().when(auditLogInfoService).saveCustomerAuditLogInfo(any(AuditLogInfoRequest.class));
 
         customerAuditLogInfoMessageConsumer.customerAuditInfoConsumer().accept(message);
     }
