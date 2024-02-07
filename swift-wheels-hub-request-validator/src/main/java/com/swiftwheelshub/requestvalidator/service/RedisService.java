@@ -6,7 +6,6 @@ import com.swiftwheelshub.requestvalidator.repository.SwaggerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
@@ -65,11 +64,6 @@ public class RedisService {
         }
 
         swaggerRepository.save(swaggerFolder);
-    }
-
-    @Recover
-    public void recover() {
-        log.info("Connection established");
     }
 
 }
