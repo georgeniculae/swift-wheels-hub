@@ -41,7 +41,7 @@ public class CarService {
     private final CarMapper carMapper;
 
     public List<CarResponse> findAllCars() {
-        return getCarDtoList(carRepository.findAll());
+        return getCarResponseList(carRepository.findAll());
     }
 
     public CarResponse findCarById(Long id) {
@@ -58,7 +58,7 @@ public class CarService {
     }
 
     public List<CarResponse> findCarsByMake(String make) {
-        return getCarDtoList(carRepository.findCarsByMake(make));
+        return getCarResponseList(carRepository.findCarsByMake(make));
     }
 
     public CarResponse saveCar(CarRequest carRequest) {
@@ -76,7 +76,7 @@ public class CarService {
                 .map(carMapper::mapDtoToEntity)
                 .toList();
 
-        return getCarDtoList(saveAllEntities(cars));
+        return getCarResponseList(saveAllEntities(cars));
     }
 
     public CarResponse updateCar(Long id, CarRequest updatedCarRequest) {
@@ -128,7 +128,7 @@ public class CarService {
 
             List<Car> cars = getCarsFromSheet(sheet);
 
-            return getCarDtoList(carRepository.saveAllAndFlush(cars));
+            return getCarResponseList(carRepository.saveAllAndFlush(cars));
         } catch (Exception e) {
             throw new SwiftWheelsHubException(e);
         }
@@ -235,7 +235,7 @@ public class CarService {
         return employeeService.findEntityById(carForUpdateDetails.receptionistEmployeeId()).getWorkingBranch();
     }
 
-    private List<CarResponse> getCarDtoList(List<Car> cars) {
+    private List<CarResponse> getCarResponseList(List<Car> cars) {
         return cars.stream()
                 .map(carMapper::mapEntityToDto)
                 .toList();
