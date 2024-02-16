@@ -2,7 +2,7 @@ package com.swiftwheelshub.customer.util;
 
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
-import com.swiftwheelshub.dto.UserDetails;
+import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import org.keycloak.representations.idm.UserRepresentation;
 
@@ -35,22 +35,22 @@ public class AssertionUtils {
         assertEquals(userUpdateRequest.email(), userRepresentation.getEmail());
     }
 
-    public static void assertUserDetails(UserRepresentation userRepresentation, UserDetails userDetails) {
-        assertEquals(userRepresentation.getUsername(), userDetails.username());
-        assertEquals(userRepresentation.getFirstName(), userDetails.firstName());
-        assertEquals(userRepresentation.getLastName(), userDetails.lastName());
-        assertEquals(userRepresentation.getEmail(), userDetails.email());
-        assertEquals(userRepresentation.getAttributes().get("address").getFirst(), userDetails.address());
-        assertEquals(userRepresentation.getAttributes().get("dateOfBirth").getFirst(), userDetails.dateOfBirth().toString());
+    public static void assertUserDetails(UserRepresentation userRepresentation, UserInfo userInfo) {
+        assertEquals(userRepresentation.getUsername(), userInfo.username());
+        assertEquals(userRepresentation.getFirstName(), userInfo.firstName());
+        assertEquals(userRepresentation.getLastName(), userInfo.lastName());
+        assertEquals(userRepresentation.getEmail(), userInfo.email());
+        assertEquals(userRepresentation.getAttributes().get("address").getFirst(), userInfo.address());
+        assertEquals(userRepresentation.getAttributes().get("dateOfBirth").getFirst(), userInfo.dateOfBirth().toString());
     }
 
-    public static void assertUserDetails(UserUpdateRequest userUpdateRequest, UserDetails userDetails) {
-        assertEquals(userUpdateRequest.username(), userDetails.username());
-        assertEquals(userUpdateRequest.firstName(), userDetails.firstName());
-        assertEquals(userUpdateRequest.lastName(), userDetails.lastName());
-        assertEquals(userUpdateRequest.email(), userDetails.email());
-        assertEquals(userUpdateRequest.address(), userDetails.address());
-        assertEquals(userUpdateRequest.dateOfBirth(), userDetails.dateOfBirth());
+    public static void assertUserDetails(UserUpdateRequest userUpdateRequest, UserInfo userInfo) {
+        assertEquals(userUpdateRequest.username(), userInfo.username());
+        assertEquals(userUpdateRequest.firstName(), userInfo.firstName());
+        assertEquals(userUpdateRequest.lastName(), userInfo.lastName());
+        assertEquals(userUpdateRequest.email(), userInfo.email());
+        assertEquals(userUpdateRequest.address(), userInfo.address());
+        assertEquals(userUpdateRequest.dateOfBirth(), userInfo.dateOfBirth());
     }
 
 }

@@ -1,6 +1,6 @@
 package com.swiftwheelshub.customer.mapper;
 
-import com.swiftwheelshub.dto.UserDetails;
+import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +33,7 @@ public interface UserMapper {
 
     @Mapping(target = "address", expression = "java(getAddress(userRepresentation))")
     @Mapping(target = "dateOfBirth", expression = "java(getDateOfBirth(userRepresentation))")
-    UserDetails mapUserToUserDetails(UserRepresentation userRepresentation);
+    UserInfo mapUserToUserDetails(UserRepresentation userRepresentation);
 
     @Mapping(target = "address", expression = "java(getAddress(userRepresentation))")
     @Mapping(target = "dateOfBirth", expression = "java(getDateOfBirth(userRepresentation))")

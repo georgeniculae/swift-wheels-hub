@@ -4,7 +4,7 @@ import com.swiftwheelshub.customer.service.CustomerService;
 import com.swiftwheelshub.customer.util.TestUtils;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
-import com.swiftwheelshub.dto.UserDetails;
+import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
@@ -46,9 +46,9 @@ class UserControllerTest {
 
     @Test
     void getCurrentUserTest_success() throws Exception {
-        UserDetails userDetails = TestUtils.getResourceAsJson("/data/UserDetails.json", UserDetails.class);
+        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserDetails.json", UserInfo.class);
 
-        when(customerService.getCurrentUser(any(HttpServletRequest.class))).thenReturn(userDetails);
+        when(customerService.getCurrentUser(any(HttpServletRequest.class))).thenReturn(userInfo);
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/current")
                         .contextPath(PATH)
@@ -153,11 +153,11 @@ class UserControllerTest {
 
     @Test
     void updateUserTest_success() throws Exception {
-        UserDetails userDetails = TestUtils.getResourceAsJson("/data/UserDetails.json", UserDetails.class);
+        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserDetails.json", UserInfo.class);
 
-        String content = TestUtils.writeValueAsString(userDetails);
+        String content = TestUtils.writeValueAsString(userInfo);
 
-        when(customerService.updateUser(anyString(), any(UserUpdateRequest.class))).thenReturn(userDetails);
+        when(customerService.updateUser(anyString(), any(UserUpdateRequest.class))).thenReturn(userInfo);
 
         MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
                         .contextPath(PATH)
@@ -175,9 +175,9 @@ class UserControllerTest {
 
     @Test
     void updateUserTest_forbidden() throws Exception {
-        UserDetails userDetails = TestUtils.getResourceAsJson("/data/UserDetails.json", UserDetails.class);
+        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserDetails.json", UserInfo.class);
 
-        String content = TestUtils.writeValueAsString(userDetails);
+        String content = TestUtils.writeValueAsString(userInfo);
 
         MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
                         .contextPath(PATH)
@@ -195,9 +195,9 @@ class UserControllerTest {
     @Test
     @WithAnonymousUser
     void updateUserTest_unauthorized() throws Exception {
-        UserDetails userDetails = TestUtils.getResourceAsJson("/data/UserDetails.json", UserDetails.class);
+        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserDetails.json", UserInfo.class);
 
-        String content = TestUtils.writeValueAsString(userDetails);
+        String content = TestUtils.writeValueAsString(userInfo);
 
         MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
                         .contextPath(PATH)
@@ -214,9 +214,9 @@ class UserControllerTest {
 
     @Test
     void findUserByUsernameTest_success() throws Exception {
-        UserDetails userDetails = TestUtils.getResourceAsJson("/data/UserDetails.json", UserDetails.class);
+        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserDetails.json", UserInfo.class);
 
-        when(customerService.findUserByUsername(anyString())).thenReturn(userDetails);
+        when(customerService.findUserByUsername(anyString())).thenReturn(userInfo);
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{username}", "admin")
                         .contextPath(PATH)

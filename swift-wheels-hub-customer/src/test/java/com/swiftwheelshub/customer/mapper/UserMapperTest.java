@@ -4,7 +4,7 @@ import com.swiftwheelshub.customer.util.AssertionUtils;
 import com.swiftwheelshub.customer.util.TestData;
 import com.swiftwheelshub.customer.util.TestUtils;
 import com.swiftwheelshub.dto.RegistrationResponse;
-import com.swiftwheelshub.dto.UserDetails;
+import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,9 +37,9 @@ class UserMapperTest {
     void mapUserToUserDetailsTest_success() {
         UserRepresentation userRepresentation = TestData.getUserRepresentation();
 
-        UserDetails userDetails = userMapper.mapUserToUserDetails(userRepresentation);
+        UserInfo userInfo = userMapper.mapUserToUserDetails(userRepresentation);
 
-        AssertionUtils.assertUserDetails(userRepresentation, userDetails);
+        AssertionUtils.assertUserDetails(userRepresentation, userInfo);
     }
 
     @Test

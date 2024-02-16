@@ -3,7 +3,7 @@ package com.swiftwheelshub.customer.controller;
 import com.swiftwheelshub.customer.service.CustomerService;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
-import com.swiftwheelshub.dto.UserDetails;
+import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import com.swiftwheelshub.lib.aspect.LogActivity;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,13 +27,13 @@ public class UserController {
 
     @GetMapping(path = "/current")
     @PreAuthorize("hasAuthority('user')")
-    public ResponseEntity<UserDetails> getCurrentUser(HttpServletRequest request) {
+    public ResponseEntity<UserInfo> getCurrentUser(HttpServletRequest request) {
         return ResponseEntity.ok(customerService.getCurrentUser(request));
     }
 
     @GetMapping(path = "/{username}")
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<UserDetails> findUserByUsername(@PathVariable("username") String username) {
+    public ResponseEntity<UserInfo> findUserByUsername(@PathVariable("username") String username) {
         return ResponseEntity.ok(customerService.findUserByUsername(username));
     }
 
@@ -53,8 +53,8 @@ public class UserController {
             sentParameters = "id",
             activityDescription = "User update"
     )
-    public ResponseEntity<UserDetails> updateUser(@PathVariable("id") String id,
-                                                  @RequestBody @Validated UserUpdateRequest userUpdateRequest) {
+    public ResponseEntity<UserInfo> updateUser(@PathVariable("id") String id,
+                                               @RequestBody @Validated UserUpdateRequest userUpdateRequest) {
         return ResponseEntity.ok(customerService.updateUser(id, userUpdateRequest));
     }
 

@@ -7,7 +7,7 @@ import com.swiftwheelshub.customer.util.TestData;
 import com.swiftwheelshub.customer.util.TestUtils;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
-import com.swiftwheelshub.dto.UserDetails;
+import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
@@ -161,7 +161,7 @@ class CustomerServiceTest {
         when(realmResource.users()).thenReturn(usersResource);
         when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of(userRepresentation));
 
-        UserDetails currentUser = customerService.getCurrentUser(httpServletRequest);
+        UserInfo currentUser = customerService.getCurrentUser(httpServletRequest);
 
         AssertionUtils.assertUserDetails(userRepresentation, currentUser);
 
@@ -209,7 +209,7 @@ class CustomerServiceTest {
         when(realmResource.users()).thenReturn(usersResource);
         when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of(userRepresentation));
 
-        UserDetails user = customerService.findUserByUsername("user");
+        UserInfo user = customerService.findUserByUsername("user");
 
         AssertionUtils.assertUserDetails(userRepresentation, user);
     }
@@ -240,9 +240,9 @@ class CustomerServiceTest {
         when(usersResource.get(anyString())).thenReturn(userResource);
         doNothing().when(userResource).update(any(UserRepresentation.class));
 
-        UserDetails userDetails = customerService.updateUser("user", userUpdateRequest);
+        UserInfo userInfo = customerService.updateUser("user", userUpdateRequest);
 
-        AssertionUtils.assertUserDetails(userUpdateRequest, userDetails);
+        AssertionUtils.assertUserDetails(userUpdateRequest, userInfo);
     }
 
     @Test

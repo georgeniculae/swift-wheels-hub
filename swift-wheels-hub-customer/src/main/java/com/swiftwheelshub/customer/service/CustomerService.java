@@ -3,7 +3,7 @@ package com.swiftwheelshub.customer.service;
 import com.swiftwheelshub.customer.mapper.UserMapper;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
-import com.swiftwheelshub.dto.UserDetails;
+import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
@@ -60,13 +60,13 @@ public class CustomerService {
 
     private final UserMapper userMapper;
 
-    public UserDetails findUserByUsername(String username) {
+    public UserInfo findUserByUsername(String username) {
         UserRepresentation userRepresentation = getUserRepresentation(username);
 
         return userMapper.mapUserToUserDetails(userRepresentation);
     }
 
-    public UserDetails getCurrentUser(HttpServletRequest request) {
+    public UserInfo getCurrentUser(HttpServletRequest request) {
         String username = HttpRequestUtil.extractUsername(request);
 
         return findUserByUsername(username);
@@ -94,7 +94,7 @@ public class CustomerService {
         }
     }
 
-    public UserDetails updateUser(String id, UserUpdateRequest userUpdateRequest) {
+    public UserInfo updateUser(String id, UserUpdateRequest userUpdateRequest) {
         UserResource userResource = findById(id);
 
         UserRepresentation userRepresentation = userMapper.mapToUserRepresentation(userUpdateRequest);

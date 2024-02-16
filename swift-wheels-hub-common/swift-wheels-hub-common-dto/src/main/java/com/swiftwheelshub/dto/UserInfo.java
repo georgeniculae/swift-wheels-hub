@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Builder
-public record UserDetails(
+public record UserInfo(
         String id,
         String username,
         String firstName,
