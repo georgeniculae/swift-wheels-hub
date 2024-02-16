@@ -1,6 +1,6 @@
 package com.swiftwheelshub.booking.service;
 
-import com.swiftwheelshub.dto.CarForUpdateDetails;
+import com.swiftwheelshub.dto.DetailsForCarUpdate;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.UpdateCarRequest;
@@ -74,13 +74,13 @@ public class CarService {
     }
 
     public void updateCarWhenBookingIsFinished(HttpServletRequest request,
-                                               CarForUpdateDetails carForUpdateDetails) {
-        String finalUrl = url + SEPARATOR + carForUpdateDetails.carId() + SEPARATOR + "update-after-return";
+                                               DetailsForCarUpdate detailsForCarUpdate) {
+        String finalUrl = url + SEPARATOR + detailsForCarUpdate.carId() + SEPARATOR + "update-after-return";
 
         restClient.put()
                 .uri(finalUrl)
                 .headers(HttpRequestUtil.mutateHeaders(request))
-                .body(carForUpdateDetails)
+                .body(detailsForCarUpdate)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (clientRequest, clientResponse) -> {
                     throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());

@@ -193,7 +193,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CarForUpdateDetails'
+              $ref: '#/components/schemas/DetailsForCarUpdate'
         required: true
       responses:
         '200':

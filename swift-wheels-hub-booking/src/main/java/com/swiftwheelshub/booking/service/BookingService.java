@@ -5,7 +5,7 @@ import com.swiftwheelshub.booking.repository.BookingRepository;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.CarForUpdateDetails;
+import com.swiftwheelshub.dto.DetailsForCarUpdate;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.EmployeeResponse;
@@ -268,13 +268,13 @@ public class BookingService {
 
     private void updateCarWhenIsReturned(HttpServletRequest request, BookingResponse bookingResponse,
                                          BookingClosingDetails bookingClosingDetails) {
-        CarForUpdateDetails carForUpdateDetails = new CarForUpdateDetails(
+        DetailsForCarUpdate detailsForCarUpdate = new DetailsForCarUpdate(
                 bookingResponse.carId(),
                 bookingClosingDetails.carState(),
                 bookingClosingDetails.receptionistEmployeeId()
         );
 
-        carService.updateCarWhenBookingIsFinished(request, carForUpdateDetails);
+        carService.updateCarWhenBookingIsFinished(request, detailsForCarUpdate);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.CarService;
-import com.swiftwheelshub.dto.CarForUpdateDetails;
+import com.swiftwheelshub.dto.DetailsForCarUpdate;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
@@ -123,8 +123,8 @@ public class CarController {
     @PutMapping(path = "/{id}/update-after-return")
     @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<CarResponse> updateCarWhenBookingIsClosed(@PathVariable("id") Long id,
-                                                                    @RequestBody @Validated CarForUpdateDetails carForUpdateDetails) {
-        CarResponse updatedCarResponse = carService.updateCarWhenBookingIsClosed(id, carForUpdateDetails);
+                                                                    @RequestBody @Validated DetailsForCarUpdate detailsForCarUpdate) {
+        CarResponse updatedCarResponse = carService.updateCarWhenBookingIsClosed(id, detailsForCarUpdate);
 
         return ResponseEntity.ok(updatedCarResponse);
     }
