@@ -2,7 +2,7 @@ package com.swiftwheelshub.agency.service;
 
 import com.swiftwheelshub.agency.mapper.CarMapper;
 import com.swiftwheelshub.agency.repository.CarRepository;
-import com.swiftwheelshub.dto.DetailsForCarUpdate;
+import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
@@ -175,10 +175,10 @@ public class CarService {
                 .build();
     }
 
-    public CarResponse updateCarWhenBookingIsClosed(Long id, DetailsForCarUpdate detailsForCarUpdate) {
+    public CarResponse updateCarWhenBookingIsClosed(Long id, CarUpdateDetails carUpdateDetails) {
         Car car = findEntityById(id);
-        car.setCarStatus(CarStatus.valueOf(detailsForCarUpdate.carState().name()));
-        car.setActualBranch(getActualBranch(detailsForCarUpdate));
+        car.setCarStatus(CarStatus.valueOf(carUpdateDetails.carState().name()));
+        car.setActualBranch(getActualBranch(carUpdateDetails));
 
         Car savedCar = saveEntity(car);
 
@@ -231,8 +231,8 @@ public class CarService {
                 .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Car details not found"));
     }
 
-    private Branch getActualBranch(DetailsForCarUpdate detailsForCarUpdate) {
-        return employeeService.findEntityById(detailsForCarUpdate.receptionistEmployeeId()).getWorkingBranch();
+    private Branch getActualBranch(CarUpdateDetails carUpdateDetails) {
+        return employeeService.findEntityById(carUpdateDetails.receptionistEmployeeId()).getWorkingBranch();
     }
 
     private List<CarResponse> getCarResponseList(List<Car> cars) {

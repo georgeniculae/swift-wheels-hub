@@ -2,7 +2,7 @@ package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.CarService;
 import com.swiftwheelshub.agency.util.TestUtils;
-import com.swiftwheelshub.dto.DetailsForCarUpdate;
+import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
@@ -474,14 +474,14 @@ class CarControllerTest {
     void updateCarWhenBookingIsClosedTest_success() throws Exception {
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
-        DetailsForCarUpdate detailsForCarUpdate = DetailsForCarUpdate.builder()
+        CarUpdateDetails carUpdateDetails = CarUpdateDetails.builder()
                 .carId(1L)
                 .carState(CarState.NOT_AVAILABLE)
                 .build();
 
-        String content = TestUtils.writeValueAsString(detailsForCarUpdate);
+        String content = TestUtils.writeValueAsString(carUpdateDetails);
 
-        when(carService.updateCarWhenBookingIsClosed(anyLong(), any(DetailsForCarUpdate.class))).thenReturn(carResponse);
+        when(carService.updateCarWhenBookingIsClosed(anyLong(), any(CarUpdateDetails.class))).thenReturn(carResponse);
 
         MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}/update-after-return", 1L)
                         .with(csrf())
@@ -500,14 +500,14 @@ class CarControllerTest {
     void updateCarWhenBookingIsClosedTest_unauthorized() throws Exception {
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
-        DetailsForCarUpdate detailsForCarUpdate = DetailsForCarUpdate.builder()
+        CarUpdateDetails carUpdateDetails = CarUpdateDetails.builder()
                 .carId(1L)
                 .carState(CarState.NOT_AVAILABLE)
                 .build();
 
-        String content = TestUtils.writeValueAsString(detailsForCarUpdate);
+        String content = TestUtils.writeValueAsString(carUpdateDetails);
 
-        when(carService.updateCarWhenBookingIsClosed(anyLong(), any(DetailsForCarUpdate.class))).thenReturn(carResponse);
+        when(carService.updateCarWhenBookingIsClosed(anyLong(), any(CarUpdateDetails.class))).thenReturn(carResponse);
 
         MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}/update-after-return", 1L)
                         .with(csrf())

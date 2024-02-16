@@ -3,7 +3,7 @@ package com.swiftwheelshub.dto;
 import lombok.Builder;
 
 @Builder
-public record DetailsForCarUpdate(
+public record CarUpdateDetails(
         Long carId,
         CarState carState,
         Long receptionistEmployeeId
@@ -11,7 +11,7 @@ public record DetailsForCarUpdate(
 
     @Override
     public String toString() {
-        return "DetailsForCarUpdate{" + "\n" +
+        return "CarUpdateDetails{" + "\n" +
                 "carId=" + carId + "\n" +
                 "carState=" + carState + "\n" +
                 "receptionistEmployeeId=" + receptionistEmployeeId + "\n" +
