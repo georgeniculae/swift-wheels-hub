@@ -46,7 +46,7 @@ class UserControllerTest {
 
     @Test
     void getCurrentUserTest_success() throws Exception {
-        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserDetails.json", UserInfo.class);
+        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
         when(customerService.getCurrentUser(any(HttpServletRequest.class))).thenReturn(userInfo);
 
@@ -153,7 +153,7 @@ class UserControllerTest {
 
     @Test
     void updateUserTest_success() throws Exception {
-        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserDetails.json", UserInfo.class);
+        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
         String content = TestUtils.writeValueAsString(userInfo);
 
@@ -175,7 +175,7 @@ class UserControllerTest {
 
     @Test
     void updateUserTest_forbidden() throws Exception {
-        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserDetails.json", UserInfo.class);
+        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
         String content = TestUtils.writeValueAsString(userInfo);
 
@@ -195,7 +195,7 @@ class UserControllerTest {
     @Test
     @WithAnonymousUser
     void updateUserTest_unauthorized() throws Exception {
-        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserDetails.json", UserInfo.class);
+        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
         String content = TestUtils.writeValueAsString(userInfo);
 
@@ -214,7 +214,7 @@ class UserControllerTest {
 
     @Test
     void findUserByUsernameTest_success() throws Exception {
-        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserDetails.json", UserInfo.class);
+        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
         when(customerService.findUserByUsername(anyString())).thenReturn(userInfo);
 
