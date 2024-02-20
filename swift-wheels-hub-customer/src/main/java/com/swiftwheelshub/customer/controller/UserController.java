@@ -70,8 +70,8 @@ public class UserController {
             sentParameters = "id",
             activityDescription = "User deletion"
     )
-    public ResponseEntity<Void> deleteUserByUsername(@PathVariable("id") String id) {
-        customerService.deleteUserByUsername(id);
+    public ResponseEntity<Void> deleteUserById(@PathVariable("id") String id) {
+        customerService.deleteUserById(id);
 
         return ResponseEntity.noContent().build();
     }

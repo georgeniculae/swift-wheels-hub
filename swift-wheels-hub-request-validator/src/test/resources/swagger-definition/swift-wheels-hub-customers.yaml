@@ -70,7 +70,7 @@ paths:
     delete:
       tags:
         - user-controller
-      operationId: deleteUserByUsername
+      operationId: deleteUserById
       parameters:
         - name: username
           in: path

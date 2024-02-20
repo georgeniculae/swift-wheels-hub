@@ -264,7 +264,7 @@ class CustomerServiceTest {
     }
 
     @Test
-    void deleteUserByUsernameTest_success() {
+    void deleteUserByIdTest_success() {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
         when(keycloak.realm(anyString())).thenReturn(realmResource);
@@ -272,11 +272,11 @@ class CustomerServiceTest {
         when(usersResource.get(anyString())).thenReturn(userResource);
         doNothing().when(userResource).remove();
 
-        assertDoesNotThrow(() -> customerService.deleteUserByUsername("user"));
+        assertDoesNotThrow(() -> customerService.deleteUserById("user"));
     }
 
     @Test
-    void deleteUserByUsernameTest_userNotFound() {
+    void deleteUserByIdTest_userNotFound() {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
         when(keycloak.realm(anyString())).thenReturn(realmResource);
@@ -284,7 +284,7 @@ class CustomerServiceTest {
         when(usersResource.get(anyString())).thenReturn(userResource);
         doThrow(new NotFoundException()).when(userResource).remove();
 
-        assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.deleteUserByUsername("user"));
+        assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.deleteUserById("user"));
     }
 
     @Test

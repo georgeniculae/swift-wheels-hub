@@ -110,7 +110,7 @@ public class CustomerService {
         return userMapper.mapUserToUserDetails(userRepresentation);
     }
 
-    public void deleteUserByUsername(String id) {
+    public void deleteUserById(String id) {
         UserResource userResource = findById(id);
 
         try {
