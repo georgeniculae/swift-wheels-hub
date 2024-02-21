@@ -1,7 +1,7 @@
 package com.swiftwheelshub.requestvalidator.service;
 
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
-import com.swiftwheelshub.requestvalidator.model.SwaggerFolder;
+import com.swiftwheelshub.requestvalidator.model.SwaggerFile;
 import com.swiftwheelshub.requestvalidator.repository.SwaggerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,19 +25,19 @@ public class RedisService {
             maxAttempts = 10, backoff = @Backoff(value = 6000L),
             listeners = "loadSwaggerCacheAtStartup"
     )
-    public void addSwaggerFolderToRedis() {
+    public void addSwaggerFilesToRedis() {
         try {
             Map<String, String> swaggerIdentifierAndContent = swaggerExtractorService.getSwaggerIdentifierAndContent();
 
-            List<SwaggerFolder> swaggerFolders = swaggerIdentifierAndContent.entrySet()
+            List<SwaggerFile> swaggerFiles = swaggerIdentifierAndContent.entrySet()
                     .stream()
-                    .map(swaggerIdAndContent -> SwaggerFolder.builder()
+                    .map(swaggerIdAndContent -> SwaggerFile.builder()
                             .id(swaggerIdAndContent.getKey())
                             .swaggerContent(swaggerIdAndContent.getValue())
                             .build())
                     .toList();
 
-            swaggerRepository.saveAll(swaggerFolders);
+            swaggerRepository.saveAll(swaggerFiles);
         } catch (Exception e) {
             log.error("Error while setting swagger folder in Redis: {}", e.getMessage());
 
@@ -45,15 +45,15 @@ public class RedisService {
         }
     }
 
-    public void repopulateRedisWithSwaggerFolder(String microserviceName) {
-        SwaggerFolder swaggerFolder;
+    public void repopulateRedisWithSwaggerFiles(String microserviceName) {
+        SwaggerFile swaggerFile;
 
         try {
             swaggerRepository.deleteById(microserviceName);
             String swaggerContent = swaggerExtractorService.getSwaggerFileForMicroservice(microserviceName)
                     .get(microserviceName);
 
-            swaggerFolder = SwaggerFolder.builder()
+            swaggerFile = SwaggerFile.builder()
                     .id(microserviceName)
                     .swaggerContent(swaggerContent)
                     .build();
@@ -63,7 +63,7 @@ public class RedisService {
             throw new SwiftWheelsHubException(e);
         }
 
-        swaggerRepository.save(swaggerFolder);
+        swaggerRepository.save(swaggerFile);
     }
 
 }

@@ -8,7 +8,7 @@ import com.atlassian.oai.validator.whitelist.rule.WhitelistRules;
 import com.swiftwheelshub.dto.IncomingRequestDetails;
 import com.swiftwheelshub.dto.RequestValidationReport;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
-import com.swiftwheelshub.requestvalidator.model.SwaggerFolder;
+import com.swiftwheelshub.requestvalidator.model.SwaggerFile;
 import com.swiftwheelshub.requestvalidator.repository.SwaggerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,11 +60,11 @@ public class SwaggerRequestValidatorService {
     }
 
     private ValidationReport getValidationReport(SimpleRequest simpleRequest) {
-        SwaggerFolder swaggerFolder = swaggerRepository.findById(getMicroserviceIdentifier(simpleRequest))
+        SwaggerFile swaggerFile = swaggerRepository.findById(getMicroserviceIdentifier(simpleRequest))
                 .orElseThrow(() -> new SwiftWheelsHubException("Swagger folder does not exist"));
 
-        String swaggerFile = swaggerFolder.getSwaggerContent();
-        OpenApiInteractionValidator validator = OpenApiInteractionValidator.createForInlineApiSpecification(swaggerFile)
+        String swaggerContent = swaggerFile.getSwaggerContent();
+        OpenApiInteractionValidator validator = OpenApiInteractionValidator.createForInlineApiSpecification(swaggerContent)
                 .withWhitelist(getWhitelist())
                 .build();
 

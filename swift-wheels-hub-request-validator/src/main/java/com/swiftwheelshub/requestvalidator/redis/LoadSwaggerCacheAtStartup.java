@@ -14,8 +14,8 @@ public class LoadSwaggerCacheAtStartup implements RetryListener {
     private final RedisService redisService;
 
     @EventListener(ApplicationStartedEvent.class)
-    public void loadSwaggerFolderCache() {
-        redisService.addSwaggerFolderToRedis();
+    public void loadSwaggerFilesCache() {
+        redisService.addSwaggerFilesToRedis();
     }
 
 }

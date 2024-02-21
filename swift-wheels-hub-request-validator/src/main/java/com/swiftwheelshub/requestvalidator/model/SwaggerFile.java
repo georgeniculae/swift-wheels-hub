@@ -9,12 +9,12 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 
-@RedisHash("SwaggerFolder")
+@RedisHash("SwaggerFile")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SwaggerFolder implements Serializable {
+public class SwaggerFile implements Serializable {
 
     @Id
     private String id;

@@ -94,7 +94,7 @@ class RequestValidatorControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void invalidateSwaggerCacheTest_success() throws Exception {
-        doNothing().when(redisService).repopulateRedisWithSwaggerFolder(anyString());
+        doNothing().when(redisService).repopulateRedisWithSwaggerFiles(anyString());
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/invalidate/{microserviceName}", "agency")
                         .with(csrf())
@@ -110,7 +110,7 @@ class RequestValidatorControllerTest {
     @Test
     @WithAnonymousUser
     void invalidateSwaggerCacheTest_unauthorized() throws Exception {
-        doNothing().when(redisService).repopulateRedisWithSwaggerFolder(anyString());
+        doNothing().when(redisService).repopulateRedisWithSwaggerFiles(anyString());
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/invalidate/{microserviceName}", "agency")
                         .with(csrf())
