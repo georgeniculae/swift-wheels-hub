@@ -1,7 +1,7 @@
 package com.swiftwheelshub.requestvalidator.service;
 
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
-import io.swagger.v3.parser.OpenAPIV3Parser;
+import com.swiftwheelshub.requestvalidator.util.TestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,18 +43,17 @@ class SwaggerExtractorServiceTest {
 
     @BeforeEach
     public void setupUrls() {
-        ReflectionTestUtils.setField(swaggerExtractorService, "agencyApiDocUrl", "agency");
-        ReflectionTestUtils.setField(swaggerExtractorService, "bookingApiDocUrl", "booking");
-        ReflectionTestUtils.setField(swaggerExtractorService, "customerApiDocUrl", "customer");
-        ReflectionTestUtils.setField(swaggerExtractorService, "expenseApiDocUrl", "expense");
+        ReflectionTestUtils.setField(swaggerExtractorService, "agencyApiDocUrl", "/agency");
+        ReflectionTestUtils.setField(swaggerExtractorService, "bookingApiDocUrl", "/booking");
+        ReflectionTestUtils.setField(swaggerExtractorService, "customerApiDocUrl", "/customer");
+        ReflectionTestUtils.setField(swaggerExtractorService, "expenseApiDocUrl", "/expense");
     }
 
     @Test
     @SuppressWarnings("unchecked")
     void getSwaggerIdentifierAndContent_success() {
-        String content = new OpenAPIV3Parser()
-                .read("src/test/resources/swagger-definition/swift-wheels-hub-agency.yaml")
-                .toString();
+        String content =
+                TestUtils.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
 
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
@@ -81,9 +80,8 @@ class SwaggerExtractorServiceTest {
     @Test
     @SuppressWarnings("unchecked")
     void getSwaggerFileForMicroservice_agency_success() {
-        String content = new OpenAPIV3Parser()
-                .read("src/test/resources/swagger-definition/swift-wheels-hub-agency.yaml")
-                .toString();
+        String content =
+                TestUtils.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
 
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
@@ -98,9 +96,8 @@ class SwaggerExtractorServiceTest {
     @Test
     @SuppressWarnings("unchecked")
     void getSwaggerFileForMicroservice_bookings_success() {
-        String content = new OpenAPIV3Parser()
-                .read("src/test/resources/swagger-definition/swift-wheels-hub-bookings.yaml")
-                .toString();
+        String content =
+                TestUtils.getResourceAsJson("/data/SwiftWheelsHubBookingsSwagger.json", String.class);
 
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
@@ -115,9 +112,8 @@ class SwaggerExtractorServiceTest {
     @Test
     @SuppressWarnings("unchecked")
     void getSwaggerFileForMicroservice_customers_success() {
-        String content = new OpenAPIV3Parser()
-                .read("src/test/resources/swagger-definition/swift-wheels-hub-bookings.yaml")
-                .toString();
+        String content =
+                TestUtils.getResourceAsJson("/data/SwiftWheelsHubCustomersSwagger.json", String.class);
 
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
@@ -132,9 +128,8 @@ class SwaggerExtractorServiceTest {
     @Test
     @SuppressWarnings("unchecked")
     void getSwaggerFileForMicroservice_expense_success() {
-        String content = new OpenAPIV3Parser()
-                .read("src/test/resources/swagger-definition/swift-wheels-hub-expense.yaml")
-                .toString();
+        String content =
+                TestUtils.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
 
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
