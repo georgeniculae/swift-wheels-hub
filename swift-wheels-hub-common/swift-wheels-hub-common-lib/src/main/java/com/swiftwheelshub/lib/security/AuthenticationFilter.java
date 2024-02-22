@@ -32,12 +32,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        String authorization = request.getHeader(X_API_KEY);
+        String apikey = request.getHeader(X_API_KEY);
 
-        if (ObjectUtils.isNotEmpty(authorization)) {
+        if (ObjectUtils.isNotEmpty(apikey)) {
             List<SimpleGrantedAuthority> roles = getRoles(request);
 
-            ApiKeyAuthenticationToken apiKeyAuthenticationToken = new ApiKeyAuthenticationToken(roles, authorization);
+            ApiKeyAuthenticationToken apiKeyAuthenticationToken = new ApiKeyAuthenticationToken(roles, apikey);
             Authentication authenticate = authenticationManager.authenticate(apiKeyAuthenticationToken);
             SecurityContextHolder.getContext().setAuthentication(authenticate);
         }
