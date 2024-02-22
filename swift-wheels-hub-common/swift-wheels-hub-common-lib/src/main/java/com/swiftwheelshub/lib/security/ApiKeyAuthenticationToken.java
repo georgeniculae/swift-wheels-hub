@@ -7,7 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.List;
 
 @Transient
-public class ApiKeyAuthenticationToken extends AbstractAuthenticationToken {
+public final class ApiKeyAuthenticationToken extends AbstractAuthenticationToken {
 
     private final String apiKey;
 
