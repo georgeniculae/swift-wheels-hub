@@ -94,13 +94,6 @@ logging:
           csrf:
             CsrfFilter: DEBUG
 
-token:
-  signing-key: ${TOKEN_SIGNING_KEY}
-  expiration: 30
-
 apikey-secret: ${API_KEY_SECRET}
-
-keycloak:
-  clientId: admin-cli
 
 request-validator-url: lb://swift-wheels-hub-request-validator/request-validator/validate
