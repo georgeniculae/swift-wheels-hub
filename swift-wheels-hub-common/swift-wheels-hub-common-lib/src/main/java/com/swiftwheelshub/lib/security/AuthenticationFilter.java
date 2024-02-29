@@ -46,10 +46,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     }
 
     private List<SimpleGrantedAuthority> getRoles(HttpServletRequest request) {
-        if (ObjectUtils.isEmpty(request.getHeader(X_ROLES))) {
-            return List.of();
-        }
+        return ObjectUtils.isEmpty(request.getHeader(X_ROLES)) ? List.of() : getRolesList(request);
+    }
 
+    private List<SimpleGrantedAuthority> getRolesList(HttpServletRequest request) {
         return Collections.list(request.getHeaders(X_ROLES))
                 .stream()
                 .map(SimpleGrantedAuthority::new)
