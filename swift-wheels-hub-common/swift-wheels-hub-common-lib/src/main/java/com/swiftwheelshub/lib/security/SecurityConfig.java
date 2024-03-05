@@ -25,7 +25,17 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request -> request.anyRequest().authenticated())
+                .authorizeHttpRequests(request -> request.requestMatchers("/agency/definition/**",
+                                "/bookings/definition/**",
+                                "/customers/definition/**",
+                                "/customers/register",
+                                "/expense/definition/**",
+                                "/actuator/**").permitAll()
+                        .requestMatchers("/agency/**",
+                                "/bookings/**",
+                                "/customers/**",
+                                "/expense/**").authenticated()
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(authenticationFilter, AnonymousAuthenticationFilter.class)
                 .build();
