@@ -34,6 +34,19 @@ class ExceptionHandlingTest {
     }
 
     @Test
+    void handleExceptionTest_instanceOfErrorResponse() {
+        SwiftWheelsHubResponseStatusException exception =
+                new SwiftWheelsHubResponseStatusException(HttpStatus.NOT_FOUND, "Not found");
+
+        MockHttpServletRequest servletRequest = new MockHttpServletRequest();
+        WebRequest webRequest = new ServletWebRequest(servletRequest);
+
+        ResponseEntity<Map<String, Object>> responseEntity = exceptionHandling.handleException(exception, webRequest);
+
+        assertEquals(404, responseEntity.getStatusCode().value());
+    }
+
+    @Test
     void handleNotFoundExceptionTest() {
         SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException =
                 new SwiftWheelsHubNotFoundException("Resource not found");

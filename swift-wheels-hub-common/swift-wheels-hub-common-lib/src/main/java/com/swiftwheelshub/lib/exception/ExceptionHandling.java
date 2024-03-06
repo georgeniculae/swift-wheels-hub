@@ -7,6 +7,7 @@ import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -22,12 +23,16 @@ public class ExceptionHandling extends DefaultErrorAttributes {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(Exception e, WebRequest request) {
-        HttpStatus internalServerError = HttpStatus.INTERNAL_SERVER_ERROR;
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        if (e instanceof ErrorResponse errorResponse) {
+            status = HttpStatus.valueOf(errorResponse.getStatusCode().value());
+        }
 
         Map<String, Object> errorAttributes =
-                getErrorAttributesMap(request, e.getMessage(), e.getLocalizedMessage(), internalServerError);
+                getErrorAttributesMap(request, e.getMessage(), e.getLocalizedMessage(), status);
 
-        return ResponseEntity.status(internalServerError).body(errorAttributes);
+        return ResponseEntity.status(status).body(errorAttributes);
     }
 
     @ExceptionHandler(SwiftWheelsHubNotFoundException.class)
@@ -53,11 +58,11 @@ public class ExceptionHandling extends DefaultErrorAttributes {
     @ExceptionHandler(SwiftWheelsHubResponseStatusException.class)
     public ResponseEntity<Map<String, Object>> handleSwiftWheelsHubResponseStatusException(SwiftWheelsHubResponseStatusException e,
                                                                                            WebRequest request) {
-        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        HttpStatus status = HttpStatus.valueOf(e.getStatusCode().value());
 
-        Map<String, Object> errorAttributes = getErrorAttributesMap(request, e.getMessage(), e.getReason(), badRequest);
+        Map<String, Object> errorAttributes = getErrorAttributesMap(request, e.getMessage(), e.getReason(), status);
 
-        return ResponseEntity.status(badRequest).body(errorAttributes);
+        return ResponseEntity.status(status).body(errorAttributes);
     }
 
     private Map<String, Object> getErrorAttributesMap(WebRequest webRequest, String errorMessage, String cause,
