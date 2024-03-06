@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.ErrorResponse;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -258,6 +259,13 @@ public class CustomerService {
     private void handleRestEasyCall(Exception e) {
         if (e instanceof NotFoundException) {
             throw new SwiftWheelsHubNotFoundException("User not found");
+        }
+
+        if (e instanceof ErrorResponse errorResponse) {
+            throw new SwiftWheelsHubResponseStatusException(
+                    HttpStatusCode.valueOf(errorResponse.getStatusCode().value()),
+                    e.getMessage()
+            );
         }
 
         throw new SwiftWheelsHubException(e);
