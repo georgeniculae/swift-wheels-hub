@@ -1,6 +1,7 @@
 package com.swiftwheelshub.expense.service;
 
 import com.swiftwheelshub.dto.InvoiceResponse;
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -31,7 +32,7 @@ public class EmailNotificationProducer {
                         return;
                     }
 
-                    log.error("Unable to send invoice=[" + invoiceResponse + "] due to : " + e.getMessage());
+                    throw new SwiftWheelsHubException("Unable to send invoice=[" + invoiceResponse + "] due to : " + e.getMessage());
                 });
     }
 
