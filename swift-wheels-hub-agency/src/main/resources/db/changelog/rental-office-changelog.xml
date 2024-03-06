@@ -22,7 +22,7 @@
             <column name="contact_address" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="logo_type" type="varchar(255)">
+            <column name="phone_number" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -39,13 +39,13 @@
         <insert tableName="rental_office">
             <column name="name" value="Rental Office 1"/>
             <column name="contact_address" value="Ploiesti"/>
-            <column name="logo_type" value="logo 1"/>
+            <column name="phone_number" value="logo 1"/>
         </insert>
 
         <insert tableName="rental_office">
             <column name="name" value="Rental Office 2"/>
             <column name="contact_address" value="Bucuresti"/>
-            <column name="logo_type" value="logo 2"/>
+            <column name="phone_number" value="logo 2"/>
         </insert>
     </changeSet>
 </databaseChangeLog>

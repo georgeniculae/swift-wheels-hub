@@ -52,7 +52,7 @@ public class RentalOfficeService {
 
         existingRentalOffice.setName(updatedRentalOfficeRequest.name());
         existingRentalOffice.setContactAddress(updatedRentalOfficeRequest.contactAddress());
-        existingRentalOffice.setLogoType(updatedRentalOfficeRequest.logoType());
+        existingRentalOffice.setPhoneNumber(updatedRentalOfficeRequest.phoneNumber());
 
         RentalOffice savedRentalOffice = saveEntity(existingRentalOffice);
 

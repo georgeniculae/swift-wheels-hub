@@ -24,6 +24,6 @@ public class RentalOffice extends BaseEntity {
     @NotEmpty(message = "Contact address domain cannot be empty")
     private String contactAddress;
 
-    private String logoType;
+    private String phoneNumber;
 
 }

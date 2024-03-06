@@ -16,7 +16,7 @@
       "id": 1,
       "name": "Test Rental Office",
       "contactAddress": "Ploiesti",
-      "logoType": ""
+      "phoneNumber": ""
     }
   },
   "actualBranch": {
@@ -27,7 +27,7 @@
       "id": 1,
       "name": "Test Rental Office",
       "contactAddress": "Ploiesti",
-      "logoType": ""
+      "phoneNumber": ""
     }
   }
 }
