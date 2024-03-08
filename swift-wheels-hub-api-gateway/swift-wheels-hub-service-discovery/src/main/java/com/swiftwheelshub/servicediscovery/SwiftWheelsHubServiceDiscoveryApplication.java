@@ -1,4 +1,4 @@
-package com.swiftwheelshub.eurekaservicediscovery;
+package com.swiftwheelshub.servicediscovery;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,10 +6,10 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
 @SpringBootApplication
 @EnableEurekaServer
-public class SwiftWheelsHubEurekaServiceDiscoveryApplication {
+public class SwiftWheelsHubServiceDiscoveryApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SwiftWheelsHubEurekaServiceDiscoveryApplication.class, args);
+        SpringApplication.run(SwiftWheelsHubServiceDiscoveryApplication.class, args);
     }
 
 }

@@ -18,7 +18,7 @@
 
     <modules>
         <module>swift-wheels-hub-cloud-gateway</module>
-        <module>swift-wheels-hub-eureka-service-discovery</module>
+        <module>swift-wheels-hub-service-discovery</module>
     </modules>
 
 </project>

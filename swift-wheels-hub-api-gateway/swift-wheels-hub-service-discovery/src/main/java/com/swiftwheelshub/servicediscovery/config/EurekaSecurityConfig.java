@@ -1,4 +1,4 @@
-package com.swiftwheelshub.eurekaservicediscovery.config;
+package com.swiftwheelshub.servicediscovery.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
