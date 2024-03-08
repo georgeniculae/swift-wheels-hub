@@ -2,10 +2,10 @@ package com.swiftwheelshub.agency.service;
 
 import com.swiftwheelshub.agency.mapper.CarMapper;
 import com.swiftwheelshub.agency.repository.CarRepository;
-import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
+import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.entity.BodyType;
 import com.swiftwheelshub.entity.Branch;
@@ -134,47 +134,6 @@ public class CarService {
         }
     }
 
-    private List<Car> getCarsFromSheet(Sheet sheet) {
-        DataFormatter dataFormatter = new DataFormatter();
-        List<Car> cars = new ArrayList<>();
-
-        for (int index = 1; index <= sheet.getLastRowNum(); index++) {
-            List<Object> values = new ArrayList<>();
-
-            Row currentRow = sheet.getRow(index);
-            Iterator<Cell> cellIterator = currentRow.cellIterator();
-
-            while (cellIterator.hasNext()) {
-                Cell cell = cellIterator.next();
-
-                switch (cell.getCellType()) {
-                    case STRING -> values.add(cell.getStringCellValue());
-                    case NUMERIC -> values.add(dataFormatter.formatCellValue(cell));
-                }
-            }
-
-            cars.add(generateCar(values));
-        }
-
-        return cars;
-    }
-
-    private Car generateCar(List<Object> values) {
-        return Car.builder()
-                .make((String) values.get(CarFields.MAKE.ordinal()))
-                .model((String) values.get(CarFields.MODEL.ordinal()))
-                .bodyType(BodyType.valueOf(((String) values.get(CarFields.BODY_TYPE.ordinal())).toUpperCase()))
-                .yearOfProduction(Integer.parseInt((String) values.get(CarFields.YEAR_OF_PRODUCTION.ordinal())))
-                .color((String) values.get(CarFields.COLOR.ordinal()))
-                .mileage(Integer.parseInt((String) values.get(CarFields.MILEAGE.ordinal())))
-                .carStatus(CarStatus.valueOf(((String) values.get(CarFields.CAR_STATUS.ordinal())).toUpperCase()))
-                .amount(Double.valueOf((String) values.get(CarFields.AMOUNT.ordinal())))
-                .originalBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ORIGINAL_BRANCH.ordinal()))))
-                .actualBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ACTUAL_BRANCH.ordinal()))))
-                .urlOfImage((String) values.get(CarFields.URL_OF_IMAGE.ordinal()))
-                .build();
-    }
-
     public CarResponse updateCarWhenBookingIsClosed(Long id, CarUpdateDetails carUpdateDetails) {
         Car car = findEntityById(id);
         car.setCarStatus(CarStatus.valueOf(carUpdateDetails.carState().name()));
@@ -239,6 +198,47 @@ public class CarService {
         return cars.stream()
                 .map(carMapper::mapEntityToDto)
                 .toList();
+    }
+
+    private List<Car> getCarsFromSheet(Sheet sheet) {
+        DataFormatter dataFormatter = new DataFormatter();
+        List<Car> cars = new ArrayList<>();
+
+        for (int index = 1; index <= sheet.getLastRowNum(); index++) {
+            List<Object> values = new ArrayList<>();
+
+            Row currentRow = sheet.getRow(index);
+            Iterator<Cell> cellIterator = currentRow.cellIterator();
+
+            while (cellIterator.hasNext()) {
+                Cell cell = cellIterator.next();
+
+                switch (cell.getCellType()) {
+                    case STRING -> values.add(cell.getStringCellValue());
+                    case NUMERIC -> values.add(dataFormatter.formatCellValue(cell));
+                }
+            }
+
+            cars.add(generateCar(values));
+        }
+
+        return cars;
+    }
+
+    private Car generateCar(List<Object> values) {
+        return Car.builder()
+                .make((String) values.get(CarFields.MAKE.ordinal()))
+                .model((String) values.get(CarFields.MODEL.ordinal()))
+                .bodyType(BodyType.valueOf(((String) values.get(CarFields.BODY_TYPE.ordinal())).toUpperCase()))
+                .yearOfProduction(Integer.parseInt((String) values.get(CarFields.YEAR_OF_PRODUCTION.ordinal())))
+                .color((String) values.get(CarFields.COLOR.ordinal()))
+                .mileage(Integer.parseInt((String) values.get(CarFields.MILEAGE.ordinal())))
+                .carStatus(CarStatus.valueOf(((String) values.get(CarFields.CAR_STATUS.ordinal())).toUpperCase()))
+                .amount(Double.valueOf((String) values.get(CarFields.AMOUNT.ordinal())))
+                .originalBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ORIGINAL_BRANCH.ordinal()))))
+                .actualBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ACTUAL_BRANCH.ordinal()))))
+                .urlOfImage((String) values.get(CarFields.URL_OF_IMAGE.ordinal()))
+                .build();
     }
 
 }
