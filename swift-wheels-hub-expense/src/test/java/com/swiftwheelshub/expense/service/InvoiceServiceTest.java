@@ -179,7 +179,7 @@ class InvoiceServiceTest {
 
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
         when(bookingService.findBookingById(any(HttpServletRequest.class), anyLong())).thenReturn(bookingResponse);
-        doNothing().when(revenueService).saveInvoiceAndRevenueTransactional(any(Invoice.class));
+        doNothing().when(revenueService).saveInvoiceAndRevenue(any(Invoice.class));
         when(invoiceRepository.saveAndFlush(any(Invoice.class))).thenReturn(invoice);
         doNothing().when(bookingService).closeBooking(any(HttpServletRequest.class), any(BookingClosingDetails.class));
 

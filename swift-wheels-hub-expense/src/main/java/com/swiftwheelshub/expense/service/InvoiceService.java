@@ -108,7 +108,7 @@ public class InvoiceService {
             BookingResponse bookingResponse = bookingService.findBookingById(request, invoiceRequest.bookingId());
             Invoice existingInvoiceUpdated = updateInvoiceWithBookingDetails(bookingResponse, invoiceRequest, existingInvoice);
 
-            revenueService.saveInvoiceAndRevenueTransactional(existingInvoiceUpdated);
+            revenueService.saveInvoiceAndRevenue(existingInvoiceUpdated);
             savedInvoice = invoiceRepository.saveAndFlush(existingInvoiceUpdated);
 
             bookingClosingDetails = getBookingClosingDetails(invoiceRequest, invoiceRequest.receptionistEmployeeId());
