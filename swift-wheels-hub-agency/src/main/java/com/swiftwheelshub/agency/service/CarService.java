@@ -41,7 +41,7 @@ public class CarService {
     private final CarMapper carMapper;
 
     public List<CarResponse> findAllCars() {
-        return getCarResponseList(carRepository.findAll());
+        return getCarResponses(carRepository.findAll());
     }
 
     public CarResponse findCarById(Long id) {
@@ -58,7 +58,7 @@ public class CarService {
     }
 
     public List<CarResponse> findCarsByMake(String make) {
-        return getCarResponseList(carRepository.findCarsByMake(make));
+        return getCarResponses(carRepository.findCarsByMake(make));
     }
 
     public CarResponse saveCar(CarRequest carRequest) {
@@ -76,7 +76,7 @@ public class CarService {
                 .map(carMapper::mapDtoToEntity)
                 .toList();
 
-        return getCarResponseList(saveAllEntities(cars));
+        return getCarResponses(saveAllEntities(cars));
     }
 
     public CarResponse updateCar(Long id, CarRequest updatedCarRequest) {
@@ -128,7 +128,7 @@ public class CarService {
 
             List<Car> cars = getCarsFromSheet(sheet);
 
-            return getCarResponseList(carRepository.saveAllAndFlush(cars));
+            return getCarResponses(carRepository.saveAllAndFlush(cars));
         } catch (Exception e) {
             throw new SwiftWheelsHubException(e);
         }
@@ -194,12 +194,6 @@ public class CarService {
         return employeeService.findEntityById(carUpdateDetails.receptionistEmployeeId()).getWorkingBranch();
     }
 
-    private List<CarResponse> getCarResponseList(List<Car> cars) {
-        return cars.stream()
-                .map(carMapper::mapEntityToDto)
-                .toList();
-    }
-
     private List<Car> getCarsFromSheet(Sheet sheet) {
         DataFormatter dataFormatter = new DataFormatter();
         List<Car> cars = new ArrayList<>();
@@ -240,5 +234,12 @@ public class CarService {
                 .urlOfImage((String) values.get(CarFields.URL_OF_IMAGE.ordinal()))
                 .build();
     }
+
+    private List<CarResponse> getCarResponses(List<Car> cars) {
+        return cars.stream()
+                .map(carMapper::mapEntityToDto)
+                .toList();
+    }
+
 
 }
