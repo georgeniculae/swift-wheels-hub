@@ -1,6 +1,7 @@
 package com.swiftwheelshub.booking.service;
 
 import com.swiftwheelshub.dto.BookingResponse;
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -37,7 +38,7 @@ public class BookingProducerService {
                         return;
                     }
 
-                    log.error("Unable to send message=[" + bookingResponse + "] due to : " + e.getMessage());
+                    throw new SwiftWheelsHubException("Unable to send message=[" + bookingResponse + "] due to : " + e.getMessage());
                 });
     }
 
@@ -51,7 +52,7 @@ public class BookingProducerService {
                         return;
                     }
 
-                    log.error("Unable to send message=[" + bookingResponse + "] due to : " + e.getMessage());
+                    throw new SwiftWheelsHubException("Unable to send message=[" + bookingResponse + "] due to : " + e.getMessage());
                 });
     }
 
@@ -65,7 +66,7 @@ public class BookingProducerService {
                         return;
                     }
 
-                    log.error("Unable to send id=[" + bookingId + "] for deleted booking due to : " + e.getMessage());
+                    throw new SwiftWheelsHubException("Unable to send id=[" + bookingId + "] for deleted booking due to : " + e.getMessage());
                 });
     }
 
