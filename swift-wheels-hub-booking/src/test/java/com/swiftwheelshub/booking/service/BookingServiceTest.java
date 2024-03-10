@@ -211,4 +211,18 @@ class BookingServiceTest {
         assertEquals("Booking from date: 2050-02-20 does not exist", swiftWheelsHubNotFoundException.getMessage());
     }
 
+    @Test
+    void deleteBookingByIdTest_success() {
+        Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
+
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader("X-USERNAME", "user");
+
+        when(bookingRepository.findById(anyLong())).thenReturn(Optional.ofNullable(booking));
+        doNothing().when(bookingRepository).deleteById(anyLong());
+        doNothing().when(carService).changeCarStatus(any(HttpServletRequest.class), anyLong(), any(CarState.class));
+
+        bookingService.deleteBookingById(httpServletRequest, 1L);
+    }
+
 }
