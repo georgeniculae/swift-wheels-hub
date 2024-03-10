@@ -56,6 +56,76 @@ class InvoiceServiceTest {
     private InvoiceMapper invoiceMapper = new InvoiceMapperImpl();
 
     @Test
+    void findAllInvoicesTest_success() {
+        Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
+
+        when(invoiceRepository.findAll()).thenReturn(List.of(invoice));
+
+        assertDoesNotThrow(() -> invoiceService.findAllInvoices());
+        List<InvoiceResponse> invoiceResponses = invoiceService.findAllInvoices();
+
+        AssertionUtils.assertInvoiceResponse(invoice, invoiceResponses.getFirst());
+    }
+
+    @Test
+    void findAllActiveInvoicesTest_success() {
+        Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
+
+        when(invoiceRepository.findAllActive()).thenReturn(List.of(invoice));
+
+        assertDoesNotThrow(() -> invoiceService.findAllInvoices());
+        List<InvoiceResponse> allActiveInvoices = invoiceService.findAllActiveInvoices();
+
+        AssertionUtils.assertInvoiceResponse(invoice, allActiveInvoices.getFirst());
+    }
+
+    @Test
+    void findInvoiceByIdTest_success() {
+        Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
+
+        when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
+
+        assertDoesNotThrow(() -> invoiceService.findInvoiceById(1L));
+        InvoiceResponse invoiceResponse = invoiceService.findInvoiceById(1L);
+
+        AssertionUtils.assertInvoiceResponse(invoice, invoiceResponse);
+    }
+
+    @Test
+    void findInvoiceByIdTest_errorOnFindingById() {
+        when(invoiceRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException =
+                assertThrows(SwiftWheelsHubNotFoundException.class, () -> invoiceService.findInvoiceById(1L));
+
+        assertNotNull(swiftWheelsHubNotFoundException);
+        assertEquals("Invoice with id 1 does not exist", swiftWheelsHubNotFoundException.getMessage());
+    }
+
+    @Test
+    void findInvoiceByFilterTest_success() {
+        Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
+
+        when(invoiceRepository.findByComments(anyString())).thenReturn(List.of(invoice));
+
+        List<InvoiceResponse> invoiceResponses =
+                assertDoesNotThrow(() -> invoiceService.findInvoiceByComments("comment"));
+
+        AssertionUtils.assertInvoiceResponse(invoice, invoiceResponses.getFirst());
+    }
+
+    @Test
+    void findAllInvoicesByCustomerIdTest_success() {
+        Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
+
+        when(invoiceRepository.findByCustomerUsername(anyString())).thenReturn(List.of(invoice));
+
+        List<InvoiceResponse> invoices = invoiceService.findAllInvoicesByCustomerUsername("user");
+
+        AssertionUtils.assertInvoiceResponse(invoice, invoices.getFirst());
+    }
+
+    @Test
     void saveInvoice_success() {
         BookingResponse bookingResponse =
                 TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
@@ -116,65 +186,6 @@ class InvoiceServiceTest {
         assertDoesNotThrow(() -> invoiceService.closeInvoice(request, 1L, invoiceRequest));
 
         verify(invoiceMapper, times(1)).mapEntityToDto(any(Invoice.class));
-    }
-
-    @Test
-    void findAllInvoicesTest_success() {
-        Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
-
-        when(invoiceRepository.findAll()).thenReturn(List.of(invoice));
-
-        assertDoesNotThrow(() -> invoiceService.findAllInvoices());
-        List<InvoiceResponse> invoiceResponses = invoiceService.findAllInvoices();
-
-        AssertionUtils.assertInvoiceResponse(invoice, invoiceResponses.getFirst());
-    }
-
-    @Test
-    void findAllActiveInvoicesTest_success() {
-        Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
-
-        when(invoiceRepository.findAllActive()).thenReturn(List.of(invoice));
-
-        assertDoesNotThrow(() -> invoiceService.findAllInvoices());
-        List<InvoiceResponse> allActiveInvoices = invoiceService.findAllActiveInvoices();
-
-        AssertionUtils.assertInvoiceResponse(invoice, allActiveInvoices.getFirst());
-    }
-
-    @Test
-    void findInvoiceByIdTest_success() {
-        Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
-
-        when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
-
-        assertDoesNotThrow(() -> invoiceService.findInvoiceById(1L));
-        InvoiceResponse invoiceResponse = invoiceService.findInvoiceById(1L);
-
-        AssertionUtils.assertInvoiceResponse(invoice, invoiceResponse);
-    }
-
-    @Test
-    void findInvoiceByIdTest_errorOnFindingById() {
-        when(invoiceRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-        SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException =
-                assertThrows(SwiftWheelsHubNotFoundException.class, () -> invoiceService.findInvoiceById(1L));
-
-        assertNotNull(swiftWheelsHubNotFoundException);
-        assertEquals("Invoice with id 1 does not exist", swiftWheelsHubNotFoundException.getMessage());
-    }
-
-    @Test
-    void findInvoiceByFilterTest_success() {
-        Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
-
-        when(invoiceRepository.findByComments(anyString())).thenReturn(List.of(invoice));
-
-        List<InvoiceResponse> invoiceResponses =
-                assertDoesNotThrow(() -> invoiceService.findInvoiceByComments("comment"));
-
-        AssertionUtils.assertInvoiceResponse(invoice, invoiceResponses.getFirst());
     }
 
     @Test

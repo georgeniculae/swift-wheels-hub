@@ -52,7 +52,7 @@ public class InvoiceController {
     @GetMapping(path = "/by-customer/{customerUsername}")
     @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<List<InvoiceResponse>> findAllInvoicesByCustomerId(@PathVariable("customerUsername") String customerUsername) {
-        List<InvoiceResponse> allInvoiceResponses = invoiceService.findAllInvoicesByCustomerId(customerUsername);
+        List<InvoiceResponse> allInvoiceResponses = invoiceService.findAllInvoicesByCustomerUsername(customerUsername);
 
         return ResponseEntity.ok(allInvoiceResponses);
     }

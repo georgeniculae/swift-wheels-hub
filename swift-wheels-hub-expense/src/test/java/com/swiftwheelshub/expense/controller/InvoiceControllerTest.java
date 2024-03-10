@@ -151,11 +151,11 @@ public class InvoiceControllerTest {
 
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
-    void findAllInvoicesByCustomerIdTest_success() throws Exception {
+    void findAllInvoicesByCustomerUsernameTest_success() throws Exception {
         InvoiceResponse invoiceResponse =
                 TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
-        when(invoiceService.findAllInvoicesByCustomerId(anyString())).thenReturn(List.of(invoiceResponse));
+        when(invoiceService.findAllInvoicesByCustomerUsername(anyString())).thenReturn(List.of(invoiceResponse));
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/by-customer/{customerUsername}", "user")
                         .with(csrf())
@@ -170,11 +170,11 @@ public class InvoiceControllerTest {
 
     @Test
     @WithAnonymousUser
-    void findAllInvoicesByCustomerIdTest_unauthorized() throws Exception {
+    void findAllInvoicesByCustomerUsernameTest_unauthorized() throws Exception {
         InvoiceResponse invoiceResponse =
                 TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
-        when(invoiceService.findAllInvoicesByCustomerId(anyString())).thenReturn(List.of(invoiceResponse));
+        when(invoiceService.findAllInvoicesByCustomerUsername(anyString())).thenReturn(List.of(invoiceResponse));
 
         mockMvc.perform(get(PATH + "/by-customer/{customerUsername}", "user")
                         .with(csrf())

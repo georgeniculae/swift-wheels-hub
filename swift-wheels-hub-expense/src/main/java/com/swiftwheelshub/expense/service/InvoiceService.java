@@ -45,7 +45,7 @@ public class InvoiceService {
                 .toList();
     }
 
-    public List<InvoiceResponse> findAllInvoicesByCustomerId(String customerUsername) {
+    public List<InvoiceResponse> findAllInvoicesByCustomerUsername(String customerUsername) {
         return invoiceRepository.findByCustomerUsername(customerUsername)
                 .stream()
                 .map(invoiceMapper::mapEntityToDto)
