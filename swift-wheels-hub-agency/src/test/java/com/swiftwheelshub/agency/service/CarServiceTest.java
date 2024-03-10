@@ -7,8 +7,11 @@ import com.swiftwheelshub.agency.util.AssertionUtils;
 import com.swiftwheelshub.agency.util.TestUtils;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
+import com.swiftwheelshub.dto.CarState;
+import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.entity.Branch;
 import com.swiftwheelshub.entity.Car;
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,8 +19,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -47,6 +57,38 @@ class CarServiceTest {
 
     @Spy
     private CarMapper carMapper = new CarMapperImpl();
+
+    @Test
+    void findAllCarsTest_success() {
+        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
+
+        when(carRepository.findAll()).thenReturn(List.of(car));
+
+        List<CarResponse> carResponses = assertDoesNotThrow(() -> carService.findAllCars());
+        AssertionUtils.assertCarResponse(car, carResponses.getFirst());
+    }
+
+    @Test
+    void findCarByFilterTest_success() {
+        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
+
+        when(carRepository.findByFilter(anyString())).thenReturn(Optional.of(car));
+
+        CarResponse carResponse = assertDoesNotThrow(() -> carService.findCarByFilter("Test"));
+
+        AssertionUtils.assertCarResponse(car, carResponse);
+    }
+
+    @Test
+    void findCarByFilterTest_errorOnFindingByFilter() {
+        when(carRepository.findByFilter(anyString())).thenReturn(Optional.empty());
+
+        SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException =
+                assertThrows(SwiftWheelsHubNotFoundException.class, () -> carService.findCarByFilter("Test"));
+
+        assertNotNull(swiftWheelsHubNotFoundException);
+        assertEquals("Car with filter: Test does not exist", swiftWheelsHubNotFoundException.getMessage());
+    }
 
     @Test
     void findCarByIdTest_success() {
@@ -118,40 +160,71 @@ class CarServiceTest {
         when(carRepository.findById(anyLong())).thenReturn(Optional.of(car));
         when(carRepository.saveAndFlush(any(Car.class))).thenReturn(car);
 
-        CarResponse updatedCarResponse = assertDoesNotThrow(() -> carService.updateCar(1L, carRequest));
+        CarResponse updatedCarResponse = carService.updateCar(1L, carRequest);
         assertNotNull(updatedCarResponse);
     }
 
     @Test
-    void findAllCarsTest_success() {
+    void uploadCarsTest_success() throws IOException {
+        File excelFile = new File("src/test/resources/file/Cars.xlsx");
+        InputStream stream = new FileInputStream(excelFile);
+        MockMultipartFile file = new MockMultipartFile("file", excelFile.getName(), MediaType.ALL_VALUE, stream);
+
         Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
 
-        when(carRepository.findAll()).thenReturn(List.of(car));
+        when(carRepository.saveAllAndFlush(anyList())).thenReturn(List.of(car));
 
-        List<CarResponse> carResponses = assertDoesNotThrow(() -> carService.findAllCars());
+        List<CarResponse> carResponses = carService.uploadCars(file);
         AssertionUtils.assertCarResponse(car, carResponses.getFirst());
     }
 
     @Test
-    void findCarByFilterTest_success() {
-        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
+    void uploadCarsTest_errorWhileSavingCars() throws IOException {
+        File excelFile = new File("src/test/resources/file/Cars.xlsx");
+        InputStream stream = new FileInputStream(excelFile);
+        MockMultipartFile file = new MockMultipartFile("file", excelFile.getName(), MediaType.ALL_VALUE, stream);
 
-        when(carRepository.findByFilter(anyString())).thenReturn(Optional.of(car));
+        when(carRepository.saveAllAndFlush(anyList())).thenThrow(new SwiftWheelsHubException("error"));
 
-        CarResponse carResponse = assertDoesNotThrow(() -> carService.findCarByFilter("Test"));
+        SwiftWheelsHubException swiftWheelsHubException =
+                assertThrows(SwiftWheelsHubException.class, () -> carService.uploadCars(file));
 
-        AssertionUtils.assertCarResponse(car, carResponse);
+        assertNotNull(swiftWheelsHubException);
     }
 
     @Test
-    void findCarByFilterTest_errorOnFindingByFilter() {
-        when(carRepository.findByFilter(anyString())).thenReturn(Optional.empty());
+    void updateCarsStatusTest_success() {
+        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
 
-        SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException =
-                assertThrows(SwiftWheelsHubNotFoundException.class, () -> carService.findCarByFilter("Test"));
+        UpdateCarRequest updateCarRequest =
+                TestUtils.getResourceAsJson("/data/UpdateCarRequest.json", UpdateCarRequest.class);
 
-        assertNotNull(swiftWheelsHubNotFoundException);
-        assertEquals("Car with filter: Test does not exist", swiftWheelsHubNotFoundException.getMessage());
+        when(carRepository.findAllById(anyList())).thenReturn(List.of(car));
+        when(carRepository.saveAndFlush(any(Car.class))).thenReturn(car);
+
+        List<CarResponse> carResponses = carService.updateCarsStatus(List.of(updateCarRequest));
+        AssertionUtils.assertCarResponse(car, carResponses.getFirst());
+    }
+
+    @Test
+    void updateCarStatusTest_success() {
+        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
+
+        when(carRepository.findById(anyLong())).thenReturn(Optional.ofNullable(car));
+        when(carRepository.saveAndFlush(any(Car.class))).thenReturn(car);
+
+        CarResponse carResponse = carService.updateCarStatus(1L, CarState.AVAILABLE);
+        AssertionUtils.assertCarResponse(Objects.requireNonNull(car), carResponse);
+    }
+
+    @Test
+    void findAvailableCarTest_success() {
+        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
+
+        when(carRepository.findById(anyLong())).thenReturn(Optional.ofNullable(car));
+
+        CarResponse carResponse = carService.findAvailableCar(1L);
+        AssertionUtils.assertCarResponse(Objects.requireNonNull(car), carResponse);
     }
 
 }

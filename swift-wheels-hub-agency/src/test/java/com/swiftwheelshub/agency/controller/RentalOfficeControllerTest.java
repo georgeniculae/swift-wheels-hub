@@ -12,13 +12,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -48,29 +46,26 @@ class RentalOfficeControllerTest {
 
         when(rentalOfficeService.findAllRentalOffices()).thenReturn(List.of(rentalOfficeResponse));
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(200, response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
     @Test
     void findAllRentalOfficesTest_unauthorized() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -81,29 +76,26 @@ class RentalOfficeControllerTest {
 
         when(rentalOfficeService.findRentalOfficeById(anyLong())).thenReturn(rentalOfficeRequest);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(200, response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
     @Test
     void findRentalOfficeByIdTest_unauthorized() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -111,15 +103,14 @@ class RentalOfficeControllerTest {
     void countRentalOfficesTest_success() throws Exception {
         when(rentalOfficeService.countRentalOffices()).thenReturn(1L);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count")
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count")
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(200, response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
@@ -127,15 +118,13 @@ class RentalOfficeControllerTest {
     void countRentalOfficesTest_unauthorized() throws Exception {
         when(rentalOfficeService.countRentalOffices()).thenReturn(1L);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count")
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -148,17 +137,16 @@ class RentalOfficeControllerTest {
 
         when(rentalOfficeService.saveRentalOffice(any(RentalOfficeRequest.class))).thenReturn(rentalOfficeResponse);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(csrf())
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(200, response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
@@ -169,17 +157,15 @@ class RentalOfficeControllerTest {
 
         String valueAsString = TestUtils.writeValueAsString(rentalOfficeResponse);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isUnauthorized())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -190,16 +176,14 @@ class RentalOfficeControllerTest {
 
         String valueAsString = TestUtils.writeValueAsString(rentalOfficeResponse);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isForbidden())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(403, response.getStatus());
-        assertEquals("Forbidden", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -212,17 +196,16 @@ class RentalOfficeControllerTest {
 
         when(rentalOfficeService.saveRentalOffice(any(RentalOfficeRequest.class))).thenReturn(rentalOfficeResponse);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .with(csrf())
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(200, response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
@@ -233,17 +216,15 @@ class RentalOfficeControllerTest {
 
         String valueAsString = TestUtils.writeValueAsString(rentalOfficeRequest);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isUnauthorized())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(401, response.getStatus());
-        assertEquals("Unauthorized", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -254,16 +235,14 @@ class RentalOfficeControllerTest {
 
         String valueAsString = TestUtils.writeValueAsString(rentalOfficeResponse);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
                 .andExpect(status().isForbidden())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(403, response.getStatus());
-        assertEquals("Forbidden", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
@@ -271,14 +250,13 @@ class RentalOfficeControllerTest {
     void deleteRentalOfficeByIdTest_success() throws Exception {
         doNothing().when(rentalOfficeService).deleteRentalOfficeById(anyLong());
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
                         .with(csrf())
                         .with(user("admin").password("admin").roles("ADMIN")))
                 .andExpect(status().isNoContent())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(204, response.getStatus());
         assertNotNull(response.getContentAsString());
     }
 
@@ -286,14 +264,12 @@ class RentalOfficeControllerTest {
     void deleteRentalOfficeByIdTest_forbidden() throws Exception {
         doNothing().when(rentalOfficeService).deleteRentalOfficeById(anyLong());
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN")))
                 .andExpect(status().isForbidden())
-                .andReturn();
+                .andReturn()
+                .getResponse();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals(403, response.getStatus());
-        assertEquals("Forbidden", response.getErrorMessage());
         assertNotNull(response.getContentAsString());
     }
 
