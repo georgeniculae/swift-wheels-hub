@@ -167,8 +167,11 @@ class CarServiceTest {
     @Test
     void uploadCarsTest_success() throws IOException {
         File excelFile = new File("src/test/resources/file/Cars.xlsx");
+
         InputStream stream = new FileInputStream(excelFile);
-        MockMultipartFile file = new MockMultipartFile("file", excelFile.getName(), MediaType.ALL_VALUE, stream);
+
+        MockMultipartFile file =
+                new MockMultipartFile("file", excelFile.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
 
         Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
 

@@ -17,10 +17,14 @@ import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -94,7 +99,6 @@ public class CarService {
         existingCar.setAmount(Objects.requireNonNull(updatedCarRequest.amount()));
         existingCar.setCarStatus(CarStatus.valueOf(updatedCarRequest.carState().name()));
         existingCar.setOriginalBranch(branch);
-        existingCar.setUrlOfImage(updatedCarRequest.urlOfImage());
 
         Car savedCar = saveEntity(existingCar);
 
@@ -148,10 +152,10 @@ public class CarService {
         carRepository.deleteById(id);
     }
 
-    public CarResponse findCarByFilter(String searchString) {
-        return carRepository.findByFilter(searchString)
+    public CarResponse findCarByFilter(String filter) {
+        return carRepository.findByFilter(filter)
                 .map(carMapper::mapEntityToDto)
-                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Car with filter: " + searchString + " does not exist"));
+                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Car with filter: " + filter + " does not exist"));
     }
 
     public Long countCars() {
@@ -210,13 +214,35 @@ public class CarService {
                 switch (cell.getCellType()) {
                     case STRING -> values.add(cell.getStringCellValue());
                     case NUMERIC -> values.add(dataFormatter.formatCellValue(cell));
+                    default -> throw new SwiftWheelsHubException("Unknown Excel cell type");
                 }
+
+                getPictureData(sheet, cell).ifPresent(values::add);
             }
 
             cars.add(generateCar(values));
         }
 
         return cars;
+    }
+
+    private Optional<byte[]> getPictureData(Sheet sheet, Cell cell) {
+        XSSFDrawing drawingPatriarch = ((XSSFSheet) sheet).createDrawingPatriarch();
+
+        return drawingPatriarch.getShapes()
+                .stream()
+                .filter(xssfShape -> xssfShape instanceof Picture)
+                .map(xssfShape -> ((Picture) xssfShape))
+                .filter(picture -> checkIfImageCorrespondsToRowAndColumn(cell, picture))
+                .map(picture -> picture.getPictureData().getData())
+                .findFirst();
+    }
+
+    private boolean checkIfImageCorrespondsToRowAndColumn(Cell cell, Picture picture) {
+        ClientAnchor clientAnchor = picture.getClientAnchor();
+
+        return cell.getColumnIndex() + 1 == clientAnchor.getCol1() &&
+                cell.getRowIndex() == clientAnchor.getRow1();
     }
 
     private Car generateCar(List<Object> values) {
@@ -231,7 +257,7 @@ public class CarService {
                 .amount(Double.valueOf((String) values.get(CarFields.AMOUNT.ordinal())))
                 .originalBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ORIGINAL_BRANCH.ordinal()))))
                 .actualBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ACTUAL_BRANCH.ordinal()))))
-                .urlOfImage((String) values.get(CarFields.URL_OF_IMAGE.ordinal()))
+                .image((byte[]) values.get(CarFields.IMAGE.ordinal()))
                 .build();
     }
 

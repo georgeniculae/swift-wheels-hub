@@ -4,6 +4,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
+import org.springframework.web.multipart.MultipartFile;
 
 @Builder
 public record CarRequest(
@@ -33,7 +34,7 @@ public record CarRequest(
 
         Long actualBranchId,
 
-        String urlOfImage
+        MultipartFile image
 ) {
 
     @Override
@@ -50,7 +51,6 @@ public record CarRequest(
                 "amount=" + amount + "\n" +
                 "originalBranchId=" + originalBranchId + "\n" +
                 "actualBranchId=" + actualBranchId + "\n" +
-                "urlOfImage='" + urlOfImage + "\n" +
                 "}";
     }
 

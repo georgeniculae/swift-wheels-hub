@@ -5,6 +5,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
@@ -51,6 +52,7 @@ public class Car extends BaseEntity {
     @JoinColumn(name = "actual_branch_id")
     private Branch actualBranch;
 
-    private String urlOfImage;
+    @Lob
+    private byte[] image;
 
 }

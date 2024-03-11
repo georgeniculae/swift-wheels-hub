@@ -54,7 +54,7 @@
             <column name="actual_branch_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="url_of_image" type="varchar(50)">
+            <column name="image" type="bytea">
                 <constraints nullable="true"/>
             </column>
         </createTable>
@@ -91,7 +91,6 @@
             <column name="amount" value="500"/>
             <column name="original_branch_id" value="1"/>
             <column name="actual_branch_id" value="1"/>
-            <column name="url_of_image" value="url 1"/>
         </insert>
 
         <insert tableName="car">
@@ -105,7 +104,6 @@
             <column name="amount" value="800"/>
             <column name="original_branch_id" value="2"/>
             <column name="actual_branch_id" value="2"/>
-            <column name="url_of_image" value="url 2"/>
         </insert>
     </changeSet>
 </databaseChangeLog>

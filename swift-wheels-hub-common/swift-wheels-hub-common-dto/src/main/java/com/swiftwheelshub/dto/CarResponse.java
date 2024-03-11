@@ -33,7 +33,7 @@ public record CarResponse(
 
         Long actualBranchId,
 
-        String urlOfImage
+        byte[] image
 ) {
 
     @Override
@@ -50,7 +50,6 @@ public record CarResponse(
                 "amount=" + amount + "\n" +
                 "originalBranchId=" + originalBranchId + "\n" +
                 "actualBranchId=" + actualBranchId + "\n" +
-                "urlOfImage='" + urlOfImage + "\n" +
                 "}";
     }
 
