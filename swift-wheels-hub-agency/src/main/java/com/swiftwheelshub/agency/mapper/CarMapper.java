@@ -3,8 +3,8 @@ package com.swiftwheelshub.agency.mapper;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.entity.Car;
-import com.swiftwheelshub.entity.Image;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
+import org.apache.commons.lang3.ObjectUtils;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,7 +20,6 @@ public interface CarMapper {
 
     @Mapping(target = "originalBranchId", expression = "java(car.getOriginalBranch().getId())")
     @Mapping(target = "actualBranchId", expression = "java(car.getActualBranch().getId())")
-    @Mapping(target = "imageId", expression = "java(car.getImage().getId())")
     @Mapping(target = "bodyCategory", source = "bodyType")
     @Mapping(target = "carState", source = "carStatus")
     CarResponse mapEntityToDto(Car car);
@@ -29,13 +28,13 @@ public interface CarMapper {
     @Mapping(target = "carStatus", source = "carState")
     Car mapDtoToEntity(CarRequest carRequest);
 
-    default Image mapToImage(MultipartFile multipartFile) {
+    default byte[] mapToImage(MultipartFile multipartFile) {
         try {
-            return Image.builder()
-                    .name(multipartFile.getOriginalFilename())
-                    .type(multipartFile.getContentType())
-                    .content(multipartFile.getBytes())
-                    .build();
+            if (ObjectUtils.isEmpty(multipartFile)) {
+                return null;
+            }
+
+            return multipartFile.getBytes();
         } catch (IOException e) {
             throw new SwiftWheelsHubException(e);
         }

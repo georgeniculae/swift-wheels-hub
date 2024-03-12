@@ -6,7 +6,6 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <include file="db/changelog/rental-office-changelog.xml"/>
-    <include file="db/changelog/image-changelog.xml"/>
     <include file="db/changelog/branch-changelog.xml"/>
     <include file="db/changelog/employee-changelog.xml"/>
     <include file="db/changelog/car-changelog.xml"/>

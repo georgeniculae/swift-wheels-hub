@@ -12,11 +12,11 @@ import com.swiftwheelshub.entity.Branch;
 import com.swiftwheelshub.entity.Car;
 import com.swiftwheelshub.entity.CarFields;
 import com.swiftwheelshub.entity.CarStatus;
-import com.swiftwheelshub.entity.Image;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -42,8 +42,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CarService {
 
-    private static final String UNDERSCORE = "_";
-    private static final String DOT = ".";
     private final CarRepository carRepository;
     private final BranchService branchService;
     private final EmployeeService employeeService;
@@ -250,12 +248,9 @@ public class CarService {
     }
 
     private Car generateCar(List<Object> values) {
-        String make = (String) values.get(CarFields.MAKE.ordinal());
-        String model = (String) values.get(CarFields.MODEL.ordinal());
-
         return Car.builder()
-                .make(make)
-                .model(model)
+                .make((String) values.get(CarFields.MAKE.ordinal()))
+                .model((String) values.get(CarFields.MODEL.ordinal()))
                 .bodyType(BodyType.valueOf(((String) values.get(CarFields.BODY_TYPE.ordinal())).toUpperCase()))
                 .yearOfProduction(Integer.parseInt((String) values.get(CarFields.YEAR_OF_PRODUCTION.ordinal())))
                 .color((String) values.get(CarFields.COLOR.ordinal()))
@@ -264,23 +259,12 @@ public class CarService {
                 .amount(Double.valueOf((String) values.get(CarFields.AMOUNT.ordinal())))
                 .originalBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ORIGINAL_BRANCH_ID.ordinal()))))
                 .actualBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ACTUAL_BRANCH_ID.ordinal()))))
-                .image(getCarPicture(values.get(CarFields.IMAGE.ordinal()), make, model))
+                .image(getImageData((PictureData) values.get(CarFields.IMAGE.ordinal())))
                 .build();
     }
 
-    private Image getCarPicture(Object o, String make, String model) {
-        PictureData pictureData = (PictureData) o;
-        String fileExtension = pictureData.suggestFileExtension();
-
-        return Image.builder()
-                .name(getFileName(make, model, fileExtension))
-                .type(fileExtension)
-                .content(pictureData.getData())
-                .build();
-    }
-
-    private String getFileName(String make, String model, String fileExtension) {
-        return make + UNDERSCORE + model + DOT + fileExtension;
+    private byte[] getImageData(PictureData pictureData) {
+        return ObjectUtils.isEmpty(pictureData) ? null : pictureData.getData();
     }
 
     private List<CarResponse> getCarResponses(List<Car> cars) {
@@ -288,6 +272,5 @@ public class CarService {
                 .map(carMapper::mapEntityToDto)
                 .toList();
     }
-
 
 }
