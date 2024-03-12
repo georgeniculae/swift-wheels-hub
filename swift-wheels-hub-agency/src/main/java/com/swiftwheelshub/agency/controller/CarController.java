@@ -1,10 +1,10 @@
 package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.CarService;
-import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
+import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -71,9 +72,9 @@ public class CarController {
         return ResponseEntity.ok(numberOfCars);
     }
 
-    @PostMapping
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<CarResponse> addCar(@RequestBody @Validated CarRequest carRequest) {
+    public ResponseEntity<CarResponse> addCar(@ModelAttribute @Validated CarRequest carRequest) {
         CarResponse savedCarResponse = carService.saveCar(carRequest);
 
         return ResponseEntity.ok(savedCarResponse);
@@ -81,7 +82,7 @@ public class CarController {
 
     @PostMapping(path = "/add")
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<List<CarResponse>> addCars(@RequestBody @Validated List<CarRequest> carRequestList) {
+    public ResponseEntity<List<CarResponse>> addCars(@ModelAttribute @Validated List<CarRequest> carRequestList) {
         List<CarResponse> savedCarResponses = carService.saveAllCars(carRequestList);
 
         return ResponseEntity.ok(savedCarResponses);
@@ -98,7 +99,7 @@ public class CarController {
     @PutMapping(path = "/{id}")
     @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<CarResponse> updateCar(@PathVariable("id") Long id,
-                                                 @RequestBody @Validated CarRequest carRequest) {
+                                                 @ModelAttribute @Validated CarRequest carRequest) {
         CarResponse updatedCarResponse = carService.updateCar(id, carRequest);
 
         return ResponseEntity.ok(updatedCarResponse);

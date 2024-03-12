@@ -12,6 +12,7 @@ import com.swiftwheelshub.entity.Branch;
 import com.swiftwheelshub.entity.Car;
 import com.swiftwheelshub.entity.CarFields;
 import com.swiftwheelshub.entity.CarStatus;
+import com.swiftwheelshub.entity.Image;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
@@ -20,6 +21,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -40,6 +42,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CarService {
 
+    private static final String UNDERSCORE = "_";
+    private static final String DOT = ".";
     private final CarRepository carRepository;
     private final BranchService branchService;
     private final EmployeeService employeeService;
@@ -68,8 +72,8 @@ public class CarService {
 
     public CarResponse saveCar(CarRequest carRequest) {
         Car car = carMapper.mapDtoToEntity(carRequest);
-
         car.setOriginalBranch(branchService.findEntityById(carRequest.originalBranchId()));
+        car.setActualBranch(branchService.findEntityById(carRequest.actualBranchId()));
 
         Car savedCar = saveEntity(car);
 
@@ -226,7 +230,7 @@ public class CarService {
         return cars;
     }
 
-    private Optional<byte[]> getPictureData(Sheet sheet, Cell cell) {
+    private Optional<PictureData> getPictureData(Sheet sheet, Cell cell) {
         XSSFDrawing drawingPatriarch = ((XSSFSheet) sheet).createDrawingPatriarch();
 
         return drawingPatriarch.getShapes()
@@ -234,7 +238,7 @@ public class CarService {
                 .filter(xssfShape -> xssfShape instanceof Picture)
                 .map(xssfShape -> ((Picture) xssfShape))
                 .filter(picture -> checkIfImageCorrespondsToRowAndColumn(cell, picture))
-                .map(picture -> picture.getPictureData().getData())
+                .map(Picture::getPictureData)
                 .findFirst();
     }
 
@@ -246,9 +250,12 @@ public class CarService {
     }
 
     private Car generateCar(List<Object> values) {
+        String make = (String) values.get(CarFields.MAKE.ordinal());
+        String model = (String) values.get(CarFields.MODEL.ordinal());
+
         return Car.builder()
-                .make((String) values.get(CarFields.MAKE.ordinal()))
-                .model((String) values.get(CarFields.MODEL.ordinal()))
+                .make(make)
+                .model(model)
                 .bodyType(BodyType.valueOf(((String) values.get(CarFields.BODY_TYPE.ordinal())).toUpperCase()))
                 .yearOfProduction(Integer.parseInt((String) values.get(CarFields.YEAR_OF_PRODUCTION.ordinal())))
                 .color((String) values.get(CarFields.COLOR.ordinal()))
@@ -257,8 +264,23 @@ public class CarService {
                 .amount(Double.valueOf((String) values.get(CarFields.AMOUNT.ordinal())))
                 .originalBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ORIGINAL_BRANCH.ordinal()))))
                 .actualBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ACTUAL_BRANCH.ordinal()))))
-                .image((byte[]) values.get(CarFields.IMAGE.ordinal()))
+                .image(getCarPicture(values.get(CarFields.IMAGE.ordinal()), make, model))
                 .build();
+    }
+
+    private Image getCarPicture(Object o, String make, String model) {
+        PictureData pictureData = (PictureData) o;
+        String fileExtension = pictureData.suggestFileExtension();
+
+        return Image.builder()
+                .name(getFileName(make, model, fileExtension))
+                .type(fileExtension)
+                .content(pictureData.getData())
+                .build();
+    }
+
+    private String getFileName(String make, String model, String fileExtension) {
+        return make + UNDERSCORE + model + DOT + fileExtension;
     }
 
     private List<CarResponse> getCarResponses(List<Car> cars) {

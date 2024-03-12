@@ -54,7 +54,7 @@
             <column name="actual_branch_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="image" type="bytea">
+            <column name="image_id" type="bigint">
                 <constraints nullable="true"/>
             </column>
         </createTable>
@@ -70,6 +70,12 @@
                                  constraintName="fk_car_actual_branch_id"
                                  referencedColumnNames="id"
                                  referencedTableName="branch"/>
+
+        <addForeignKeyConstraint baseColumnNames="image_id"
+                                 baseTableName="car"
+                                 constraintName="fk_car_image_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="image"/>
     </changeSet>
 
     <changeSet id="add-car-1" author="George Niculae">

@@ -33,7 +33,7 @@ public record CarResponse(
 
         Long actualBranchId,
 
-        byte[] image
+        Long imageId
 ) {
 
     @Override
@@ -50,6 +50,7 @@ public record CarResponse(
                 "amount=" + amount + "\n" +
                 "originalBranchId=" + originalBranchId + "\n" +
                 "actualBranchId=" + actualBranchId + "\n" +
+                "imageId=" + imageId + "\n" +
                 "}";
     }
 

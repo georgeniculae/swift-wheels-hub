@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.Serializable;
+
 @Builder
 public record CarRequest(
         Long id,
@@ -35,7 +37,7 @@ public record CarRequest(
         Long actualBranchId,
 
         MultipartFile image
-) {
+) implements Serializable {
 
     @Override
     public String toString() {
