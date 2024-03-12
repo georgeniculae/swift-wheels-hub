@@ -1,13 +1,11 @@
 package com.swiftwheelshub.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -15,6 +13,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+
+import java.sql.Types;
 
 @Entity
 @Table(name = "car", schema = "public")
@@ -53,8 +54,7 @@ public class Car extends BaseEntity {
     @JoinColumn(name = "actual_branch_id")
     private Branch actualBranch;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id")
-    private Image image;
+    @JdbcTypeCode(Types.BINARY)
+    private byte[] image;
 
 }
