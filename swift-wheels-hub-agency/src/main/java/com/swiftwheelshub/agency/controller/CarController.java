@@ -72,7 +72,7 @@ public class CarController {
         return ResponseEntity.ok(numberOfCars);
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<CarResponse> addCar(@ModelAttribute @Validated CarRequest carRequest) {
         CarResponse savedCarResponse = carService.saveCar(carRequest);
@@ -80,7 +80,7 @@ public class CarController {
         return ResponseEntity.ok(savedCarResponse);
     }
 
-    @PostMapping(path = "/add")
+    @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<List<CarResponse>> addCars(@ModelAttribute @Validated List<CarRequest> carRequests) {
         List<CarResponse> savedCarResponses = carService.saveAllCars(carRequests);
@@ -96,7 +96,7 @@ public class CarController {
         return ResponseEntity.ok(savedCarResponses);
     }
 
-    @PutMapping(path = "/{id}")
+    @PutMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<CarResponse> updateCar(@PathVariable("id") Long id,
                                                  @ModelAttribute @Validated CarRequest carRequest) {
