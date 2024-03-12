@@ -17,7 +17,7 @@
     <description>Swift Wheels Hub API Gateway</description>
 
     <modules>
-        <module>swift-wheels-hub-cloud-gateway</module>
+        <module>swift-wheels-hub-gateway</module>
         <module>swift-wheels-hub-service-discovery</module>
     </modules>
 
