@@ -80,7 +80,13 @@ public class CarService {
 
     public List<CarResponse> saveAllCars(List<CarRequest> carRequests) {
         List<Car> cars = carRequests.stream()
-                .map(carMapper::mapDtoToEntity)
+                .map(carRequest -> {
+                    Car car = carMapper.mapDtoToEntity(carRequest);
+                    car.setOriginalBranch(branchService.findEntityById(carRequest.originalBranchId()));
+                    car.setActualBranch(branchService.findEntityById(carRequest.actualBranchId()));
+
+                    return car;
+                })
                 .toList();
 
         return getCarResponses(saveAllEntities(cars));
