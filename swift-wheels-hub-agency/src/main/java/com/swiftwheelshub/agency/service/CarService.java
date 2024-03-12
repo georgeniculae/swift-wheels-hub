@@ -78,20 +78,6 @@ public class CarService {
         return carMapper.mapEntityToDto(savedCar);
     }
 
-    public List<CarResponse> saveAllCars(List<CarRequest> carRequests) {
-        List<Car> cars = carRequests.stream()
-                .map(carRequest -> {
-                    Car car = carMapper.mapDtoToEntity(carRequest);
-                    car.setOriginalBranch(branchService.findEntityById(carRequest.originalBranchId()));
-                    car.setActualBranch(branchService.findEntityById(carRequest.actualBranchId()));
-
-                    return car;
-                })
-                .toList();
-
-        return getCarResponses(saveAllEntities(cars));
-    }
-
     public CarResponse updateCar(Long id, CarRequest updatedCarRequest) {
         Car existingCar = findEntityById(id);
 
@@ -172,10 +158,6 @@ public class CarService {
 
     private Car saveEntity(Car car) {
         return carRepository.saveAndFlush(car);
-    }
-
-    private List<Car> saveAllEntities(List<Car> carList) {
-        return carRepository.saveAllAndFlush(carList);
     }
 
     private Car findEntityById(Long id) {

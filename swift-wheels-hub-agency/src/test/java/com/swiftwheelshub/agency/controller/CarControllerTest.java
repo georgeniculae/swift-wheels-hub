@@ -230,7 +230,8 @@ class CarControllerTest {
                         .param("amount", String.valueOf(carRequest.amount()))
                         .param("originalBranchId", String.valueOf(carRequest.originalBranchId()))
                         .param("actualBranchId", String.valueOf(carRequest.actualBranchId()))
-                        .with(csrf()))
+                        .with(csrf())
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -279,72 +280,6 @@ class CarControllerTest {
                         .param("amount", String.valueOf(carRequest.amount()))
                         .param("originalBranchId", String.valueOf(carRequest.originalBranchId()))
                         .param("actualBranchId", String.valueOf(carRequest.actualBranchId())))
-                .andExpect(status().isForbidden())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
-    }
-
-    @Test
-    void addAllCarsTest_success() throws Exception {
-        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
-        List<CarResponse> carResponses = List.of(carResponse);
-
-        when(carService.saveAllCars(anyList())).thenReturn(carResponses);
-
-        MockHttpServletResponse response = mockMvc.perform(post(PATH + "/add")
-                        .flashAttr("carRequest", carRequest)
-                        .param("make", carRequest.make())
-                        .param("model", carRequest.model())
-                        .param("bodyCategory", String.valueOf(carRequest.bodyCategory()))
-                        .param("yearOfProduction", String.valueOf(carRequest.yearOfProduction()))
-                        .param("color", carRequest.color())
-                        .param("mileage", String.valueOf(carRequest.mileage()))
-                        .param("carState", String.valueOf(carRequest.carState()))
-                        .param("amount", String.valueOf(carRequest.amount()))
-                        .param("originalBranchId", String.valueOf(carRequest.originalBranchId()))
-                        .param("actualBranchId", String.valueOf(carRequest.actualBranchId())))
-                .andExpect(status().isForbidden())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
-    }
-
-    @Test
-    void addAllCarsTest_unauthorized() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
-        List<CarResponse> carResponses = List.of(carResponse);
-        String valueAsString = TestUtils.writeValueAsString(carResponses);
-
-        when(carService.saveAllCars(anyList())).thenReturn(carResponses);
-
-        MockHttpServletResponse response = mockMvc.perform(post(PATH + "/add")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
-    }
-
-    @Test
-    void addAllCarsTest_forbidden() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
-        List<CarResponse> carResponses = List.of(carResponse);
-        String valueAsString = TestUtils.writeValueAsString(carResponses);
-
-        when(carService.saveAllCars(anyList())).thenReturn(carResponses);
-
-        MockHttpServletResponse response = mockMvc.perform(post(PATH + "/add")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
                 .andExpect(status().isForbidden())
                 .andReturn()
                 .getResponse();
@@ -414,7 +349,8 @@ class CarControllerTest {
                         .param("amount", String.valueOf(carRequest.amount()))
                         .param("originalBranchId", String.valueOf(carRequest.originalBranchId()))
                         .param("actualBranchId", String.valueOf(carRequest.actualBranchId()))
-                        .with(csrf()))
+                        .with(csrf())
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -423,15 +359,24 @@ class CarControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void updateCarTest_unauthorized() throws Exception {
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
-        String valueAsString = TestUtils.writeValueAsString(carRequest);
 
         MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
+                        .flashAttr("carRequest", carRequest)
+                        .param("make", carRequest.make())
+                        .param("model", carRequest.model())
+                        .param("bodyCategory", String.valueOf(carRequest.bodyCategory()))
+                        .param("yearOfProduction", String.valueOf(carRequest.yearOfProduction()))
+                        .param("color", carRequest.color())
+                        .param("mileage", String.valueOf(carRequest.mileage()))
+                        .param("carState", String.valueOf(carRequest.carState()))
+                        .param("amount", String.valueOf(carRequest.amount()))
+                        .param("originalBranchId", String.valueOf(carRequest.originalBranchId()))
+                        .param("actualBranchId", String.valueOf(carRequest.actualBranchId()))
                         .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isUnauthorized())
                 .andReturn()
                 .getResponse();
@@ -442,13 +387,20 @@ class CarControllerTest {
     @Test
     void updateCarTest_forbidden() throws Exception {
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
-        String valueAsString = TestUtils.writeValueAsString(carRequest);
 
         MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
-                        .with(user("admin").password("admin").roles("ADMIN"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
+                        .flashAttr("carRequest", carRequest)
+                        .param("make", carRequest.make())
+                        .param("model", carRequest.model())
+                        .param("bodyCategory", String.valueOf(carRequest.bodyCategory()))
+                        .param("yearOfProduction", String.valueOf(carRequest.yearOfProduction()))
+                        .param("color", carRequest.color())
+                        .param("mileage", String.valueOf(carRequest.mileage()))
+                        .param("carState", String.valueOf(carRequest.carState()))
+                        .param("amount", String.valueOf(carRequest.amount()))
+                        .param("originalBranchId", String.valueOf(carRequest.originalBranchId()))
+                        .param("actualBranchId", String.valueOf(carRequest.actualBranchId()))
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isForbidden())
                 .andReturn()
                 .getResponse();

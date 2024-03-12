@@ -80,14 +80,6 @@ public class CarController {
         return ResponseEntity.ok(savedCarResponse);
     }
 
-    @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<List<CarResponse>> addCars(@ModelAttribute @Validated List<CarRequest> carRequests) {
-        List<CarResponse> savedCarResponses = carService.saveAllCars(carRequests);
-
-        return ResponseEntity.ok(savedCarResponses);
-    }
-
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<List<CarResponse>> uploadCars(@RequestParam("file") MultipartFile file) {

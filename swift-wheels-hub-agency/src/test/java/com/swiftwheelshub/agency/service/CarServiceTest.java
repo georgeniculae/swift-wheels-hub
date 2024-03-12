@@ -32,7 +32,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -135,19 +134,6 @@ class CarServiceTest {
 
         CarResponse savedCarResponse = assertDoesNotThrow(() -> carService.saveCar(carRequest));
         AssertionUtils.assertCarResponse(car, savedCarResponse);
-    }
-
-    @Test
-    void saveAllCarsTest_success() {
-        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
-        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
-        List<Car> cars = List.of(car);
-        List<CarRequest> carRequests = List.of(carRequest);
-
-        when(carRepository.saveAllAndFlush(anyList())).thenReturn(cars);
-
-        List<CarResponse> savedCarResponses = assertDoesNotThrow(() -> carService.saveAllCars(carRequests));
-        assertFalse(savedCarResponses.isEmpty());
     }
 
     @Test
