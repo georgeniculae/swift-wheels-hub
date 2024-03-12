@@ -262,8 +262,8 @@ public class CarService {
                 .mileage(Integer.parseInt((String) values.get(CarFields.MILEAGE.ordinal())))
                 .carStatus(CarStatus.valueOf(((String) values.get(CarFields.CAR_STATUS.ordinal())).toUpperCase()))
                 .amount(Double.valueOf((String) values.get(CarFields.AMOUNT.ordinal())))
-                .originalBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ORIGINAL_BRANCH.ordinal()))))
-                .actualBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ACTUAL_BRANCH.ordinal()))))
+                .originalBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ORIGINAL_BRANCH_ID.ordinal()))))
+                .actualBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ACTUAL_BRANCH_ID.ordinal()))))
                 .image(getCarPicture(values.get(CarFields.IMAGE.ordinal()), make, model))
                 .build();
     }
