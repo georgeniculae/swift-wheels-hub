@@ -57,4 +57,8 @@ public class Car extends BaseEntity {
     @JdbcTypeCode(Types.BINARY)
     private byte[] image;
 
+    public Car(byte[] image) {
+        this.image = image;
+    }
+
 }

@@ -18,4 +18,10 @@ public interface CarRepository extends JpaRepository<Car, Long> {
 
     List<Car> findCarsByMake(String make);
 
+    @Query("""
+            Select new Car(car.image)
+            From Car car
+            where car.id = :id""")
+    Optional<Car> findImageByCarId(@Param("id") Long id);
+
 }

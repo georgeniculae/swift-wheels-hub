@@ -68,6 +68,12 @@ public class CarService {
         return getCarResponses(carRepository.findCarsByMake(make));
     }
 
+    public byte[] getCarImage(Long id) {
+       return carRepository.findImageByCarId(id)
+                .map(Car::getImage)
+                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Car not found"));
+    }
+
     public CarResponse saveCar(CarRequest carRequest) {
         Car car = carMapper.mapDtoToEntity(carRequest);
         car.setOriginalBranch(branchService.findEntityById(carRequest.originalBranchId()));
