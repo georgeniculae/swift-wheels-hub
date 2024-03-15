@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -219,7 +220,7 @@ public class CarService {
             cars.add(generateCar(values));
         }
 
-        return cars;
+        return Collections.unmodifiableList(cars);
     }
 
     private Optional<PictureData> getPictureData(Sheet sheet, Cell cell) {
