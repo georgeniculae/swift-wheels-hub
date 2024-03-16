@@ -1,7 +1,7 @@
 package com.swiftwheelshub.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
@@ -25,7 +25,8 @@ public class Branch extends BaseEntity {
 
     private String address;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @JoinColumn(name = "rental_office_id")
     private RentalOffice rentalOffice;
 
 }

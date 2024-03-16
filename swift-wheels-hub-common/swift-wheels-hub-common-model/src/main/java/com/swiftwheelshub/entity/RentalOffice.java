@@ -1,6 +1,9 @@
 package com.swiftwheelshub.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -17,6 +20,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RentalOffice extends BaseEntity {
+
+    @OneToMany(mappedBy = "rentalOffice", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
+    private Branch branch;
 
     @NotEmpty(message = "Name cannot be empty")
     private String name;
