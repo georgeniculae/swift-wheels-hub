@@ -15,7 +15,7 @@ public class ImageService {
     public byte[] getCarImage(Long id) {
         return imageRepository.findByCarId(id)
                 .map(Image::getContent)
-                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Car not found"));
+                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Image not found"));
     }
 
 }
