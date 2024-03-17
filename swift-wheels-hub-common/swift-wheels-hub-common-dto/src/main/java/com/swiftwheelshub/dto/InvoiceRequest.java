@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Builder
@@ -33,11 +34,11 @@ public record InvoiceRequest(
 
         Boolean isVehicleDamaged,
 
-        Double damageCost,
+        BigDecimal damageCost,
 
-        Double additionalPayment,
+        BigDecimal additionalPayment,
 
-        Double totalAmount,
+        BigDecimal totalAmount,
 
         String comments
 ) {

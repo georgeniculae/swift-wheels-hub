@@ -7,6 +7,7 @@ import lombok.Builder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Builder
 public record CarRequest(
@@ -30,7 +31,7 @@ public record CarRequest(
         @Enumerated(EnumType.STRING)
         CarState carState,
 
-        Double amount,
+        BigDecimal amount,
 
         Long originalBranchId,
 

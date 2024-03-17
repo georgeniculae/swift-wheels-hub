@@ -64,14 +64,6 @@ public class CarController {
         return ResponseEntity.ok(availableCarResponse);
     }
 
-    @GetMapping(path = "/{id}/image")
-    @PreAuthorize("hasAuthority('user')")
-    public ResponseEntity<byte[]> findCarImage(@PathVariable("id") Long id) {
-        byte[] carImage = carService.getCarImage(id);
-
-        return ResponseEntity.ok(carImage);
-    }
-
     @GetMapping(path = "/count")
     @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<Long> countCars() {

@@ -60,8 +60,8 @@ public class Car extends BaseEntity {
     @JoinColumn(name = "actual_branch_id")
     private Branch actualBranch;
 
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JsonIgnore
-    @OneToOne(mappedBy = "car", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
-    private CarImage carImage;
+    private Image image;
 
 }

@@ -5,9 +5,9 @@ import com.swiftwheelshub.booking.repository.BookingRepository;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
+import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.EmployeeResponse;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.entity.Booking;
@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -79,20 +80,20 @@ public class BookingService {
                 .toList();
     }
 
-    public Double getAmountSpentByLoggedInUser(HttpServletRequest request) {
+    public BigDecimal getAmountSpentByLoggedInUser(HttpServletRequest request) {
         return findBookingsByLoggedInUser(request)
                 .stream()
                 .map(BookingResponse::amount)
                 .filter(Objects::nonNull)
-                .reduce(0D, Double::sum);
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public Double getSumOfAllBookingAmount() {
+    public BigDecimal getSumOfAllBookingAmount() {
         return findAllBookings()
                 .stream()
                 .map(BookingResponse::amount)
                 .filter(Objects::nonNull)
-                .reduce(0D, Double::sum);
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public LocalDate getCurrentDate() {
@@ -220,7 +221,7 @@ public class BookingService {
         return Optional.empty();
     }
 
-    private Double getAmount(BookingRequest bookingRequest, Double amount) {
+    private BigDecimal getAmount(BookingRequest bookingRequest, BigDecimal amount) {
         LocalDate dateFrom = bookingRequest.dateFrom();
         LocalDate dateTo = bookingRequest.dateTo();
 
@@ -230,7 +231,7 @@ public class BookingService {
             return amount;
         }
 
-        return bookingDays * amount;
+        return amount.multiply(BigDecimal.valueOf(bookingDays));
     }
 
     private Booking findEntityById(Long id) {
@@ -240,7 +241,7 @@ public class BookingService {
 
     private Booking setupNewBooking(BookingRequest newBookingRequest, CarResponse carResponse) {
         Booking newBooking = bookingMapper.mapDtoToEntity(newBookingRequest);
-        double amount = carResponse.amount();
+        BigDecimal amount = carResponse.amount();
 
         newBooking.setDateTo(newBookingRequest.dateTo());
         newBooking.setDateFrom(newBookingRequest.dateFrom());

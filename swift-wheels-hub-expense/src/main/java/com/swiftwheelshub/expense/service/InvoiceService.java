@@ -17,6 +17,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -184,12 +185,12 @@ public class InvoiceService {
         return existingInvoice;
     }
 
-    private double getDamageCost(InvoiceRequest invoiceRequest) {
-        return ObjectUtils.isEmpty(invoiceRequest.damageCost()) ? 0D : invoiceRequest.damageCost();
+    private BigDecimal getDamageCost(InvoiceRequest invoiceRequest) {
+        return ObjectUtils.isEmpty(invoiceRequest.damageCost()) ? BigDecimal.ZERO : invoiceRequest.damageCost();
     }
 
-    private double getAdditionalPayment(InvoiceRequest invoiceRequest) {
-        return ObjectUtils.isEmpty(invoiceRequest.additionalPayment()) ? 0D : invoiceRequest.additionalPayment();
+    private BigDecimal getAdditionalPayment(InvoiceRequest invoiceRequest) {
+        return ObjectUtils.isEmpty(invoiceRequest.additionalPayment()) ? BigDecimal.ZERO : invoiceRequest.additionalPayment();
     }
 
     private Invoice updateInvoiceWithBookingDetails(BookingResponse bookingResponse, InvoiceRequest invoiceRequest,
@@ -217,11 +218,11 @@ public class InvoiceService {
         );
     }
 
-    private Double getTotalAmount(Invoice existingInvoice, BookingResponse bookingResponse) {
+    private BigDecimal getTotalAmount(Invoice existingInvoice, BookingResponse bookingResponse) {
         LocalDate carReturnDate = existingInvoice.getCarDateOfReturn();
         LocalDate bookingDateTo = bookingResponse.dateTo();
         LocalDate bookingDateFrom = bookingResponse.dateFrom();
-        double carAmount = bookingResponse.rentalCarPrice();
+        BigDecimal carAmount = bookingResponse.rentalCarPrice();
 
         boolean isReturnDatePassed = carReturnDate.isAfter(bookingDateTo);
 
@@ -229,18 +230,18 @@ public class InvoiceService {
             return getAmountForLateReturn(carReturnDate, bookingDateTo, bookingDateFrom, carAmount);
         }
 
-        return getDaysPeriod(bookingDateFrom, bookingDateTo) * carAmount +
-                (ObjectUtils.isEmpty(existingInvoice.getDamageCost()) ? 0D : existingInvoice.getDamageCost());
+        return carAmount.multiply(BigDecimal.valueOf(getDaysPeriod(bookingDateFrom, bookingDateTo)))
+                .add(ObjectUtils.isEmpty(existingInvoice.getDamageCost()) ? BigDecimal.ZERO : existingInvoice.getDamageCost());
     }
 
     private int getDaysPeriod(LocalDate bookingDateFrom, LocalDate bookingDateTo) {
         return Period.between(bookingDateFrom, bookingDateTo).getDays();
     }
 
-    private double getAmountForLateReturn(LocalDate carReturnDate, LocalDate bookingDateTo, LocalDate bookingDateFrom,
-                                          Double carAmount) {
-        return getDaysPeriod(bookingDateFrom, bookingDateTo) * carAmount +
-                getDaysPeriod(bookingDateTo, carReturnDate) * 2 * carAmount;
+    private BigDecimal getAmountForLateReturn(LocalDate carReturnDate, LocalDate bookingDateTo, LocalDate bookingDateFrom,
+                                              BigDecimal carAmount) {
+        return carAmount.multiply(BigDecimal.valueOf(getDaysPeriod(bookingDateFrom, bookingDateTo)))
+                .add(BigDecimal.valueOf(getDaysPeriod(bookingDateTo, carReturnDate)).multiply(BigDecimal.valueOf(2)).multiply(carAmount));
     }
 
     private CarState getCarStatus(boolean isVehicleDamaged) {

@@ -24,7 +24,7 @@
             <column name="status" type="status_enum">>
                 <constraints nullable="false"/>
             </column>
-            <column name="amount" type="double">
+            <column name="amount" type="numeric">
                 <constraints nullable="false"/>
             </column>
             <column name="date_from" type="date">
@@ -48,7 +48,7 @@
             <column name="return_branch_id" type="bigint">
                 <constraints nullable="true"/>
             </column>
-            <column name="rental_car_price" type="double">
+            <column name="rental_car_price" type="numeric">
                 <constraints nullable="false"/>
             </column>
         </createTable>

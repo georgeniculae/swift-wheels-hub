@@ -5,6 +5,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 
+import java.math.BigDecimal;
+
 @Builder
 public record CarResponse(
         Long id,
@@ -27,7 +29,7 @@ public record CarResponse(
         @Enumerated(EnumType.STRING)
         CarState carState,
 
-        Double amount,
+        BigDecimal amount,
 
         Long originalBranchId,
 

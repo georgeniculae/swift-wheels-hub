@@ -197,35 +197,6 @@ class CarControllerTest {
     }
 
     @Test
-    void findCarImageTest_success() throws Exception {
-        when(carService.getCarImage(anyLong())).thenReturn(new byte[]{});
-
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/count")
-                        .with(user("admin").password("admin").roles("ADMIN"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
-    }
-
-    @Test
-    void findCarImageTest_unauthorized() throws Exception {
-        when(carService.getCarImage(anyLong())).thenReturn(new byte[]{});
-
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/count")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
-    }
-
-    @Test
     void countCarsTest_unauthorized() throws Exception {
         when(carService.countCars()).thenReturn(1L);
 

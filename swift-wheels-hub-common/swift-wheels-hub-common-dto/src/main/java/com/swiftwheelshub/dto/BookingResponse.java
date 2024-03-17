@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Builder
@@ -42,9 +43,9 @@ public record BookingResponse(
         @Temporal(TemporalType.DATE)
         LocalDate dateTo,
 
-        Double amount,
+        BigDecimal amount,
 
-        Double rentalCarPrice,
+        BigDecimal rentalCarPrice,
 
         @NotNull(message = "Rental branch id cannot be null")
         Long rentalBranchId,

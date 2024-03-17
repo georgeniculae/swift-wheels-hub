@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -44,11 +45,11 @@ public class Invoice extends BaseEntity {
 
     private Boolean isVehicleDamaged;
 
-    private Double damageCost;
+    private BigDecimal damageCost;
 
-    private Double additionalPayment;
+    private BigDecimal additionalPayment;
 
-    private Double totalAmount;
+    private BigDecimal totalAmount;
 
     private String comments;
 

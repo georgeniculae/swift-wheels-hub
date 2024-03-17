@@ -1,5 +1,6 @@
 package com.swiftwheelshub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,6 +14,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Table(name = "branch", schema = "public")
@@ -33,6 +36,7 @@ public class Branch extends BaseEntity {
     private RentalOffice rentalOffice;
 
     @OneToMany(mappedBy = "workingBranch", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
-    private Employee employee;
+    @JsonIgnore
+    private List<Employee> employees;
 
 }

@@ -3,6 +3,7 @@ package com.swiftwheelshub.dto;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Builder
@@ -13,7 +14,7 @@ public record RevenueRequest(
         LocalDate dateOfRevenue,
 
         @NotNull(message = "Amount from booking cannot be null")
-        Double amountFromBooking
+        BigDecimal amountFromBooking
 ) {
 
     @Override

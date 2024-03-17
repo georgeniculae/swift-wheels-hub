@@ -13,8 +13,6 @@ import com.swiftwheelshub.entity.Car;
 import com.swiftwheelshub.entity.Employee;
 import com.swiftwheelshub.entity.RentalOffice;
 
-import java.util.Objects;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AssertionUtils {
@@ -27,7 +25,7 @@ public class AssertionUtils {
         assertEquals(car.getColor(), carRequest.color());
         assertEquals(car.getMileage(), carRequest.mileage());
         assertEquals(car.getCarStatus().getDisplayName(), carRequest.carState().getDisplayName());
-        assertEquals(car.getAmount(), Objects.requireNonNull(carRequest.amount()).doubleValue());
+        assertEquals(car.getAmount(), carRequest.amount());
     }
 
     public static void assertCarResponse(Car car, CarResponse carResponse) {
@@ -38,7 +36,7 @@ public class AssertionUtils {
         assertEquals(car.getColor(), carResponse.color());
         assertEquals(car.getMileage(), carResponse.mileage());
         assertEquals(car.getCarStatus().getDisplayName(), carResponse.carState().getDisplayName());
-        assertEquals(car.getAmount(), Objects.requireNonNull(carResponse.amount()).doubleValue());
+        assertEquals(car.getAmount(), carResponse.amount());
     }
 
     public static void assertBranchRequest(Branch branch, BranchRequest branchRequest) {

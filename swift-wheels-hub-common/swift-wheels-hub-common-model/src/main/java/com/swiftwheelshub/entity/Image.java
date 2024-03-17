@@ -1,8 +1,6 @@
 package com.swiftwheelshub.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,19 +12,15 @@ import org.hibernate.annotations.JdbcTypeCode;
 import java.sql.Types;
 
 @Entity
-@Table(name = "car_image", schema = "public")
+@Table(name = "image", schema = "public")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Setter
-public class CarImage extends BaseEntity {
-
-    @OneToOne
-    @JoinColumn(name = "car_id")
-    private Car car;
+public class Image extends BaseEntity {
 
     @JdbcTypeCode(Types.BINARY)
-    private byte[] image;
+    private byte[] content;
 
 }

@@ -1,5 +1,6 @@
 package com.swiftwheelshub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,6 +13,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "rental_office", schema = "public")
 @NoArgsConstructor
@@ -22,7 +25,8 @@ import lombok.Setter;
 public class RentalOffice extends BaseEntity {
 
     @OneToMany(mappedBy = "rentalOffice", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
-    private Branch branch;
+    @JsonIgnore
+    private List<Branch> branches;
 
     @NotEmpty(message = "Name cannot be empty")
     private String name;

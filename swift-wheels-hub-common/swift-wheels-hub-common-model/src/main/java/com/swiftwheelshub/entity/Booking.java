@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -53,9 +54,9 @@ public class Booking extends BaseEntity {
     @Temporal(TemporalType.DATE)
     private LocalDate dateTo;
 
-    private Double amount;
+    private BigDecimal amount;
 
-    private Double rentalCarPrice;
+    private BigDecimal rentalCarPrice;
 
     @NotNull(message = "Rental branch id cannot be null")
     private Long rentalBranchId;

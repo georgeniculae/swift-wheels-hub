@@ -4,21 +4,19 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet id="create-table-revenue" author="George Niculae">
+    <changeSet id="create-table-rental-office" author="George Niculae">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists schemaName="car-rental-expense" catalogName="car-rental-expense" tableName="revenue"/>
+                <tableExists schemaName="swift_wheels_hub_agency" catalogName="swift_wheels_hub_agency"
+                             tableName="image"/>
             </not>
         </preConditions>
 
-        <createTable tableName="revenue">
+        <createTable tableName="image">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="date_of_revenue" type="date">
-                <constraints nullable="false"/>
-            </column>
-            <column name="amount_from_booking" type="numeric">
+            <column name="content" type="bytea">
                 <constraints nullable="false"/>
             </column>
         </createTable>

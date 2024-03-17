@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -30,8 +31,8 @@ public class RevenueController {
 
     @GetMapping(path = "/total")
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<Double> getTotalAmount() {
-        Double totalAmount = revenueService.getTotalAmount();
+    public ResponseEntity<BigDecimal> getTotalAmount() {
+        BigDecimal totalAmount = revenueService.getTotalAmount();
 
         return ResponseEntity.ok(totalAmount);
     }

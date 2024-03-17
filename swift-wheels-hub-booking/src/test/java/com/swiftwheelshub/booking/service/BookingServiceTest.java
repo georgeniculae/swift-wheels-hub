@@ -22,6 +22,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
@@ -162,8 +163,8 @@ class BookingServiceTest {
 
         when(bookingRepository.findBookingsByUser(anyString())).thenReturn(List.of(booking));
 
-        Double amount = assertDoesNotThrow(() -> bookingService.getAmountSpentByLoggedInUser(request));
-        assertEquals(500, amount);
+        BigDecimal amount = assertDoesNotThrow(() -> bookingService.getAmountSpentByLoggedInUser(request));
+        assertEquals(BigDecimal.valueOf(500), amount);
     }
 
     @Test
@@ -172,8 +173,8 @@ class BookingServiceTest {
 
         when(bookingRepository.findAll()).thenReturn(List.of(booking));
 
-        Double sumOfAllBookingAmount = assertDoesNotThrow(() -> bookingService.getSumOfAllBookingAmount());
-        assertEquals(500, sumOfAllBookingAmount);
+        BigDecimal sumOfAllBookingAmount = assertDoesNotThrow(() -> bookingService.getSumOfAllBookingAmount());
+        assertEquals(BigDecimal.valueOf(500), sumOfAllBookingAmount);
     }
 
     @Test

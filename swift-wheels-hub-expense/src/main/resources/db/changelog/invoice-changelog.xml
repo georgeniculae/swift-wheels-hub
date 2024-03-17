@@ -36,13 +36,13 @@
             <column name="is_vehicle_damaged" type="boolean">
                 <constraints nullable="true"/>
             </column>
-            <column name="additional_payment" type="double">
+            <column name="additional_payment" type="numeric">
                 <constraints nullable="true"/>
             </column>
-            <column name="damage_cost" type="double">
+            <column name="damage_cost" type="numeric">
                 <constraints nullable="true"/>
             </column>
-            <column name="total_amount" type="double">
+            <column name="total_amount" type="numeric">
                 <constraints nullable="true"/>
             </column>
             <column name="comments" type="varchar(255)">

@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -24,6 +25,6 @@ public class Revenue extends BaseEntity {
     private LocalDate dateOfRevenue;
 
     @NotNull(message = "Amount from booking cannot be null")
-    private Double amountFromBooking;
+    private BigDecimal amountFromBooking;
 
 }

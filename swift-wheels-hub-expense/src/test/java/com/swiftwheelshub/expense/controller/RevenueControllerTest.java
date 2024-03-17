@@ -15,6 +15,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -76,7 +77,7 @@ public class RevenueControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findAllInvoicesTest_success() throws Exception {
-        when(revenueService.getTotalAmount()).thenReturn(550.0);
+        when(revenueService.getTotalAmount()).thenReturn(BigDecimal.valueOf(550));
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/total")
                         .with(csrf())
@@ -92,7 +93,7 @@ public class RevenueControllerTest {
     @Test
     @WithAnonymousUser
     void findAllInvoicesTest_unauthorized() throws Exception {
-        when(revenueService.getTotalAmount()).thenReturn(550.0);
+        when(revenueService.getTotalAmount()).thenReturn(BigDecimal.valueOf(550.0));
 
         mockMvc.perform(get(PATH + "/total")
                         .with(csrf())

@@ -8,51 +8,51 @@
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists schemaName="swift_wheels_hub_agency" catalogName="swift_wheels_hub_agency"
-                             tableName="branch_cars"/>
+                             tableName="rental_office_branches"/>
             </not>
         </preConditions>
 
-        <createTable tableName="branch_cars">
+        <createTable tableName="rental_office_branches">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="rental_office_id" type="bigint">
+                <constraints nullable="false"/>
             </column>
             <column name="branch_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="car_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
 
+        <addForeignKeyConstraint baseColumnNames="rental_office_id"
+                                 baseTableName="rental_office_branches"
+                                 constraintName="fk_rental_office_branches_rental_office_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="rental_office"/>
+
         <addForeignKeyConstraint baseColumnNames="branch_id"
-                                 baseTableName="branch_cars"
-                                 constraintName="fk_branch_cars_branch_id"
+                                 baseTableName="rental_office_branches"
+                                 constraintName="fk_rental_office_branches_branch_id"
                                  referencedColumnNames="id"
                                  referencedTableName="branch"/>
-
-        <addForeignKeyConstraint baseColumnNames="car_id"
-                                 baseTableName="branch_cars"
-                                 constraintName="fk_branch_cars_car_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="car"/>
     </changeSet>
 
-    <changeSet id="add-branch-cars-1" author="George Niculae">
+    <changeSet id="add-rental-office-branches-1" author="George Niculae">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*)
-                FROM branch_cars
+                FROM rental_office_branches
             </sqlCheck>
         </preConditions>
 
-        <insert tableName="branch_cars">
+        <insert tableName="rental_office_branches">
+            <column name="rental_office_id" value="1"/>
             <column name="branch_id" value="1"/>
-            <column name="car_id" value="1"/>
         </insert>
 
-        <insert tableName="branch_cars">
+        <insert tableName="rental_office_branches">
+            <column name="rental_office_id" value="2"/>
             <column name="branch_id" value="2"/>
-            <column name="car_id" value="2"/>
         </insert>
     </changeSet>
 </databaseChangeLog>
