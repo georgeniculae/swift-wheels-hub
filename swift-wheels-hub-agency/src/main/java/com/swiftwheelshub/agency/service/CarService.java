@@ -11,7 +11,6 @@ import com.swiftwheelshub.entity.BodyType;
 import com.swiftwheelshub.entity.Branch;
 import com.swiftwheelshub.entity.Car;
 import com.swiftwheelshub.entity.CarFields;
-import com.swiftwheelshub.entity.Image;
 import com.swiftwheelshub.entity.CarStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
@@ -38,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -70,6 +70,12 @@ public class CarService {
         return getCarResponses(carRepository.findCarsByMake(make));
     }
 
+    public byte[] getCarImage(Long id) {
+       return carRepository.findImageByCarId(id)
+                .map(Car::getImage)
+                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Car not found"));
+    }
+
     public CarResponse saveCar(CarRequest carRequest) {
         Car car = carMapper.mapDtoToEntity(carRequest);
         car.setOriginalBranch(branchService.findEntityById(carRequest.originalBranchId()));
@@ -92,7 +98,7 @@ public class CarService {
         existingCar.setYearOfProduction(updatedCarRequest.yearOfProduction());
         existingCar.setColor(updatedCarRequest.color());
         existingCar.setMileage(updatedCarRequest.mileage());
-        existingCar.setAmount(updatedCarRequest.amount());
+        existingCar.setAmount(Objects.requireNonNull(updatedCarRequest.amount()));
         existingCar.setCarStatus(CarStatus.valueOf(updatedCarRequest.carState().name()));
         existingCar.setOriginalBranch(branch);
 
@@ -195,32 +201,27 @@ public class CarService {
         List<Car> cars = new ArrayList<>();
 
         for (int index = 1; index <= sheet.getLastRowNum(); index++) {
-            List<Object> values = geCarValues(sheet, index, dataFormatter);
+            List<Object> values = new ArrayList<>();
+
+            Row currentRow = sheet.getRow(index);
+            Iterator<Cell> cellIterator = currentRow.cellIterator();
+
+            while (cellIterator.hasNext()) {
+                Cell cell = cellIterator.next();
+
+                switch (cell.getCellType()) {
+                    case STRING -> values.add(cell.getStringCellValue());
+                    case NUMERIC -> values.add(dataFormatter.formatCellValue(cell));
+                    default -> throw new SwiftWheelsHubException("Unknown Excel cell type");
+                }
+
+                getPictureData(sheet, cell).ifPresent(values::add);
+            }
 
             cars.add(generateCar(values));
         }
 
         return Collections.unmodifiableList(cars);
-    }
-
-    private List<Object> geCarValues(Sheet sheet, int index, DataFormatter dataFormatter) {
-        List<Object> values = new ArrayList<>();
-
-        Row currentRow = sheet.getRow(index);
-        Iterator<Cell> cellIterator = currentRow.cellIterator();
-
-        while (cellIterator.hasNext()) {
-            Cell cell = cellIterator.next();
-
-            switch (cell.getCellType()) {
-                case STRING -> values.add(cell.getStringCellValue());
-                case NUMERIC -> values.add(dataFormatter.formatCellValue(cell));
-                default -> throw new SwiftWheelsHubException("Unknown Excel cell type");
-            }
-
-            getPictureData(sheet, cell).ifPresent(values::add);
-        }
-        return values;
     }
 
     private Optional<PictureData> getPictureData(Sheet sheet, Cell cell) {
@@ -254,7 +255,7 @@ public class CarService {
                 .amount(new BigDecimal((String) values.get(CarFields.AMOUNT.ordinal())))
                 .originalBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ORIGINAL_BRANCH_ID.ordinal()))))
                 .actualBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ACTUAL_BRANCH_ID.ordinal()))))
-                .image(Image.builder().content(getImageData((PictureData) values.get(CarFields.IMAGE.ordinal()))).build())
+                .image(getImageData((PictureData) values.get(CarFields.IMAGE.ordinal())))
                 .build();
     }
 

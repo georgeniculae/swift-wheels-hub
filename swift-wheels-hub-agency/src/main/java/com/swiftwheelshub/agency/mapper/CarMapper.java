@@ -3,16 +3,19 @@ package com.swiftwheelshub.agency.mapper;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.entity.Car;
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
+import org.apache.commons.lang3.ObjectUtils;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
+import org.springframework.web.multipart.MultipartFile;
 
-@Mapper(
-        componentModel = "spring",
+import java.io.IOException;
+
+@Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        injectionStrategy = InjectionStrategy.CONSTRUCTOR
-)
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface CarMapper {
 
     @Mapping(target = "originalBranchId", expression = "java(car.getOriginalBranch().getId())")
@@ -24,5 +27,17 @@ public interface CarMapper {
     @Mapping(target = "bodyType", source = "bodyCategory")
     @Mapping(target = "carStatus", source = "carState")
     Car mapDtoToEntity(CarRequest carRequest);
+
+    default byte[] mapToImage(MultipartFile multipartFile) {
+        try {
+            if (ObjectUtils.isEmpty(multipartFile)) {
+                return null;
+            }
+
+            return multipartFile.getBytes();
+        } catch (IOException e) {
+            throw new SwiftWheelsHubException(e);
+        }
+    }
 
 }

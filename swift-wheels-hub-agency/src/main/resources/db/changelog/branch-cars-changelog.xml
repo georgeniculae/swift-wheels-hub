@@ -19,7 +19,7 @@
             <column name="branch_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="car_id" type="bigint">
+            <column name="cars_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -30,9 +30,9 @@
                                  referencedColumnNames="id"
                                  referencedTableName="branch"/>
 
-        <addForeignKeyConstraint baseColumnNames="car_id"
+        <addForeignKeyConstraint baseColumnNames="cars_id"
                                  baseTableName="branch_cars"
-                                 constraintName="fk_branch_cars_car_id"
+                                 constraintName="fk_branch_cars_cars_id"
                                  referencedColumnNames="id"
                                  referencedTableName="car"/>
     </changeSet>
@@ -47,12 +47,12 @@
 
         <insert tableName="branch_cars">
             <column name="branch_id" value="1"/>
-            <column name="car_id" value="1"/>
+            <column name="cars_id" value="1"/>
         </insert>
 
         <insert tableName="branch_cars">
             <column name="branch_id" value="2"/>
-            <column name="car_id" value="2"/>
+            <column name="cars_id" value="2"/>
         </insert>
     </changeSet>
 </databaseChangeLog>
