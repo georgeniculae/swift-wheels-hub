@@ -11,7 +11,7 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     @Query("""
             SELECT image.content
             FROM Image image
-            JOIN Car car ON image.id = car.image.id
+            INNER JOIN Car car ON image.id = car.image.id
             WHERE car.id = : carId""")
     Optional<Image> findByCarId(Long carId);
 
