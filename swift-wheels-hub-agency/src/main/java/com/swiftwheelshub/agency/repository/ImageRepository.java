@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface ImageRepository extends JpaRepository<Image, Long> {
 
     @Query("""
-            SELECT image.content
+            SELECT image
             FROM Image image
             INNER JOIN Car car ON image.id = car.image.id
             WHERE car.id = : carId""")
