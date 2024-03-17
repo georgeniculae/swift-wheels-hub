@@ -3,6 +3,7 @@ package com.swiftwheelshub.dto;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,8 +12,6 @@ import java.math.BigDecimal;
 
 @Builder
 public record CarRequest(
-        Long id,
-
         @NotEmpty(message = "Make cannot be empty")
         String make,
 
@@ -20,21 +19,28 @@ public record CarRequest(
         String model,
 
         @Enumerated(EnumType.STRING)
+        @NotNull(message = "Body category cannot be null")
         BodyCategory bodyCategory,
 
-        int yearOfProduction,
+        @NotNull(message = "Year of production cannot be null")
+        Integer yearOfProduction,
 
+        @NotNull(message = "Color cannot be null")
         String color,
 
-        int mileage,
+        @NotNull(message = "Mileage cannot be null")
+        Integer mileage,
 
         @Enumerated(EnumType.STRING)
         CarState carState,
 
+        @NotNull(message = "Amount cannot be null")
         BigDecimal amount,
 
+        @NotNull(message = "Original branch cannot be null")
         Long originalBranchId,
 
+        @NotNull(message = "Actual branch cannot be null")
         Long actualBranchId,
 
         MultipartFile image
@@ -43,7 +49,6 @@ public record CarRequest(
     @Override
     public String toString() {
         return "CarRequest{" + "\n" +
-                "id=" + id +
                 "make='" + make + "\n" +
                 "model='" + model + "\n" +
                 "bodyCategory=" + bodyCategory + "\n" +
