@@ -20,11 +20,11 @@ public record CarResponse(
         @Enumerated(EnumType.STRING)
         BodyCategory bodyCategory,
 
-        int yearOfProduction,
+        Integer yearOfProduction,
 
         String color,
 
-        int mileage,
+        Integer mileage,
 
         @Enumerated(EnumType.STRING)
         CarState carState,
