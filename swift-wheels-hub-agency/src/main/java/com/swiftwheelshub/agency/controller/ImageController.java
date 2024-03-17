@@ -16,10 +16,10 @@ public class ImageController {
 
     private final ImageService imageService;
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "/{carId}")
     @PreAuthorize("hasAuthority('user')")
-    public ResponseEntity<byte[]> findCarImage(@PathVariable("id") Long id) {
-        byte[] carImage = imageService.getCarImage(id);
+    public ResponseEntity<byte[]> findCarImage(@PathVariable("carId") Long carId) {
+        byte[] carImage = imageService.getCarImage(carId);
 
         return ResponseEntity.ok(carImage);
     }

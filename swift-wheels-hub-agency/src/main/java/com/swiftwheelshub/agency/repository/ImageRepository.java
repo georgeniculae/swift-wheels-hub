@@ -12,7 +12,7 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
             SELECT image
             FROM Image image
             INNER JOIN Car car ON image.id = car.image.id
-            WHERE car.id = : carId""")
+            WHERE car.id = :carId""")
     Optional<Image> findByCarId(Long carId);
 
 }
