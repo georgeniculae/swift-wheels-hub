@@ -195,27 +195,32 @@ public class CarService {
         List<Car> cars = new ArrayList<>();
 
         for (int index = 1; index <= sheet.getLastRowNum(); index++) {
-            List<Object> values = new ArrayList<>();
-
-            Row currentRow = sheet.getRow(index);
-            Iterator<Cell> cellIterator = currentRow.cellIterator();
-
-            while (cellIterator.hasNext()) {
-                Cell cell = cellIterator.next();
-
-                switch (cell.getCellType()) {
-                    case STRING -> values.add(cell.getStringCellValue());
-                    case NUMERIC -> values.add(dataFormatter.formatCellValue(cell));
-                    default -> throw new SwiftWheelsHubException("Unknown Excel cell type");
-                }
-
-                getPictureData(sheet, cell).ifPresent(values::add);
-            }
+            List<Object> values = geCarValues(sheet, index, dataFormatter);
 
             cars.add(generateCar(values));
         }
 
         return Collections.unmodifiableList(cars);
+    }
+
+    private List<Object> geCarValues(Sheet sheet, int index, DataFormatter dataFormatter) {
+        List<Object> values = new ArrayList<>();
+
+        Row currentRow = sheet.getRow(index);
+        Iterator<Cell> cellIterator = currentRow.cellIterator();
+
+        while (cellIterator.hasNext()) {
+            Cell cell = cellIterator.next();
+
+            switch (cell.getCellType()) {
+                case STRING -> values.add(cell.getStringCellValue());
+                case NUMERIC -> values.add(dataFormatter.formatCellValue(cell));
+                default -> throw new SwiftWheelsHubException("Unknown Excel cell type");
+            }
+
+            getPictureData(sheet, cell).ifPresent(values::add);
+        }
+        return values;
     }
 
     private Optional<PictureData> getPictureData(Sheet sheet, Cell cell) {
