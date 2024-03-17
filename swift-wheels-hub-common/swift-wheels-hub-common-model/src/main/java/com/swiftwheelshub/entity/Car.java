@@ -38,12 +38,14 @@ public class Car extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private BodyType bodyType;
 
-    private int yearOfProduction;
+    @NotNull(message = "Year of production cannot be null")
+    private Integer yearOfProduction;
 
     @NotEmpty(message = "Color cannot be empty")
     private String color;
 
-    private int mileage;
+    @NotNull(message = "Mileage cannot be null")
+    private Integer mileage;
 
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Car status cannot be null")
