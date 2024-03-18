@@ -76,8 +76,8 @@ public class CarService {
                 .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Car not found"));
     }
 
-    public CarResponse saveCar(CarRequest carRequest) {
-        Car car = carMapper.mapDtoToEntity(carRequest);
+    public CarResponse saveCar(CarRequest carRequest, MultipartFile image) {
+        Car car = carMapper.mapDtoToEntity(carRequest, image);
         car.setOriginalBranch(branchService.findEntityById(carRequest.originalBranchId()));
         car.setActualBranch(branchService.findEntityById(carRequest.actualBranchId()));
 
@@ -86,7 +86,7 @@ public class CarService {
         return carMapper.mapEntityToDto(savedCar);
     }
 
-    public CarResponse updateCar(Long id, CarRequest updatedCarRequest) {
+    public CarResponse updateCar(Long id, CarRequest updatedCarRequest, MultipartFile image) {
         Car existingCar = findEntityById(id);
 
         Long branchId = updatedCarRequest.originalBranchId();
@@ -101,6 +101,7 @@ public class CarService {
         existingCar.setAmount(Objects.requireNonNull(updatedCarRequest.amount()));
         existingCar.setCarStatus(CarStatus.valueOf(updatedCarRequest.carState().name()));
         existingCar.setOriginalBranch(branch);
+        existingCar.setImage(carMapper.mapToImage(image));
 
         Car savedCar = saveEntity(existingCar);
 

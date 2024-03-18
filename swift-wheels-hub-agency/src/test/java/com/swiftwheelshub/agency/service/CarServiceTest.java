@@ -129,10 +129,13 @@ class CarServiceTest {
         Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
+        MockMultipartFile image =
+                new MockMultipartFile("car", "car.jpg", MediaType.TEXT_PLAIN_VALUE, "car".getBytes());
+
         when(branchService.findEntityById(anyLong())).thenReturn(branch);
         when(carRepository.saveAndFlush(any(Car.class))).thenReturn(car);
 
-        CarResponse savedCarResponse = assertDoesNotThrow(() -> carService.saveCar(carRequest));
+        CarResponse savedCarResponse = assertDoesNotThrow(() -> carService.saveCar(carRequest, image));
         AssertionUtils.assertCarResponse(car, savedCarResponse);
     }
 
@@ -142,11 +145,14 @@ class CarServiceTest {
         Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
+        MockMultipartFile image =
+                new MockMultipartFile("car", "car.jpg", MediaType.TEXT_PLAIN_VALUE, "car".getBytes());
+
         when(branchService.findEntityById(anyLong())).thenReturn(branch);
         when(carRepository.findById(anyLong())).thenReturn(Optional.of(car));
         when(carRepository.saveAndFlush(any(Car.class))).thenReturn(car);
 
-        CarResponse updatedCarResponse = carService.updateCar(1L, carRequest);
+        CarResponse updatedCarResponse = carService.updateCar(1L, carRequest, image);
         assertNotNull(updatedCarResponse);
     }
 

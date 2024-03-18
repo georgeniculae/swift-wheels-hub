@@ -13,13 +13,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -82,8 +82,9 @@ public class CarController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<CarResponse> addCar(@ModelAttribute @Validated CarRequest carRequest) {
-        CarResponse savedCarResponse = carService.saveCar(carRequest);
+    public ResponseEntity<CarResponse> addCar(@RequestPart @Validated CarRequest carRequest,
+                                              @RequestPart MultipartFile image) {
+        CarResponse savedCarResponse = carService.saveCar(carRequest, image);
 
         return ResponseEntity.ok(savedCarResponse);
     }
@@ -99,8 +100,9 @@ public class CarController {
     @PutMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<CarResponse> updateCar(@PathVariable("id") Long id,
-                                                 @ModelAttribute @Validated CarRequest carRequest) {
-        CarResponse updatedCarResponse = carService.updateCar(id, carRequest);
+                                                 @RequestPart @Validated CarRequest carRequest,
+                                                 @RequestPart MultipartFile image) {
+        CarResponse updatedCarResponse = carService.updateCar(id, carRequest, image);
 
         return ResponseEntity.ok(updatedCarResponse);
     }

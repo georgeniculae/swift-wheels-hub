@@ -6,7 +6,7 @@
   "color": "black",
   "mileage": 270000,
   "carState": "AVAILABLE",
-  "amount": 500.0,
+  "amount": 500,
   "originalBranchId": 1,
   "actualBranchId": 1
 }

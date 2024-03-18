@@ -1,8 +1,12 @@
 package com.swiftwheelshub.agency.mapper;
 
+import com.swiftwheelshub.dto.BodyCategory;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
+import com.swiftwheelshub.dto.CarState;
+import com.swiftwheelshub.entity.BodyType;
 import com.swiftwheelshub.entity.Car;
+import com.swiftwheelshub.entity.CarStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.mapstruct.InjectionStrategy;
@@ -13,9 +17,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-@Mapper(componentModel = "spring",
+@Mapper(
+        componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR
+)
 public interface CarMapper {
 
     @Mapping(target = "originalBranchId", expression = "java(car.getOriginalBranch().getId())")
@@ -24,9 +30,18 @@ public interface CarMapper {
     @Mapping(target = "carState", source = "carStatus")
     CarResponse mapEntityToDto(Car car);
 
-    @Mapping(target = "bodyType", source = "bodyCategory")
-    @Mapping(target = "carStatus", source = "carState")
-    Car mapDtoToEntity(CarRequest carRequest);
+    @Mapping(target = "bodyType", expression = "java(mapToBodyType(carRequest.bodyCategory()))")
+    @Mapping(target = "carStatus", expression = "java(mapToCarStatus(carRequest.carState()))")
+    @Mapping(target = "image", expression = "java(mapToImage(image))")
+    Car mapDtoToEntity(CarRequest carRequest, MultipartFile image);
+
+    default BodyType mapToBodyType(BodyCategory bodyCategory) {
+        return BodyType.valueOf(bodyCategory.name());
+    }
+
+    default CarStatus mapToCarStatus(CarState carState) {
+        return CarStatus.valueOf(carState.name());
+    }
 
     default byte[] mapToImage(MultipartFile multipartFile) {
         try {

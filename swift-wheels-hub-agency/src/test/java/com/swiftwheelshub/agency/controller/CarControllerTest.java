@@ -22,6 +22,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -36,7 +40,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -245,20 +248,20 @@ class CarControllerTest {
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
-        when(carService.saveCar(any(CarRequest.class))).thenReturn(carResponse);
+        File carImage = new File("src/test/resources/image/car.jpg");
+        InputStream stream = new FileInputStream(carImage);
 
-        MockHttpServletResponse response = mockMvc.perform(post(PATH)
-                        .flashAttr("carRequest", carRequest)
-                        .param("make", carRequest.make())
-                        .param("model", carRequest.model())
-                        .param("bodyCategory", String.valueOf(carRequest.bodyCategory()))
-                        .param("yearOfProduction", String.valueOf(carRequest.yearOfProduction()))
-                        .param("color", carRequest.color())
-                        .param("mileage", String.valueOf(carRequest.mileage()))
-                        .param("carState", String.valueOf(carRequest.carState()))
-                        .param("amount", String.valueOf(carRequest.amount()))
-                        .param("originalBranchId", String.valueOf(carRequest.originalBranchId()))
-                        .param("actualBranchId", String.valueOf(carRequest.actualBranchId()))
+        MockMultipartFile image =
+                new MockMultipartFile("image", carImage.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
+
+        MockMultipartFile carRequestMockPart =
+                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtils.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
+
+        when(carService.saveCar(any(CarRequest.class), any(MultipartFile.class))).thenReturn(carResponse);
+
+        MockHttpServletResponse response = mockMvc.perform(multipart(HttpMethod.POST, PATH)
+                        .file(image)
+                        .file(carRequestMockPart)
                         .with(csrf())
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk())
@@ -273,19 +276,20 @@ class CarControllerTest {
     void addCarTest_unauthorized() throws Exception {
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
-        MockHttpServletResponse response = mockMvc.perform(post(PATH)
-                        .flashAttr("carRequest", carRequest)
-                        .param("make", carRequest.make())
-                        .param("model", carRequest.model())
-                        .param("bodyCategory", String.valueOf(carRequest.bodyCategory()))
-                        .param("yearOfProduction", String.valueOf(carRequest.yearOfProduction()))
-                        .param("color", carRequest.color())
-                        .param("mileage", String.valueOf(carRequest.mileage()))
-                        .param("carState", String.valueOf(carRequest.carState()))
-                        .param("amount", String.valueOf(carRequest.amount()))
-                        .param("originalBranchId", String.valueOf(carRequest.originalBranchId()))
-                        .param("actualBranchId", String.valueOf(carRequest.actualBranchId()))
-                        .with(csrf()))
+        File carImage = new File("src/test/resources/image/car.jpg");
+        InputStream stream = new FileInputStream(carImage);
+
+        MockMultipartFile image =
+                new MockMultipartFile("image", carImage.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
+
+        MockMultipartFile carRequestMockPart =
+                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtils.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
+
+        MockHttpServletResponse response = mockMvc.perform(multipart(HttpMethod.POST, PATH)
+                        .file(image)
+                        .file(carRequestMockPart)
+                        .with(csrf())
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isUnauthorized())
                 .andReturn()
                 .getResponse();
@@ -297,18 +301,19 @@ class CarControllerTest {
     void addCarTest_forbidden() throws Exception {
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
-        MockHttpServletResponse response = mockMvc.perform(post(PATH)
-                        .flashAttr("carRequest", carRequest)
-                        .param("make", carRequest.make())
-                        .param("model", carRequest.model())
-                        .param("bodyCategory", String.valueOf(carRequest.bodyCategory()))
-                        .param("yearOfProduction", String.valueOf(carRequest.yearOfProduction()))
-                        .param("color", carRequest.color())
-                        .param("mileage", String.valueOf(carRequest.mileage()))
-                        .param("carState", String.valueOf(carRequest.carState()))
-                        .param("amount", String.valueOf(carRequest.amount()))
-                        .param("originalBranchId", String.valueOf(carRequest.originalBranchId()))
-                        .param("actualBranchId", String.valueOf(carRequest.actualBranchId())))
+        File carImage = new File("src/test/resources/image/car.jpg");
+        InputStream stream = new FileInputStream(carImage);
+
+        MockMultipartFile image =
+                new MockMultipartFile("image", carImage.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
+
+        MockMultipartFile carRequestMockPart =
+                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtils.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
+
+        MockHttpServletResponse response = mockMvc.perform(multipart(HttpMethod.POST, PATH)
+                        .file(image)
+                        .file(carRequestMockPart)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isForbidden())
                 .andReturn()
                 .getResponse();
@@ -344,11 +349,6 @@ class CarControllerTest {
         MockMultipartFile file =
                 new MockMultipartFile("file", "Cars.xlsx", MediaType.TEXT_PLAIN_VALUE, "Cars".getBytes());
 
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
-        List<CarResponse> carResponses = List.of(carResponse);
-
-        when(carService.uploadCars(any(MultipartFile.class))).thenReturn(carResponses);
-
         mockMvc.perform(multipart(HttpMethod.POST, PATH + "/upload")
                         .file(file)
                         .with(csrf())
@@ -364,20 +364,20 @@ class CarControllerTest {
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
-        when(carService.updateCar(anyLong(), any(CarRequest.class))).thenReturn(carResponse);
+        File carImage = new File("src/test/resources/image/car.jpg");
+        InputStream stream = new FileInputStream(carImage);
 
-        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
-                        .flashAttr("carRequest", carRequest)
-                        .param("make", carRequest.make())
-                        .param("model", carRequest.model())
-                        .param("bodyCategory", String.valueOf(carRequest.bodyCategory()))
-                        .param("yearOfProduction", String.valueOf(carRequest.yearOfProduction()))
-                        .param("color", carRequest.color())
-                        .param("mileage", String.valueOf(carRequest.mileage()))
-                        .param("carState", String.valueOf(carRequest.carState()))
-                        .param("amount", String.valueOf(carRequest.amount()))
-                        .param("originalBranchId", String.valueOf(carRequest.originalBranchId()))
-                        .param("actualBranchId", String.valueOf(carRequest.actualBranchId()))
+        MockMultipartFile image =
+                new MockMultipartFile("image", carImage.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
+
+        MockMultipartFile carRequestMockPart =
+                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtils.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
+
+        when(carService.updateCar(anyLong(), any(CarRequest.class), any(MultipartFile.class))).thenReturn(carResponse);
+
+        MockHttpServletResponse response = mockMvc.perform(multipart(HttpMethod.PUT, PATH + "/{id}", 1L)
+                        .file(image)
+                        .file(carRequestMockPart)
                         .with(csrf())
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk())
@@ -392,18 +392,18 @@ class CarControllerTest {
     void updateCarTest_unauthorized() throws Exception {
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
-        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
-                        .flashAttr("carRequest", carRequest)
-                        .param("make", carRequest.make())
-                        .param("model", carRequest.model())
-                        .param("bodyCategory", String.valueOf(carRequest.bodyCategory()))
-                        .param("yearOfProduction", String.valueOf(carRequest.yearOfProduction()))
-                        .param("color", carRequest.color())
-                        .param("mileage", String.valueOf(carRequest.mileage()))
-                        .param("carState", String.valueOf(carRequest.carState()))
-                        .param("amount", String.valueOf(carRequest.amount()))
-                        .param("originalBranchId", String.valueOf(carRequest.originalBranchId()))
-                        .param("actualBranchId", String.valueOf(carRequest.actualBranchId()))
+        File carImage = new File("src/test/resources/image/car.jpg");
+        InputStream stream = new FileInputStream(carImage);
+
+        MockMultipartFile image =
+                new MockMultipartFile("image", carImage.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
+
+        MockMultipartFile carRequestMockPart =
+                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtils.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
+
+        MockHttpServletResponse response = mockMvc.perform(multipart(HttpMethod.PUT, PATH + "/{id}", 1L)
+                        .file(image)
+                        .file(carRequestMockPart)
                         .with(csrf())
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isUnauthorized())
@@ -417,18 +417,18 @@ class CarControllerTest {
     void updateCarTest_forbidden() throws Exception {
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
-        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
-                        .flashAttr("carRequest", carRequest)
-                        .param("make", carRequest.make())
-                        .param("model", carRequest.model())
-                        .param("bodyCategory", String.valueOf(carRequest.bodyCategory()))
-                        .param("yearOfProduction", String.valueOf(carRequest.yearOfProduction()))
-                        .param("color", carRequest.color())
-                        .param("mileage", String.valueOf(carRequest.mileage()))
-                        .param("carState", String.valueOf(carRequest.carState()))
-                        .param("amount", String.valueOf(carRequest.amount()))
-                        .param("originalBranchId", String.valueOf(carRequest.originalBranchId()))
-                        .param("actualBranchId", String.valueOf(carRequest.actualBranchId()))
+        File carImage = new File("src/test/resources/image/car.jpg");
+        InputStream stream = new FileInputStream(carImage);
+
+        MockMultipartFile image =
+                new MockMultipartFile("image", carImage.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
+
+        MockMultipartFile carRequestMockPart =
+                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtils.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
+
+        MockHttpServletResponse response = mockMvc.perform(multipart(HttpMethod.PUT, PATH + "/{id}", 1L)
+                        .file(image)
+                        .file(carRequestMockPart)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isForbidden())
                 .andReturn()

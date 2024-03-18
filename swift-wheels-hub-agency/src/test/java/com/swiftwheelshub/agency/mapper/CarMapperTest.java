@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -37,9 +39,12 @@ class CarMapperTest {
 
     @Test
     void mapDtoToEntityTest_success() {
+        MockMultipartFile image =
+                new MockMultipartFile("car", "car.jpg", MediaType.TEXT_PLAIN_VALUE, "car".getBytes());
+
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
-        Car car = Assertions.assertDoesNotThrow(() -> carMapper.mapDtoToEntity(carRequest));
+        Car car = Assertions.assertDoesNotThrow(() -> carMapper.mapDtoToEntity(carRequest, image));
 
         assertNotNull(car);
         AssertionUtils.assertCarRequest(car, carRequest);
@@ -47,7 +52,7 @@ class CarMapperTest {
 
     @Test
     void mapDtoToEntityTest_null() {
-        Car car = Assertions.assertDoesNotThrow(() -> carMapper.mapDtoToEntity(null));
+        Car car = Assertions.assertDoesNotThrow(() -> carMapper.mapDtoToEntity(null, null));
 
         assertNull(car);
     }
