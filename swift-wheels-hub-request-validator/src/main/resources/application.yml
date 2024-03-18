@@ -56,7 +56,8 @@ apikey:
   secret: ${API_KEY_SECRET}
 
 swagger:
-  agency: lb://swift-wheels-hub-agency/agency/definition/v3/api-docs
-  booking: lb://swift-wheels-hub-booking/bookings/definition/v3/api-docs
-  customer: lb://swift-wheels-hub-customer/customers/definition/v3/api-docs
-  expense: lb://swift-wheels-hub-expense/expense/definition/v3/api-docs
+  endpoints:
+    agency: lb://swift-wheels-hub-agency/agency/definition/v3/api-docs
+    booking: lb://swift-wheels-hub-booking/bookings/definition/v3/api-docs
+    customer: lb://swift-wheels-hub-customer/customers/definition/v3/api-docs
+    expense: lb://swift-wheels-hub-expense/expense/definition/v3/api-docs

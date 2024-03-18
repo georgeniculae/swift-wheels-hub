@@ -5,12 +5,12 @@ import com.swiftwheelshub.requestvalidator.model.SwaggerFile;
 import com.swiftwheelshub.requestvalidator.repository.SwaggerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.util.Pair;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,13 +27,13 @@ public class RedisService {
     )
     public void addSwaggerFilesToRedis() {
         try {
-            Map<String, String> swaggerIdentifierAndContent = swaggerExtractorService.getSwaggerIdentifierAndContent();
+            List<Pair<String, String>> swaggerIdentifierAndContent = swaggerExtractorService.getSwaggerIdentifierAndContent();
 
-            List<SwaggerFile> swaggerFiles = swaggerIdentifierAndContent.entrySet()
+            List<SwaggerFile> swaggerFiles = swaggerIdentifierAndContent
                     .stream()
                     .map(swaggerIdAndContent -> SwaggerFile.builder()
-                            .id(swaggerIdAndContent.getKey())
-                            .swaggerContent(swaggerIdAndContent.getValue())
+                            .id(swaggerIdAndContent.getFirst())
+                            .swaggerContent(swaggerIdAndContent.getSecond())
                             .build())
                     .toList();
 
@@ -51,7 +51,7 @@ public class RedisService {
         try {
             swaggerRepository.deleteById(microserviceName);
             String swaggerContent = swaggerExtractorService.getSwaggerFileForMicroservice(microserviceName)
-                    .get(microserviceName);
+                    .getSecond();
 
             swaggerFile = SwaggerFile.builder()
                     .id(microserviceName)

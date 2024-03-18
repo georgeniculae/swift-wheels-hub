@@ -15,10 +15,10 @@ import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -80,7 +80,7 @@ public class DebeziumListener {
                         .map(Field::name)
                         .filter(fieldName -> ObjectUtils.isNotEmpty(struct.get(fieldName)))
                         .map(fieldName -> getFieldName(struct, fieldName))
-                        .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+                        .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
 
                 Invoice invoice = objectMapper.convertValue(payload, Invoice.class);
                 InvoiceResponse invoiceResponse = invoiceMapper.mapEntityToDto(invoice);

@@ -3,6 +3,7 @@ package com.swiftwheelshub.lib.annotation;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -27,5 +28,6 @@ import java.lang.annotation.Target;
 @EnableDiscoveryClient
 @EnableScheduling
 @EnableRetry
+@EnableConfigurationProperties
 public @interface SwiftWheelsHubMicroservice {
 }
