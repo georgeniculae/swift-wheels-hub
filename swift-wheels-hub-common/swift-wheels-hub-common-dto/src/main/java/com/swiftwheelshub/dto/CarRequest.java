@@ -5,9 +5,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Builder
@@ -41,10 +39,8 @@ public record CarRequest(
         Long originalBranchId,
 
         @NotNull(message = "Actual branch cannot be null")
-        Long actualBranchId,
-
-        MultipartFile image
-) implements Serializable {
+        Long actualBranchId
+) {
 
     @Override
     public String toString() {
