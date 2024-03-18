@@ -1,7 +1,7 @@
 package com.swiftwheelshub.gateway.filter.global;
 
-import com.swiftwheelshub.gateway.security.JwtAuthenticationTokenConverter;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
+import com.swiftwheelshub.gateway.security.JwtAuthenticationTokenConverter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +17,6 @@ import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,9 +55,11 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     }
 
     private Mono<ServerWebExchange> modifyHeaders(ServerWebExchange exchange) {
-        return getUsername(exchange.getRequest())
-                .zipWith(getRoles(exchange.getRequest()))
-                .map(usernameAndAuthorities -> mutateServerWebExchange(exchange, usernameAndAuthorities));
+        return Mono.zip(
+                getUsername(exchange.getRequest()),
+                getRoles(exchange.getRequest()),
+                (username, authorities) -> mutateServerWebExchange(exchange, username, authorities)
+        );
     }
 
     private Mono<String> getUsername(ServerHttpRequest request) {
@@ -95,23 +96,21 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
                 .substring(7);
     }
 
-    private ServerWebExchange mutateServerWebExchange(ServerWebExchange exchange,
-                                                      Tuple2<String, List<String>> usernameAndAuthorities) {
+    private ServerWebExchange mutateServerWebExchange(ServerWebExchange exchange, String username,
+                                                      List<String> authorities) {
         return exchange.mutate()
-                .request(mutateHeaders(usernameAndAuthorities))
+                .request(mutateHeaders(username, authorities))
                 .build();
     }
 
-    private Consumer<ServerHttpRequest.Builder> mutateHeaders(Tuple2<String, List<String>> usernameAndAuthorities) {
+    private Consumer<ServerHttpRequest.Builder> mutateHeaders(String username, List<String> roles) {
         return requestBuilder -> {
             requestBuilder.header(X_API_KEY_HEADER, apikey);
 
-            String username = usernameAndAuthorities.getT1();
             if (ObjectUtils.isNotEmpty(username)) {
                 requestBuilder.header(X_USERNAME, username);
             }
 
-            List<String> roles = usernameAndAuthorities.getT2();
             if (ObjectUtils.isNotEmpty(roles)) {
                 requestBuilder.header(X_ROLES, roles.toArray(new String[]{}));
             }
