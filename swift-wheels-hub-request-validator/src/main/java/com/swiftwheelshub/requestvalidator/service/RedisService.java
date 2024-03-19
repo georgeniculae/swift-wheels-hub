@@ -22,7 +22,7 @@ public class RedisService {
 
     @Retryable(
             retryFor = SwiftWheelsHubException.class,
-            maxAttempts = 10, backoff = @Backoff(value = 6000L),
+            maxAttempts = 6, backoff = @Backoff(value = 10000L),
             listeners = "loadSwaggerCacheAtStartup"
     )
     public void addSwaggerFilesToRedis() {
