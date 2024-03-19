@@ -109,8 +109,8 @@ public class BookingController {
             sentParameters = "username",
             activityDescription = "Booking deletion"
     )
-    public ResponseEntity<Void> deleteBookingById(HttpServletRequest request,
-                                                  @PathVariable("username") String username) {
+    public ResponseEntity<Void> deleteBookingsByUsername(HttpServletRequest request,
+                                                         @PathVariable("username") String username) {
         bookingService.deleteBookingByCustomerUsername(request, username);
 
         return ResponseEntity.noContent().build();

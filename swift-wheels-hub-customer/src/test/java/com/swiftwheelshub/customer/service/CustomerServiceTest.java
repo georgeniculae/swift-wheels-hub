@@ -281,7 +281,7 @@ class CustomerServiceTest {
         when(usersResource.get(anyString())).thenReturn(userResource);
 
         doNothing().when(userResource).remove();
-        doNothing().when(bookingService).deleteBookingByUsername(any(HttpServletRequest.class), anyString());
+        doNothing().when(bookingService).deleteBookingsByUsername(any(HttpServletRequest.class), anyString());
         when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of(userRepresentation));
         assertDoesNotThrow(() -> customerService.deleteUserByUsername(httpServletRequest, "user"));
     }

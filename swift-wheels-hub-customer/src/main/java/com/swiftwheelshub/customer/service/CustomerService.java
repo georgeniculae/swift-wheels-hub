@@ -123,7 +123,7 @@ public class CustomerService {
             handleRestEasyCall(e);
         }
 
-        bookingService.deleteBookingByUsername(request, username);
+        bookingService.deleteBookingsByUsername(request, username);
     }
 
     public void signOut(HttpServletRequest request) {

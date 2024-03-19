@@ -20,7 +20,7 @@ public class BookingService {
 
     private final RestClient restClient;
 
-    public void deleteBookingByUsername(HttpServletRequest request, String username) {
+    public void deleteBookingsByUsername(HttpServletRequest request, String username) {
         restClient.delete()
                 .uri(url + SEPARATOR + username)
                 .headers(HttpRequestUtil.mutateHeaders(request))
