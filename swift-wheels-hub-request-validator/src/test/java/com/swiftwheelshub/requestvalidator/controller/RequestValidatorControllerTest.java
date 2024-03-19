@@ -1,10 +1,10 @@
 package com.swiftwheelshub.requestvalidator.controller;
 
-import com.swiftwheelshub.requestvalidator.util.TestUtils;
 import com.swiftwheelshub.dto.IncomingRequestDetails;
 import com.swiftwheelshub.dto.RequestValidationReport;
 import com.swiftwheelshub.requestvalidator.service.RedisService;
 import com.swiftwheelshub.requestvalidator.service.SwaggerRequestValidatorService;
+import com.swiftwheelshub.requestvalidator.util.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,8 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @EnableWebMvc
 class RequestValidatorControllerTest {
 
-    private static final String PATH = "/request-validator";
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -56,7 +54,7 @@ class RequestValidatorControllerTest {
         when(swaggerRequestValidatorService.validateRequest(any(IncomingRequestDetails.class)))
                 .thenReturn(requestValidationReport);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/validate")
+        mockMvc.perform(MockMvcRequestBuilders.post("/validate")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -79,7 +77,7 @@ class RequestValidatorControllerTest {
         when(swaggerRequestValidatorService.validateRequest(any(IncomingRequestDetails.class)))
                 .thenReturn(requestValidationReport);
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/validate")
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post("/validate")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -96,7 +94,7 @@ class RequestValidatorControllerTest {
     void invalidateSwaggerCacheTest_success() throws Exception {
         doNothing().when(redisService).repopulateRedisWithSwaggerFiles(anyString());
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/invalidate/{microserviceName}", "agency")
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put("/invalidate/{microserviceName}", "agency")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -112,7 +110,7 @@ class RequestValidatorControllerTest {
     void invalidateSwaggerCacheTest_unauthorized() throws Exception {
         doNothing().when(redisService).repopulateRedisWithSwaggerFiles(anyString());
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/invalidate/{microserviceName}", "agency")
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put("/invalidate/{microserviceName}", "agency")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

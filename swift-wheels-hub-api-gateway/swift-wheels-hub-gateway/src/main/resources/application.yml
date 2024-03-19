@@ -31,7 +31,7 @@ spring:
         - id: booking
           uri: lb://swift-wheels-hub-booking
           predicates:
-            - Path=/bookings/**
+            - Path=/booking/**
           filters:
             - name: LanguageHeaderUpdater
               args:
@@ -98,4 +98,4 @@ logging:
 
 apikey-secret: ${API_KEY_SECRET}
 
-request-validator-url: lb://swift-wheels-hub-request-validator/request-validator/validate
+request-validator-url: lb://swift-wheels-hub-request-validator/validate

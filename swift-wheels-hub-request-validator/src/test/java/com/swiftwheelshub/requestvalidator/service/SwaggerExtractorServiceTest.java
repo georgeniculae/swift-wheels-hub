@@ -57,9 +57,9 @@ class SwaggerExtractorServiceTest {
         String agencyContent =
                 TestUtils.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
         String bookingContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubBookingsSwagger.json", String.class);
+                TestUtils.getResourceAsJson("/data/SwiftWheelsHubBookingSwagger.json", String.class);
         String customerContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubCustomersSwagger.json", String.class);
+                TestUtils.getResourceAsJson("/data/SwiftWheelsHubCustomerSwagger.json", String.class);
         String expenseContent =
                 TestUtils.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
 
@@ -103,9 +103,9 @@ class SwaggerExtractorServiceTest {
         String agencyContent =
                 TestUtils.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
         String bookingContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubBookingsSwagger.json", String.class);
+                TestUtils.getResourceAsJson("/data/SwiftWheelsHubBookingSwagger.json", String.class);
         String customerContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubCustomersSwagger.json", String.class);
+                TestUtils.getResourceAsJson("/data/SwiftWheelsHubCustomerSwagger.json", String.class);
         String expenseContent =
                 TestUtils.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
 
@@ -132,9 +132,9 @@ class SwaggerExtractorServiceTest {
         String agencyContent =
                 TestUtils.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
         String bookingContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubBookingsSwagger.json", String.class);
+                TestUtils.getResourceAsJson("/data/SwiftWheelsHubBookingSwagger.json", String.class);
         String customerContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubCustomersSwagger.json", String.class);
+                TestUtils.getResourceAsJson("/data/SwiftWheelsHubCustomerSwagger.json", String.class);
         String expenseContent =
                 TestUtils.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
 
@@ -178,9 +178,9 @@ class SwaggerExtractorServiceTest {
         String agencyContent =
                 TestUtils.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
         String bookingContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubBookingsSwagger.json", String.class);
+                TestUtils.getResourceAsJson("/data/SwiftWheelsHubBookingSwagger.json", String.class);
         String customerContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubCustomersSwagger.json", String.class);
+                TestUtils.getResourceAsJson("/data/SwiftWheelsHubCustomerSwagger.json", String.class);
         String expenseContent =
                 TestUtils.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
 
