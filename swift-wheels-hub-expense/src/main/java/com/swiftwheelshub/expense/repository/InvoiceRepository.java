@@ -39,4 +39,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
     @Query("select (count(i) > 0) from Invoice i where i.bookingId = ?1")
     boolean existsByBookingId(Long bookingId);
+
+    void deleteByBookingId(Long bookingId);
+
 }

@@ -188,26 +188,4 @@ class InvoiceServiceTest {
         verify(invoiceMapper, times(1)).mapEntityToDto(any(Invoice.class));
     }
 
-    @Test
-    void deleteInvoiceByBookingIdTest_success() {
-        Invoice invoice = TestUtils.getResourceAsJson("/data/InProgressInvoice.json", Invoice.class);
-
-        when(invoiceRepository.findByBookingId(anyLong())).thenReturn(Optional.ofNullable(invoice));
-
-        assertDoesNotThrow(() -> invoiceService.deleteInvoiceByBookingId(1L));
-    }
-
-    @Test
-    void deleteInvoiceByBookingIdTest_error_bookingInProgress() {
-        Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
-
-        when(invoiceRepository.findByBookingId(anyLong())).thenReturn(Optional.ofNullable(invoice));
-
-        SwiftWheelsHubResponseStatusException exception =
-                assertThrows(SwiftWheelsHubResponseStatusException.class, () -> invoiceService.deleteInvoiceByBookingId(1L));
-
-        assertNotNull(exception);
-        assertThat(exception.getMessage()).contains("Invoice cannot be deleted if booking is in progress");
-    }
-
 }

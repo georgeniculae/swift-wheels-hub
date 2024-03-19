@@ -170,12 +170,14 @@ public class BookingService {
         return bookingResponse;
     }
 
-    public void deleteBookingById(HttpServletRequest request, Long id) {
+    public void deleteBookingByCustomerUsername(HttpServletRequest request, String username) {
         Booking existingBooking;
 
         try {
-            existingBooking = findEntityById(id);
-            bookingRepository.deleteById(id);
+            existingBooking = bookingRepository.findByCustomerUsernameIgnoreCase(username)
+                    .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Booking not found"));
+
+            bookingRepository.deleteById(existingBooking.getId());
         } catch (Exception e) {
             throw new SwiftWheelsHubException(e);
         }

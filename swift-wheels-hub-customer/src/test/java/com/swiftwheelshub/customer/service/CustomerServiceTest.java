@@ -11,6 +11,7 @@ import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.core.Headers;
@@ -84,6 +85,9 @@ class CustomerServiceTest {
 
     @Mock
     private RoleScopeResource roleScopeResource;
+
+    @Mock
+    private BookingService bookingService;
 
     @Spy
     private UserMapper userMapper = new UserMapperImpl();
@@ -267,24 +271,31 @@ class CustomerServiceTest {
     void deleteUserByIdTest_success() {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader("X-API-KEY", "apikey");
+
         when(keycloak.realm(anyString())).thenReturn(realmResource);
         when(realmResource.users()).thenReturn(usersResource);
         when(usersResource.get(anyString())).thenReturn(userResource);
         doNothing().when(userResource).remove();
+        doNothing().when(bookingService).deleteBookingByUsername(any(HttpServletRequest.class), anyString());
 
-        assertDoesNotThrow(() -> customerService.deleteUserById("user"));
+        assertDoesNotThrow(() -> customerService.deleteUserByUsername(httpServletRequest, "user"));
     }
 
     @Test
     void deleteUserByIdTest_userNotFound() {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader("X-API-KEY", "apikey");
+
         when(keycloak.realm(anyString())).thenReturn(realmResource);
         when(realmResource.users()).thenReturn(usersResource);
         when(usersResource.get(anyString())).thenReturn(userResource);
         doThrow(new NotFoundException()).when(userResource).remove();
 
-        assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.deleteUserById("user"));
+        assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.deleteUserByUsername(httpServletRequest, "user"));
     }
 
     @Test

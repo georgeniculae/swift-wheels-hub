@@ -64,14 +64,15 @@ public class UserController {
         return ResponseEntity.ok(customerService.countUsers());
     }
 
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(path = "/{username}")
     @PreAuthorize("hasAuthority('admin')")
     @LogActivity(
-            sentParameters = "id",
+            sentParameters = "username",
             activityDescription = "User deletion"
     )
-    public ResponseEntity<Void> deleteUserById(@PathVariable("id") String id) {
-        customerService.deleteUserById(id);
+    public ResponseEntity<Void> deleteUserByUsername(HttpServletRequest request,
+                                                     @PathVariable("username") String username) {
+        customerService.deleteUserByUsername(request, username);
 
         return ResponseEntity.noContent().build();
     }

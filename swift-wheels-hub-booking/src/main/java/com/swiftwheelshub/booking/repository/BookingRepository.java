@@ -17,6 +17,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Optional<Booking> findByDateOfBooking(@Param("dateOfBooking") LocalDate dateOfBooking);
 
     @Query("""
+            SELECT booking
+            FROM Booking booking
+            WHERE UPPER(booking.customerUsername) = UPPER(?1)""")
+    Optional<Booking> findByCustomerUsernameIgnoreCase(String customerUsername);
+
+    @Query("""
             From Booking booking
             where booking.customerUsername = : username""")
     List<Booking> findBookingsByUser(@Param("username") String username);
@@ -26,7 +32,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             From Booking booking
             where booking.customerUsername = :customerUsername""")
     Long countByCustomerUsername(@Param("customerUsername") String customerUsername);
-
-    void deleteByCustomerUsername(String customerUsername);
 
 }

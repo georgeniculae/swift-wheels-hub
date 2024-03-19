@@ -59,6 +59,8 @@ public class CustomerService {
 
     private final Keycloak keycloak;
 
+    private final BookingService bookingService;
+
     private final UserMapper userMapper;
 
     public UserInfo findUserByUsername(String username) {
@@ -111,14 +113,16 @@ public class CustomerService {
         return userMapper.mapUserToUserDetails(userRepresentation);
     }
 
-    public void deleteUserById(String id) {
-        UserResource userResource = findById(id);
+    public void deleteUserByUsername(HttpServletRequest request, String username) {
+        UserResource userResource = findById(username);
 
         try {
             userResource.remove();
         } catch (Exception e) {
             handleRestEasyCall(e);
         }
+
+        bookingService.deleteBookingByUsername(request, username);
     }
 
     public void signOut(HttpServletRequest request) {

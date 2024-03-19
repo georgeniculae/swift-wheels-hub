@@ -103,14 +103,15 @@ public class BookingController {
         return ResponseEntity.ok(updatedBookingResponse);
     }
 
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(path = "/{username}")
     @PreAuthorize("hasAuthority('user')")
     @LogActivity(
-            sentParameters = "id",
+            sentParameters = "username",
             activityDescription = "Booking deletion"
     )
-    public ResponseEntity<Void> deleteBookingById(HttpServletRequest request, @PathVariable("id") Long id) {
-        bookingService.deleteBookingById(request, id);
+    public ResponseEntity<Void> deleteBookingById(HttpServletRequest request,
+                                                  @PathVariable("username") String username) {
+        bookingService.deleteBookingByCustomerUsername(request, username);
 
         return ResponseEntity.noContent().build();
     }

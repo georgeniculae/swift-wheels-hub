@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -442,8 +443,8 @@ class BookingControllerTest {
     }
 
     @Test
-    void deleteBookingByIdTest_success() throws Exception {
-        doNothing().when(bookingService).deleteBookingById(any(HttpServletRequest.class), anyLong());
+    void deleteBookingByUsernameTest_success() throws Exception {
+        doNothing().when(bookingService).deleteBookingByCustomerUsername(any(HttpServletRequest.class), anyString());
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L).contextPath(PATH)
                         .with(csrf())

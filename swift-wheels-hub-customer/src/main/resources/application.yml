@@ -100,3 +100,6 @@ keycloak:
 
 audit:
   enabled: true
+
+booking-service:
+  url: lb://swift-wheels-hub-booking/bookings

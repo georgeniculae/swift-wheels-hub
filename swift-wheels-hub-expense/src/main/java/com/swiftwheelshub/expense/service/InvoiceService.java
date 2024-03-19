@@ -123,18 +123,7 @@ public class InvoiceService {
     }
 
     public void deleteInvoiceByBookingId(Long bookingId) {
-        Invoice invoice = findInvoiceByBookingId(bookingId);
-
-        if (ObjectUtils.isEmpty(invoice.getTotalAmount())) {
-            invoiceRepository.deleteById(bookingId);
-
-            return;
-        }
-
-        throw new SwiftWheelsHubResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Invoice cannot be deleted if booking is in progress"
-        );
+        invoiceRepository.deleteByBookingId(bookingId);
     }
 
     private void validateInvoice(InvoiceRequest invoiceRequest) {
