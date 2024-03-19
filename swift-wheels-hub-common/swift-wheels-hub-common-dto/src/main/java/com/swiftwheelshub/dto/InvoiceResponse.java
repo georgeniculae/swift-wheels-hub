@@ -1,7 +1,5 @@
 package com.swiftwheelshub.dto;
 
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -29,7 +27,6 @@ public record InvoiceResponse(
         Long bookingId,
 
         @DateTimeFormat(pattern = "yyyy-MM-dd")
-        @Temporal(TemporalType.DATE)
         LocalDate carDateOfReturn,
 
         Boolean isVehicleDamaged,

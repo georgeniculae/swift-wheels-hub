@@ -1,7 +1,5 @@
 package com.swiftwheelshub.dto;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -16,7 +14,6 @@ public record CarRequest(
         @NotEmpty(message = "Model cannot be null")
         String model,
 
-        @Enumerated(EnumType.STRING)
         @NotNull(message = "Body category cannot be null")
         BodyCategory bodyCategory,
 
@@ -29,7 +26,6 @@ public record CarRequest(
         @NotNull(message = "Mileage cannot be null")
         Integer mileage,
 
-        @Enumerated(EnumType.STRING)
         CarState carState,
 
         @NotNull(message = "Amount cannot be null")
