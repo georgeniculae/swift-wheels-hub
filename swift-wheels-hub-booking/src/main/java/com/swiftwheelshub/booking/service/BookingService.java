@@ -171,18 +171,16 @@ public class BookingService {
     }
 
     public void deleteBookingByCustomerUsername(HttpServletRequest request, String username) {
-        Booking existingBooking;
+        bookingRepository.findByCustomerUsernameIgnoreCase(username)
+                .forEach(existingBooking -> {
+                    try {
+                        bookingRepository.deleteById(existingBooking.getId());
+                    } catch (Exception e) {
+                        throw new SwiftWheelsHubException(e);
+                    }
 
-        try {
-            existingBooking = bookingRepository.findByCustomerUsernameIgnoreCase(username)
-                    .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Booking not found"));
-
-            bookingRepository.deleteById(existingBooking.getId());
-        } catch (Exception e) {
-            throw new SwiftWheelsHubException(e);
-        }
-
-        carService.changeCarStatus(request, existingBooking.getCarId(), CarState.AVAILABLE);
+                    carService.changeCarStatus(request, existingBooking.getCarId(), CarState.AVAILABLE);
+                });
     }
 
     private void validateBookingDates(BookingRequest newBookingRequest) {

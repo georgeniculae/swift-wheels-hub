@@ -17,10 +17,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Optional<Booking> findByDateOfBooking(@Param("dateOfBooking") LocalDate dateOfBooking);
 
     @Query("""
-            SELECT booking
-            FROM Booking booking
-            WHERE UPPER(booking.customerUsername) = UPPER(?1)""")
-    Optional<Booking> findByCustomerUsernameIgnoreCase(String customerUsername);
+            From Booking booking
+            where upper(booking.customerUsername) = upper(?1)""")
+    List<Booking> findByCustomerUsernameIgnoreCase(String customerUsername);
 
     @Query("""
             From Booking booking
