@@ -114,7 +114,8 @@ public class CustomerService {
     }
 
     public void deleteUserByUsername(HttpServletRequest request, String username) {
-        UserResource userResource = findById(username);
+        UserRepresentation userRepresentation = getUserRepresentation(username);
+        UserResource userResource = findById(userRepresentation.getId());
 
         try {
             userResource.remove();

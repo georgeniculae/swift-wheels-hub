@@ -268,31 +268,38 @@ class CustomerServiceTest {
     }
 
     @Test
-    void deleteUserByIdTest_success() {
+    void deleteUserByUsernameTest_success() {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-API-KEY", "apikey");
 
+        UserRepresentation userRepresentation = TestData.getUserRepresentation();
+
         when(keycloak.realm(anyString())).thenReturn(realmResource);
         when(realmResource.users()).thenReturn(usersResource);
         when(usersResource.get(anyString())).thenReturn(userResource);
+
         doNothing().when(userResource).remove();
         doNothing().when(bookingService).deleteBookingByUsername(any(HttpServletRequest.class), anyString());
-
+        when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of(userRepresentation));
         assertDoesNotThrow(() -> customerService.deleteUserByUsername(httpServletRequest, "user"));
     }
 
     @Test
-    void deleteUserByIdTest_userNotFound() {
+    void deleteUserByUsernameTest_userNotFound() {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-API-KEY", "apikey");
 
+        UserRepresentation userRepresentation = TestData.getUserRepresentation();
+
         when(keycloak.realm(anyString())).thenReturn(realmResource);
         when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of(userRepresentation));
         when(usersResource.get(anyString())).thenReturn(userResource);
+
         doThrow(new NotFoundException()).when(userResource).remove();
 
         assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.deleteUserByUsername(httpServletRequest, "user"));
