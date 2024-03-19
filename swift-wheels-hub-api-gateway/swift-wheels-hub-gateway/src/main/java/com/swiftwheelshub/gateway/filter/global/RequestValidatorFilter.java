@@ -49,7 +49,7 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
                 .flatMap(requestValidationReport -> filterRequest(exchange, chain, requestValidationReport))
                 .switchIfEmpty(Mono.defer(() -> chain.filter(exchange)))
                 .onErrorMap(e-> {
-                    log.error("Error While trying to validate request: {}", e.getMessage());
+                    log.error("Error while trying to validate request: {}", e.getMessage());
 
                     return new SwiftWheelsHubException(e);
                 });
