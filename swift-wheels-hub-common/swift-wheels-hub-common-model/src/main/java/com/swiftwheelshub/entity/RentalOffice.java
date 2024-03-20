@@ -1,6 +1,8 @@
 package com.swiftwheelshub.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,8 +22,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
-@Setter
+@Getter(onMethod_ = @JsonProperty)
+@Setter(onMethod_ = @JsonProperty)
+@JsonIgnoreProperties(ignoreUnknown = true, value = "branches")
 public class RentalOffice extends BaseEntity {
 
     @OneToMany(mappedBy = "rentalOffice", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
