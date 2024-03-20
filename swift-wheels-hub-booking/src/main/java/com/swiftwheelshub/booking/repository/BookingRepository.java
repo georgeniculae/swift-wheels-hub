@@ -2,8 +2,10 @@ package com.swiftwheelshub.booking.repository;
 
 import com.swiftwheelshub.entity.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,5 +33,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             From Booking booking
             where booking.customerUsername = :customerUsername""")
     Long countByCustomerUsername(@Param("customerUsername") String customerUsername);
+
+    @Transactional
+    @Modifying
+    @Query("delete from Booking b where b.customerUsername in ?1")
+    void deleteByCustomerUsernameIn(List<String> customerUsernames);
 
 }

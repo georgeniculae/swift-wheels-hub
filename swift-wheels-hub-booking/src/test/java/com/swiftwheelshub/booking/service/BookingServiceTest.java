@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -220,8 +221,8 @@ class BookingServiceTest {
         httpServletRequest.addHeader("X-USERNAME", "user");
 
         when(bookingRepository.findByCustomerUsernameIgnoreCase(anyString())).thenReturn(List.of(booking));
-        doNothing().when(bookingRepository).deleteById(anyLong());
-        doNothing().when(carService).changeCarStatus(any(HttpServletRequest.class), anyLong(), any(CarState.class));
+        doNothing().when(bookingRepository).deleteByCustomerUsernameIn(anyList());
+        doNothing().when(carService).updateCarsStatus(any(HttpServletRequest.class), anyList());
 
         bookingService.deleteBookingByCustomerUsername(httpServletRequest, "user");
     }
