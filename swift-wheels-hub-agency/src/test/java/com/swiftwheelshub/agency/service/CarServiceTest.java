@@ -31,7 +31,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -68,25 +67,14 @@ class CarServiceTest {
     }
 
     @Test
-    void findCarByFilterTest_success() {
+    void findCarsByFilterTest_success() {
         Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
 
-        when(carRepository.findByFilter(anyString())).thenReturn(Optional.of(car));
+        when(carRepository.findByFilter(anyString())).thenReturn(List.of(car));
 
-        CarResponse carResponse = assertDoesNotThrow(() -> carService.findCarByFilter("Test"));
+        List<CarResponse> carResponses = assertDoesNotThrow(() -> carService.findCarsByFilter("Test"));
 
-        AssertionUtils.assertCarResponse(car, carResponse);
-    }
-
-    @Test
-    void findCarByFilterTest_errorOnFindingByFilter() {
-        when(carRepository.findByFilter(anyString())).thenReturn(Optional.empty());
-
-        SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException =
-                assertThrows(SwiftWheelsHubNotFoundException.class, () -> carService.findCarByFilter("Test"));
-
-        assertNotNull(swiftWheelsHubNotFoundException);
-        assertEquals("Car with filter: Test does not exist", swiftWheelsHubNotFoundException.getMessage());
+        AssertionUtils.assertCarResponse(car, carResponses.getFirst());
     }
 
     @Test
@@ -115,7 +103,7 @@ class CarServiceTest {
     void findCarsByMakeTest_success() {
         Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
 
-        when(carRepository.findCarsByMake(anyString())).thenReturn(List.of(car));
+        when(carRepository.findCarsByMakeIgnoreCase(anyString())).thenReturn(List.of(car));
 
         List<CarResponse> carResponses = assertDoesNotThrow(() -> carService.findCarsByMake("Test"));
 

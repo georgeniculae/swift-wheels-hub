@@ -123,24 +123,13 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void findEmployeeByFilterTest_success() {
+    void findEmployeesByFilterTest_success() {
         Employee employee = TestUtils.getResourceAsJson("/data/Employee.json", Employee.class);
 
-        when(employeeRepository.findByFilter(anyString())).thenReturn(Optional.of(employee));
+        when(employeeRepository.findByFilter(anyString())).thenReturn(List.of(employee));
 
-        EmployeeResponse employeeResponse = assertDoesNotThrow(() -> employeeService.findEmployeeByFilter("Ion"));
-        AssertionUtils.assertEmployeeResponse(employee, employeeResponse);
-    }
-
-    @Test
-    void findEmployeeByFilterTest_errorOnFindingByFilter() {
-        when(employeeRepository.findByFilter(anyString())).thenReturn(Optional.empty());
-
-        SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException =
-                assertThrows(SwiftWheelsHubNotFoundException.class, () -> employeeService.findEmployeeByFilter("Test"));
-
-        assertNotNull(swiftWheelsHubNotFoundException);
-        assertEquals("Employee with filter: Test does not exist", swiftWheelsHubNotFoundException.getMessage());
+        List<EmployeeResponse> employeeResponses = employeeService.findEmployeesByFilter("Ion");
+        AssertionUtils.assertEmployeeResponse(employee, employeeResponses.getFirst());
     }
 
 }

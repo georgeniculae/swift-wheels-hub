@@ -49,6 +49,14 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeResponses);
     }
 
+    @GetMapping(path = "/filter/{filter}")
+    @PreAuthorize("hasAuthority('user')")
+    public ResponseEntity<List<EmployeeResponse>> findEmployeesByFilter(@PathVariable("filter") String filter) {
+        List<EmployeeResponse> employeeResponses = employeeService.findEmployeesByFilter(filter);
+
+        return ResponseEntity.ok(employeeResponses);
+    }
+
     @GetMapping(path = "/count")
     @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<Long> countEmployees() {

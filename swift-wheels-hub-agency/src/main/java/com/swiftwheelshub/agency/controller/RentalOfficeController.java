@@ -41,6 +41,14 @@ public class RentalOfficeController {
         return ResponseEntity.ok(rentalOfficeResponse);
     }
 
+    @GetMapping(path = "/name/{name}")
+    @PreAuthorize("hasAuthority('user')")
+    public ResponseEntity<List<RentalOfficeResponse>> findRentalOfficesByName(@PathVariable("name") String name) {
+        List<RentalOfficeResponse> rentalOfficeResponses = rentalOfficeService.findRentalOfficeByName(name);
+
+        return ResponseEntity.ok(rentalOfficeResponses);
+    }
+
     @GetMapping(path = "/count")
     @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<Long> countRentalOffices() {

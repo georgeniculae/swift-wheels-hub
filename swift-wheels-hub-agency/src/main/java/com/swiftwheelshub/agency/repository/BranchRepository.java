@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface BranchRepository extends JpaRepository<Branch, Long> {
 
@@ -13,6 +13,6 @@ public interface BranchRepository extends JpaRepository<Branch, Long> {
             From Branch branch
             where lower(branch.name) like '%:filter%' or
             lower(branch.rentalOffice) like '%:filter%'""")
-    Optional<Branch> findByFilter(@Param("filter") String filter);
+    List<Branch> findByFilter(@Param("filter") String filter);
 
 }

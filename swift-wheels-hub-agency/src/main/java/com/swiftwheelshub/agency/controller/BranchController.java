@@ -41,6 +41,14 @@ public class BranchController {
         return ResponseEntity.ok(branchResponse);
     }
 
+    @GetMapping(path = "/filter/{filter}")
+    @PreAuthorize("hasAuthority('user')")
+    public ResponseEntity<List<BranchResponse>> findBranchesByFilter(@PathVariable("filter") String filter) {
+        List<BranchResponse> branchResponses = branchService.findBranchesByFilter(filter);
+
+        return ResponseEntity.ok(branchResponses);
+    }
+
     @GetMapping(path = "/count")
     @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<Long> countBranches() {

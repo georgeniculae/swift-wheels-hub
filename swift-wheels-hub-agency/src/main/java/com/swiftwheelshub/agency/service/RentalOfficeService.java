@@ -59,10 +59,11 @@ public class RentalOfficeService {
         return rentalOfficeMapper.mapEntityToDto(savedRentalOffice);
     }
 
-    public RentalOfficeResponse findRentalOfficeByName(String searchString) {
-        return rentalOfficeRepository.findRentalOfficeByName(searchString)
+    public List<RentalOfficeResponse> findRentalOfficeByName(String name) {
+        return rentalOfficeRepository.findRentalOfficeByName(name)
+                .stream()
                 .map(rentalOfficeMapper::mapEntityToDto)
-                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Rental office with name: " + searchString + " does not exist"));
+                .toList();
     }
 
     public Long countRentalOffices() {

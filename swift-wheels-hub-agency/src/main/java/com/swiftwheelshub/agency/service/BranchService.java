@@ -67,10 +67,11 @@ public class BranchService {
         branchRepository.deleteById(id);
     }
 
-    public BranchResponse findBranchByFilter(String searchString) {
-        return branchRepository.findByFilter(searchString)
+    public List<BranchResponse> findBranchesByFilter(String filter) {
+        return branchRepository.findByFilter(filter)
+                .stream()
                 .map(branchMapper::mapEntityToDto)
-                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Branch with filter: " + searchString + " does not exist"));
+                .toList();
     }
 
     public Long countBranches() {

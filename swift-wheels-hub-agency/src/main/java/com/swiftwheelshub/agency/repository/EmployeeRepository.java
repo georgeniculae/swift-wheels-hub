@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
@@ -14,7 +13,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             From Employee employee
             where lower(employee.firstName) like '%:filter%'
             or lower(employee.lastName) like '%:filter%'""")
-    Optional<Employee> findByFilter(@Param("filter") String filter);
+    List<Employee> findByFilter(@Param("filter") String filter);
 
     @Query("""
             From Employee employee

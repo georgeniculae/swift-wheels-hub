@@ -76,10 +76,11 @@ public class EmployeeService {
                 .toList();
     }
 
-    public EmployeeResponse findEmployeeByFilter(String searchString) {
-        return employeeRepository.findByFilter(searchString)
+    public List<EmployeeResponse> findEmployeesByFilter(String filter) {
+        return employeeRepository.findByFilter(filter)
+                .stream()
                 .map(employeeMapper::mapEntityToDto)
-                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Employee with filter: " + searchString + " does not exist"));
+                .toList();
     }
 
     public Long countEmployees() {

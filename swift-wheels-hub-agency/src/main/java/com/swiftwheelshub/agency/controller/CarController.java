@@ -56,6 +56,14 @@ public class CarController {
         return ResponseEntity.ok(carResponses);
     }
 
+    @GetMapping(path = "/filter/{filter}")
+    @PreAuthorize("hasAuthority('user')")
+    public ResponseEntity<List<CarResponse>> findAvailableCar(@PathVariable("filter") String filter) {
+        List<CarResponse> carResponses = carService.findCarsByFilter(filter);
+
+        return ResponseEntity.ok(carResponses);
+    }
+
     @GetMapping(path = "/{id}/availability")
     @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<CarResponse> findAvailableCar(@PathVariable("id") Long id) {

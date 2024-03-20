@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -106,24 +105,13 @@ class BranchServiceTest {
     }
 
     @Test
-    void findBranchByFilterTest_success() {
+    void findBranchesByFilterTest_success() {
         Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
 
-        when(branchRepository.findByFilter(anyString())).thenReturn(Optional.of(branch));
+        when(branchRepository.findByFilter(anyString())).thenReturn(List.of(branch));
 
-        BranchResponse branchRequest = assertDoesNotThrow(() -> branchService.findBranchByFilter("Test"));
-        AssertionUtils.assertBranchResponse(branch, branchRequest);
-    }
-
-    @Test
-    void findBranchByFilterTest_errorOnFindingByFilter() {
-        when(branchRepository.findByFilter(anyString())).thenReturn(Optional.empty());
-
-        SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException =
-                assertThrows(SwiftWheelsHubNotFoundException.class, () -> branchService.findBranchByFilter("Test"));
-
-        assertNotNull(swiftWheelsHubNotFoundException);
-        assertEquals("Branch with filter: Test does not exist", swiftWheelsHubNotFoundException.getMessage());
+        List<BranchResponse> branchResponses = branchService.findBranchesByFilter("Test");
+        AssertionUtils.assertBranchResponse(branch, branchResponses.getFirst());
     }
 
 }

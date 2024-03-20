@@ -104,6 +104,40 @@ class CarControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
+    void findCarsByFilterTest_success() throws Exception {
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+
+        when(carService.findCarsByFilter(anyString())).thenReturn(List.of(carResponse));
+
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/filter/{filter}", "filter")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void findCarsByFilterTest_unauthorized() throws Exception {
+        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+
+        when(carService.findCarsByFilter(anyString())).thenReturn(List.of(carResponse));
+
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/filter/{filter}", "filter")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
     @WithAnonymousUser
     void findCarByIdTest_unauthorized() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{id}", 1L)

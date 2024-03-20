@@ -6,6 +6,7 @@ import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import com.swiftwheelshub.lib.aspect.LogActivity;
+import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -73,6 +74,17 @@ public class UserController {
     public ResponseEntity<Void> deleteUserByUsername(HttpServletRequest request,
                                                      @PathVariable("username") String username) {
         customerService.deleteUserByUsername(request, username);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(path = "/{username}")
+    @PreAuthorize("hasAuthority('admin')")
+    @LogActivity(
+            activityDescription = "Current user deletion"
+    )
+    public ResponseEntity<Void> deleteCurrentUser(HttpServletRequest request) {
+        customerService.deleteUserByUsername(request, HttpRequestUtil.extractUsername(request));
 
         return ResponseEntity.noContent().build();
     }

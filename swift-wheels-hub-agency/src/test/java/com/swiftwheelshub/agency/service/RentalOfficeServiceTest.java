@@ -120,23 +120,12 @@ class RentalOfficeServiceTest {
     void findRentalOfficeByNameTest_success() {
         RentalOffice rentalOffice = TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
-        when(rentalOfficeRepository.findRentalOfficeByName(anyString())).thenReturn(Optional.of(rentalOffice));
+        when(rentalOfficeRepository.findRentalOfficeByName(anyString())).thenReturn(List.of(rentalOffice));
 
-        RentalOfficeResponse rentalOfficeResponse =
-                assertDoesNotThrow(() -> rentalOfficeService.findRentalOfficeByName("Test Rental Office"));
+        List<RentalOfficeResponse> rentalOfficeResponses =
+                rentalOfficeService.findRentalOfficeByName("Test Rental Office");
 
-        AssertionUtils.assertRentalOfficeResponse(rentalOffice, rentalOfficeResponse);
-    }
-
-    @Test
-    void findRentalOfficeByNameTest_errorOnFindingByName() {
-        when(rentalOfficeRepository.findRentalOfficeByName(anyString())).thenReturn(Optional.empty());
-
-        SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException =
-                assertThrows(SwiftWheelsHubNotFoundException.class, () -> rentalOfficeService.findRentalOfficeByName("Test Rental Office"));
-
-        assertNotNull(swiftWheelsHubNotFoundException);
-        assertEquals("Rental office with name: Test Rental Office does not exist", swiftWheelsHubNotFoundException.getMessage());
+        AssertionUtils.assertRentalOfficeResponse(rentalOffice, rentalOfficeResponses.getFirst());
     }
 
 }

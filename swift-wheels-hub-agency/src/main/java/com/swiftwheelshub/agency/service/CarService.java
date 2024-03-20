@@ -67,7 +67,7 @@ public class CarService {
     }
 
     public List<CarResponse> findCarsByMake(String make) {
-        return getCarResponses(carRepository.findCarsByMake(make));
+        return getCarResponses(carRepository.findCarsByMakeIgnoreCase(make));
     }
 
     public byte[] getCarImage(Long id) {
@@ -155,10 +155,11 @@ public class CarService {
         carRepository.deleteById(id);
     }
 
-    public CarResponse findCarByFilter(String filter) {
+    public List<CarResponse> findCarsByFilter(String filter) {
         return carRepository.findByFilter(filter)
+                .stream()
                 .map(carMapper::mapEntityToDto)
-                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Car with filter: " + filter + " does not exist"));
+                .toList();
     }
 
     public Long countCars() {

@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target(value = ElementType.METHOD)
 public @interface LogActivity {
 
-    String[] sentParameters();
+    String[] sentParameters() default StringUtils.EMPTY;
 
     String activityDescription() default StringUtils.EMPTY;
 

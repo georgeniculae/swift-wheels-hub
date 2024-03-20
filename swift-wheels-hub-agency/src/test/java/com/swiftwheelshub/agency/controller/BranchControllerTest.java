@@ -21,6 +21,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -75,26 +76,13 @@ class BranchControllerTest {
     }
 
     @Test
-    void findBranchByIdTest_success() throws Exception {
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    void findBranchByIdTest_successWithMockUser() throws Exception {
         BranchResponse branchResponse =
                 TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
         when(branchService.findBranchById(anyLong())).thenReturn(branchResponse);
 
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{id}", 1L)
-                        .with(user("admin").password("admin").roles("ADMIN"))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
-    }
-
-    @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
-    void findBranchByIdTest_successWithMockUser() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -109,6 +97,42 @@ class BranchControllerTest {
     @WithAnonymousUser()
     void findBranchByIdTest_unauthorized() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    void findBranchesByFilterTest_success() throws Exception {
+        BranchResponse branchResponse =
+                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
+
+        when(branchService.findBranchesByFilter(anyString())).thenReturn(List.of(branchResponse));
+
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/filter/{filter}", "filter")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void findBranchesByFilterTest_unauthorized() throws Exception {
+        BranchResponse branchResponse =
+                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
+
+        when(branchService.findBranchesByFilter(anyString())).thenReturn(List.of(branchResponse));
+
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/filter/{filter}", "filter")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())

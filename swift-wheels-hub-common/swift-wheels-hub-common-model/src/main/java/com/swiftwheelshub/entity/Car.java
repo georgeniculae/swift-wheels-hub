@@ -68,4 +68,19 @@ public class Car extends BaseEntity {
         this.image = image;
     }
 
+    public Car(Long id, String make, String model, BodyType bodyType, Integer yearOfProduction, String color,
+               Integer mileage, CarStatus carStatus, BigDecimal amount, Branch originalBranch, Branch actualBranch) {
+        super(id);
+        this.make = make;
+        this.model = model;
+        this.bodyType = bodyType;
+        this.yearOfProduction = yearOfProduction;
+        this.color = color;
+        this.mileage = mileage;
+        this.carStatus = carStatus;
+        this.amount = amount;
+        this.originalBranch = originalBranch;
+        this.actualBranch = actualBranch;
+    }
+
 }

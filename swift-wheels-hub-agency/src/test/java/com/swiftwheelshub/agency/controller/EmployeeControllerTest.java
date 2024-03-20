@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -20,10 +22,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = EmployeeController.class)
@@ -120,6 +124,37 @@ class EmployeeControllerTest {
     @Test
     void findEmployeesByBranchIdTest_unauthorized() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/branch/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
+    void findEmployeesByFilterTest_success() throws Exception {
+        EmployeeResponse employeeResponse =
+                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
+
+        when(employeeService.findEmployeesByFilter(anyString())).thenReturn(List.of(employeeResponse));
+
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/filter/{filter}", "filter")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void findEmployeesByFilterTest_unauthorized() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/filter/{filter}", "filter")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
