@@ -78,7 +78,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping(path = "/{username}")
+    @DeleteMapping(path = "/current")
     @PreAuthorize("hasAuthority('admin')")
     @LogActivity(
             activityDescription = "Current user deletion"
