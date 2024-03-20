@@ -36,7 +36,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Transactional
     @Modifying
-    @Query("delete from Booking b where b.customerUsername in ?1")
+    @Query("""
+            delete from Booking b
+            where b.customerUsername in ?1""")
     void deleteByCustomerUsernameIn(List<String> customerUsernames);
 
 }
