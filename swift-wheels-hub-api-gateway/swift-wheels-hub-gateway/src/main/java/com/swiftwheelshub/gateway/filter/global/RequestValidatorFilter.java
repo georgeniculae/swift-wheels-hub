@@ -48,11 +48,7 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
                 .flatMap(this::getValidationReport)
                 .flatMap(requestValidationReport -> filterRequest(exchange, chain, requestValidationReport))
                 .switchIfEmpty(Mono.defer(() -> chain.filter(exchange)))
-                .onErrorMap(e -> {
-                    log.error("Error while trying to validate request: {}", e.getMessage());
-
-                    return new SwiftWheelsHubException(e);
-                });
+                .onErrorMap(this::handleExceptions);
     }
 
     @Override
@@ -98,6 +94,22 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
                         HttpStatus.BAD_REQUEST,
                         requestValidationReport.errorMessage()
                 )
+        );
+    }
+
+    private SwiftWheelsHubResponseStatusException handleExceptions(Throwable e) {
+        log.error("Error while trying to validate request: {}", e.getMessage());
+
+        if (e instanceof SwiftWheelsHubResponseStatusException swiftWheelsHubResponseStatusException) {
+            return new SwiftWheelsHubResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    swiftWheelsHubResponseStatusException.getMessage()
+            );
+        }
+
+        return new SwiftWheelsHubResponseStatusException(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                e.getMessage()
         );
     }
 
