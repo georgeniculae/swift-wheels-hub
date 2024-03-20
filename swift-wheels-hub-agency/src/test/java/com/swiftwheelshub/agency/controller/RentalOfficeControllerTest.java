@@ -44,6 +44,7 @@ class RentalOfficeControllerTest {
     private RentalOfficeService rentalOfficeService;
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findAllRentalOfficesTest_success() throws Exception {
         RentalOfficeResponse rentalOfficeResponse =
                 TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
@@ -51,7 +52,6 @@ class RentalOfficeControllerTest {
         when(rentalOfficeService.findAllRentalOffices()).thenReturn(List.of(rentalOfficeResponse));
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -62,6 +62,7 @@ class RentalOfficeControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void findAllRentalOfficesTest_unauthorized() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -74,6 +75,7 @@ class RentalOfficeControllerTest {
     }
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findRentalOfficeByIdTest_success() throws Exception {
         RentalOfficeResponse rentalOfficeRequest =
                 TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
@@ -81,7 +83,6 @@ class RentalOfficeControllerTest {
         when(rentalOfficeService.findRentalOfficeById(anyLong())).thenReturn(rentalOfficeRequest);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -92,6 +93,7 @@ class RentalOfficeControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void findRentalOfficeByIdTest_unauthorized() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -135,11 +137,11 @@ class RentalOfficeControllerTest {
     }
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void countRentalOfficesTest_success() throws Exception {
         when(rentalOfficeService.countRentalOffices()).thenReturn(1L);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count")
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -150,6 +152,7 @@ class RentalOfficeControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void countRentalOfficesTest_unauthorized() throws Exception {
         when(rentalOfficeService.countRentalOffices()).thenReturn(1L);
 
@@ -164,6 +167,7 @@ class RentalOfficeControllerTest {
     }
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void addRentalOfficeTest_success() throws Exception {
         RentalOfficeResponse rentalOfficeResponse =
                 TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
@@ -174,7 +178,6 @@ class RentalOfficeControllerTest {
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(csrf())
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
@@ -186,6 +189,7 @@ class RentalOfficeControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void addRentalOfficeTest_unauthorized() throws Exception {
         RentalOfficeResponse rentalOfficeResponse =
                 TestUtils.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeResponse.class);
@@ -205,6 +209,7 @@ class RentalOfficeControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void addRentalOfficeTest_forbidden() throws Exception {
         RentalOfficeResponse rentalOfficeResponse =
                 TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
@@ -223,6 +228,7 @@ class RentalOfficeControllerTest {
     }
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void updateRentalOfficeTest_success() throws Exception {
         RentalOfficeResponse rentalOfficeResponse =
                 TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
@@ -233,7 +239,6 @@ class RentalOfficeControllerTest {
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .with(csrf())
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
@@ -245,6 +250,7 @@ class RentalOfficeControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void updateRentalOfficeTest_unauthorized() throws Exception {
         RentalOfficeResponse rentalOfficeRequest =
                 TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
@@ -264,6 +270,7 @@ class RentalOfficeControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void updateRentalOfficeTest_forbidden() throws Exception {
         RentalOfficeResponse rentalOfficeResponse =
                 TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
@@ -282,6 +289,7 @@ class RentalOfficeControllerTest {
     }
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void deleteRentalOfficeByIdTest_success() throws Exception {
         doNothing().when(rentalOfficeService).deleteRentalOfficeById(anyLong());
 
@@ -296,9 +304,20 @@ class RentalOfficeControllerTest {
     }
 
     @Test
-    void deleteRentalOfficeByIdTest_forbidden() throws Exception {
-        doNothing().when(rentalOfficeService).deleteRentalOfficeById(anyLong());
+    @WithAnonymousUser
+    void deleteRentalOfficeByIdTest_unauthorized() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized())
+                .andReturn()
+                .getResponse();
 
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void deleteRentalOfficeByIdTest_forbidden() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN")))
                 .andExpect(status().isForbidden())

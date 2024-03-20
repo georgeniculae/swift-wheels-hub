@@ -57,13 +57,13 @@ class CarControllerTest {
     private CarService carService;
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findAllCarsTest_success() throws Exception {
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.findAllCars()).thenReturn(List.of(carResponse));
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH)
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -87,13 +87,13 @@ class CarControllerTest {
     }
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findCarByIdTest_success() throws Exception {
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.findCarById(anyLong())).thenReturn(carResponse);
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{id}", 1L)
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -151,13 +151,13 @@ class CarControllerTest {
     }
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findCarsByMakeTest_success() throws Exception {
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.findCarsByMake(anyString())).thenReturn(List.of(carResponse));
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/make/{make}", "Test")
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -185,13 +185,13 @@ class CarControllerTest {
     }
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findAvailableCarTest_success() throws Exception {
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.findAvailableCar(anyLong())).thenReturn(carResponse);
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{id}/availability", 1L)
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -219,11 +219,11 @@ class CarControllerTest {
     }
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void countCarsTest_success() throws Exception {
         when(carService.countCars()).thenReturn(1L);
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/count")
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -234,11 +234,11 @@ class CarControllerTest {
     }
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findCarImageTest_success() throws Exception {
         when(carService.getCarImage(anyLong())).thenReturn(new byte[]{});
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/count")
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -249,6 +249,7 @@ class CarControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void findCarImageTest_unauthorized() throws Exception {
         when(carService.getCarImage(anyLong())).thenReturn(new byte[]{});
 
@@ -263,6 +264,7 @@ class CarControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void countCarsTest_unauthorized() throws Exception {
         when(carService.countCars()).thenReturn(1L);
 
@@ -332,6 +334,7 @@ class CarControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void addCarTest_forbidden() throws Exception {
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
@@ -356,6 +359,7 @@ class CarControllerTest {
     }
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void uploadCarsTest_success() throws Exception {
         MockMultipartFile file =
                 new MockMultipartFile("file", "Cars.xlsx", MediaType.TEXT_PLAIN_VALUE, "Cars".getBytes());
@@ -368,7 +372,6 @@ class CarControllerTest {
         MockHttpServletResponse response = mockMvc.perform(multipart(HttpMethod.POST, PATH + "/upload")
                         .file(file)
                         .with(csrf())
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -448,6 +451,7 @@ class CarControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void updateCarTest_forbidden() throws Exception {
         CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
@@ -472,6 +476,7 @@ class CarControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void updateCarsStatusTest_success() throws Exception {
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
@@ -486,7 +491,6 @@ class CarControllerTest {
 
         MockHttpServletResponse response = mockMvc.perform(put(PATH + "/update-statuses")
                         .with(csrf())
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(content))
@@ -524,6 +528,7 @@ class CarControllerTest {
     }
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void updateCarWhenBookingIsClosedTest_success() throws Exception {
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
@@ -538,7 +543,6 @@ class CarControllerTest {
 
         MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}/update-after-return", 1L)
                         .with(csrf())
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
                 .andExpect(status().isOk())
@@ -574,6 +578,7 @@ class CarControllerTest {
     }
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void updateCarStatusTest_success() throws Exception {
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
@@ -581,7 +586,6 @@ class CarControllerTest {
 
         MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}/change-status?carState=NOT_AVAILABLE", 1L)
                         .with(csrf())
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -591,6 +595,7 @@ class CarControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void updateCarStatusTest_unauthorized() throws Exception {
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
@@ -608,6 +613,7 @@ class CarControllerTest {
     }
 
     @Test
+    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void deleteCarByIdTest_success() throws Exception {
         doNothing().when(carService).deleteCarById(anyLong());
 
@@ -622,6 +628,7 @@ class CarControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     void deleteCarByIdTest_forbidden() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(delete(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN")))
