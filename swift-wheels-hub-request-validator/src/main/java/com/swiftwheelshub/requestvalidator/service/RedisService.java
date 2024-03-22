@@ -27,15 +27,7 @@ public class RedisService {
     )
     public void addSwaggerFilesToRedis() {
         try {
-            List<Pair<String, String>> swaggerIdentifierAndContent = swaggerExtractorService.getSwaggerIdentifierAndContent();
-
-            List<SwaggerFile> swaggerFiles = swaggerIdentifierAndContent
-                    .stream()
-                    .map(swaggerIdAndContent -> SwaggerFile.builder()
-                            .id(swaggerIdAndContent.getFirst())
-                            .swaggerContent(swaggerIdAndContent.getSecond())
-                            .build())
-                    .toList();
+            List<SwaggerFile> swaggerFiles = swaggerExtractorService.getSwaggerFiles();
 
             swaggerRepository.saveAll(swaggerFiles);
         } catch (Exception e) {
@@ -51,10 +43,10 @@ public class RedisService {
         try {
             swaggerRepository.deleteById(microserviceName);
             String swaggerContent = swaggerExtractorService.getSwaggerFileForMicroservice(microserviceName)
-                    .getSecond();
+                    .getSwaggerContent();
 
             swaggerFile = SwaggerFile.builder()
-                    .id(microserviceName)
+                    .identifier(microserviceName)
                     .swaggerContent(swaggerContent)
                     .build();
         } catch (Exception e) {

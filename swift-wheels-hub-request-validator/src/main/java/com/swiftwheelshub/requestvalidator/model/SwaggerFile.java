@@ -17,7 +17,7 @@ import java.io.Serializable;
 public class SwaggerFile implements Serializable {
 
     @Id
-    private String id;
+    private String identifier;
     private String swaggerContent;
 
 }

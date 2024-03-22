@@ -3,6 +3,7 @@ package com.swiftwheelshub.requestvalidator.service;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.requestvalidator.config.RegisteredEndpoints;
+import com.swiftwheelshub.requestvalidator.model.SwaggerFile;
 import com.swiftwheelshub.requestvalidator.util.TestUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
-import org.springframework.data.util.Pair;
 import org.springframework.web.client.RestClient;
 
 import java.util.LinkedHashMap;
@@ -93,8 +93,8 @@ class SwaggerExtractorServiceTest {
             }
         });
 
-        List<Pair<String, String>> swaggerIdentifierAndContent = swaggerExtractorService.getSwaggerIdentifierAndContent();
-        assertFalse(swaggerIdentifierAndContent.isEmpty());
+        List<SwaggerFile> swaggers = swaggerExtractorService.getSwaggerFiles();
+        assertFalse(swaggers.isEmpty());
     }
 
     @Test
@@ -123,7 +123,7 @@ class SwaggerExtractorServiceTest {
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.body(eq(String.class))).thenReturn(StringUtils.EMPTY);
 
-        assertThrows(SwiftWheelsHubNotFoundException.class, () -> swaggerExtractorService.getSwaggerIdentifierAndContent());
+        assertThrows(SwiftWheelsHubNotFoundException.class, () -> swaggerExtractorService.getSwaggerFiles());
     }
 
     @Test
@@ -168,8 +168,8 @@ class SwaggerExtractorServiceTest {
             }
         });
 
-        Pair<String, String> swaggers = swaggerExtractorService.getSwaggerFileForMicroservice("bookings");
-        assertTrue(ObjectUtils.isNotEmpty(swaggers));
+        SwaggerFile swagger = swaggerExtractorService.getSwaggerFileForMicroservice("bookings");
+        assertTrue(ObjectUtils.isNotEmpty(swagger));
     }
 
     @Test

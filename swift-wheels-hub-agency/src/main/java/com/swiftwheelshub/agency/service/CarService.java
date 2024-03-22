@@ -71,9 +71,9 @@ public class CarService {
     }
 
     public byte[] getCarImage(Long id) {
-       return carRepository.findImageByCarId(id)
+        return carRepository.findImageByCarId(id)
                 .map(Car::getImage)
-                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Car not found"));
+                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Image not found. Image possible is not attached to car"));
     }
 
     public CarResponse saveCar(CarRequest carRequest, MultipartFile image) {

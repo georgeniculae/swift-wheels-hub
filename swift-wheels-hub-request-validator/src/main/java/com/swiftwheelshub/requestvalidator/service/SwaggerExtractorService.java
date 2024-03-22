@@ -3,6 +3,7 @@ package com.swiftwheelshub.requestvalidator.service;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.requestvalidator.config.RegisteredEndpoints;
+import com.swiftwheelshub.requestvalidator.model.SwaggerFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -28,24 +30,29 @@ public class SwaggerExtractorService {
 
     private final RegisteredEndpoints registeredEndpoints;
 
-    public List<Pair<String, String>> getSwaggerIdentifierAndContent() {
+    public List<SwaggerFile> getSwaggerFiles() {
         return registeredEndpoints.getEndpoints()
                 .entrySet()
                 .stream()
-                .map(endpoints -> {
-                    String swaggerContent = getRestCallResponse(endpoints.getKey(), endpoints.getValue());
-
-                    return Pair.of(endpoints.getKey(), swaggerContent);
-                })
+                .map(this::getSwaggerFile)
                 .toList();
     }
 
-    public Pair<String, String> getSwaggerFileForMicroservice(String microserviceName) {
-        return getSwaggerIdentifierAndContent()
+    public SwaggerFile getSwaggerFileForMicroservice(String microserviceName) {
+        return getSwaggerFiles()
                 .stream()
-                .filter(swaggerIdentifierAndContent -> microserviceName.contains(swaggerIdentifierAndContent.getFirst()))
+                .filter(swaggerFile -> microserviceName.contains(swaggerFile.getIdentifier()))
                 .findFirst()
                 .orElseThrow(() -> new SwiftWheelsHubException("Microservice not existent"));
+    }
+
+    private SwaggerFile getSwaggerFile(Map.Entry<String, String> endpoints) {
+        String swaggerContent = getRestCallResponse(endpoints.getKey(), endpoints.getValue());
+
+        return SwaggerFile.builder()
+                .identifier(endpoints.getKey())
+                .swaggerContent(swaggerContent)
+                .build();
     }
 
     private String getRestCallResponse(String microservice, String url) {
