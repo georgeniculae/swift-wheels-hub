@@ -39,7 +39,6 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    @PreAuthorize("hasAuthority('admin')")
     @LogActivity(
             sentParameters = "registerRequest",
             activityDescription = "User registration"
