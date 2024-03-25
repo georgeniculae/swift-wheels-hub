@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -23,11 +24,7 @@ public class ExceptionHandling extends DefaultErrorAttributes {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(Exception e, WebRequest request) {
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-
-        if (e instanceof ErrorResponse errorResponse) {
-            status = HttpStatus.valueOf(errorResponse.getStatusCode().value());
-        }
+        HttpStatus status = getHttpStatus(e);
 
         Map<String, Object> errorAttributes =
                 getErrorAttributesMap(request, e.getMessage(), e.getLocalizedMessage(), status);
@@ -63,6 +60,20 @@ public class ExceptionHandling extends DefaultErrorAttributes {
         Map<String, Object> errorAttributes = getErrorAttributesMap(request, e.getMessage(), e.getReason(), status);
 
         return ResponseEntity.status(status).body(errorAttributes);
+    }
+
+    private HttpStatus getHttpStatus(Exception e) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        if (e instanceof ErrorResponse errorResponse) {
+            status = HttpStatus.valueOf(errorResponse.getStatusCode().value());
+        }
+
+        if (e instanceof AccessDeniedException) {
+            status = HttpStatus.UNAUTHORIZED;
+        }
+
+        return status;
     }
 
     private Map<String, Object> getErrorAttributesMap(WebRequest webRequest, String errorMessage, String cause,
