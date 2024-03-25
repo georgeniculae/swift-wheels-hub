@@ -17,6 +17,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -82,7 +83,7 @@ public class AuditAspect {
     }
 
     private AuditLogInfoRequest getAuditLogInfoDto(String methodName, String username, List<String> parametersValues) {
-        return new AuditLogInfoRequest(methodName, username, parametersValues);
+        return new AuditLogInfoRequest(methodName, username, LocalDateTime.now(), parametersValues);
     }
 
 }

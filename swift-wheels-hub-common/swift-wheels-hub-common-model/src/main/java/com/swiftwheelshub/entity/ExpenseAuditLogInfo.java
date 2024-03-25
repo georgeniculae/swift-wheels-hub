@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -31,6 +32,8 @@ public class ExpenseAuditLogInfo {
     private String methodName;
 
     private String username;
+
+    private LocalDateTime timestamp;
 
     private List<String> parametersValues;
 
