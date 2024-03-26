@@ -16,3 +16,4 @@ jobs:
         run: mvn --batch-mode deploy
         env:
           GITHUB_TOKEN: ${{ secrets.MVN_TOKEN }}
+          API_KEY_SECRET: ${{ secrets.API_KEY_SECRET }}
