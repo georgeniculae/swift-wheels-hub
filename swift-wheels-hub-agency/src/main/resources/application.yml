@@ -41,6 +41,9 @@ spring:
       enabled: true
       max-file-size: 15MB
       max-request-size: 15MB
+  sql:
+    init:
+      mode: always
 
 eureka:
   client:
