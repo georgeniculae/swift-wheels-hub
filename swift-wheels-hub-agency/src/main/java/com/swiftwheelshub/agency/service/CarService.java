@@ -50,7 +50,9 @@ public class CarService {
     private final CarMapper carMapper;
 
     public List<CarResponse> findAllCars() {
-        return getCarResponses(carRepository.findAll());
+        List<Car> cars = carRepository.findAll();
+
+        return getCarResponses(cars);
     }
 
     public CarResponse findCarById(Long id) {
