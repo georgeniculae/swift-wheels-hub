@@ -44,6 +44,9 @@ spring:
   sql:
     init:
       mode: always
+  docker:
+    compose:
+      enabled: false
 
 eureka:
   client:
