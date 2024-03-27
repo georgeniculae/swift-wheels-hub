@@ -60,6 +60,18 @@ public class DebeziumListener {
         this.objectMapper = objectMapper;
     }
 
+    @PostConstruct
+    private void start() {
+        this.executor.execute(debeziumEngine);
+    }
+
+    @PreDestroy
+    private void stop() throws IOException {
+        if (Objects.nonNull(this.debeziumEngine)) {
+            this.debeziumEngine.close();
+        }
+    }
+
     private void handleChangeEvent(RecordChangeEvent<SourceRecord> sourceRecordRecordChangeEvent) {
         SourceRecord sourceRecord = sourceRecordRecordChangeEvent.record();
 
@@ -76,18 +88,6 @@ public class DebeziumListener {
 
                 log.info("Updated Data: {} with Operation: {}", payload, operation.name());
             }
-        }
-    }
-
-    @PostConstruct
-    private void start() {
-        this.executor.execute(debeziumEngine);
-    }
-
-    @PreDestroy
-    private void stop() throws IOException {
-        if (Objects.nonNull(this.debeziumEngine)) {
-            this.debeziumEngine.close();
         }
     }
 
