@@ -3,7 +3,6 @@ package com.swiftwheelshub.agency.repository;
 import com.swiftwheelshub.entity.Car;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 
 import java.util.List;
@@ -26,7 +25,7 @@ public interface CarRepository extends JpaRepository<Car, Long> {
             car.actualBranch
             )
             From Car car
-            where car.id = :id""")
+            where car.id = ?1""")
     @NonNull
     Optional<Car> findById(@NonNull Long id);
 
@@ -45,9 +44,9 @@ public interface CarRepository extends JpaRepository<Car, Long> {
             car.actualBranch
             )
             From Car car
-            where lower(car.make) like '%:filter%'
-            or lower(car.model) like '%:filter%'""")
-    List<Car> findByFilter(@Param("filter") String filter);
+            where upper(car.make) like upper(concat('%', ?1, '%'))
+            or upper(car.model) like upper(concat('%', ?1, '%'))""")
+    List<Car> findByFilter(String filter);
 
     @Query("""
             Select new Car(
@@ -82,13 +81,13 @@ public interface CarRepository extends JpaRepository<Car, Long> {
             car.actualBranch
             )
             From Car car
-            where lower(car.make) like '%:make%'""")
+            where upper(car.make) like upper(concat('%', ?1, '%'))""")
     List<Car> findCarsByMakeIgnoreCase(String make);
 
     @Query("""
             Select new Car(car.image)
             From Car car
-            where car.id = :id""")
-    Optional<Car> findImageByCarId(@Param("id") Long id);
+            where car.id = ?1""")
+    Optional<Car> findImageByCarId(Long id);
 
 }

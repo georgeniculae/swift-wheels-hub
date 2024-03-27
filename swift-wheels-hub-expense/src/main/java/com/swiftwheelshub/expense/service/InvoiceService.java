@@ -60,7 +60,7 @@ public class InvoiceService {
     }
 
     public List<InvoiceResponse> findInvoiceByComments(String searchString) {
-        return invoiceRepository.findByComments(searchString)
+        return invoiceRepository.findByCommentsIgnoreCase(searchString)
                 .stream()
                 .map(invoiceMapper::mapEntityToDto)
                 .toList();

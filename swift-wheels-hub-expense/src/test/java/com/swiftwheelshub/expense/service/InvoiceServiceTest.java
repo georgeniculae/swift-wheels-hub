@@ -106,7 +106,7 @@ class InvoiceServiceTest {
     void findInvoiceByFilterTest_success() {
         Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
 
-        when(invoiceRepository.findByComments(anyString())).thenReturn(List.of(invoice));
+        when(invoiceRepository.findByCommentsIgnoreCase(anyString())).thenReturn(List.of(invoice));
 
         List<InvoiceResponse> invoiceResponses =
                 assertDoesNotThrow(() -> invoiceService.findInvoiceByComments("comment"));

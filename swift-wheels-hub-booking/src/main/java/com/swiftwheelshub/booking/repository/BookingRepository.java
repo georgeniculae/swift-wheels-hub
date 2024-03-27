@@ -4,7 +4,6 @@ import com.swiftwheelshub.entity.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -15,8 +14,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("""
             From Booking booking
-            where booking.dateOfBooking = :dateOfBooking""")
-    Optional<Booking> findByDateOfBooking(@Param("dateOfBooking") LocalDate dateOfBooking);
+            where booking.dateOfBooking = ?1""")
+    Optional<Booking> findByDateOfBooking(LocalDate dateOfBooking);
 
     @Query("""
             From Booking booking
@@ -25,14 +24,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("""
             From Booking booking
-            where booking.customerUsername = : username""")
-    List<Booking> findBookingsByUser(@Param("username") String username);
+            where booking.customerUsername = ?1""")
+    List<Booking> findBookingsByUser(String username);
 
     @Query("""
             Select count(booking)
             From Booking booking
-            where booking.customerUsername = :customerUsername""")
-    Long countByCustomerUsername(@Param("customerUsername") String customerUsername);
+            where booking.customerUsername = ?1""")
+    Long countByCustomerUsername(String customerUsername);
 
     @Transactional
     @Modifying

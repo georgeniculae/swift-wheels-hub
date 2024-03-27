@@ -11,6 +11,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,9 +34,27 @@ class CarRepositoryTest {
     }
 
     @Test
+    void findByIdTest_success() {
+        Optional<Car> optionalCar = carRepository.findById(1L);
+        assertTrue(optionalCar.isPresent());
+    }
+
+    @Test
     void findAllCarsTest_success() {
         List<Car> cars = carRepository.findAll();
         assertEquals(2, cars.size());
+    }
+
+    @Test
+    void findByFilterTest_success() {
+        List<Car> cars = carRepository.findByFilter("Golf");
+        assertEquals(1, cars.size());
+    }
+
+    @Test
+    void findCarsByMakeIgnoreCaseTest_success() {
+        List<Car> cars = carRepository.findCarsByMakeIgnoreCase("Volkswagen");
+        assertEquals(1, cars.size());
     }
 
 }
