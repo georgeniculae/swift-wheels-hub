@@ -25,18 +25,6 @@
     <dependencies>
         <dependency>
             <groupId>com.swiftwheelshub</groupId>
-            <artifactId>swift-wheels-hub-common-dto</artifactId>
-            <version>${swift-wheels-hub-common.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.swiftwheelshub</groupId>
-            <artifactId>swift-wheels-hub-common-exception</artifactId>
-            <version>${swift-wheels-hub-common.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.swiftwheelshub</groupId>
             <artifactId>swift-wheels-hub-common-lib</artifactId>
             <version>${swift-wheels-hub-common.version}</version>
         </dependency>
