@@ -72,7 +72,7 @@ public class DebeziumListener {
 
             if (Operation.READ != operation) {
                 Map<String, Object> payload = getPayload(operation, sourceRecordChangeValue);
-                handleBookings(payload, operation);
+                handleBookingSending(payload, operation);
 
                 log.info("Updated Data: {} with Operation: {}", payload, operation.name());
             }
@@ -104,7 +104,7 @@ public class DebeziumListener {
                 .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
     }
 
-    private void handleBookings(Map<String, Object> payload, Operation operation) {
+    private void handleBookingSending(Map<String, Object> payload, Operation operation) {
         Booking booking = objectMapper.convertValue(payload, Booking.class);
         BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
 
