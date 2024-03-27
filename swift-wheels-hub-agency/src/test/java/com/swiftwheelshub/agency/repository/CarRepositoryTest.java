@@ -57,4 +57,10 @@ class CarRepositoryTest {
         assertEquals(1, cars.size());
     }
 
+    @Test
+    void findImageByCarIdTest_success() {
+        Optional<Car> optionalCar = carRepository.findImageByCarId(1L);
+        assertTrue(optionalCar.isPresent());
+    }
+
 }
