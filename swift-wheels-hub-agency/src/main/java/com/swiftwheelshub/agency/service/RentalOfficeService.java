@@ -59,8 +59,8 @@ public class RentalOfficeService {
         return rentalOfficeMapper.mapEntityToDto(savedRentalOffice);
     }
 
-    public List<RentalOfficeResponse> findRentalOfficeByName(String name) {
-        return rentalOfficeRepository.findRentalOfficeByName(name)
+    public List<RentalOfficeResponse> findRentalOfficeByFilter(String filter) {
+        return rentalOfficeRepository.findRentalOfficeByFilter(filter)
                 .stream()
                 .map(rentalOfficeMapper::mapEntityToDto)
                 .toList();

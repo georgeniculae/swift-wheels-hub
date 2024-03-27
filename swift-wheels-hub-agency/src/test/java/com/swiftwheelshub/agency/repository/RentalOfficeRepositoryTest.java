@@ -1,6 +1,6 @@
 package com.swiftwheelshub.agency.repository;
 
-import com.swiftwheelshub.entity.Branch;
+import com.swiftwheelshub.entity.RentalOffice;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -18,14 +18,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Testcontainers
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class BranchRepositoryTest {
+class RentalOfficeRepositoryTest {
 
     @Container
     @ServiceConnection
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest");
 
     @Autowired
-    private BranchRepository branchRepository;
+    private RentalOfficeRepository rentalOfficeRepository;
 
     @Test
     void checkIfConnectionEstablished() {
@@ -34,8 +34,8 @@ class BranchRepositoryTest {
 
     @Test
     void findByFilterTest_success() {
-        List<Branch> branches = branchRepository.findByFilter("Branch");
-        assertEquals(2, branches.size());
+        List<RentalOffice> rentalOffices = rentalOfficeRepository.findRentalOfficeByFilter("Rental Office");
+        assertEquals(2, rentalOffices.size());
     }
 
 }

@@ -11,7 +11,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Query("""
             From Employee employee
             where upper(employee.firstName) like upper(concat('%', ?1, '%'))
-            or upper(employee.lastName) like upper(concat('%', ?1, '%'))""")
+            or upper(employee.lastName) like upper(concat('%', ?1, '%'))
+            or upper(employee.jobPosition) like upper(concat('%', ?1, '%'))
+            or upper(employee.workingBranch.name) like upper(concat('%', ?1, '%'))""")
     List<Employee> findByFilter(String filter);
 
     @Query("""

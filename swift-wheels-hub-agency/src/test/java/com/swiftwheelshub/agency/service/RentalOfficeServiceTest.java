@@ -120,10 +120,10 @@ class RentalOfficeServiceTest {
     void findRentalOfficeByNameTest_success() {
         RentalOffice rentalOffice = TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
-        when(rentalOfficeRepository.findRentalOfficeByName(anyString())).thenReturn(List.of(rentalOffice));
+        when(rentalOfficeRepository.findRentalOfficeByFilter(anyString())).thenReturn(List.of(rentalOffice));
 
         List<RentalOfficeResponse> rentalOfficeResponses =
-                rentalOfficeService.findRentalOfficeByName("Test Rental Office");
+                rentalOfficeService.findRentalOfficeByFilter("Test Rental Office");
 
         AssertionUtils.assertRentalOfficeResponse(rentalOffice, rentalOfficeResponses.getFirst());
     }

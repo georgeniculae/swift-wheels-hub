@@ -41,10 +41,10 @@ public class RentalOfficeController {
         return ResponseEntity.ok(rentalOfficeResponse);
     }
 
-    @GetMapping(path = "/name/{name}")
+    @GetMapping(path = "/filter/{filter}")
     @PreAuthorize("hasAuthority('user')")
-    public ResponseEntity<List<RentalOfficeResponse>> findRentalOfficesByName(@PathVariable("name") String name) {
-        List<RentalOfficeResponse> rentalOfficeResponses = rentalOfficeService.findRentalOfficeByName(name);
+    public ResponseEntity<List<RentalOfficeResponse>> findRentalOfficesByFilter(@PathVariable("filter") String filter) {
+        List<RentalOfficeResponse> rentalOfficeResponses = rentalOfficeService.findRentalOfficeByFilter(filter);
 
         return ResponseEntity.ok(rentalOfficeResponses);
     }

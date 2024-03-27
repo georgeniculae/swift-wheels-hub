@@ -107,13 +107,13 @@ class RentalOfficeControllerTest {
 
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
-    void findRentalOfficesByNameTest_success() throws Exception {
+    void findRentalOfficesByFilterTest_success() throws Exception {
         RentalOfficeResponse rentalOfficeResponse =
                 TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
-        when(rentalOfficeService.findRentalOfficeByName(anyString())).thenReturn(List.of(rentalOfficeResponse));
+        when(rentalOfficeService.findRentalOfficeByFilter(anyString())).thenReturn(List.of(rentalOfficeResponse));
 
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/name/{name}", "name")
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/filter/{filter}", "filter")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
