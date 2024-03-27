@@ -23,6 +23,7 @@ public class ObjectMapperConfig {
                         DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS
                 )
                 .featuresToDisable(
+                        SerializationFeature.FAIL_ON_EMPTY_BEANS,
                         SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS,
                         DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE
                 )

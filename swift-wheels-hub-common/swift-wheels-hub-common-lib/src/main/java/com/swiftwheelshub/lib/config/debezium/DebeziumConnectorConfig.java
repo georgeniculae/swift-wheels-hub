@@ -60,6 +60,7 @@ public class DebeziumConnectorConfig {
                 .with("offset.storage", "org.apache.kafka.connect.storage.FileOffsetBackingStore")
                 .with("offset.storage.file.filename", offsetStorageTempFile.getAbsolutePath())
                 .with("offset.flush.interval.ms", "60000")
+                .with("decimal.handling.mode", "string")
                 .with("database.hostname", databaseHost)
                 .with("database.port", databasePort)
                 .with("database.user", databaseUsername)
