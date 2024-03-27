@@ -11,7 +11,8 @@ public interface BranchRepository extends JpaRepository<Branch, Long> {
     @Query("""
             From Branch branch
             where upper(branch.name) like upper(concat('%', ?1, '%')) or
-            upper(branch.rentalOffice) like upper(concat('%', ?1, '%'))""")
+            upper(branch.address) like upper(concat('%', ?1, '%')) or
+            upper(branch.rentalOffice.name) like upper(concat('%', ?1, '%'))""")
     List<Branch> findByFilter(String filter);
 
 }
