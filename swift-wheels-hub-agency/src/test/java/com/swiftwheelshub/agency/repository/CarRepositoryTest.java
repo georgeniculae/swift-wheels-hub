@@ -12,7 +12,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Testcontainers
@@ -35,7 +35,7 @@ class CarRepositoryTest {
     @Test
     void findAllCarsTest_success() {
         List<Car> cars = carRepository.findAll();
-        assertFalse(cars.isEmpty());
+        assertEquals(2, cars.size());
     }
 
 }
