@@ -71,21 +71,8 @@ public class DebeziumListener {
             Operation operation = Operation.forCode((String) sourceRecordChangeValue.get(OPERATION));
 
             if (Operation.READ != operation) {
-                String record = Operation.DELETE == operation ? BEFORE : AFTER;
-
-                Struct struct = (Struct) sourceRecordChangeValue.get(record);
-                Map<String, Object> payload = struct.schema()
-                        .fields()
-                        .stream()
-                        .map(Field::name)
-                        .filter(fieldName -> ObjectUtils.isNotEmpty(struct.get(fieldName)))
-                        .map(fieldName -> getFieldName(struct, fieldName))
-                        .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
-
-                Invoice invoice = objectMapper.convertValue(payload, Invoice.class);
-                InvoiceResponse invoiceResponse = invoiceMapper.mapEntityToDto(invoice);
-
-                notifyCustomer(operation, invoiceResponse);
+                Map<String, Object> payload = getPayload(operation, sourceRecordChangeValue);
+                notifyCustomer(operation, payload);
 
                 log.info("Updated Data: {} with Operation: {}", payload, operation.name());
             }
@@ -102,6 +89,19 @@ public class DebeziumListener {
         if (Objects.nonNull(this.debeziumEngine)) {
             this.debeziumEngine.close();
         }
+    }
+
+    private Map<String, Object> getPayload(Operation operation, Struct sourceRecordChangeValue) {
+        String record = Operation.DELETE == operation ? BEFORE : AFTER;
+        Struct struct = (Struct) sourceRecordChangeValue.get(record);
+
+        return struct.schema()
+                .fields()
+                .stream()
+                .map(Field::name)
+                .filter(fieldName -> ObjectUtils.isNotEmpty(struct.get(fieldName)))
+                .map(fieldName -> getFieldName(struct, fieldName))
+                .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
     }
 
     private Pair<String, Object> getFieldName(Struct struct, String fieldName) {
@@ -137,7 +137,10 @@ public class DebeziumListener {
         return updatedFieldName.toString().replace(UNDERSCORE, StringUtils.EMPTY);
     }
 
-    private void notifyCustomer(Operation operation, InvoiceResponse invoiceResponse) {
+    private void notifyCustomer(Operation operation, Map<String, Object> payload) {
+        Invoice invoice = objectMapper.convertValue(payload, Invoice.class);
+        InvoiceResponse invoiceResponse = invoiceMapper.mapEntityToDto(invoice);
+
         if (Operation.UPDATE.equals(operation) && ObjectUtils.isNotEmpty(invoiceResponse.totalAmount())) {
             emailNotificationProducer.sendMessage(invoiceResponse);
         }

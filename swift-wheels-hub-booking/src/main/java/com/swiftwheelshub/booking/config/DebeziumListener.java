@@ -71,17 +71,7 @@ public class DebeziumListener {
             Operation operation = Operation.forCode((String) sourceRecordChangeValue.get(OPERATION));
 
             if (Operation.READ != operation) {
-                String record = Operation.DELETE == operation ? BEFORE : AFTER;
-
-                Struct struct = (Struct) sourceRecordChangeValue.get(record);
-                Map<String, Object> payload = struct.schema()
-                        .fields()
-                        .stream()
-                        .map(Field::name)
-                        .filter(fieldName -> ObjectUtils.isNotEmpty(struct.get(fieldName)))
-                        .map(fieldName -> getFieldName(struct, fieldName))
-                        .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
-
+                Map<String, Object> payload = getPayload(operation, sourceRecordChangeValue);
                 handleBookings(payload, operation);
 
                 log.info("Updated Data: {} with Operation: {}", payload, operation.name());
@@ -99,6 +89,19 @@ public class DebeziumListener {
         if (Objects.nonNull(this.debeziumEngine)) {
             this.debeziumEngine.close();
         }
+    }
+
+    private Map<String, Object> getPayload(Operation operation, Struct sourceRecordChangeValue) {
+        String record = Operation.DELETE == operation ? BEFORE : AFTER;
+        Struct struct = (Struct) sourceRecordChangeValue.get(record);
+
+        return struct.schema()
+                .fields()
+                .stream()
+                .map(Field::name)
+                .filter(fieldName -> ObjectUtils.isNotEmpty(struct.get(fieldName)))
+                .map(fieldName -> getFieldName(struct, fieldName))
+                .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
     }
 
     private void handleBookings(Map<String, Object> payload, Operation operation) {
