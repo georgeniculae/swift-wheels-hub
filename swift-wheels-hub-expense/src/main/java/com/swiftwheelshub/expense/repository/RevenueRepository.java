@@ -15,7 +15,9 @@ public interface RevenueRepository extends JpaRepository<Revenue, Long> {
             revenue.dateOfRevenue = ?1""")
     List<Revenue> findByDateOfRevenue(LocalDate dateOfRevenue);
 
-    @Query("SELECT sum(revenue.amountFromBooking) from Revenue revenue")
+    @Query("""
+            SELECT sum(revenue.amountFromBooking)
+            from Revenue revenue""")
     BigDecimal getTotalAmount();
 
 }
