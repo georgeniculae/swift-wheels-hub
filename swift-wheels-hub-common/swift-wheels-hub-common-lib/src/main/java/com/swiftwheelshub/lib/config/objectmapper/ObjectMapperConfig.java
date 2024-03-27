@@ -18,7 +18,10 @@ public class ObjectMapperConfig {
     public ObjectMapper objectMapper() {
         return Jackson2ObjectMapperBuilder.json()
                 .modules(new JavaTimeModule())
-                .featuresToEnable(MapperFeature.ALLOW_COERCION_OF_SCALARS)
+                .featuresToEnable(
+                        MapperFeature.ALLOW_COERCION_OF_SCALARS,
+                        DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS
+                )
                 .featuresToDisable(
                         SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS,
                         DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE
