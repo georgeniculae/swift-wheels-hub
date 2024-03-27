@@ -44,7 +44,7 @@ class RentalOfficeControllerTest {
     private RentalOfficeService rentalOfficeService;
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findAllRentalOfficesTest_success() throws Exception {
         RentalOfficeResponse rentalOfficeResponse =
                 TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
@@ -75,7 +75,7 @@ class RentalOfficeControllerTest {
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findRentalOfficeByIdTest_success() throws Exception {
         RentalOfficeResponse rentalOfficeRequest =
                 TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
@@ -137,7 +137,7 @@ class RentalOfficeControllerTest {
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void countRentalOfficesTest_success() throws Exception {
         when(rentalOfficeService.countRentalOffices()).thenReturn(1L);
 
@@ -167,12 +167,14 @@ class RentalOfficeControllerTest {
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void addRentalOfficeTest_success() throws Exception {
+        RentalOfficeRequest rentalOfficeRequest =
+                TestUtils.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
         RentalOfficeResponse rentalOfficeResponse =
                 TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
-        String valueAsString = TestUtils.writeValueAsString(rentalOfficeResponse);
+        String valueAsString = TestUtils.writeValueAsString(rentalOfficeRequest);
 
         when(rentalOfficeService.saveRentalOffice(any(RentalOfficeRequest.class))).thenReturn(rentalOfficeResponse);
 
@@ -228,12 +230,14 @@ class RentalOfficeControllerTest {
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void updateRentalOfficeTest_success() throws Exception {
+        RentalOfficeRequest rentalOfficeRequest =
+                TestUtils.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
         RentalOfficeResponse rentalOfficeResponse =
                 TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
-        String valueAsString = TestUtils.writeValueAsString(rentalOfficeResponse);
+        String valueAsString = TestUtils.writeValueAsString(rentalOfficeRequest);
 
         when(rentalOfficeService.saveRentalOffice(any(RentalOfficeRequest.class))).thenReturn(rentalOfficeResponse);
 
@@ -289,7 +293,7 @@ class RentalOfficeControllerTest {
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void deleteRentalOfficeByIdTest_success() throws Exception {
         doNothing().when(rentalOfficeService).deleteRentalOfficeById(anyLong());
 

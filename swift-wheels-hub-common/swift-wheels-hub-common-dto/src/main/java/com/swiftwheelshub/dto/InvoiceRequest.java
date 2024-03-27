@@ -10,8 +10,6 @@ import java.time.LocalDate;
 
 @Builder
 public record InvoiceRequest(
-        Long id,
-
         @NotEmpty(message = "Username cannot be empty")
         String customerUsername,
 
@@ -43,7 +41,6 @@ public record InvoiceRequest(
     @Override
     public String toString() {
         return "InvoiceRequest{" + "\n" +
-                "id=" + id + "\n" +
                 "customerUsername='" + customerUsername + "\n" +
                 "customerEmail='" + customerEmail + "\n" +
                 "carId=" + carId + "\n" +

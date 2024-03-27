@@ -109,7 +109,7 @@ class BookingServiceTest {
                 TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
 
         BookingClosingDetails bookingClosingDetails =
-                TestUtils.getResourceAsJson("/data/BookingClosingDetailsDto.json", BookingClosingDetails.class);
+                TestUtils.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
 
@@ -140,7 +140,7 @@ class BookingServiceTest {
     void updateBookingTest_updatedCar_success() {
         Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
         Booking updatedBooking = TestUtils.getResourceAsJson("/data/UpdatedBooking.json", Booking.class);
-        BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/UpdatedBookingDto.json", BookingRequest.class);
+        BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/UpdatedBookingRequest.json", BookingRequest.class);
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         MockHttpServletRequest request = new MockHttpServletRequest();

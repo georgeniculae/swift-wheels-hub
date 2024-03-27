@@ -311,7 +311,7 @@ class BookingControllerTest {
         BookingResponse bookingResponse =
                 TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
         BookingClosingDetails bookingClosingDetails =
-                TestUtils.getResourceAsJson("/data/BookingClosingDetailsDto.json", BookingClosingDetails.class);
+                TestUtils.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
 
         String content = TestUtils.writeValueAsString(bookingClosingDetails);
 
@@ -337,7 +337,7 @@ class BookingControllerTest {
         BookingResponse bookingResponse =
                 TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
         BookingClosingDetails bookingClosingDetails =
-                TestUtils.getResourceAsJson("/data/BookingClosingDetailsDto.json", BookingClosingDetails.class);
+                TestUtils.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
 
         String content = TestUtils.writeValueAsString(bookingClosingDetails);
 

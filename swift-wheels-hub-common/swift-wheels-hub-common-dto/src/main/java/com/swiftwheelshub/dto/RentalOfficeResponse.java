@@ -13,6 +13,7 @@ public record RentalOfficeResponse(
         @NotEmpty(message = "Contact address domain cannot be empty")
         String contactAddress,
 
+        @NotEmpty(message = "Phone number cannot be empty")
         String phoneNumber
 ) {
 

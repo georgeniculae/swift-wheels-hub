@@ -534,6 +534,7 @@ class CarControllerTest {
 
         CarUpdateDetails carUpdateDetails = CarUpdateDetails.builder()
                 .carId(1L)
+                .receptionistEmployeeId(1L)
                 .carState(CarState.NOT_AVAILABLE)
                 .build();
 

@@ -1,12 +1,11 @@
 package com.swiftwheelshub.dto;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
 public record EmployeeRequest(
-        Long id,
-
         @NotEmpty(message = "First name cannot be empty")
         String firstName,
 
@@ -16,13 +15,13 @@ public record EmployeeRequest(
         @NotEmpty(message = "Job position cannot be empty")
         String jobPosition,
 
+        @NotNull(message = "Working branch id cannot be empty")
         Long workingBranchId
 ) {
 
     @Override
     public String toString() {
         return "EmployeeRequest{" + "\n" +
-                "id=" + id + "\n" +
                 "firstName='" + firstName + "\n" +
                 "lastName='" + lastName + "\n" +
                 "jobPosition='" + jobPosition + "\n" +

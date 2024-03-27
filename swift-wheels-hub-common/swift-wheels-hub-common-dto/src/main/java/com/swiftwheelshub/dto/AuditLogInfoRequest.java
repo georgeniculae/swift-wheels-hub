@@ -1,6 +1,7 @@
 package com.swiftwheelshub.dto;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ public record AuditLogInfoRequest(
 
         String username,
 
+        @NotNull(message = "Timestamp cannot be null")
         LocalDateTime timestamp,
 
         List<String> parametersValues

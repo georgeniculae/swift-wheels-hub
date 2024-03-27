@@ -10,8 +10,6 @@ import java.time.LocalDate;
 
 @Builder
 public record BookingRequest(
-        Long id,
-
         @NotNull(message = "Date of booking cannot be null")
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         LocalDate dateOfBooking,
@@ -48,7 +46,6 @@ public record BookingRequest(
     @Override
     public String toString() {
         return "BookingRequest{" + "\n" +
-                "id=" + id + "\n" +
                 "dateOfBooking=" + dateOfBooking + "\n" +
                 "status=" + status +
                 "customerUsername='" + customerUsername + "\n" +

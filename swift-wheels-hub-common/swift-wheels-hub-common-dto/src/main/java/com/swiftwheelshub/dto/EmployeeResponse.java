@@ -1,6 +1,7 @@
 package com.swiftwheelshub.dto;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
@@ -16,6 +17,7 @@ public record EmployeeResponse(
         @NotEmpty(message = "Job position cannot be empty")
         String jobPosition,
 
+        @NotNull(message = "Working branch id cannot be empty")
         Long workingBranchId
 ) {
 
