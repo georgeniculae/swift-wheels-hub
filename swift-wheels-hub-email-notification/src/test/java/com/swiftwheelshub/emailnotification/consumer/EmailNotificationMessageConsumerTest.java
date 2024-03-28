@@ -24,7 +24,7 @@ class EmailNotificationMessageConsumerTest {
     private UserNotificationService userNotificationService;
 
     @Test
-    void invoiceConsumerTest_success() {
+    void emailNotificationConsumerTest_success() {
         InvoiceResponse invoiceResponse =
                 TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
@@ -32,7 +32,7 @@ class EmailNotificationMessageConsumerTest {
 
         doNothing().when(userNotificationService).notifyCustomer(any(InvoiceResponse.class));
 
-        emailNotificationMessageConsumer.invoiceConsumer().accept(message);
+        emailNotificationMessageConsumer.emailNotificationConsumer().accept(message);
     }
 
 }

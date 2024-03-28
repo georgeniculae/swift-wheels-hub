@@ -16,7 +16,7 @@ spring:
     discovery:
       enabled: true
     function:
-      definition: invoiceConsumer
+      definition: emailNotificationConsumer
     stream:
       bindings:
         emailNotificationConsumer-in-0:
