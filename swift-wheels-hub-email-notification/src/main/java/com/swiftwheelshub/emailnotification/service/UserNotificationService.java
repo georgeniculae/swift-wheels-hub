@@ -1,19 +1,24 @@
 package com.swiftwheelshub.emailnotification.service;
 
+import com.sendgrid.Response;
 import com.sendgrid.helpers.mail.Mail;
 import com.swiftwheelshub.dto.InvoiceResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserNotificationService {
 
     private final EmailService emailService;
 
     public void notifyCustomer(InvoiceResponse invoiceResponse) {
         Mail mail = emailService.createMail(invoiceResponse.customerEmail(), invoiceResponse);
-        emailService.sendEmail(mail);
+        Response response = emailService.sendEmail(mail);
+
+        log.info("Invoice processed with status: {}{}", response.getStatusCode(), response.getBody());
     }
 
 }

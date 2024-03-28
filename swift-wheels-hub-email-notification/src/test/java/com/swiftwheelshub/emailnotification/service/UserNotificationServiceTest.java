@@ -1,5 +1,6 @@
 package com.swiftwheelshub.emailnotification.service;
 
+import com.sendgrid.Response;
 import com.sendgrid.helpers.mail.Mail;
 import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.emailnotification.util.TestUtils;
@@ -28,7 +29,10 @@ class UserNotificationServiceTest {
         InvoiceResponse invoiceResponse =
                 TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
+        Response response = new Response();
+
         when(emailService.createMail(anyString(), any(Object.class))).thenReturn(new Mail());
+        when(emailService.sendEmail(any(Mail.class))).thenReturn(response);
 
         assertDoesNotThrow(() -> userNotificationService.notifyCustomer(invoiceResponse));
     }

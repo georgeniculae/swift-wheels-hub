@@ -4,6 +4,7 @@ import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
+import com.sendgrid.Response;
 import com.sendgrid.SendGrid;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
@@ -42,7 +43,7 @@ public class EmailService {
 
     private final MustacheFactory mustacheFactory;
 
-    public void sendEmail(Mail mail) {
+    public Response sendEmail(Mail mail) {
         Request request = new Request();
 
         request.setMethod(Method.POST);
@@ -51,7 +52,7 @@ public class EmailService {
         try {
             request.setBody(mail.build());
 
-            sendGrid.api(request);
+            return sendGrid.api(request);
         } catch (IOException e) {
             throw new SwiftWheelsHubException(e);
         }
