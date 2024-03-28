@@ -1,0 +1,17 @@
+{
+  "id": 1,
+  "firstName": "Ion",
+  "lastName": "Popescu",
+  "jobPosition": "manager",
+  "workingBranch": {
+    "id": 1,
+    "name": "Test Branch",
+    "address": "Ploiesti",
+    "rentalOffice": {
+      "id": 1,
+      "name": "Test Rental Office",
+      "contactAddress": "Ploiesti",
+      "phoneNumber": ""
+    }
+  }
+}

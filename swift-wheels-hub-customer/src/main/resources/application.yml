@@ -1,0 +1,105 @@
+server:
+  port: ${PORT:0}
+  error:
+    include-message: always
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
+  servlet:
+    context-path: /customers
+
+spring:
+  application:
+    name: swift-wheels-hub-customer
+  threads:
+    virtual:
+      enabled: true
+  cloud:
+    discovery:
+      enabled: true
+    stream:
+      bindings:
+        auditLogInfoProducer-out-0:
+          destination: ${CUSTOMER_AUDIT_LOG_INFO_TOPIC}
+          contentType: application/json
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      keySerializer: org.apache.kafka.common.serialization.StringSerializer
+      valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${EUREKA_USER}:${EUREKA_PASSWORD}@localhost:8761/eureka
+    registryFetchIntervalSeconds: 5
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 10
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /definition/swagger-ui.html
+    operationsSorter: method
+  api-docs:
+    path: /definition/v3/api-docs
+
+management:
+  server:
+    port: ${PORT:0}
+  endpoint:
+    loggers:
+      enabled: true
+    health:
+      group:
+        custom:
+          show-components: always
+          show-details: always
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,loggers,prometheus
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        web:
+          csrf:
+            CsrfFilter: DEBUG
+        jdbc:
+          core:
+            JdbcTemplate: DEBUG
+            StatementCreatorUtils: TRACE
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+
+apikey:
+  secret: ${API_KEY_SECRET}
+
+keycloak:
+  serverUrl: http://localhost:8080
+  realm: ${KEYCLOAK_REALM}
+  clientId: ${KEYCLOAK_CLIENT_ID}
+  clientSecret: ${KEYCLOAK_CLIENT_SECRET}
+
+audit:
+  enabled: true
+
+booking-service:
+  url: lb://swift-wheels-hub-booking/bookings

@@ -1,0 +1,13 @@
+{
+  "id": 1,
+  "customerUsername": "test",
+  "carId": 1,
+  "receptionistEmployeeId": 1,
+  "bookingId": 1,
+  "carDateOfReturn": null,
+  "isVehicleDamaged": null,
+  "damageCost": null,
+  "additionalPayment": null,
+  "totalAmount": null,
+  "comments": null
+}

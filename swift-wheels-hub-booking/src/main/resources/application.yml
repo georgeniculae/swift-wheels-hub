@@ -1,0 +1,142 @@
+server:
+  port: ${PORT:0}
+  error:
+    include-message: always
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
+  servlet:
+    context-path: /bookings
+
+spring:
+  application:
+    name: swift-wheels-hub-booking
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/swift_wheels_hub_booking
+    username: ${POSTGRESQL_USERNAME}
+    password: ${POSTGRESQL_PASSWORD}
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+  cloud:
+    discovery:
+      enabled: true
+    stream:
+      bindings:
+        savedBookingProducer-out-0:
+          destination: ${SAVED_BOOKING_TOPIC}
+          contentType: application/json
+        updatedBookingProducer-out-0:
+          destination: ${UPDATED_BOOKING_TOPIC}
+          contentType: application/json
+        deletedBookingProducer-out-0:
+          destination: ${DELETED_BOOKING_TOPIC}
+          contentType: application/json
+        auditLogInfoProducer-out-0:
+          destination: ${BOOKING_AUDIT_LOG_INFO_TOPIC}
+          contentType: application/json
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      keySerializer: org.apache.kafka.common.serialization.StringSerializer
+      valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${EUREKA_USER}:${EUREKA_PASSWORD}@localhost:8761/eureka
+    registryFetchIntervalSeconds: 5
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 10
+
+management:
+  server:
+    port: ${PORT:0}
+  endpoint:
+    loggers:
+      enabled: true
+    health:
+      group:
+        custom:
+          show-components: always
+          show-details: always
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,loggers,prometheus
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /definition/swagger-ui.html
+    operationsSorter: method
+  api-docs:
+    path: /definition/v3/api-docs
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        web:
+          csrf:
+            CsrfFilter: DEBUG
+        jdbc:
+          core:
+            JdbcTemplate: DEBUG
+            StatementCreatorUtils: TRACE
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+
+apikey:
+  secret: ${API_KEY_SECRET}
+
+rest-client:
+  url:
+    swift-wheels-hub-agency-branches: lb://swift-wheels-hub-agency/agency/branches
+    swift-wheels-hub-agency-cars: lb://swift-wheels-hub-agency/agency/cars
+    swift-wheels-hub-agency-employees: lb://swift-wheels-hub-agency/agency/employees
+    swift-wheels-hub-customer: lb://swift-wheels-hub-customer/customers
+    swift-wheels-hub-expense: lb://swift-wheels-hub-expense/expense/invoices
+
+debezium:
+  enabled: true
+  connector-name: debezium-booking-postgres-connector
+  server-name: booking-postgres-server
+  server-id: 10182
+  database-name: swift_wheels_hub_booking
+  database-host: localhost
+  database-port: 5432
+  topic-name: ${DEBEZIUM_BOOKING_TOPIC}
+  table-name: booking
+  schema-name: public
+  slot-name: booking_slot
+  groupId: ${BOOKING_CONSUMER_GROUP}
+
+audit:
+  enabled: true
