@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.io.StringWriter;
 
 @Service
@@ -53,7 +52,7 @@ public class EmailService {
             request.setBody(mail.build());
 
             return sendGrid.api(request);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new SwiftWheelsHubException(e);
         }
     }
@@ -76,7 +75,7 @@ public class EmailService {
         Mustache mustache = mustacheFactory.compile(MAIL_TEMPLATE_FOLDER + FILE_NAME + MUSTACHE_FORMAT);
         try {
             mustache.execute(stringWriter, object).flush();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new SwiftWheelsHubException(e);
         }
 
