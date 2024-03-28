@@ -1,7 +1,7 @@
 package com.swiftwheelshub.customer.service;
 
-import com.swiftwheelshub.customer.mapper.UserMapper;
-import com.swiftwheelshub.customer.mapper.UserMapperImpl;
+import com.swiftwheelshub.customer.mapper.CustomerMapper;
+import com.swiftwheelshub.customer.mapper.CustomerMapperImpl;
 import com.swiftwheelshub.customer.util.AssertionUtils;
 import com.swiftwheelshub.customer.util.TestData;
 import com.swiftwheelshub.customer.util.TestUtils;
@@ -90,7 +90,7 @@ class CustomerServiceTest {
     private BookingService bookingService;
 
     @Spy
-    private UserMapper userMapper = new UserMapperImpl();
+    private CustomerMapper customerMapper = new CustomerMapperImpl();
 
     @Test
     @SuppressWarnings("all")
@@ -125,7 +125,7 @@ class CustomerServiceTest {
 
         AssertionUtils.assertRegistrationResponse(registerRequest, registrationResponse);
 
-        verify(userMapper).mapToRegistrationResponse(any(UserRepresentation.class));
+        verify(customerMapper).mapToRegistrationResponse(any(UserRepresentation.class));
     }
 
     @Test
@@ -169,7 +169,7 @@ class CustomerServiceTest {
 
         AssertionUtils.assertUserDetails(userRepresentation, currentUser);
 
-        verify(userMapper).mapUserToUserDetails(any(UserRepresentation.class));
+        verify(customerMapper).mapUserToUserDetails(any(UserRepresentation.class));
     }
 
     @Test

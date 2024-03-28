@@ -1,6 +1,6 @@
 package com.swiftwheelshub.customer.service;
 
-import com.swiftwheelshub.customer.mapper.UserMapper;
+import com.swiftwheelshub.customer.mapper.CustomerMapper;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserInfo;
@@ -61,12 +61,12 @@ public class CustomerService {
 
     private final BookingService bookingService;
 
-    private final UserMapper userMapper;
+    private final CustomerMapper customerMapper;
 
     public UserInfo findUserByUsername(String username) {
         UserRepresentation userRepresentation = getUserRepresentation(username);
 
-        return userMapper.mapUserToUserDetails(userRepresentation);
+        return customerMapper.mapUserToUserDetails(userRepresentation);
     }
 
     public UserInfo getCurrentUser(HttpServletRequest request) {
@@ -100,7 +100,7 @@ public class CustomerService {
     public UserInfo updateUser(String id, UserUpdateRequest userUpdateRequest) {
         UserResource userResource = findById(id);
 
-        UserRepresentation userRepresentation = userMapper.mapToUserRepresentation(userUpdateRequest);
+        UserRepresentation userRepresentation = customerMapper.mapToUserRepresentation(userUpdateRequest);
         userRepresentation.singleAttribute(ADDRESS, userUpdateRequest.address());
         userRepresentation.singleAttribute(DATE_OF_BIRTH, userUpdateRequest.dateOfBirth().toString());
 
@@ -110,7 +110,7 @@ public class CustomerService {
             handleRestEasyCall(e);
         }
 
-        return userMapper.mapUserToUserDetails(userRepresentation);
+        return customerMapper.mapUserToUserDetails(userRepresentation);
     }
 
     public void deleteUserByUsername(HttpServletRequest request, String username) {
@@ -195,7 +195,7 @@ public class CustomerService {
             verifyEmail(getUserId(userRepresentation.getUsername()));
         }
 
-        return userMapper.mapToRegistrationResponse(userRepresentation);
+        return customerMapper.mapToRegistrationResponse(userRepresentation);
     }
 
     private UserRepresentation getUserRepresentation(String username) {

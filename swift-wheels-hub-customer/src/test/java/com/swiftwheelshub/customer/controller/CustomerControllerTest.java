@@ -32,10 +32,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = UserController.class)
+@SpringBootTest(classes = CustomerController.class)
 @AutoConfigureMockMvc
 @EnableWebMvc
-class UserControllerTest {
+class CustomerControllerTest {
 
     private static final String PATH = "/customers";
 
