@@ -120,12 +120,14 @@ public class CarService {
     }
 
     public List<CarResponse> updateCarsStatus(List<UpdateCarRequest> carsForUpdate) {
-        return carRepository.findAllById(getIds(carsForUpdate))
-                .stream()
-                .peek(car -> {
-                    UpdateCarRequest updateCarRequest = getMatchingCarDetails(carsForUpdate, car);
-                    car.setCarStatus(CarStatus.valueOf(updateCarRequest.carState().name()));
-                })
+        List<Car> updatableCars = carRepository.findAllById(getIds(carsForUpdate));
+
+        updatableCars.forEach(car -> {
+            UpdateCarRequest updateCarRequest = getMatchingCarDetails(carsForUpdate, car);
+            car.setCarStatus(CarStatus.valueOf(updateCarRequest.carState().name()));
+        });
+
+        return updatableCars.stream()
                 .map(this::saveEntity)
                 .map(carMapper::mapEntityToDto)
                 .toList();
