@@ -8,7 +8,7 @@ server:
 
 spring:
   application:
-    name: swift-wheels-hub-cloud-gateway
+    name: swift-wheels-hub-gateway
   security:
     oauth2:
       resourceserver:

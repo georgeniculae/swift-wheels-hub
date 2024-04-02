@@ -1,1 +1,1 @@
-# swift-wheels-hub-cloud-gateway
+# swift-wheels-hub-gateway
