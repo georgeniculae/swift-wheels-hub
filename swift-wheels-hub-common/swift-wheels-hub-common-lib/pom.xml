@@ -17,11 +17,10 @@
 
     <properties>
         <java.version>21</java.version>
-        <spring-cloud-dependencies.version>2023.0.0</spring-cloud-dependencies.version>
+        <spring-cloud-dependencies.version>2023.0.1</spring-cloud-dependencies.version>
         <swift-wheels-hub-common.version>0.0.1-SNAPSHOT</swift-wheels-hub-common.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <debezium.version>2.5.0.Final</debezium.version>
-        <mustache.version>0.9.11</mustache.version>
+        <debezium.version>2.5.4.Final</debezium.version>
     </properties>
 
     <dependencies>
