@@ -16,7 +16,6 @@
     <description>Swift Wheels Hub Common Lib</description>
 
     <properties>
-        <spring-cloud-dependencies.version>2023.0.1</spring-cloud-dependencies.version>
         <swift-wheels-hub-common.version>0.0.1-SNAPSHOT</swift-wheels-hub-common.version>
     </properties>
 
@@ -121,18 +120,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud-dependencies.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <plugins>
