@@ -16,13 +16,8 @@
     <description>Swift Wheels Hub Customer</description>
 
     <properties>
-        <java.version>21</java.version>
         <spring-cloud-dependencies.version>2023.0.1</spring-cloud-dependencies.version>
         <swift-wheels-hub-common.version>0.0.1-SNAPSHOT</swift-wheels-hub-common.version>
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <keycloak-client.version>23.0.4</keycloak-client.version>
-        <springdoc-openapi-starter-webmvc-ui.version>2.4.0</springdoc-openapi-starter-webmvc-ui.version>
-        <resteasy-client.version>6.2.8.Final</resteasy-client.version>
     </properties>
 
     <dependencies>
@@ -71,19 +66,16 @@
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-admin-client</artifactId>
-            <version>${keycloak-client.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
-            <version>${resteasy-client.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jackson2-provider</artifactId>
-            <version>${resteasy-client.version}</version>
         </dependency>
 
         <dependency>
@@ -94,7 +86,6 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>${mapstruct.version}</version>
         </dependency>
 
         <dependency>
@@ -105,7 +96,6 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
         </dependency>
 
         <dependency>

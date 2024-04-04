@@ -9,10 +9,9 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.4</version>
-        <relativePath/>
+        <groupId>com.swftwheelshub</groupId>
+        <artifactId>swift-wheels-hub-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <name>Swift Wheels Hub</name>

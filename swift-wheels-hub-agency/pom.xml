@@ -16,13 +16,8 @@
     <description>Swift Wheels Hub Agency</description>
 
     <properties>
-        <java.version>21</java.version>
         <spring-cloud-dependencies.version>2023.0.1</spring-cloud-dependencies.version>
         <swift-wheels-hub-common.version>0.0.1-SNAPSHOT</swift-wheels-hub-common.version>
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <liquibase.version>4.27.0</liquibase.version>
-        <springdoc-openapi-starter-webmvc-ui.version>2.4.0</springdoc-openapi-starter-webmvc-ui.version>
-        <poi.version>5.2.5</poi.version>
     </properties>
 
     <dependencies>
@@ -86,25 +81,21 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>${mapstruct.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>${poi.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>${poi.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-maven-plugin</artifactId>
-            <version>${liquibase.version}</version>
         </dependency>
 
         <dependency>
@@ -115,7 +106,6 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
         </dependency>
 
         <dependency>

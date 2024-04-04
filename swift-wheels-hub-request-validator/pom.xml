@@ -16,10 +16,8 @@
     <description>Swift Wheels Hub Request Validator</description>
 
     <properties>
-        <java.version>21</java.version>
         <spring-cloud-dependencies.version>2023.0.1</spring-cloud-dependencies.version>
         <swift-wheels-hub-common.version>0.0.1-SNAPSHOT</swift-wheels-hub-common.version>
-        <swagger-request-validator.version>2.40.0</swagger-request-validator.version>
     </properties>
 
     <dependencies>
@@ -53,7 +51,6 @@
         <dependency>
             <groupId>com.atlassian.oai</groupId>
             <artifactId>swagger-request-validator-core</artifactId>
-            <version>${swagger-request-validator.version}</version>
         </dependency>
 
         <dependency>

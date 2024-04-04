@@ -15,10 +15,6 @@
     <name>Swift Wheels Hub Common Dto</name>
     <description>Swift Wheels Hub Common Dto</description>
 
-    <properties>
-        <java.version>21</java.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
