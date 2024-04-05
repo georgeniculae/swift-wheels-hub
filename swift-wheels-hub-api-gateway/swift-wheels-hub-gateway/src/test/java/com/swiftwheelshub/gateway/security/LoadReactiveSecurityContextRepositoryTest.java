@@ -7,11 +7,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -26,13 +26,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ReactiveSecurityContextRepositoryTest {
+class LoadReactiveSecurityContextRepositoryTest {
 
     @InjectMocks
     private AuthenticationManager authenticationManager;
-
-    @Mock
-    private Authentication authentication;
 
     @Mock
     private NimbusReactiveJwtDecoder nimbusReactiveJwtDecoder;
@@ -50,14 +47,14 @@ class ReactiveSecurityContextRepositoryTest {
         Map<String, Object> headers = Map.of(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         Map<String, Object> claims = Map.of("preferred_username", "user");
 
+        BearerTokenAuthenticationToken bearerTokenAuthenticationToken = new BearerTokenAuthenticationToken(token);
         Jwt jwt = new Jwt(token, Instant.now(), Instant.now().plus(30, ChronoUnit.MINUTES), headers, claims);
         JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(jwt, roles, username);
 
-        when(authentication.getPrincipal()).thenReturn(token);
         when(nimbusReactiveJwtDecoder.decode(token)).thenReturn(Mono.just(jwt));
         when(jwtAuthenticationTokenConverter.convert(any(Jwt.class))).thenReturn(Mono.just(jwtAuthenticationToken));
 
-        authenticationManager.authenticate(authentication)
+        authenticationManager.authenticate(bearerTokenAuthenticationToken)
                 .as(StepVerifier::create)
                 .expectNext(jwtAuthenticationToken)
                 .verifyComplete();
