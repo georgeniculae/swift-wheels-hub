@@ -23,7 +23,7 @@ public class LoadReactiveSecurityContextRepository extends WebSessionServerSecur
         return Mono.justOrEmpty(getAuthorizationHeader(exchange))
                 .filter(authorization -> authorization.startsWith(BEARER))
                 .map(this::getBearerTokenAuthenticationToken)
-                .delayUntil(reactiveAuthenticationManager::authenticate)
+                .flatMap(reactiveAuthenticationManager::authenticate)
                 .map(SecurityContextImpl::new);
     }
 
