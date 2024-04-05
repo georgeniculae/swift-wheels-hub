@@ -22,7 +22,7 @@ public class SecurityConfig {
     private String jwkUri;
     private final ReactiveAuthenticationManager reactiveAuthenticationManager;
     private final JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
-    private final LoadReactiveSecurityContextRepository loadReactiveSecurityContextRepository;
+    private final LoadSecurityContextRepository loadSecurityContextRepository;
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
@@ -49,7 +49,7 @@ public class SecurityConfig {
                         resourceServerSpec.jwt(jwtSpec -> jwtSpec.jwkSetUri(jwkUri)
                                 .authenticationManager(reactiveAuthenticationManager)
                                 .jwtAuthenticationConverter(jwtAuthenticationTokenConverter)))
-                .securityContextRepository(loadReactiveSecurityContextRepository)
+                .securityContextRepository(loadSecurityContextRepository)
                 .requestCache(request -> request.requestCache(NoOpServerRequestCache.getInstance()))
                 .build();
     }
