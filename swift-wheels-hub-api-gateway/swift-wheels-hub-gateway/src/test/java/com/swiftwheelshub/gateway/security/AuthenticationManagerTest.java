@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.when;
 class AuthenticationManagerTest {
 
     @InjectMocks
-    private AuthenticationManager authenticationManager;
+    private ReactiveAuthenticationManager reactiveAuthenticationManager;
 
     @Mock
     private NimbusReactiveJwtDecoder nimbusReactiveJwtDecoder;
@@ -54,7 +55,7 @@ class AuthenticationManagerTest {
         when(nimbusReactiveJwtDecoder.decode(anyString())).thenReturn(Mono.just(jwt));
         when(jwtAuthenticationTokenConverter.convert(jwt)).thenReturn(Mono.just(jwtAuthenticationToken));
 
-        authenticationManager.authenticate(bearerTokenAuthenticationToken)
+        reactiveAuthenticationManager.authenticate(bearerTokenAuthenticationToken)
                 .as(StepVerifier::create)
                 .expectNextMatches(auth -> auth.isAuthenticated() && roles.equals(auth.getAuthorities()))
                 .verifyComplete();

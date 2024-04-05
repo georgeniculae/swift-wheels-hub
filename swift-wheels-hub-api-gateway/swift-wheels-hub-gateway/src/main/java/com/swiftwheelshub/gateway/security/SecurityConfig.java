@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -19,7 +20,7 @@ public class SecurityConfig {
 
     @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
     private String jwkUri;
-    private final AuthenticationManager reactiveAuthenticationManager;
+    private final ReactiveAuthenticationManager reactiveAuthenticationManager;
     private final JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
     private final LoadReactiveSecurityContextRepository loadReactiveSecurityContextRepository;
 

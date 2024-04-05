@@ -3,6 +3,7 @@ package com.swiftwheelshub.gateway.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
@@ -15,14 +16,14 @@ import reactor.core.publisher.Mono;
 public class LoadReactiveSecurityContextRepository extends WebSessionServerSecurityContextRepository {
 
     private final static String BEARER = "Bearer ";
-    private final AuthenticationManager authenticationManager;
+    private final ReactiveAuthenticationManager reactiveAuthenticationManager;
 
     @Override
     public Mono<SecurityContext> load(ServerWebExchange exchange) {
         return Mono.justOrEmpty(getAuthorizationHeader(exchange))
                 .filter(authorization -> authorization.startsWith(BEARER))
                 .map(this::getBearerTokenAuthenticationToken)
-                .delayUntil(authenticationManager::authenticate)
+                .delayUntil(reactiveAuthenticationManager::authenticate)
                 .map(SecurityContextImpl::new);
     }
 
