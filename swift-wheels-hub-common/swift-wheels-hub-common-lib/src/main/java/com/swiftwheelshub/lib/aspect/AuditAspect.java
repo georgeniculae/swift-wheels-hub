@@ -44,7 +44,7 @@ public class AuditAspect {
         String username = getUsername();
         List<String> parametersValues = getParametersValues(joinPoint, logActivity, signature);
 
-        AuditLogInfoRequest auditLogInfoRequest = getAuditLogInfoDto(method.getName(), username, parametersValues);
+        AuditLogInfoRequest auditLogInfoRequest = getAuditLogInfoRequest(method.getName(), username, parametersValues);
 
         try {
             Object proceed = joinPoint.proceed();
@@ -82,7 +82,7 @@ public class AuditAspect {
                 .toList();
     }
 
-    private AuditLogInfoRequest getAuditLogInfoDto(String methodName, String username, List<String> parametersValues) {
+    private AuditLogInfoRequest getAuditLogInfoRequest(String methodName, String username, List<String> parametersValues) {
         return new AuditLogInfoRequest(methodName, username, LocalDateTime.now(), parametersValues);
     }
 
