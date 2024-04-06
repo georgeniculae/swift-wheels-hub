@@ -17,7 +17,7 @@ public class EmailNotificationMessageConsumer {
 
     @Bean
     public Consumer<Message<InvoiceResponse>> emailNotificationConsumer() {
-        return invoiceResponseMessage -> userNotificationService.notifyCustomer(invoiceResponseMessage.getPayload());
+        return message -> userNotificationService.notifyCustomer(message.getPayload());
     }
 
 }
