@@ -29,8 +29,8 @@ public class CustomerController {
 
     @GetMapping(path = "/infos")
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<List<UserInfo>> findAllCustomers() {
-        List<UserInfo> allCustomers = customerService.findAllCustomers();
+    public ResponseEntity<List<UserInfo>> findAllUsers() {
+        List<UserInfo> allCustomers = customerService.findAllUsers();
 
         return ResponseEntity.ok(allCustomers);
     }

@@ -54,7 +54,7 @@ public class CustomerService {
     private final BookingService bookingService;
     private final CustomerMapper customerMapper;
 
-    public List<UserInfo> findAllCustomers() {
+    public List<UserInfo> findAllUsers() {
         return getUsersResource().list()
                 .stream()
                 .map(customerMapper::mapUserToUserInfo)

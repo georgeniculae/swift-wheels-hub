@@ -49,10 +49,10 @@ class CustomerControllerTest {
 
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
-    void findAllCustomersTest_success() throws Exception {
+    void findAllUsersTest_success() throws Exception {
         UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
-        when(customerService.findAllCustomers()).thenReturn(List.of(userInfo));
+        when(customerService.findAllUsers()).thenReturn(List.of(userInfo));
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/infos")
                         .contextPath(PATH)
@@ -67,10 +67,10 @@ class CustomerControllerTest {
 
     @Test
     @WithAnonymousUser
-    void findAllCustomersTest_unauthorized() throws Exception {
+    void findAllUsersTest_unauthorized() throws Exception {
         UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
-        when(customerService.findAllCustomers()).thenReturn(List.of(userInfo));
+        when(customerService.findAllUsers()).thenReturn(List.of(userInfo));
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/infos")
                         .contextPath(PATH)

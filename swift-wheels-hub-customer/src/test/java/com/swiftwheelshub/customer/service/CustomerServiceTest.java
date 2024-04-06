@@ -94,7 +94,7 @@ class CustomerServiceTest {
     private CustomerMapper customerMapper = new CustomerMapperImpl();
 
     @Test
-    void findAllCustomersTest_success() {
+    void findAllUsersTest_success() {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
         UserRepresentation userRepresentation = TestData.getUserRepresentation();
@@ -103,7 +103,7 @@ class CustomerServiceTest {
         when(realmResource.users()).thenReturn(usersResource);
         when(usersResource.list()).thenReturn(List.of(userRepresentation));
 
-        List<UserInfo> allCustomers = customerService.findAllCustomers();
+        List<UserInfo> allCustomers = customerService.findAllUsers();
 
         assertFalse(allCustomers.isEmpty());
     }
