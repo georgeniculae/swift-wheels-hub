@@ -19,6 +19,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -44,6 +46,42 @@ class CustomerControllerTest {
 
     @MockBean
     private CustomerService customerService;
+
+    @Test
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
+    void findAllCustomersTest_success() throws Exception {
+        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
+
+        when(customerService.findAllCustomers()).thenReturn(List.of(userInfo));
+
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/infos")
+                        .contextPath(PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void findAllCustomersTest_unauthorized() throws Exception {
+        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
+
+        when(customerService.findAllCustomers()).thenReturn(List.of(userInfo));
+
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/infos")
+                        .contextPath(PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
 
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")

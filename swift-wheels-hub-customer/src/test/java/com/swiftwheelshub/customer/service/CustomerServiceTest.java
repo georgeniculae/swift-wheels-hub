@@ -41,6 +41,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -93,63 +94,18 @@ class CustomerServiceTest {
     private CustomerMapper customerMapper = new CustomerMapperImpl();
 
     @Test
-    @SuppressWarnings("all")
-    void registerCustomerTest_success() {
+    void findAllCustomersTest_success() {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
-        RegisterRequest registerRequest =
-                TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
+        UserRepresentation userRepresentation = TestData.getUserRepresentation();
 
-        Headers<Object> headers = new Headers<>();
-        headers.put("test", List.of());
-        Response response = new ServerResponse(null, 201, headers);
-
-        mockStatic(CreatedResponseUtil.class);
-        when(CreatedResponseUtil.getCreatedId(any())).thenReturn("id");
         when(keycloak.realm(anyString())).thenReturn(realmResource);
-        when(realmResource.roles()).thenReturn(rolesResource);
-        when(rolesResource.list()).thenReturn(List.of(roleRepresentation));
-        when(rolesResource.get(anyString())).thenReturn(roleResource);
         when(realmResource.users()).thenReturn(usersResource);
-        when(usersResource.create(any(UserRepresentation.class))).thenReturn(response);
-        when(usersResource.get(anyString())).thenReturn(userResource);
-        when(rolesResource.get(anyString())).thenReturn(roleResource);
-        doNothing().when(roleResource).addComposites(anyList());
-        when(roleResource.toRepresentation()).thenReturn(roleRepresentation);
-        doNothing().when(userResource).resetPassword(any(CredentialRepresentation.class));
-        when(userResource.roles()).thenReturn(roleMappingResource);
-        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
-        doNothing().when(roleScopeResource).add(anyList());
+        when(usersResource.list()).thenReturn(List.of(userRepresentation));
 
-        RegistrationResponse registrationResponse = customerService.registerCustomer(registerRequest);
+        List<UserInfo> allCustomers = customerService.findAllCustomers();
 
-        AssertionUtils.assertRegistrationResponse(registerRequest, registrationResponse);
-
-        verify(customerMapper).mapToRegistrationResponse(any(UserRepresentation.class));
-    }
-
-    @Test
-    void registerCustomerTest_customerUnderAge() {
-        RegisterRequest registerRequest =
-                TestUtils.getResourceAsJson("/data/RegisterRequestAgeBelow18.json", RegisterRequest.class);
-
-        SwiftWheelsHubResponseStatusException swiftWheelsHubResponseStatusException =
-                assertThrows(SwiftWheelsHubResponseStatusException.class, () -> customerService.registerCustomer(registerRequest));
-
-        assertNotNull(swiftWheelsHubResponseStatusException);
-        assertThat(swiftWheelsHubResponseStatusException.getMessage()).contains("Customer is under 18 years old");
-    }
-
-    @Test
-    void registerCustomerTest_passwordTooShort() {
-        RegisterRequest registerRequest =
-                TestUtils.getResourceAsJson("/data/RegisterRequestPasswordTooShort.json", RegisterRequest.class);
-
-        SwiftWheelsHubResponseStatusException swiftWheelsHubResponseStatusException =
-                assertThrows(SwiftWheelsHubResponseStatusException.class, () -> customerService.registerCustomer(registerRequest));
-
-        assertNotNull(swiftWheelsHubResponseStatusException);
-        assertThat(swiftWheelsHubResponseStatusException.getMessage()).contains("Password too short");
+        assertFalse(allCustomers.isEmpty());
     }
 
     @Test
@@ -169,7 +125,7 @@ class CustomerServiceTest {
 
         AssertionUtils.assertUserDetails(userRepresentation, currentUser);
 
-        verify(customerMapper).mapUserToUserDetails(any(UserRepresentation.class));
+        verify(customerMapper).mapUserToUserInfo(any(UserRepresentation.class));
     }
 
     @Test
@@ -230,6 +186,66 @@ class CustomerServiceTest {
                 assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.findUserByUsername("user"));
 
         assertNotNull(notFoundException);
+    }
+
+    @Test
+    void registerCustomerTest_success() {
+        ReflectionTestUtils.setField(customerService, "realm", "realm");
+
+        RegisterRequest registerRequest =
+                TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
+
+        Headers<Object> headers = new Headers<>();
+        headers.put("test", List.of());
+        Response response = new ServerResponse(null, 201, headers);
+
+        try (var ignored = mockStatic(CreatedResponseUtil.class)) {
+            when(CreatedResponseUtil.getCreatedId(any())).thenReturn("id");
+            when(keycloak.realm(anyString())).thenReturn(realmResource);
+            when(realmResource.roles()).thenReturn(rolesResource);
+            when(rolesResource.list()).thenReturn(List.of(roleRepresentation));
+            when(rolesResource.get(anyString())).thenReturn(roleResource);
+            when(realmResource.users()).thenReturn(usersResource);
+            when(usersResource.create(any(UserRepresentation.class))).thenReturn(response);
+            when(usersResource.get(anyString())).thenReturn(userResource);
+            when(rolesResource.get(anyString())).thenReturn(roleResource);
+            doNothing().when(roleResource).addComposites(anyList());
+            when(roleResource.toRepresentation()).thenReturn(roleRepresentation);
+            doNothing().when(userResource).resetPassword(any(CredentialRepresentation.class));
+            when(userResource.roles()).thenReturn(roleMappingResource);
+            when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+            doNothing().when(roleScopeResource).add(anyList());
+
+            RegistrationResponse registrationResponse = customerService.registerCustomer(registerRequest);
+
+            AssertionUtils.assertRegistrationResponse(registerRequest, registrationResponse);
+
+            verify(customerMapper).mapToRegistrationResponse(any(UserRepresentation.class));
+        }
+    }
+
+    @Test
+    void registerCustomerTest_customerUnderAge() {
+        RegisterRequest registerRequest =
+                TestUtils.getResourceAsJson("/data/RegisterRequestAgeBelow18.json", RegisterRequest.class);
+
+        SwiftWheelsHubResponseStatusException swiftWheelsHubResponseStatusException =
+                assertThrows(SwiftWheelsHubResponseStatusException.class, () -> customerService.registerCustomer(registerRequest));
+
+        assertNotNull(swiftWheelsHubResponseStatusException);
+        assertThat(swiftWheelsHubResponseStatusException.getMessage()).contains("Customer is under 18 years old");
+    }
+
+    @Test
+    void registerCustomerTest_passwordTooShort() {
+        RegisterRequest registerRequest =
+                TestUtils.getResourceAsJson("/data/RegisterRequestPasswordTooShort.json", RegisterRequest.class);
+
+        SwiftWheelsHubResponseStatusException swiftWheelsHubResponseStatusException =
+                assertThrows(SwiftWheelsHubResponseStatusException.class, () -> customerService.registerCustomer(registerRequest));
+
+        assertNotNull(swiftWheelsHubResponseStatusException);
+        assertThat(swiftWheelsHubResponseStatusException.getMessage()).contains("Password too short");
     }
 
     @Test

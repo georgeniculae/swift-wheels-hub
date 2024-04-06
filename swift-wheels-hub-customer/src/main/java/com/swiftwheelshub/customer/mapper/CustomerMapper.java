@@ -1,8 +1,9 @@
 package com.swiftwheelshub.customer.mapper;
 
-import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.dto.RegistrationResponse;
+import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.dto.UserUpdateRequest;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.mapstruct.InjectionStrategy;
@@ -33,7 +34,7 @@ public interface CustomerMapper {
 
     @Mapping(target = "address", expression = "java(getAddress(userRepresentation))")
     @Mapping(target = "dateOfBirth", expression = "java(getDateOfBirth(userRepresentation))")
-    UserInfo mapUserToUserDetails(UserRepresentation userRepresentation);
+    UserInfo mapUserToUserInfo(UserRepresentation userRepresentation);
 
     @Mapping(target = "address", expression = "java(getAddress(userRepresentation))")
     @Mapping(target = "dateOfBirth", expression = "java(getDateOfBirth(userRepresentation))")
@@ -51,7 +52,7 @@ public interface CustomerMapper {
                 .getOrDefault(DATE_OF_BIRTH, List.of(StringUtils.EMPTY))
                 .getFirst();
 
-        return LocalDate.parse(dateOfBirthAsString);
+        return ObjectUtils.isEmpty(dateOfBirthAsString) ? null : LocalDate.parse(dateOfBirthAsString);
     }
 
     default String getRegistrationDate() {

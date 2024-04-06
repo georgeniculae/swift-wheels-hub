@@ -54,10 +54,17 @@ public class CustomerService {
     private final BookingService bookingService;
     private final CustomerMapper customerMapper;
 
+    public List<UserInfo> findAllCustomers() {
+        return getUsersResource().list()
+                .stream()
+                .map(customerMapper::mapUserToUserInfo)
+                .toList();
+    }
+
     public UserInfo findUserByUsername(String username) {
         UserRepresentation userRepresentation = getUserRepresentation(username);
 
-        return customerMapper.mapUserToUserDetails(userRepresentation);
+        return customerMapper.mapUserToUserInfo(userRepresentation);
     }
 
     public UserInfo getCurrentUser(HttpServletRequest request) {
@@ -101,7 +108,7 @@ public class CustomerService {
             handleRestEasyCallException(e);
         }
 
-        return customerMapper.mapUserToUserDetails(userRepresentation);
+        return customerMapper.mapUserToUserInfo(userRepresentation);
     }
 
     public void deleteUserByUsername(HttpServletRequest request) {

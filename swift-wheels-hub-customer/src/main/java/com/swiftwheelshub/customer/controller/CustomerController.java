@@ -19,11 +19,21 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class CustomerController {
 
     private final CustomerService customerService;
+
+    @GetMapping(path = "/infos")
+    @PreAuthorize("hasAuthority('admin')")
+    public ResponseEntity<List<UserInfo>> findAllCustomers() {
+        List<UserInfo> allCustomers = customerService.findAllCustomers();
+
+        return ResponseEntity.ok(allCustomers);
+    }
 
     @GetMapping(path = "/current")
     @PreAuthorize("hasAuthority('user')")
