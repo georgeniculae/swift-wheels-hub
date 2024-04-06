@@ -8,6 +8,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
@@ -32,8 +33,7 @@ public class BookingProducerService {
         kafkaTemplate.send(buildMessage(bookingResponse, savedBookingProducerTopicName))
                 .whenComplete((result, e) -> {
                     if (ObjectUtils.isEmpty(e)) {
-                        log.info("Sent message=[" + bookingResponse + "] with offset=["
-                                + result.getRecordMetadata().offset() + "]");
+                        logSentMessage(bookingResponse, result);
 
                         return;
                     }
@@ -46,8 +46,7 @@ public class BookingProducerService {
         kafkaTemplate.send(buildMessage(bookingResponse, updatedBookingProducerTopicName))
                 .whenComplete((result, e) -> {
                     if (ObjectUtils.isEmpty(e)) {
-                        log.info("Sent message=[" + bookingResponse + "] with offset=["
-                                + result.getRecordMetadata().offset() + "]");
+                        logSentMessage(bookingResponse, result);
 
                         return;
                     }
@@ -60,8 +59,8 @@ public class BookingProducerService {
         kafkaTemplate.send(buildMessage(bookingId, deletedBookingProducerTopicName))
                 .whenComplete((result, e) -> {
                     if (ObjectUtils.isEmpty(e)) {
-                        log.info("Sent id=[" + bookingId + "] for deleted booking with offset=["
-                                + result.getRecordMetadata().offset() + "]");
+                        log.info("Sent id=[{}] for deleted booking with offset=[{}]",
+                                bookingId, result.getRecordMetadata().offset());
 
                         return;
                     }
@@ -74,6 +73,10 @@ public class BookingProducerService {
         return MessageBuilder.withPayload(t)
                 .setHeader(KafkaHeaders.TOPIC, topicName)
                 .build();
+    }
+
+    private void logSentMessage(BookingResponse bookingResponse, SendResult<String, Object> result) {
+        log.info("Sent message=[{}] with offset=[{}]", bookingResponse, result.getRecordMetadata().offset());
     }
 
 }
