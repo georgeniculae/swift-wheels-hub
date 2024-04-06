@@ -173,7 +173,7 @@ public class CustomerService {
                                                          RegisterRequest request) {
         String createdId = CreatedResponseUtil.getCreatedId(response);
         UserResource userResource = findById(createdId);
-        createUserRoleIfNonexistent();
+        createRoleUserIfNonexistent();
 
         try {
             userResource.resetPassword(createPasswordCredentials(request.password()));
@@ -204,7 +204,7 @@ public class CustomerService {
         return getUserRepresentation(username).getId();
     }
 
-    private void createUserRoleIfNonexistent() {
+    private void createRoleUserIfNonexistent() {
         boolean isRoleNonexistent = getRealmResource().roles()
                 .list()
                 .stream()
