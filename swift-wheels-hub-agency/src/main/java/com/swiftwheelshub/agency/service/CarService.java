@@ -119,16 +119,13 @@ public class CarService {
         return carMapper.mapEntityToDto(savedCar);
     }
 
-    public List<CarResponse> updateCarsStatus(List<UpdateCarRequest> carsForUpdate) {
-        List<Car> updatableCars = carRepository.findAllById(getIds(carsForUpdate));
+    public List<CarResponse> updateCarsStatus(List<UpdateCarRequest> updateCarRequests) {
+        List<Car> updatableCars = carRepository.findAllById(getIds(updateCarRequests));
 
-        updatableCars.forEach(car -> {
-            UpdateCarRequest updateCarRequest = getMatchingCarDetails(carsForUpdate, car);
-            car.setCarStatus(CarStatus.valueOf(updateCarRequest.carState().name()));
-        });
+        updatableCars.forEach(car -> car.setCarStatus(getUpdatedCarStatus(updateCarRequests, car)));
 
-        return updatableCars.stream()
-                .map(this::saveEntity)
+        return carRepository.saveAllAndFlush(updatableCars)
+                .stream()
                 .map(carMapper::mapEntityToDto)
                 .toList();
     }
@@ -191,11 +188,13 @@ public class CarService {
                 .toList();
     }
 
-    private UpdateCarRequest getMatchingCarDetails(List<UpdateCarRequest> carsForUpdate, Car car) {
-        return carsForUpdate.stream()
+    private CarStatus getUpdatedCarStatus(List<UpdateCarRequest> updateCarRequests, Car car) {
+        UpdateCarRequest matchingUpdateCarRequest = updateCarRequests.stream()
                 .filter(updateCarRequest -> car.getId().equals(updateCarRequest.carId()))
                 .findAny()
                 .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Car details not found"));
+
+        return CarStatus.valueOf(matchingUpdateCarRequest.carState().name());
     }
 
     private Branch getActualBranch(CarUpdateDetails carUpdateDetails) {

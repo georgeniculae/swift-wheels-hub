@@ -183,7 +183,7 @@ class CarServiceTest {
                 TestUtils.getResourceAsJson("/data/UpdateCarRequest.json", UpdateCarRequest.class);
 
         when(carRepository.findAllById(anyList())).thenReturn(List.of(car));
-        when(carRepository.saveAndFlush(any(Car.class))).thenReturn(car);
+        when(carRepository.saveAllAndFlush(anyList())).thenReturn(List.of(car));
 
         List<CarResponse> carResponses = carService.updateCarsStatus(List.of(updateCarRequest));
         AssertionUtils.assertCarResponse(car, carResponses.getFirst());
