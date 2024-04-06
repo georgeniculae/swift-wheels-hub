@@ -49,6 +49,7 @@ public class CustomerService {
 
     @Value("${keycloak.realm}")
     private String realm;
+
     private final Keycloak keycloak;
     private final BookingService bookingService;
     private final CustomerMapper customerMapper;
@@ -97,7 +98,7 @@ public class CustomerService {
         try {
             userResource.update(userRepresentation);
         } catch (Exception e) {
-            handleRestEasyCall(e);
+            handleRestEasyCallException(e);
         }
 
         return customerMapper.mapUserToUserDetails(userRepresentation);
@@ -111,7 +112,7 @@ public class CustomerService {
         try {
             userResource.remove();
         } catch (Exception e) {
-            handleRestEasyCall(e);
+            handleRestEasyCallException(e);
         }
 
         bookingService.deleteBookingsByUsername(request);
@@ -124,7 +125,7 @@ public class CustomerService {
         try {
             findById(userRepresentation.getId()).logout();
         } catch (Exception e) {
-            handleRestEasyCall(e);
+            handleRestEasyCallException(e);
         }
     }
 
@@ -164,7 +165,7 @@ public class CustomerService {
         try {
             findById(userId).sendVerifyEmail();
         } catch (Exception e) {
-            handleRestEasyCall(e);
+            handleRestEasyCallException(e);
         }
     }
 
@@ -172,14 +173,14 @@ public class CustomerService {
                                                          RegisterRequest request) {
         String createdId = CreatedResponseUtil.getCreatedId(response);
         UserResource userResource = findById(createdId);
-        handleUserRole();
+        createUserRoleIfNonexistent();
 
         try {
             userResource.resetPassword(createPasswordCredentials(request.password()));
             RoleRepresentation roleRepresentation = getUserRoleRepresentation();
             userResource.roles().realmLevel().add(List.of(roleRepresentation));
         } catch (Exception e) {
-            handleRestEasyCall(e);
+            handleRestEasyCallException(e);
         }
 
         if (request.needsEmailVerification()) {
@@ -190,7 +191,7 @@ public class CustomerService {
     }
 
     private UserRepresentation getUserRepresentation(String username) {
-        List<UserRepresentation> userRepresentations = getUserRepresentations(username);
+        List<UserRepresentation> userRepresentations = getUsersResource().searchByUsername(username, true);
 
         if (userRepresentations.isEmpty()) {
             throw new SwiftWheelsHubNotFoundException("User with username " + username + " doesn't exist");
@@ -199,15 +200,11 @@ public class CustomerService {
         return userRepresentations.getFirst();
     }
 
-    private List<UserRepresentation> getUserRepresentations(String username) {
-        return getUsersResource().searchByUsername(username, true);
-    }
-
     private String getUserId(String username) {
         return getUserRepresentation(username).getId();
     }
 
-    private void handleUserRole() {
+    private void createUserRoleIfNonexistent() {
         boolean isRoleNonexistent = getRealmResource().roles()
                 .list()
                 .stream()
@@ -252,7 +249,7 @@ public class CustomerService {
         }
     }
 
-    private void handleRestEasyCall(Exception e) {
+    private void handleRestEasyCallException(Exception e) {
         if (e instanceof NotFoundException) {
             throw new SwiftWheelsHubNotFoundException("User not found");
         }
