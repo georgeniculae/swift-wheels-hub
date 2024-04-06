@@ -19,8 +19,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("""
             From Booking booking
-            where upper(booking.customerUsername) = upper(?1)""")
-    List<Booking> findByCustomerUsernameIgnoreCase(String customerUsername);
+            where booking.customerUsername = ?1""")
+    List<Booking> findByCustomerUsername(String customerUsername);
 
     @Query("""
             From Booking booking
@@ -37,7 +37,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Modifying
     @Query("""
             delete from Booking b
-            where b.customerUsername in ?1""")
-    void deleteByCustomerUsernameIn(List<String> customerUsernames);
+            where b.customerUsername = ?1""")
+    void deleteByCustomerUsername(String customerUsername);
 
 }

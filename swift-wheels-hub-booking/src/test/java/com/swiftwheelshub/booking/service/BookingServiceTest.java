@@ -220,8 +220,8 @@ class BookingServiceTest {
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-USERNAME", "user");
 
-        when(bookingRepository.findByCustomerUsernameIgnoreCase(anyString())).thenReturn(List.of(booking));
-        doNothing().when(bookingRepository).deleteByCustomerUsernameIn(anyList());
+        when(bookingRepository.findByCustomerUsername(anyString())).thenReturn(List.of(booking));
+        doNothing().when(bookingRepository).deleteByCustomerUsername(anyString());
         doNothing().when(carService).updateCarsStatus(any(HttpServletRequest.class), anyList());
 
         bookingService.deleteBookingByCustomerUsername(httpServletRequest, "user");

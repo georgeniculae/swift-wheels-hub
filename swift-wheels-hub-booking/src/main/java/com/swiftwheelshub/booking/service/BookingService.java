@@ -171,10 +171,10 @@ public class BookingService {
     }
 
     public void deleteBookingByCustomerUsername(HttpServletRequest request, String username) {
-        List<Booking> existingBookings = bookingRepository.findByCustomerUsernameIgnoreCase(username);
+        List<Booking> existingBookings = bookingRepository.findByCustomerUsername(username);
 
         try {
-            bookingRepository.deleteByCustomerUsernameIn(getCustomersUsernames(existingBookings));
+            bookingRepository.deleteByCustomerUsername(username);
         } catch (Exception e) {
             throw new SwiftWheelsHubException(e);
         }
@@ -275,12 +275,6 @@ public class BookingService {
         );
 
         carService.updateCarWhenBookingIsFinished(request, carUpdateDetails);
-    }
-
-    private List<String> getCustomersUsernames(List<Booking> existingBookings) {
-        return existingBookings.stream()
-                .map(Booking::getCustomerUsername)
-                .toList();
     }
 
     private List<UpdateCarRequest> getUpdateCarRequests(List<Booking> existingBookings) {
