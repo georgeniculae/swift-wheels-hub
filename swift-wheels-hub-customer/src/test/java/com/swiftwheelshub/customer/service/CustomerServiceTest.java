@@ -273,6 +273,7 @@ class CustomerServiceTest {
 
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-API-KEY", "apikey");
+        httpServletRequest.addHeader("X-USERNAME", "user");
 
         UserRepresentation userRepresentation = TestData.getUserRepresentation();
 
@@ -281,9 +282,10 @@ class CustomerServiceTest {
         when(usersResource.get(anyString())).thenReturn(userResource);
 
         doNothing().when(userResource).remove();
-        doNothing().when(bookingService).deleteBookingsByUsername(any(HttpServletRequest.class), anyString());
+        doNothing().when(bookingService).deleteBookingsByUsername(any(HttpServletRequest.class));
         when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of(userRepresentation));
-        assertDoesNotThrow(() -> customerService.deleteUserByUsername(httpServletRequest, "user"));
+
+        assertDoesNotThrow(() -> customerService.deleteUserByUsername(httpServletRequest));
     }
 
     @Test
@@ -292,6 +294,7 @@ class CustomerServiceTest {
 
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-API-KEY", "apikey");
+        httpServletRequest.addHeader("X-USERNAME", "user");
 
         UserRepresentation userRepresentation = TestData.getUserRepresentation();
 
@@ -302,7 +305,7 @@ class CustomerServiceTest {
 
         doThrow(new NotFoundException()).when(userResource).remove();
 
-        assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.deleteUserByUsername(httpServletRequest, "user"));
+        assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.deleteUserByUsername(httpServletRequest));
     }
 
     @Test

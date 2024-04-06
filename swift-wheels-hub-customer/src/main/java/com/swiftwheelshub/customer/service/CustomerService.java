@@ -103,7 +103,8 @@ public class CustomerService {
         return customerMapper.mapUserToUserDetails(userRepresentation);
     }
 
-    public void deleteUserByUsername(HttpServletRequest request, String username) {
+    public void deleteUserByUsername(HttpServletRequest request) {
+        String username = HttpRequestUtil.extractUsername(request);
         UserRepresentation userRepresentation = getUserRepresentation(username);
         UserResource userResource = findById(userRepresentation.getId());
 
@@ -113,7 +114,7 @@ public class CustomerService {
             handleRestEasyCall(e);
         }
 
-        bookingService.deleteBookingsByUsername(request, username);
+        bookingService.deleteBookingsByUsername(request);
     }
 
     public void signOut(HttpServletRequest request) {

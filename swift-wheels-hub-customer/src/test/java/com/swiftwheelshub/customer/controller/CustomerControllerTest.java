@@ -283,7 +283,7 @@ class CustomerControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void deleteUserByUsernameTest_success() throws Exception {
-        doNothing().when(customerService).deleteUserByUsername(any(HttpServletRequest.class), anyString());
+        doNothing().when(customerService).deleteUserByUsername(any(HttpServletRequest.class));
 
         MockHttpServletResponse response = mockMvc.perform(delete(PATH + "/{username}", "user")
                         .contextPath(PATH)
@@ -315,7 +315,7 @@ class CustomerControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void deleteCurrentTest_success() throws Exception {
-        doNothing().when(customerService).deleteUserByUsername(any(HttpServletRequest.class), anyString());
+        doNothing().when(customerService).deleteUserByUsername(any(HttpServletRequest.class));
 
         MockHttpServletResponse response = mockMvc.perform(delete(PATH + "/current")
                         .contextPath(PATH)
