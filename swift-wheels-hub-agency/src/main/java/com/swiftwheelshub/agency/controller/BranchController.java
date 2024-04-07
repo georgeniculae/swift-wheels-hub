@@ -5,7 +5,7 @@ import com.swiftwheelshub.dto.BranchRequest;
 import com.swiftwheelshub.dto.BranchResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +26,7 @@ public class BranchController {
     private final BranchService branchService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('admin')")
+    @Secured("admin")
     public ResponseEntity<List<BranchResponse>> findAllBranches() {
         List<BranchResponse> branchResponses = branchService.findAllBranches();
 
@@ -34,7 +34,7 @@ public class BranchController {
     }
 
     @GetMapping(path = "/{id}")
-    @PreAuthorize("hasAuthority('user')")
+    @Secured("user")
     public ResponseEntity<BranchResponse> findBranchById(@PathVariable("id") Long id) {
         BranchResponse branchResponse = branchService.findBranchById(id);
 
@@ -42,7 +42,7 @@ public class BranchController {
     }
 
     @GetMapping(path = "/filter/{filter}")
-    @PreAuthorize("hasAuthority('user')")
+    @Secured("user")
     public ResponseEntity<List<BranchResponse>> findBranchesByFilter(@PathVariable("filter") String filter) {
         List<BranchResponse> branchResponses = branchService.findBranchesByFilter(filter);
 
@@ -50,7 +50,7 @@ public class BranchController {
     }
 
     @GetMapping(path = "/count")
-    @PreAuthorize("hasAuthority('user')")
+    @Secured("user")
     public ResponseEntity<Long> countBranches() {
         Long numberOfBranches = branchService.countBranches();
 
@@ -58,7 +58,7 @@ public class BranchController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('admin')")
+    @Secured("admin")
     public ResponseEntity<BranchResponse> addBranch(@RequestBody @Validated BranchRequest branchRequest) {
         BranchResponse savedBranchResponse = branchService.saveBranch(branchRequest);
 
@@ -66,7 +66,7 @@ public class BranchController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('admin')")
+    @Secured("admin")
     public ResponseEntity<BranchResponse> updateBranch(@PathVariable("id") Long id,
                                                        @RequestBody @Validated BranchRequest branchRequest) {
         BranchResponse updatedBranchResponse = branchService.updateBranch(id, branchRequest);
@@ -75,7 +75,7 @@ public class BranchController {
     }
 
     @DeleteMapping(path = "/{id}")
-    @PreAuthorize("hasAuthority('admin')")
+    @Secured("admin")
     public ResponseEntity<Void> deleteBranchById(@PathVariable("id") Long id) {
         branchService.deleteBranchById(id);
 

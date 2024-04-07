@@ -14,8 +14,8 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
-@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 @ConditionalOnBean(ApiKeyAuthenticationProvider.class)
 public class SecurityConfig {
 

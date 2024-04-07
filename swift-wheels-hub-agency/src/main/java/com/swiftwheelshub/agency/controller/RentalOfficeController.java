@@ -5,7 +5,7 @@ import com.swiftwheelshub.dto.RentalOfficeRequest;
 import com.swiftwheelshub.dto.RentalOfficeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +26,7 @@ public class RentalOfficeController {
     private final RentalOfficeService rentalOfficeService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('admin')")
+    @Secured("admin")
     public ResponseEntity<List<RentalOfficeResponse>> findAllRentalOffices() {
         List<RentalOfficeResponse> allRentalOffices = rentalOfficeService.findAllRentalOffices();
 
@@ -34,7 +34,7 @@ public class RentalOfficeController {
     }
 
     @GetMapping(path = "/{id}")
-    @PreAuthorize("hasAuthority('user')")
+    @Secured("user")
     public ResponseEntity<RentalOfficeResponse> findRentalOfficeById(@PathVariable("id") Long id) {
         RentalOfficeResponse rentalOfficeResponse = rentalOfficeService.findRentalOfficeById(id);
 
@@ -42,7 +42,7 @@ public class RentalOfficeController {
     }
 
     @GetMapping(path = "/filter/{filter}")
-    @PreAuthorize("hasAuthority('user')")
+    @Secured("user")
     public ResponseEntity<List<RentalOfficeResponse>> findRentalOfficesByFilter(@PathVariable("filter") String filter) {
         List<RentalOfficeResponse> rentalOfficeResponses = rentalOfficeService.findRentalOfficeByFilter(filter);
 
@@ -50,7 +50,7 @@ public class RentalOfficeController {
     }
 
     @GetMapping(path = "/count")
-    @PreAuthorize("hasAuthority('admin')")
+    @Secured("admin")
     public ResponseEntity<Long> countRentalOffices() {
         Long numberOfRentalOffices = rentalOfficeService.countRentalOffices();
 
@@ -58,7 +58,7 @@ public class RentalOfficeController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('admin')")
+    @Secured("admin")
     public ResponseEntity<RentalOfficeResponse> addRentalOffice(@RequestBody @Validated RentalOfficeRequest rentalOfficeRequest) {
         RentalOfficeResponse savedRentalOfficeResponse = rentalOfficeService.saveRentalOffice(rentalOfficeRequest);
 
@@ -66,7 +66,7 @@ public class RentalOfficeController {
     }
 
     @PutMapping(path = "/{id}")
-    @PreAuthorize("hasAuthority('admin')")
+    @Secured("admin")
     public ResponseEntity<RentalOfficeResponse> updateRentalOffice(@PathVariable("id") Long id,
                                                                    @RequestBody @Validated RentalOfficeRequest rentalOfficeRequest) {
         RentalOfficeResponse updatedRentalOfficeResponse = rentalOfficeService.updateRentalOffice(id, rentalOfficeRequest);
@@ -75,7 +75,7 @@ public class RentalOfficeController {
     }
 
     @DeleteMapping(path = "/{id}")
-    @PreAuthorize("hasAuthority('admin')")
+    @Secured("admin")
     public ResponseEntity<Void> deleteRentalOfficeById(@PathVariable("id") Long id) {
         rentalOfficeService.deleteRentalOfficeById(id);
 

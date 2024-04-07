@@ -5,7 +5,7 @@ import com.swiftwheelshub.dto.EmployeeRequest;
 import com.swiftwheelshub.dto.EmployeeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +26,7 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('admin')")
+    @Secured("admin")
     public ResponseEntity<List<EmployeeResponse>> findAllEmployees() {
         List<EmployeeResponse> employeeResponses = employeeService.findAllEmployees();
 
@@ -34,7 +34,7 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/{id}")
-    @PreAuthorize("hasAuthority('user')")
+    @Secured("user")
     public ResponseEntity<EmployeeResponse> findEmployeeById(@PathVariable("id") Long id) {
         EmployeeResponse employeeResponse = employeeService.findEmployeeById(id);
 
@@ -42,7 +42,7 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/branch/{id}")
-    @PreAuthorize("hasAuthority('user')")
+    @Secured("user")
     public ResponseEntity<List<EmployeeResponse>> findEmployeesByBranchId(@PathVariable("id") Long id) {
         List<EmployeeResponse> employeeResponses = employeeService.findEmployeesByBranchId(id);
 
@@ -50,7 +50,7 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/filter/{filter}")
-    @PreAuthorize("hasAuthority('user')")
+    @Secured("user")
     public ResponseEntity<List<EmployeeResponse>> findEmployeesByFilter(@PathVariable("filter") String filter) {
         List<EmployeeResponse> employeeResponses = employeeService.findEmployeesByFilter(filter);
 
@@ -58,7 +58,7 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/count")
-    @PreAuthorize("hasAuthority('admin')")
+    @Secured("admin")
     public ResponseEntity<Long> countEmployees() {
         Long numberOfEmployees = employeeService.countEmployees();
 
@@ -66,7 +66,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('admin')")
+    @Secured("admin")
     public ResponseEntity<EmployeeResponse> addEmployee(@RequestBody @Validated EmployeeRequest employeeRequest) {
         EmployeeResponse savedEmployeeResponse = employeeService.saveEmployee(employeeRequest);
 
@@ -74,7 +74,7 @@ public class EmployeeController {
     }
 
     @PutMapping(path = "/{id}")
-    @PreAuthorize("hasAuthority('admin')")
+    @Secured("admin")
     public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable("id") Long id,
                                                            @RequestBody @Validated EmployeeRequest employeeRequest) {
         EmployeeResponse updatedEmployeeResponse = employeeService.updateEmployee(id, employeeRequest);
@@ -83,7 +83,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping(path = "/{id}")
-    @PreAuthorize("hasAuthority('admin')")
+    @Secured("admin")
     public ResponseEntity<Void> deleteEmployeeById(@PathVariable("id") Long id) {
         employeeService.deleteEmployeeById(id);
 
