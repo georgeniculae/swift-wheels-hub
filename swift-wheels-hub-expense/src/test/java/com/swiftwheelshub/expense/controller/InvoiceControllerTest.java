@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = InvoiceController.class)
 @AutoConfigureMockMvc
 @EnableWebMvc
-public class InvoiceControllerTest {
+class InvoiceControllerTest {
 
     private static final String PATH = "/invoices";
 

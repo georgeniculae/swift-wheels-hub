@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = RevenueController.class)
 @AutoConfigureMockMvc
 @EnableWebMvc
-public class RevenueControllerTest {
+class RevenueControllerTest {
 
     private static final String PATH = "/revenues";
 
