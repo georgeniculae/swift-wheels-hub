@@ -8,7 +8,7 @@ import com.swiftwheelshub.lib.aspect.LogActivity;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +28,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     @GetMapping(path = "/list")
-    @Secured("user")
+    @PreAuthorize("hasRole('user')")
     public ResponseEntity<List<BookingResponse>> findAllBookings() {
         List<BookingResponse> bookingResponses = bookingService.findAllBookings();
 
@@ -36,7 +36,7 @@ public class BookingController {
     }
 
     @GetMapping(path = "/{id}")
-    @Secured("user")
+    @PreAuthorize("hasRole('user')")
     public ResponseEntity<BookingResponse> findBookingById(@PathVariable("id") Long id) {
         BookingResponse bookingResponse = bookingService.findBookingById(id);
 
@@ -44,7 +44,7 @@ public class BookingController {
     }
 
     @GetMapping(path = "/count")
-    @Secured("user")
+    @PreAuthorize("hasRole('user')")
     public ResponseEntity<Long> countBookings() {
         Long numberOfBookings = bookingService.countBookings();
 
@@ -52,7 +52,7 @@ public class BookingController {
     }
 
     @GetMapping(path = "/count-by-current-user")
-    @Secured("user")
+    @PreAuthorize("hasRole('user')")
     public ResponseEntity<Long> countByLoggedInUser(HttpServletRequest request) {
         Long numberOfBookings = bookingService.countByLoggedInUser(request);
 
@@ -60,7 +60,7 @@ public class BookingController {
     }
 
     @GetMapping(path = "/current-date")
-    @Secured("user")
+    @PreAuthorize("hasRole('user')")
     public ResponseEntity<LocalDate> getCurrentDate() {
         LocalDate currentDate = bookingService.getCurrentDate();
 
@@ -68,7 +68,7 @@ public class BookingController {
     }
 
     @PostMapping("/new")
-    @Secured("user")
+    @PreAuthorize("hasRole('user')")
     @LogActivity(
             sentParameters = "bookingRequest",
             activityDescription = "Booking add"
@@ -81,7 +81,7 @@ public class BookingController {
     }
 
     @PostMapping(path = "/close-booking")
-    @Secured("user")
+    @PreAuthorize("hasRole('user')")
     public ResponseEntity<BookingResponse> closeBooking(HttpServletRequest request,
                                                         @RequestBody @Validated BookingClosingDetails bookingClosingDetails) {
         BookingResponse updatedBookingResponse = bookingService.closeBooking(request, bookingClosingDetails);
@@ -90,7 +90,7 @@ public class BookingController {
     }
 
     @PutMapping(path = "/{id}")
-    @Secured("user")
+    @PreAuthorize("hasRole('user')")
     @LogActivity(
             sentParameters = "bookingRequest",
             activityDescription = "Booking update"
@@ -104,7 +104,7 @@ public class BookingController {
     }
 
     @DeleteMapping(path = "/{username}")
-    @Secured("user")
+    @PreAuthorize("hasRole('user')")
     @LogActivity(
             sentParameters = "username",
             activityDescription = "Booking deletion"

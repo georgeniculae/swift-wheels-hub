@@ -39,13 +39,13 @@ class JwtAuthenticationTokenConverterTest {
         String token = TestUtils.getResourceAsJson("/data/JwtToken.json", String.class);
 
         Map<String, Object> headers = Map.of(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-        String user = "user";
-        Map<String, Object> claims = Map.of("preferred_username", user);
+        String roleUser = "ROLE_user";
+        Map<String, Object> claims = Map.of("preferred_username", roleUser);
 
         Jwt jwt = new Jwt(token, Instant.now(), Instant.now().plus(30, ChronoUnit.MINUTES), headers, claims);
 
         String username = jwtAuthenticationTokenConverter.extractUsername(jwt);
-        assertEquals(user, username);
+        assertEquals(roleUser, username);
     }
 
     @Test

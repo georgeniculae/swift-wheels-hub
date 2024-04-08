@@ -9,7 +9,7 @@ import com.swiftwheelshub.lib.aspect.LogActivity;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +28,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping(path = "/infos")
-    @Secured("admin")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<List<UserInfo>> findAllUsers() {
         List<UserInfo> allCustomers = customerService.findAllUsers();
 
@@ -36,13 +36,13 @@ public class CustomerController {
     }
 
     @GetMapping(path = "/current")
-    @Secured("user")
+    @PreAuthorize("hasRole('user')")
     public ResponseEntity<UserInfo> getCurrentUser(HttpServletRequest request) {
         return ResponseEntity.ok(customerService.getCurrentUser(request));
     }
 
     @GetMapping(path = "/{username}")
-    @Secured("admin")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<UserInfo> findUserByUsername(@PathVariable("username") String username) {
         return ResponseEntity.ok(customerService.findUserByUsername(username));
     }
@@ -57,7 +57,7 @@ public class CustomerController {
     }
 
     @PutMapping(path = "/{id}")
-    @Secured("admin")
+    @PreAuthorize("hasRole('admin')")
     @LogActivity(
             sentParameters = "id",
             activityDescription = "User update"
@@ -68,13 +68,13 @@ public class CustomerController {
     }
 
     @GetMapping(path = "/count")
-    @Secured("admin")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<Integer> countUsers() {
         return ResponseEntity.ok(customerService.countUsers());
     }
 
     @DeleteMapping(path = "/{username}")
-    @Secured("admin")
+    @PreAuthorize("hasRole('admin')")
     @LogActivity(
             sentParameters = "username",
             activityDescription = "User deletion"
@@ -87,7 +87,7 @@ public class CustomerController {
     }
 
     @DeleteMapping(path = "/current")
-    @Secured("admin")
+    @PreAuthorize("hasRole('admin')")
     @LogActivity(
             activityDescription = "Current user deletion"
     )
@@ -98,7 +98,7 @@ public class CustomerController {
     }
 
     @GetMapping(path = "/sign-out")
-    @Secured("user")
+    @PreAuthorize("hasRole('user')")
     public ResponseEntity<Void> signOut(HttpServletRequest request) {
         customerService.signOut(request);
 
