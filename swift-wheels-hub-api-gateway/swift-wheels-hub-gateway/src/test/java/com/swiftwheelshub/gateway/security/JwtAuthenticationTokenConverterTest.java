@@ -51,12 +51,11 @@ class JwtAuthenticationTokenConverterTest {
     @Test
     void extractGrantedAuthoritiesTest_success() {
         String token = TestUtils.getResourceAsJson("/data/JwtToken.json", String.class);
-        String roleUser = "ROLE_user";
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(roleUser);
+        String user = "user";
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(user);
         Collection<? extends GrantedAuthority> roles = List.of(simpleGrantedAuthority);
 
         Map<String, Object> headers = Map.of(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-        String user = "user";
         Map<String, Object> claims = Map.of("realm_access", List.of(user));
 
         Jwt jwt = new Jwt(token, Instant.now(), Instant.now().plus(30, ChronoUnit.MINUTES), headers, claims);
