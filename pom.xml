@@ -12,6 +12,7 @@
         <groupId>com.swftwheelshub</groupId>
         <artifactId>swift-wheels-hub-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath/>
     </parent>
 
     <name>Swift Wheels Hub</name>
@@ -36,7 +37,7 @@
     </repositories>
 
     <scm>
-        <developerConnection>scm:git:https://github.com/georgeniculae/swift-wheels-hub</developerConnection>
+        <developerConnection>scm:git:https://github.com/georgeniculae/swift-wheels-hub-parent</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -44,7 +45,7 @@
         <repository>
             <id>github</id>
             <name>swift-wheels-hub</name>
-            <url>https://maven.pkg.github.com/georgeniculae/swift-wheels-hub</url>
+            <url>https://maven.pkg.github.com/georgeniculae/swift-wheels-hub-parent</url>
         </repository>
     </distributionManagement>
 
