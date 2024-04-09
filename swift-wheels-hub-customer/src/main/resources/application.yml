@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:0}
+  port: ${random.int(8089,9090)}
   error:
     include-message: always
     include-binding-errors: never
@@ -15,8 +15,18 @@ spring:
     virtual:
       enabled: true
   cloud:
-    discovery:
-      enabled: true
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        instanceId: ${spring.application.name}-id
+        serviceName: ${spring.application.name}
+        healthCheckPath: /customers/actuator/health
+        healthCheckInterval: 5s
+        hostname: localhost
+        failFast: false
+        config:
+          enabled: false
     stream:
       bindings:
         auditLogInfoProducer-out-0:
@@ -28,17 +38,6 @@ spring:
       keySerializer: org.apache.kafka.common.serialization.StringSerializer
       valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://${EUREKA_USER}:${EUREKA_PASSWORD}@localhost:8761/eureka
-    registryFetchIntervalSeconds: 5
-  instance:
-    preferIpAddress: true
-    leaseRenewalIntervalInSeconds: 10
-
 springdoc:
   swagger-ui:
     enabled: true
@@ -49,7 +48,7 @@ springdoc:
 
 management:
   server:
-    port: ${PORT:0}
+    port: ${random.int(8089,9090)}
   endpoint:
     loggers:
       enabled: true
@@ -102,4 +101,4 @@ audit:
   enabled: true
 
 booking-service:
-  url: lb://swift-wheels-hub-booking/bookings
+  url: http://swift-wheels-hub-booking/bookings

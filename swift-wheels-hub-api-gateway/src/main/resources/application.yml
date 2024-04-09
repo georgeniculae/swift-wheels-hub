@@ -8,7 +8,7 @@ server:
 
 spring:
   application:
-    name: swift-wheels-hub-gateway
+    name: swift-wheels-hub-api-gateway
   security:
     oauth2:
       resourceserver:
@@ -18,7 +18,22 @@ spring:
   codec:
     max-in-memory-size: 20MB
   cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        instanceId: ${spring.application.name}-id
+        serviceName: ${spring.application.name}
+        healthCheckPath: /actuator/health
+        healthCheckInterval: 5s
+        hostname: localhost
+        failFast: false
+        config:
+          enabled: false
     gateway:
+      discovery:
+        locator:
+          enabled: true
       routes:
         - id: agency
           uri: lb://swift-wheels-hub-agency
@@ -52,17 +67,6 @@ spring:
             - name: LanguageHeaderUpdater
               args:
                 language: "EN"
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://${EUREKA_USER}:${EUREKA_PASSWORD}@localhost:8761/eureka
-    registryFetchIntervalSeconds: 5
-  instance:
-    preferIpAddress: true
-    leaseRenewalIntervalInSeconds: 10
 
 management:
   server:
@@ -98,4 +102,4 @@ logging:
 
 apikey-secret: ${API_KEY_SECRET}
 
-request-validator-url: lb://swift-wheels-hub-request-validator/validate
+request-validator-url: http://swift-wheels-hub-request-validator/validate

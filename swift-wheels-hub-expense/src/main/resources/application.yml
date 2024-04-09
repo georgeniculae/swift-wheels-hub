@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:0}
+  port: ${random.int(8089,9090)}
   error:
     include-message: always
     include-binding-errors: never
@@ -32,8 +32,18 @@ spring:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
   cloud:
-    discovery:
-      enabled: true
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        instanceId: ${spring.application.name}-id
+        serviceName: ${spring.application.name}
+        healthCheckPath: /expense/actuator/health
+        healthCheckInterval: 5s
+        hostname: localhost
+        failFast: false
+        config:
+          enabled: false
     function:
       definition: savedBookingConsumer;updatedBookingConsumer;deletedBookingConsumer
     stream:
@@ -80,17 +90,6 @@ spring:
 apikey:
   secret: ${API_KEY_SECRET}
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://${EUREKA_USER}:${EUREKA_PASSWORD}@localhost:8761/eureka
-    registryFetchIntervalSeconds: 5
-  instance:
-    preferIpAddress: true
-    leaseRenewalIntervalInSeconds: 10
-
 springdoc:
   swagger-ui:
     enabled: true
@@ -101,7 +100,7 @@ springdoc:
 
 management:
   server:
-    port: ${PORT:0}
+    port: ${random.int(8089,9090)}
   endpoint:
     loggers:
       enabled: true
@@ -157,10 +156,10 @@ debezium:
 
 rest-client:
   url:
-    swift-wheels-hub-bookings: lb://swift-wheels-hub-booking/bookings
-    swift-wheels-hub-agency-branches: lb://swift-wheels-hub-agency/agency/branches
-    swift-wheels-hub-agency-cars: lb://car-rental-agency/agency/cars
-    swift-wheels-hub-agency-employees: lb://swift-wheels-hub-agency/agency/employees
+    swift-wheels-hub-bookings: http://swift-wheels-hub-booking/bookings
+    swift-wheels-hub-agency-branches: http://swift-wheels-hub-agency/agency/branches
+    swift-wheels-hub-agency-cars: http://car-rental-agency/agency/cars
+    swift-wheels-hub-agency-employees: http://swift-wheels-hub-agency/agency/employees
 
 sendgrid:
   enabled: true

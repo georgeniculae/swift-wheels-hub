@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:0}
+  port: ${random.int(8089,9090)}
   error:
     include-message: always
     include-binding-errors: never
@@ -13,8 +13,18 @@ spring:
     virtual:
       enabled: true
   cloud:
-    discovery:
-      enabled: true
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        instanceId: ${spring.application.name}-id
+        serviceName: ${spring.application.name}
+        healthCheckPath: /actuator/health
+        healthCheckInterval: 5s
+        hostname: localhost
+        failFast: false
+        config:
+          enabled: false
     function:
       definition: emailNotificationConsumer
     stream:
@@ -41,20 +51,9 @@ spring:
   mvc:
     throw-exception-if-no-handler-found: true
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://${EUREKA_USER}:${EUREKA_PASSWORD}@localhost:8761/eureka
-    registryFetchIntervalSeconds: 5
-  instance:
-    preferIpAddress: true
-    leaseRenewalIntervalInSeconds: 10
-
 management:
   server:
-    port: ${PORT:0}
+    port: ${random.int(8089,9090)}
   endpoint:
     loggers:
       enabled: true

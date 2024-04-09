@@ -6,10 +6,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class SwiftWheelsHubGatewayApplication {
+public class SwiftWheelsHubApiGatewayApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SwiftWheelsHubGatewayApplication.class, args);
+        SpringApplication.run(SwiftWheelsHubApiGatewayApplication.class, args);
     }
 
 }
