@@ -43,6 +43,7 @@ spring:
         hostname: localhost
         failFast: false
     stream:
+      defaultBinder: kafka
       bindings:
         savedBookingProducer-out-0:
           destination: ${SAVED_BOOKING_TOPIC}

@@ -47,6 +47,7 @@ spring:
     function:
       definition: savedBookingConsumer;updatedBookingConsumer;deletedBookingConsumer
     stream:
+      defaultBinder: kafka
       bindings:
         auditLogInfoProducer-out-0:
           destination: ${EXPENSE_AUDIT_LOG_INFO_TOPIC}
