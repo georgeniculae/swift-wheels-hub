@@ -23,21 +23,13 @@ import java.util.stream.Collectors;
 public class SwaggerRequestValidatorService {
 
     private static final String SWAGGER = "swagger";
-
     private static final String SEPARATOR_REGEX = "/";
-
     private static final String V3 = "v3";
-
     private static final String SWAGGER_PATH = "Swagger path";
-
     private static final String SWAGGER_MESSAGE = "Swagger message";
-
     private static final String V3_PATH = "v3 path";
-
     private static final String V3_MESSAGE = "v3 message";
-
     private static final String ACTUATOR = "actuator";
-
     private final SwaggerRepository swaggerRepository;
 
     public RequestValidationReport validateRequest(IncomingRequestDetails request) {
