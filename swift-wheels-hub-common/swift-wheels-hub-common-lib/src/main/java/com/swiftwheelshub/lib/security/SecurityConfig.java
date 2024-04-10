@@ -34,7 +34,6 @@ public class SecurityConfig {
                                 "/bookings/actuator/**",
                                 "/customers/actuator/**",
                                 "/expense/actuator/**",
-                                "/favicon.ico",
                                 "/actuator/**").permitAll()
                         .requestMatchers("/agency/**",
                                 "/bookings/**",
