@@ -39,6 +39,8 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
 
     private static final String DEFINITION_PATH = "/definition";
 
+    private static final String ACTUATOR_PATH = "/actuator";
+
     @Value("${apikey-secret}")
     private String apikey;
 
@@ -91,7 +93,7 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     private boolean doesPathContainPattern(ServerHttpRequest serverHttpRequest) {
         String path = serverHttpRequest.getPath().value();
 
-        return !path.contains(REGISTER_PATH) && !path.contains(DEFINITION_PATH);
+        return !path.contains(REGISTER_PATH) && !path.contains(DEFINITION_PATH) && !path.contains(ACTUATOR_PATH);
     }
 
     private String getAuthorizationToken(ServerHttpRequest request) {
