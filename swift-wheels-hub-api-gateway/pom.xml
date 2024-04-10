@@ -20,6 +20,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.projectreactor.tools</groupId>
+            <artifactId>blockhound</artifactId>
+            <version>1.0.8.RELEASE</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.swiftwheelshub</groupId>
             <artifactId>swift-wheels-hub-common-dto</artifactId>
             <version>${swift-wheels-hub-common.version}</version>
