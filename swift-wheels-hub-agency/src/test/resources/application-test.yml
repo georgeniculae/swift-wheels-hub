@@ -1,6 +1,9 @@
 spring:
   cloud:
+    bus:
+      enabled: false
+    discovery:
+      enabled: false
     consul:
       config:
-        import-check:
-          enabled: false
+        enabled: false
