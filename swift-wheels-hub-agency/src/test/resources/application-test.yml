@@ -1,0 +1,6 @@
+spring:
+  cloud:
+    consul:
+      config:
+        import-check:
+          enabled: false

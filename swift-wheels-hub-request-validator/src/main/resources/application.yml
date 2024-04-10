@@ -14,6 +14,8 @@ spring:
       enabled: true
   cloud:
     consul:
+      config:
+        enabled: false
       host: localhost
       port: 8500
       discovery:
@@ -23,8 +25,6 @@ spring:
         healthCheckInterval: 5s
         hostname: localhost
         failFast: false
-        config:
-          enabled: false
   redis:
     host: ${REDIS_HOST}
     password: ${REDIS_PASSWORD}

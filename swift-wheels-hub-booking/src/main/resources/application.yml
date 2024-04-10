@@ -31,6 +31,8 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.yaml
   cloud:
     consul:
+      config:
+        enabled: false
       host: localhost
       port: 8500
       discovery:
@@ -40,8 +42,6 @@ spring:
         healthCheckInterval: 5s
         hostname: localhost
         failFast: false
-        config:
-          enabled: false
     stream:
       bindings:
         savedBookingProducer-out-0:

@@ -26,6 +26,8 @@ spring:
         format_sql: true
   cloud:
     consul:
+      config:
+        enabled: false
       host: localhost
       port: 8500
       discovery:
@@ -35,8 +37,6 @@ spring:
         healthCheckInterval: 5s
         hostname: localhost
         failFast: false
-        config:
-          enabled: false
     function:
       definition: bookingAuditInfoConsumer;customerAuditInfoConsumer;expenseAuditInfoConsumer
     stream:
