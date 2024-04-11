@@ -38,10 +38,11 @@ spring:
       host: localhost
       port: 8500
       discovery:
+        prefer-ip-address: true
         instanceId: ${spring.application.name}-id
         serviceName: ${spring.application.name}
-        healthCheckPath: /expense/actuator/health
-        healthCheckInterval: 5s
+        healthCheckPath: /actuator/health
+        healthCheckInterval: 10s
         hostname: localhost
         failFast: false
     function:
