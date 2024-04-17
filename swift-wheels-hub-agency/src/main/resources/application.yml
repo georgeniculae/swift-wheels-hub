@@ -35,14 +35,19 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.yaml
   cloud:
     loadbalancer:
+      enabled: true
+      ribbon:
+        enabled: false
       cache:
         enabled: false
     consul:
+      enabled: true
       config:
         enabled: false
       host: localhost
       port: 8500
       discovery:
+        enabled: true
         prefer-ip-address: true
         instanceId: ${spring.application.name}-id
         serviceName: ${spring.application.name}
