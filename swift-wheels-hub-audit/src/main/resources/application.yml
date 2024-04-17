@@ -25,6 +25,9 @@ spring:
       hibernate:
         format_sql: true
   cloud:
+    loadbalancer:
+      cache:
+        enabled: false
     consul:
       config:
         enabled: false

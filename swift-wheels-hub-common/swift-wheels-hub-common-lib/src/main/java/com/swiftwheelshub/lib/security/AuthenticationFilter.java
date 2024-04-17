@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -21,7 +22,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-@ConditionalOnBean(ApiKeyAuthenticationProvider.class)
+@ConditionalOnProperty(prefix = "apikey", name = "secret")
 public class AuthenticationFilter extends OncePerRequestFilter {
 
     private final static String X_API_KEY = "X-API-KEY";
