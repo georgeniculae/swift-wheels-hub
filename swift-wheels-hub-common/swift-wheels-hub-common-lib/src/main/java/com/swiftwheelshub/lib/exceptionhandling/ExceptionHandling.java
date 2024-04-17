@@ -1,4 +1,4 @@
-package com.swiftwheelshub.lib.exception;
+package com.swiftwheelshub.lib.exceptionhandling;
 
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
@@ -11,6 +11,7 @@ import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.file.AccessDeniedException;
 import java.util.Map;
@@ -24,10 +25,11 @@ public class ExceptionHandling extends DefaultErrorAttributes {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(Exception e, WebRequest request) {
-        HttpStatus status = getHttpStatus(e);
+        HttpStatus status = getStatus(e);
+        String message = getMessage(e);
 
         Map<String, Object> errorAttributes =
-                getErrorAttributesMap(request, e.getMessage(), e.getLocalizedMessage(), status);
+                getErrorAttributesMap(request, message, e.getLocalizedMessage(), status);
 
         return ResponseEntity.status(status).body(errorAttributes);
     }
@@ -43,7 +45,8 @@ public class ExceptionHandling extends DefaultErrorAttributes {
     }
 
     @ExceptionHandler(SwiftWheelsHubException.class)
-    public ResponseEntity<Map<String, Object>> handleSwiftWheelsHubException(SwiftWheelsHubException e, WebRequest request) {
+    public ResponseEntity<Map<String, Object>> handleSwiftWheelsHubException(SwiftWheelsHubException e,
+                                                                             WebRequest request) {
         HttpStatus internalServerError = HttpStatus.INTERNAL_SERVER_ERROR;
 
         Map<String, Object> errorAttributes =
@@ -56,13 +59,12 @@ public class ExceptionHandling extends DefaultErrorAttributes {
     public ResponseEntity<Map<String, Object>> handleSwiftWheelsHubResponseStatusException(SwiftWheelsHubResponseStatusException e,
                                                                                            WebRequest request) {
         HttpStatus status = HttpStatus.valueOf(e.getStatusCode().value());
-
-        Map<String, Object> errorAttributes = getErrorAttributesMap(request, e.getMessage(), e.getReason(), status);
+        Map<String, Object> errorAttributes = getErrorAttributesMap(request, e.getReason(), e.getReason(), status);
 
         return ResponseEntity.status(status).body(errorAttributes);
     }
 
-    private HttpStatus getHttpStatus(Exception e) {
+    private HttpStatus getStatus(Exception e) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
         if (e instanceof ErrorResponse errorResponse) {
@@ -74,6 +76,14 @@ public class ExceptionHandling extends DefaultErrorAttributes {
         }
 
         return status;
+    }
+
+    private String getMessage(Exception e) {
+        if (e instanceof ResponseStatusException responseStatusException) {
+            return responseStatusException.getReason();
+        }
+
+        return e.getMessage();
     }
 
     private Map<String, Object> getErrorAttributesMap(WebRequest webRequest, String errorMessage, String cause,
