@@ -81,7 +81,7 @@ class RentalOfficeServiceTest {
                 assertThrows(SwiftWheelsHubNotFoundException.class, () -> rentalOfficeService.findRentalOfficeById(1L));
 
         assertNotNull(swiftWheelsHubNotFoundException);
-        assertEquals("Rental office with id 1 does not exist", swiftWheelsHubNotFoundException.getMessage());
+        assertEquals("Rental office with id 1 does not exist", swiftWheelsHubNotFoundException.getReason());
     }
 
     @Test

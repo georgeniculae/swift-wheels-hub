@@ -99,7 +99,7 @@ class InvoiceServiceTest {
                 assertThrows(SwiftWheelsHubNotFoundException.class, () -> invoiceService.findInvoiceById(1L));
 
         assertNotNull(swiftWheelsHubNotFoundException);
-        assertEquals("Invoice with id 1 does not exist", swiftWheelsHubNotFoundException.getMessage());
+        assertEquals("Invoice with id 1 does not exist", swiftWheelsHubNotFoundException.getReason());
     }
 
     @Test

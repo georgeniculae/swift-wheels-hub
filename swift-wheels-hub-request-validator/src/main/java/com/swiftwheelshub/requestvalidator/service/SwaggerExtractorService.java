@@ -1,5 +1,6 @@
 package com.swiftwheelshub.requestvalidator.service;
 
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.requestvalidator.config.RegisteredEndpoints;
 import com.swiftwheelshub.requestvalidator.model.SwaggerFile;
@@ -62,7 +63,7 @@ public class SwaggerExtractorService {
 
         return Optional.ofNullable(body)
                 .filter(StringUtils::isNotBlank)
-                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Swagger content for " + microservice + " is empty"));
+                .orElseThrow(() -> new SwiftWheelsHubException("Swagger content for " + microservice + " is empty"));
     }
 
 }

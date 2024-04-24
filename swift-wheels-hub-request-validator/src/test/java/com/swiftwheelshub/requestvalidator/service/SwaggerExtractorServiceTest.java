@@ -123,7 +123,7 @@ class SwaggerExtractorServiceTest {
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.body(eq(String.class))).thenReturn(StringUtils.EMPTY);
 
-        assertThrows(SwiftWheelsHubNotFoundException.class, () -> swaggerExtractorService.getSwaggerFiles());
+        assertThrows(SwiftWheelsHubException.class, () -> swaggerExtractorService.getSwaggerFiles());
     }
 
     @Test
@@ -214,7 +214,7 @@ class SwaggerExtractorServiceTest {
             }
         });
 
-        assertThrows(SwiftWheelsHubException.class, () -> swaggerExtractorService.getSwaggerFileForMicroservice("test"));
+        assertThrows(SwiftWheelsHubNotFoundException.class, () -> swaggerExtractorService.getSwaggerFileForMicroservice("test"));
     }
 
 }

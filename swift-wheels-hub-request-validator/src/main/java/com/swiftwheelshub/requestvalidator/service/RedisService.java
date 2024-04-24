@@ -1,6 +1,7 @@
 package com.swiftwheelshub.requestvalidator.service;
 
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
+import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.requestvalidator.model.SwaggerFile;
 import com.swiftwheelshub.requestvalidator.repository.SwaggerRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +51,10 @@ public class RedisService {
                     .build();
         } catch (Exception e) {
             log.error("Error while repopulating swagger folder in Redis: {}", e.getMessage());
+
+            if (e instanceof SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException) {
+                throw swiftWheelsHubNotFoundException;
+            }
 
             throw new SwiftWheelsHubException(e);
         }

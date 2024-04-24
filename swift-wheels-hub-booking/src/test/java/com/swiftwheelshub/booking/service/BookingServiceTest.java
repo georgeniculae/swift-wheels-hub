@@ -210,7 +210,7 @@ class BookingServiceTest {
                 assertThrows(SwiftWheelsHubNotFoundException.class, () -> bookingService.findBookingByDateOfBooking("2050-02-20"));
 
         assertNotNull(swiftWheelsHubNotFoundException);
-        assertEquals("Booking from date: 2050-02-20 does not exist", swiftWheelsHubNotFoundException.getMessage());
+        assertEquals("Booking from date: 2050-02-20 does not exist", swiftWheelsHubNotFoundException.getReason());
     }
 
     @Test

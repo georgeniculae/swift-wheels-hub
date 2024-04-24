@@ -74,7 +74,7 @@ class EmployeeServiceTest {
                 assertThrows(SwiftWheelsHubNotFoundException.class, () -> employeeService.findEmployeeById(1L));
 
         assertNotNull(swiftWheelsHubNotFoundException);
-        assertEquals("Employee with id 1 does not exist", swiftWheelsHubNotFoundException.getMessage());
+        assertEquals("Employee with id 1 does not exist", swiftWheelsHubNotFoundException.getReason());
     }
 
     @Test
