@@ -1,6 +1,5 @@
 package com.swiftwheelshub.requestvalidator.service;
 
-import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.requestvalidator.config.RegisteredEndpoints;
 import com.swiftwheelshub.requestvalidator.model.SwaggerFile;
@@ -42,7 +41,7 @@ public class SwaggerExtractorService {
                 .stream()
                 .filter(swaggerFile -> microserviceName.contains(swaggerFile.getIdentifier()))
                 .findFirst()
-                .orElseThrow(() -> new SwiftWheelsHubException("Microservice not existent"));
+                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Microservice not existent"));
     }
 
     private SwaggerFile getSwaggerFile(Map.Entry<String, String> endpoints) {
