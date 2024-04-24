@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -47,6 +49,11 @@ public class BookingService {
                 });
     }
 
+    @Retryable(
+            retryFor = Exception.class,
+            maxAttempts = 5, backoff = @Backoff(value = 5000L),
+            listeners = "invoiceService"
+    )
     public void closeBooking(HttpServletRequest request, BookingClosingDetails bookingClosingDetails) {
         String finalUrl = url + SEPARATOR + "close-booking";
 

@@ -19,6 +19,7 @@ import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.retry.RetryListener;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -30,7 +31,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class BookingService {
+public class BookingService implements RetryListener {
 
     private final BookingRepository bookingRepository;
     private final CarService carService;

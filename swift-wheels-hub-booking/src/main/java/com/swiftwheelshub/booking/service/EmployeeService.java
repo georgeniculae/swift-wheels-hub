@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -25,6 +27,11 @@ public class EmployeeService {
 
     private final RestClient restClient;
 
+    @Retryable(
+            retryFor = Exception.class,
+            maxAttempts = 5, backoff = @Backoff(value = 5000L),
+            listeners = "bookingService"
+    )
     public EmployeeResponse findEmployeeById(HttpServletRequest request, Long receptionistEmployeeId) {
         return restClient.get()
                 .uri(url + SEPARATOR + receptionistEmployeeId)

@@ -1,8 +1,8 @@
 package com.swiftwheelshub.booking.service;
 
-import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
+import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -54,6 +56,11 @@ public class CarService {
                 });
     }
 
+    @Retryable(
+            retryFor = Exception.class,
+            maxAttempts = 5, backoff = @Backoff(value = 5000L),
+            listeners = "bookingService"
+    )
     public void changeCarStatus(HttpServletRequest request, Long carId, CarState carState) {
         String finalUrl = url + SEPARATOR + carId + SEPARATOR + "change-status";
 
@@ -73,6 +80,11 @@ public class CarService {
                 .toBodilessEntity();
     }
 
+    @Retryable(
+            retryFor = Exception.class,
+            maxAttempts = 5, backoff = @Backoff(value = 5000L),
+            listeners = "bookingService"
+    )
     public void updateCarWhenBookingIsFinished(HttpServletRequest request,
                                                CarUpdateDetails carUpdateDetails) {
         String finalUrl = url + SEPARATOR + carUpdateDetails.carId() + SEPARATOR + "update-after-return";
@@ -88,6 +100,11 @@ public class CarService {
                 .toBodilessEntity();
     }
 
+    @Retryable(
+            retryFor = Exception.class,
+            maxAttempts = 5, backoff = @Backoff(value = 5000L),
+            listeners = "bookingService"
+    )
     public void updateCarsStatus(HttpServletRequest request, List<UpdateCarRequest> carsForUpdate) {
         String finalUrl = url + SEPARATOR + "update-statuses";
 

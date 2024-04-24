@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.retry.RetryListener;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,7 +26,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class InvoiceService {
+public class InvoiceService implements RetryListener {
 
     private final InvoiceRepository invoiceRepository;
     private final RevenueService revenueService;
