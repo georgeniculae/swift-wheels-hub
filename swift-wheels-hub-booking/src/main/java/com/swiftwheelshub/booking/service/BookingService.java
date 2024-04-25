@@ -148,14 +148,14 @@ public class BookingService implements RetryListener {
         return bookingResponse;
     }
 
-    public BookingResponse closeBooking(HttpServletRequest request, BookingClosingDetails bookingUpdateDetailsDto) {
+    public BookingResponse closeBooking(HttpServletRequest request, BookingClosingDetails bookingClosingDetails) {
         BookingResponse bookingResponse;
 
         try {
-            Booking existingBooking = findEntityById(bookingUpdateDetailsDto.bookingId());
+            Booking existingBooking = findEntityById(bookingClosingDetails.bookingId());
 
             EmployeeResponse employeeResponse =
-                    employeeService.findEmployeeById(request, bookingUpdateDetailsDto.receptionistEmployeeId());
+                    employeeService.findEmployeeById(request, bookingClosingDetails.receptionistEmployeeId());
 
             existingBooking.setStatus(BookingStatus.CLOSED);
             existingBooking.setReturnBranchId(employeeResponse.workingBranchId());
@@ -166,7 +166,7 @@ public class BookingService implements RetryListener {
             throw new SwiftWheelsHubException(e);
         }
 
-        updateCarWhenIsReturned(request, bookingResponse, bookingUpdateDetailsDto);
+        updateCarWhenIsReturned(request, bookingResponse, bookingClosingDetails);
 
         return bookingResponse;
     }
