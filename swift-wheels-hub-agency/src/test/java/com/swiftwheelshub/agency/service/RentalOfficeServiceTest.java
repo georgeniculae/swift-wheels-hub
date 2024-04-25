@@ -99,7 +99,7 @@ class RentalOfficeServiceTest {
         AssertionUtils.assertRentalOfficeResponse(rentalOffice, savedRentalOfficeResponse);
 
         verify(rentalOfficeRepository, times(1)).saveAndFlush(argumentCaptor.capture());
-        verify(rentalOfficeMapper, times(1)).mapEntityToDto(any(RentalOffice.class));
+        verify(rentalOfficeMapper).mapEntityToDto(any(RentalOffice.class));
     }
 
     @Test

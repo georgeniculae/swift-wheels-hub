@@ -201,10 +201,10 @@ public class BookingService implements RetryListener {
     private Booking updateExistingBooking(HttpServletRequest request, BookingRequest updatedBookingRequest,
                                           Long existingCarId, Long newCarId, Booking existingBooking) {
         getCarIfIsChanged(request, existingCarId, newCarId)
-                .ifPresentOrElse(carDto -> {
-                            existingBooking.setCarId(carDto.id());
-                            existingBooking.setRentalBranchId(carDto.actualBranchId());
-                            existingBooking.setAmount(getAmount(updatedBookingRequest, carDto.amount()));
+                .ifPresentOrElse(carResponse -> {
+                            existingBooking.setCarId(carResponse.id());
+                            existingBooking.setRentalBranchId(carResponse.actualBranchId());
+                            existingBooking.setAmount(getAmount(updatedBookingRequest, carResponse.amount()));
                         },
                         () -> existingBooking.setAmount(getAmount(updatedBookingRequest, existingBooking.getRentalCarPrice())));
 

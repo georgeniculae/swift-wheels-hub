@@ -33,7 +33,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -185,7 +184,7 @@ class InvoiceServiceTest {
 
         assertDoesNotThrow(() -> invoiceService.closeInvoice(request, 1L, invoiceRequest));
 
-        verify(invoiceMapper, times(1)).mapEntityToDto(any(Invoice.class));
+        verify(invoiceMapper).mapEntityToDto(any(Invoice.class));
     }
 
 }
