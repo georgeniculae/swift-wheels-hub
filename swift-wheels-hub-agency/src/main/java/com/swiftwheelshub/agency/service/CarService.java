@@ -120,9 +120,7 @@ public class CarService {
     }
 
     public List<CarResponse> updateCarsStatus(List<UpdateCarRequest> updateCarRequests) {
-        List<Car> updatableCars = carRepository.findAllById(getIds(updateCarRequests));
-
-        updatableCars.forEach(car -> car.setCarStatus(getUpdatedCarStatus(updateCarRequests, car)));
+        List<Car> updatableCars = getUpdatableCars(updateCarRequests);
 
         return carRepository.saveAllAndFlush(updatableCars)
                 .stream()
@@ -180,6 +178,13 @@ public class CarService {
         if (!CarStatus.AVAILABLE.equals(car.getCarStatus())) {
             throw new SwiftWheelsHubResponseStatusException(HttpStatus.BAD_REQUEST, "Selected car is not available");
         }
+    }
+
+    private List<Car> getUpdatableCars(List<UpdateCarRequest> updateCarRequests) {
+        return carRepository.findAllById(getIds(updateCarRequests))
+                .stream()
+                .peek(car -> car.setCarStatus(getUpdatedCarStatus(updateCarRequests, car)))
+                .toList();
     }
 
     private List<Long> getIds(List<UpdateCarRequest> carsForUpdate) {
