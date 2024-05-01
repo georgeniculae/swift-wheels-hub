@@ -11,7 +11,6 @@ import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.requestvalidator.model.SwaggerFile;
 import com.swiftwheelshub.requestvalidator.repository.SwaggerRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class SwaggerRequestValidatorService {
 
     private static final String SWAGGER = "swagger";

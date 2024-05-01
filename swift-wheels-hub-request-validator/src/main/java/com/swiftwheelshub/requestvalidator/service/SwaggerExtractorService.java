@@ -5,7 +5,6 @@ import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.requestvalidator.config.RegisteredEndpoints;
 import com.swiftwheelshub.requestvalidator.model.SwaggerFile;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class SwaggerExtractorService {
 
     private static final String X_API_KEY = "X-API-KEY";
