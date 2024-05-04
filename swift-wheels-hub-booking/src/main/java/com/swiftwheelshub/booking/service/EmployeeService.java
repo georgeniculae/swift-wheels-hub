@@ -6,13 +6,14 @@ import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,13 +41,8 @@ public class EmployeeService {
                         throw new SwiftWheelsHubResponseStatusException(statusCode, clientResponse.getStatusText());
                     }
 
-                    EmployeeResponse employeeResponse = clientResponse.bodyTo(EmployeeResponse.class);
-
-                    if (ObjectUtils.isEmpty(employeeResponse)) {
-                        throw new SwiftWheelsHubNotFoundException("Employee with id: " + receptionistEmployeeId + " not found");
-                    }
-
-                    return employeeResponse;
+                    return Optional.ofNullable(clientResponse.bodyTo(EmployeeResponse.class))
+                            .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Employee with id: " + receptionistEmployeeId + " not found"));
                 });
     }
 

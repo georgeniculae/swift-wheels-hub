@@ -7,13 +7,14 @@ import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,13 +40,8 @@ public class BookingService {
                         throw new SwiftWheelsHubResponseStatusException(statusCode, clientResponse.getStatusText());
                     }
 
-                    BookingResponse bookingResponse = clientResponse.bodyTo(BookingResponse.class);
-
-                    if (ObjectUtils.isEmpty(bookingResponse)) {
-                        throw new SwiftWheelsHubNotFoundException("Booking with id: " + bookingId + " not found");
-                    }
-
-                    return bookingResponse;
+                    return Optional.ofNullable(clientResponse.bodyTo(BookingResponse.class))
+                            .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Booking with id: " + bookingId + " not found"));
                 });
     }
 

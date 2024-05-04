@@ -9,7 +9,6 @@ import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.retry.annotation.Backoff;
@@ -20,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,13 +46,8 @@ public class CarService {
                         throw new SwiftWheelsHubResponseStatusException(statusCode, clientResponse.getStatusText());
                     }
 
-                    CarResponse carResponse = clientResponse.bodyTo(CarResponse.class);
-
-                    if (ObjectUtils.isEmpty(carResponse)) {
-                        throw new SwiftWheelsHubNotFoundException("Car with id: " + carId + " not found");
-                    }
-
-                    return carResponse;
+                    return Optional.ofNullable(clientResponse.bodyTo(CarResponse.class))
+                            .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Car with id: " + carId + " not found"));
                 });
     }
 
