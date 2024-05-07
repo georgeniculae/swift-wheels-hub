@@ -162,19 +162,6 @@ public class InvoiceService implements RetryListener {
         }
     }
 
-    private Invoice updateExistingInvoice(Invoice existingInvoice, InvoiceRequest invoiceRequest, Long carId,
-                                          Long receptionistEmployeeId) {
-        existingInvoice.setCarDateOfReturn(invoiceRequest.carDateOfReturn());
-        existingInvoice.setReceptionistEmployeeId(receptionistEmployeeId);
-        existingInvoice.setCarId(carId);
-        existingInvoice.setIsVehicleDamaged(invoiceRequest.isVehicleDamaged());
-        existingInvoice.setDamageCost(getDamageCost(invoiceRequest));
-        existingInvoice.setAdditionalPayment(getAdditionalPayment(invoiceRequest));
-        existingInvoice.setComments(invoiceRequest.comments());
-
-        return existingInvoice;
-    }
-
     private BigDecimal getDamageCost(InvoiceRequest invoiceRequest) {
         return ObjectUtils.isEmpty(invoiceRequest.damageCost()) ? BigDecimal.ZERO : invoiceRequest.damageCost();
     }
@@ -187,14 +174,18 @@ public class InvoiceService implements RetryListener {
                                                     Invoice existingInvoice) {
         Long receptionistEmployeeId = invoiceRequest.receptionistEmployeeId();
         Long carId = invoiceRequest.carId();
+        String customerUsername = bookingResponse.customerUsername();
+        String customerEmail = bookingResponse.customerEmail();
 
-        Invoice existingInvoiceUpdated =
-                updateExistingInvoice(existingInvoice, invoiceRequest, carId, receptionistEmployeeId);
-
-        return updateInvoiceAmount(bookingResponse, existingInvoiceUpdated);
-    }
-
-    private Invoice updateInvoiceAmount(BookingResponse bookingResponse, Invoice existingInvoice) {
+        existingInvoice.setCustomerUsername(customerUsername);
+        existingInvoice.setCustomerEmail(customerEmail);
+        existingInvoice.setCarDateOfReturn(invoiceRequest.carDateOfReturn());
+        existingInvoice.setReceptionistEmployeeId(receptionistEmployeeId);
+        existingInvoice.setCarId(carId);
+        existingInvoice.setIsVehicleDamaged(invoiceRequest.isVehicleDamaged());
+        existingInvoice.setDamageCost(getDamageCost(invoiceRequest));
+        existingInvoice.setAdditionalPayment(getAdditionalPayment(invoiceRequest));
+        existingInvoice.setComments(invoiceRequest.comments());
         existingInvoice.setTotalAmount(getTotalAmount(existingInvoice, bookingResponse));
 
         return existingInvoice;

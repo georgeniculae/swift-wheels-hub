@@ -1,6 +1,5 @@
 package com.swiftwheelshub.dto;
 
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -10,12 +9,6 @@ import java.time.LocalDate;
 
 @Builder
 public record InvoiceRequest(
-        @NotEmpty(message = "Username cannot be empty")
-        String customerUsername,
-
-        @NotEmpty(message = "Customer email cannot be empty")
-        String customerEmail,
-
         @NotNull(message = "Car id cannot be null")
         Long carId,
 
@@ -41,8 +34,6 @@ public record InvoiceRequest(
     @Override
     public String toString() {
         return "InvoiceRequest{" + "\n" +
-                "customerUsername='" + customerUsername + "\n" +
-                "customerEmail='" + customerEmail + "\n" +
                 "carId=" + carId + "\n" +
                 "receptionistEmployeeId=" + receptionistEmployeeId + "\n" +
                 "bookingId=" + bookingId + "\n" +
