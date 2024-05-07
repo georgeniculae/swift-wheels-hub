@@ -243,9 +243,8 @@ public class BookingService implements RetryListener {
         Booking newBooking = bookingMapper.mapDtoToEntity(newBookingRequest);
         BigDecimal amount = carResponse.amount();
 
-        newBooking.setDateTo(newBookingRequest.dateTo());
-        newBooking.setDateFrom(newBookingRequest.dateFrom());
         newBooking.setCustomerUsername(newBookingRequest.customerUsername());
+        newBooking.setCustomerEmail(newBooking.getCustomerEmail());
         newBooking.setCarId(carResponse.id());
         newBooking.setDateOfBooking(LocalDate.now());
         newBooking.setRentalBranchId(carResponse.actualBranchId());
