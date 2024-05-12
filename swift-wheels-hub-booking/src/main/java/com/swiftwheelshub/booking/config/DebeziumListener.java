@@ -75,7 +75,7 @@ public class DebeziumListener {
     private void handleChangeEvent(RecordChangeEvent<SourceRecord> sourceRecordRecordChangeEvent) {
         SourceRecord sourceRecord = sourceRecordRecordChangeEvent.record();
 
-        log.info("Key = '" + sourceRecord.key() + "' value = '" + sourceRecord.value() + "'");
+        log.info("Key = '{}', value = '{}'", sourceRecord.key(), sourceRecord.value());
 
         Struct sourceRecordChangeValue = (Struct) sourceRecord.value();
 
