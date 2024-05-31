@@ -69,17 +69,17 @@ spring:
           binder: kafka
           destination: ${SAVED_BOOKING_TOPIC}
           contentType: application/json
-          group: ${BOOKING_CONSUMER_GROUP}
+          group: ${EXPENSE_CONSUMER_GROUP}
         updatedBookingConsumer-in-0:
           binder: kafka
           destination: ${UPDATED_BOOKING_TOPIC}
           contentType: application/json
-          group: ${BOOKING_CONSUMER_GROUP}
+          group: ${EXPENSE_CONSUMER_GROUP}
         deletedBookingConsumer-in-0:
           binder: kafka
           destination: ${DELETED_BOOKING_TOPIC}
           contentType: application/json
-          group: ${BOOKING_CONSUMER_GROUP}
+          group: ${EXPENSE_CONSUMER_GROUP}
       kafka:
         binder:
           auto-create-topics: true
