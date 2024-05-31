@@ -5,6 +5,7 @@ import com.swiftwheelshub.booking.mapper.BookingMapper;
 import com.swiftwheelshub.booking.service.BookingProducerService;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.entity.Booking;
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import io.debezium.config.Configuration;
 import io.debezium.embedded.Connect;
 import io.debezium.engine.DebeziumEngine;
@@ -62,13 +63,17 @@ public class DebeziumListener {
 
     @PostConstruct
     private void start() {
-        this.executor.execute(debeziumEngine);
+        executor.execute(debeziumEngine);
     }
 
     @PreDestroy
-    private void stop() throws IOException {
-        if (Objects.nonNull(this.debeziumEngine)) {
-            this.debeziumEngine.close();
+    private void stop() {
+        if (Objects.nonNull(debeziumEngine)) {
+            try {
+                debeziumEngine.close();
+            } catch (IOException e) {
+                throw new SwiftWheelsHubException(e);
+            }
         }
     }
 

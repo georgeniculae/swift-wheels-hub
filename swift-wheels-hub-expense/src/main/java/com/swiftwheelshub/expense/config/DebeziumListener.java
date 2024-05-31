@@ -3,6 +3,7 @@ package com.swiftwheelshub.expense.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.entity.Invoice;
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.expense.mapper.InvoiceMapper;
 import com.swiftwheelshub.expense.service.EmailNotificationProducer;
 import io.debezium.config.Configuration;
@@ -62,13 +63,17 @@ public class DebeziumListener {
 
     @PostConstruct
     private void start() {
-        this.executor.execute(debeziumEngine);
+        executor.execute(debeziumEngine);
     }
 
     @PreDestroy
-    private void stop() throws IOException {
-        if (Objects.nonNull(this.debeziumEngine)) {
-            this.debeziumEngine.close();
+    private void stop() {
+        if (Objects.nonNull(debeziumEngine)) {
+            try {
+                debeziumEngine.close();
+            } catch (IOException e) {
+                throw new SwiftWheelsHubException(e);
+            }
         }
     }
 
