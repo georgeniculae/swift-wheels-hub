@@ -68,6 +68,13 @@ public class CarService {
         return carMapper.mapEntityToDto(car);
     }
 
+    public List<CarResponse> findAllAvailableCars() {
+        return carRepository.findAllAvailableCars()
+                .stream()
+                .map(carMapper::mapEntityToDto)
+                .toList();
+    }
+
     public List<CarResponse> findCarsByMake(String make) {
         return getCarResponses(carRepository.findCarsByMakeIgnoreCase(make));
     }

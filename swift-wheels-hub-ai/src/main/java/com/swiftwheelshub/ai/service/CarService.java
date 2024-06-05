@@ -21,8 +21,6 @@ public class CarService {
 
     private static final String SEPARATOR = "/";
 
-    private static final String CAR_STATUS = "carState";
-
     @Value("${rest-client.url.swift-wheels-hub-agency-cars}")
     private String url;
 
@@ -30,7 +28,7 @@ public class CarService {
 
     public List<CarResponse> getAllAvailableCars(HttpServletRequest request) {
         return restClient.get()
-                .uri(url)
+                .uri(url + SEPARATOR + "available")
                 .headers(HttpRequestUtil.mutateHeaders(request))
                 .exchange((_, clientResponse) -> {
                     HttpStatusCode statusCode = clientResponse.getStatusCode();

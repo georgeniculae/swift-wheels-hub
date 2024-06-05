@@ -40,6 +40,14 @@ public class CarController {
         return ResponseEntity.ok(carResponses);
     }
 
+    @GetMapping(path = "/available")
+    @PreAuthorize("hasRole('user')")
+    public ResponseEntity<List<CarResponse>> findAllAvailableCars() {
+        List<CarResponse> carResponses = carService.findAllAvailableCars();
+
+        return ResponseEntity.ok(carResponses);
+    }
+
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('user')")
     public ResponseEntity<CarResponse> findCarById(@PathVariable("id") Long id) {
@@ -58,7 +66,7 @@ public class CarController {
 
     @GetMapping(path = "/filter/{filter}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<List<CarResponse>> findAvailableCar(@PathVariable("filter") String filter) {
+    public ResponseEntity<List<CarResponse>> findCarsByFilter(@PathVariable("filter") String filter) {
         List<CarResponse> carResponses = carService.findCarsByFilter(filter);
 
         return ResponseEntity.ok(carResponses);
@@ -66,7 +74,7 @@ public class CarController {
 
     @GetMapping(path = "/{id}/availability")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<CarResponse> findAvailableCar(@PathVariable("id") Long id) {
+    public ResponseEntity<CarResponse> findCarsByFilter(@PathVariable("id") Long id) {
         CarResponse availableCarResponse = carService.findAvailableCar(id);
 
         return ResponseEntity.ok(availableCarResponse);

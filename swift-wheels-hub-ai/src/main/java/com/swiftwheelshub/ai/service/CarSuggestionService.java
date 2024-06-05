@@ -2,6 +2,7 @@ package com.swiftwheelshub.ai.service;
 
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.TripInfo;
+import dev.langchain4j.model.chat.ChatLanguageModel;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,13 +18,14 @@ import java.util.Locale;
 @Slf4j
 public class CarSuggestionService {
 
-    private final GeminiService geminiService;
+    private final ChatLanguageModel chatLanguageModel;
     private final CarService carService;
 
     public String getChatOutput(HttpServletRequest request, TripInfo tripInfo) {
         List<String> cars = getAvailableCars(request);
+        String chatPrompt = createChatPrompt(tripInfo, cars);
 
-        return geminiService.getChatDiscussionOutput(createChatPrompt(tripInfo, cars));
+        return chatLanguageModel.generate(chatPrompt);
     }
 
     private List<String> getAvailableCars(HttpServletRequest request) {
