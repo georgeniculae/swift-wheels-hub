@@ -75,7 +75,7 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     private Mono<String> getUsername(ServerHttpRequest request) {
         return Mono.just(request)
                 .filter(this::doesPathContainPattern)
-                .flatMap(serverHttpRequest -> nimbusReactiveJwtDecoder.decode(getAuthorizationToken(request)))
+                .flatMap(serverHttpRequest -> nimbusReactiveJwtDecoder.decode(getAuthorizationToken(serverHttpRequest)))
                 .map(jwtAuthenticationTokenConverter::extractUsername)
                 .switchIfEmpty(Mono.defer(() -> Mono.just(StringUtils.EMPTY)));
     }
@@ -83,7 +83,7 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     private Mono<List<String>> getRoles(ServerHttpRequest request) {
         return Mono.just(request)
                 .filter(this::doesPathContainPattern)
-                .flatMap(serverHttpRequest -> nimbusReactiveJwtDecoder.decode(getAuthorizationToken(request)))
+                .flatMap(serverHttpRequest -> nimbusReactiveJwtDecoder.decode(getAuthorizationToken(serverHttpRequest)))
                 .flatMapMany(jwtAuthenticationTokenConverter::extractGrantedAuthorities)
                 .map(GrantedAuthority::getAuthority)
                 .collectList()

@@ -301,7 +301,7 @@ class CustomerServiceTest {
         doNothing().when(bookingService).deleteBookingsByUsername(any(HttpServletRequest.class));
         when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of(userRepresentation));
 
-        assertDoesNotThrow(() -> customerService.deleteUserByUsername(httpServletRequest));
+        assertDoesNotThrow(() -> customerService.deleteUserByUsername(httpServletRequest, "user"));
     }
 
     @Test
@@ -321,7 +321,7 @@ class CustomerServiceTest {
 
         doThrow(new NotFoundException()).when(userResource).remove();
 
-        assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.deleteUserByUsername(httpServletRequest));
+        assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.deleteUserByUsername(httpServletRequest, "user"));
     }
 
     @Test

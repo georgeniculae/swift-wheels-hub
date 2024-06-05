@@ -26,8 +26,7 @@ public class EmailNotificationProducer {
         kafkaTemplate.send(buildMessage(invoiceResponse, emailNotificationProducerTopicName))
                 .whenComplete((result, e) -> {
                     if (ObjectUtils.isEmpty(e)) {
-                        log.info("Sent invoice=[" + invoiceResponse + "] with offset=["
-                                + result.getRecordMetadata().offset() + "]");
+                        log.info("Sent invoice=[{}] with offset=[{}]", invoiceResponse, result.getRecordMetadata().offset());
 
                         return;
                     }

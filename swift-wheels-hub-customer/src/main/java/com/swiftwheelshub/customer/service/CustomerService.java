@@ -111,8 +111,7 @@ public class CustomerService {
         return customerMapper.mapUserToUserInfo(userRepresentation);
     }
 
-    public void deleteUserByUsername(HttpServletRequest request) {
-        String username = HttpRequestUtil.extractUsername(request);
+    public void deleteUserByUsername(HttpServletRequest request, String username) {
         UserRepresentation userRepresentation = getUserRepresentation(username);
         UserResource userResource = findById(userRepresentation.getId());
 
@@ -123,6 +122,11 @@ public class CustomerService {
         }
 
         bookingService.deleteBookingsByUsername(request);
+    }
+
+    public void deleteCurrentUser(HttpServletRequest request) {
+        String username = HttpRequestUtil.extractUsername(request);
+        deleteUserByUsername(request, username);
     }
 
     public void signOut(HttpServletRequest request) {

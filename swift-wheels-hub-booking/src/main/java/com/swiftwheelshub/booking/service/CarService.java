@@ -40,7 +40,7 @@ public class CarService {
         return restClient.get()
                 .uri(finalUrl)
                 .headers(HttpRequestUtil.mutateHeaders(request))
-                .exchange((clientRequest, clientResponse) -> {
+                .exchange((_, clientResponse) -> {
                     HttpStatusCode statusCode = clientResponse.getStatusCode();
                     if (statusCode.isError()) {
                         throw new SwiftWheelsHubResponseStatusException(statusCode, clientResponse.getStatusText());
@@ -69,7 +69,7 @@ public class CarService {
                 .uri(uri)
                 .headers(HttpRequestUtil.mutateHeaders(request))
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, (clientRequest, clientResponse) -> {
+                .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
                     throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());
                 })
                 .toBodilessEntity();
@@ -89,7 +89,7 @@ public class CarService {
                 .headers(HttpRequestUtil.mutateHeaders(request))
                 .body(carUpdateDetails)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, (clientRequest, clientResponse) -> {
+                .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
                     throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());
                 })
                 .toBodilessEntity();
@@ -108,7 +108,7 @@ public class CarService {
                 .headers(HttpRequestUtil.mutateHeaders(request))
                 .body(carsForUpdate)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, (clientRequest, clientResponse) -> {
+                .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
                     throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());
                 })
                 .toBodilessEntity();

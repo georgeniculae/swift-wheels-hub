@@ -81,7 +81,7 @@ public class CustomerController {
     )
     public ResponseEntity<Void> deleteUserByUsername(HttpServletRequest request,
                                                      @PathVariable("username") String username) {
-        customerService.deleteUserByUsername(request);
+        customerService.deleteUserByUsername(request, username);
 
         return ResponseEntity.noContent().build();
     }
@@ -92,7 +92,7 @@ public class CustomerController {
             activityDescription = "Current user deletion"
     )
     public ResponseEntity<Void> deleteCurrentUser(HttpServletRequest request) {
-        customerService.deleteUserByUsername(request);
+        customerService.deleteCurrentUser(request);
 
         return ResponseEntity.noContent().build();
     }

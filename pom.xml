@@ -25,6 +25,7 @@
         <module>swift-wheels-hub-customer</module>
         <module>swift-wheels-hub-email-notification</module>
         <module>swift-wheels-hub-expense</module>
+        <module>swift-wheels-hub-ai</module>
         <module>swift-wheels-hub-request-validator</module>
     </modules>
 

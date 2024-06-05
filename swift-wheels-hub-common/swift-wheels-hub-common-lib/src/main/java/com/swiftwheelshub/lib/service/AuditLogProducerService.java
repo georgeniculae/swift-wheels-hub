@@ -27,13 +27,12 @@ public class AuditLogProducerService {
         kafkaTemplate.send(buildMessage(auditLogInfo, topic))
                 .whenComplete((result, e) -> {
                     if (ObjectUtils.isEmpty(e)) {
-                        log.info("Sent message=[" + auditLogInfo + "] with offset=["
-                                + result.getRecordMetadata().offset() + "]");
+                        log.info("Sent message=[{}] with offset=[{}]", auditLogInfo, result.getRecordMetadata().offset());
 
                         return;
                     }
 
-                    log.error("Unable to send message=[" + auditLogInfo + "] due to : " + e.getMessage());
+                    log.error("Unable to send message=[{}] due to :{} ", auditLogInfo, e.getMessage());
                 });
     }
 

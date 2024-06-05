@@ -25,7 +25,7 @@ public class BookingService {
                 .uri(url + SEPARATOR + HttpRequestUtil.extractUsername(request))
                 .headers(HttpRequestUtil.mutateHeaders(request))
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, (clientRequest, clientResponse) -> {
+                .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
                     throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());
                 })
                 .toBodilessEntity();

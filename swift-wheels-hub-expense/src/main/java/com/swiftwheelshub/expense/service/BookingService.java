@@ -33,7 +33,7 @@ public class BookingService {
         return restClient.get()
                 .uri(finalUrl)
                 .headers(HttpRequestUtil.mutateHeaders(request))
-                .exchange((clientRequest, clientResponse) -> {
+                .exchange((_, clientResponse) -> {
                     HttpStatusCode statusCode = clientResponse.getStatusCode();
 
                     if (statusCode.isError()) {
@@ -58,7 +58,7 @@ public class BookingService {
                 .headers(HttpRequestUtil.mutateHeaders(request))
                 .body(bookingClosingDetails)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, (clientRequest, clientResponse) -> {
+                .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
                     throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());
                 })
                 .toBodilessEntity();
