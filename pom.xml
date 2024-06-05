@@ -20,12 +20,12 @@
         <module>swift-wheels-hub-common</module>
         <module>swift-wheels-hub-api-gateway</module>
         <module>swift-wheels-hub-agency</module>
+        <module>swift-wheels-hub-ai</module>
         <module>swift-wheels-hub-audit</module>
         <module>swift-wheels-hub-booking</module>
         <module>swift-wheels-hub-customer</module>
         <module>swift-wheels-hub-email-notification</module>
         <module>swift-wheels-hub-expense</module>
-        <module>swift-wheels-hub-ai</module>
         <module>swift-wheels-hub-request-validator</module>
     </modules>
 

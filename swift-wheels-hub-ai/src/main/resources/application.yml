@@ -5,6 +5,8 @@ server:
     include-binding-errors: never
     include-stacktrace: never
     include-exception: false
+  servlet:
+    context-path: /ai
 
 spring:
   application:
@@ -69,6 +71,14 @@ management:
       enabled: true
     readinessstate:
       enabled: true
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /definition/swagger-ui.html
+    operationsSorter: method
+  api-docs:
+    path: /definition/v3/api-docs
 
 apikey:
   secret: ${API_KEY_SECRET}
