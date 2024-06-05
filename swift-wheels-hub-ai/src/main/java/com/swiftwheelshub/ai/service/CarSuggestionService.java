@@ -15,7 +15,7 @@ import java.util.Locale;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class GeminiService {
+public class CarSuggestionService {
 
     private final ChatDiscussionService chatDiscussionService;
     private final CarService carService;
