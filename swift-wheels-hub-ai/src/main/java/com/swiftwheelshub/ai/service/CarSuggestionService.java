@@ -51,8 +51,7 @@ public class CarSuggestionService {
     }
 
     private String getMonth(LocalDate tripDate) {
-        return tripDate.getMonth()
-                .getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+        return tripDate.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
     }
 
 }

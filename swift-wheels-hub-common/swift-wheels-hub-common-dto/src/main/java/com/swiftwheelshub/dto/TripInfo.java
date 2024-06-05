@@ -7,7 +7,7 @@ import lombok.NonNull;
 
 import java.time.LocalDate;
 
-@Builder
+@Builder(toBuilder = true)
 public record TripInfo(
         @NotEmpty
         String destination,
