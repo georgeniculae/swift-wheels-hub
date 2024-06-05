@@ -32,6 +32,7 @@ public class CarService {
                 .headers(HttpRequestUtil.mutateHeaders(request))
                 .exchange((_, clientResponse) -> {
                     HttpStatusCode statusCode = clientResponse.getStatusCode();
+
                     if (statusCode.isError()) {
                         throw new SwiftWheelsHubResponseStatusException(statusCode, clientResponse.getStatusText());
                     }
