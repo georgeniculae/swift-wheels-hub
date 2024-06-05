@@ -17,13 +17,13 @@ import java.util.Locale;
 @Slf4j
 public class CarSuggestionService {
 
-    private final ChatDiscussionService chatDiscussionService;
+    private final GeminiService geminiService;
     private final CarService carService;
 
     public String getChatOutput(HttpServletRequest request, TripInfo tripInfo) {
         List<String> cars = getAvailableCars(request);
 
-        return chatDiscussionService.getGeminiOutput(createChatPrompt(tripInfo, cars));
+        return geminiService.getChatDiscussionOutput(createChatPrompt(tripInfo, cars));
     }
 
     private List<String> getAvailableCars(HttpServletRequest request) {

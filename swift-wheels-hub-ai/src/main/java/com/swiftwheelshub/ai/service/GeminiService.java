@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 @Service
-public class ChatDiscussionService {
+public class GeminiService {
 
     @Value("${spring.ai.vertex.ai.gemini.project-id}")
     private String projectId;
@@ -23,7 +23,7 @@ public class ChatDiscussionService {
     @Value("${spring.ai.vertex.ai.gemini.chat.options.model}")
     private String modelName;
 
-    public String getGeminiOutput(String input) {
+    public String getChatDiscussionOutput(String input) {
         try (VertexAI vertexAI = new VertexAI(projectId, location)) {
             GenerateContentResponse response;
 
