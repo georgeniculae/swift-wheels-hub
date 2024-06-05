@@ -5,7 +5,6 @@ import com.swiftwheelshub.dto.TripInfo;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -15,7 +14,6 @@ import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class CarSuggestionService {
 
     private final ChatLanguageModel chatLanguageModel;
