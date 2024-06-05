@@ -16,7 +16,7 @@
 
     <properties>
         <swift-wheels-hub-common.version>0.0.1-SNAPSHOT</swift-wheels-hub-common.version>
-        <spring-ai.version>0.8.1</spring-ai.version>
+        <langchain4j-vertex-ai-gemini.version>0.31.0</langchain4j-vertex-ai-gemini.version>
     </properties>
 
     <dependencies>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-vertex-ai-gemini</artifactId>
-            <version>0.31.0</version>
+            <version>${langchain4j-vertex-ai-gemini.version}</version>
         </dependency>
 
         <dependency>
