@@ -72,3 +72,7 @@ management:
 
 apikey:
   secret: ${API_KEY_SECRET}
+
+rest-client:
+  url:
+    swift-wheels-hub-agency-cars: http://swift-wheels-hub-agency/agency/cars

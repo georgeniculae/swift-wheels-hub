@@ -1,6 +1,7 @@
 package com.swiftwheelshub.ai.controller;
 
 import com.swiftwheelshub.ai.service.GeminiService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -17,8 +18,9 @@ public class CarSuggestionController {
     private final GeminiService geminiService;
 
     @PostMapping
-    public ResponseEntity<String> getChatPrompt(@RequestBody @NonNull String destination) {
-        String chatOutput = geminiService.getChatOutput(destination);
+    public ResponseEntity<String> getChatPrompt(HttpServletRequest request,
+                                                @RequestBody @NonNull String destination) {
+        String chatOutput = geminiService.getChatOutput(request, destination);
 
         return ResponseEntity.ok(chatOutput);
     }
