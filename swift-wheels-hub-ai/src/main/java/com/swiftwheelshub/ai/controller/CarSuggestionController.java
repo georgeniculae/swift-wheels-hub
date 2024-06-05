@@ -1,10 +1,11 @@
 package com.swiftwheelshub.ai.controller;
 
 import com.swiftwheelshub.ai.service.GeminiService;
+import com.swiftwheelshub.dto.TripInfo;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +20,8 @@ public class CarSuggestionController {
 
     @PostMapping
     public ResponseEntity<String> getChatPrompt(HttpServletRequest request,
-                                                @RequestBody @NonNull String destination) {
-        String chatOutput = geminiService.getChatOutput(request, destination);
+                                                @RequestBody @Valid TripInfo tripInfo) {
+        String chatOutput = geminiService.getChatOutput(request, tripInfo);
 
         return ResponseEntity.ok(chatOutput);
     }

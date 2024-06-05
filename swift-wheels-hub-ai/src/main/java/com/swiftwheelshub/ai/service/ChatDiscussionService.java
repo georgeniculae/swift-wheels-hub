@@ -23,7 +23,7 @@ public class ChatDiscussionService {
     @Value("${spring.ai.vertex.ai.gemini.chat.options.model}")
     private String modelName;
 
-    public String openChatDiscussion(String input) {
+    public String getGeminiOutput(String input) {
         try (VertexAI vertexAI = new VertexAI(projectId, location)) {
             GenerateContentResponse response;
 
