@@ -34,7 +34,7 @@ public class EmployeeService {
     public EmployeeResponse findEmployeeById(HttpServletRequest request, Long receptionistEmployeeId) {
         return restClient.get()
                 .uri(url + SEPARATOR + receptionistEmployeeId)
-                .headers(HttpRequestUtil.mutateHeaders(request))
+                .headers(HttpRequestUtil.setHttpHeaders(request))
                 .exchange((clientRequest, clientResponse) -> {
                     HttpStatusCode statusCode = clientResponse.getStatusCode();
                     if (statusCode.isError()) {

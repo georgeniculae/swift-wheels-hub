@@ -23,7 +23,7 @@ public class BookingService {
     public void deleteBookingsByUsername(HttpServletRequest request) {
         restClient.delete()
                 .uri(url + SEPARATOR + HttpRequestUtil.extractUsername(request))
-                .headers(HttpRequestUtil.mutateHeaders(request))
+                .headers(HttpRequestUtil.setHttpHeaders(request))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
                     throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());

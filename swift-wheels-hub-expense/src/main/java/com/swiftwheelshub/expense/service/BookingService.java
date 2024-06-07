@@ -32,7 +32,7 @@ public class BookingService {
 
         return restClient.get()
                 .uri(finalUrl)
-                .headers(HttpRequestUtil.mutateHeaders(request))
+                .headers(HttpRequestUtil.setHttpHeaders(request))
                 .exchange((_, clientResponse) -> {
                     HttpStatusCode statusCode = clientResponse.getStatusCode();
 
@@ -55,7 +55,7 @@ public class BookingService {
 
         restClient.post()
                 .uri(finalUrl)
-                .headers(HttpRequestUtil.mutateHeaders(request))
+                .headers(HttpRequestUtil.setHttpHeaders(request))
                 .body(bookingClosingDetails)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {

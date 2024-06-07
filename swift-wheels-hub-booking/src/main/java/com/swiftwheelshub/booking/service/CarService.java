@@ -39,7 +39,7 @@ public class CarService {
 
         return restClient.get()
                 .uri(finalUrl)
-                .headers(HttpRequestUtil.mutateHeaders(request))
+                .headers(HttpRequestUtil.setHttpHeaders(request))
                 .exchange((_, clientResponse) -> {
                     HttpStatusCode statusCode = clientResponse.getStatusCode();
                     if (statusCode.isError()) {
@@ -67,7 +67,7 @@ public class CarService {
 
         restClient.put()
                 .uri(uri)
-                .headers(HttpRequestUtil.mutateHeaders(request))
+                .headers(HttpRequestUtil.setHttpHeaders(request))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
                     throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());
@@ -86,7 +86,7 @@ public class CarService {
 
         restClient.put()
                 .uri(finalUrl)
-                .headers(HttpRequestUtil.mutateHeaders(request))
+                .headers(HttpRequestUtil.setHttpHeaders(request))
                 .body(carUpdateDetails)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
@@ -105,7 +105,7 @@ public class CarService {
 
         restClient.put()
                 .uri(finalUrl)
-                .headers(HttpRequestUtil.mutateHeaders(request))
+                .headers(HttpRequestUtil.setHttpHeaders(request))
                 .body(carsForUpdate)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {

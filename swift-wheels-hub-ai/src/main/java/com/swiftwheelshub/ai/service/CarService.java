@@ -29,7 +29,7 @@ public class CarService {
     public List<CarResponse> getAllAvailableCars(HttpServletRequest request) {
         return restClient.get()
                 .uri(url + SEPARATOR + "available")
-                .headers(HttpRequestUtil.mutateHeaders(request))
+                .headers(HttpRequestUtil.setHttpHeaders(request))
                 .exchange((_, clientResponse) -> {
                     HttpStatusCode statusCode = clientResponse.getStatusCode();
 

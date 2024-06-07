@@ -18,7 +18,7 @@ public class HttpRequestUtil {
     private static final String X_USERNAME = "X-USERNAME";
     private static final String X_ROLES = "X-ROLES";
 
-    public static Consumer<HttpHeaders> mutateHeaders(HttpServletRequest request) {
+    public static Consumer<HttpHeaders> setHttpHeaders(HttpServletRequest request) {
         return httpHeaders -> {
             httpHeaders.setAccept(List.of(MediaType.APPLICATION_JSON));
             httpHeaders.setContentType(MediaType.APPLICATION_JSON);
