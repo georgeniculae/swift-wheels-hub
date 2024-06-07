@@ -2,7 +2,6 @@ package com.swiftwheelshub.ai.service;
 
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.TripInfo;
-import dev.langchain4j.model.chat.ChatLanguageModel;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,14 +15,14 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class CarSuggestionService {
 
-    private final ChatLanguageModel chatLanguageModel;
+    private final GeminiService geminiService;
     private final CarService carService;
 
     public String getChatOutput(HttpServletRequest request, TripInfo tripInfo) {
         List<String> cars = getAvailableCars(request);
         String chatPrompt = createChatPrompt(tripInfo, cars);
 
-        return chatLanguageModel.generate(chatPrompt);
+        return geminiService.openChatDiscussion(chatPrompt);
     }
 
     private List<String> getAvailableCars(HttpServletRequest request) {
