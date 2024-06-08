@@ -15,14 +15,14 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class CarSuggestionService {
 
-    private final GeminiService geminiService;
+    private final ChatService chatService;
     private final CarService carService;
 
     public String getChatOutput(HttpServletRequest request, TripInfo tripInfo) {
         List<String> cars = getAvailableCars(request);
         String chatPrompt = createChatPrompt(tripInfo, cars);
 
-        return geminiService.openChatDiscussion(chatPrompt);
+        return chatService.openChatReply(chatPrompt);
     }
 
     private List<String> getAvailableCars(HttpServletRequest request) {

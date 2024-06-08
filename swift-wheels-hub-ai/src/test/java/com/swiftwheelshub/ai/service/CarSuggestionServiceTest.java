@@ -28,7 +28,7 @@ class CarSuggestionServiceTest {
     private CarService carService;
 
     @Mock
-    private GeminiService geminiService;
+    private ChatService chatService;
 
     @Test
     void getChatOutputTest_success() {
@@ -38,7 +38,7 @@ class CarSuggestionServiceTest {
         TripInfo tripInfo = TestUtils.getResourceAsJson("/data/TripInfo.json", TripInfo.class);
 
         when(carService.getAllAvailableCars(any(HttpServletRequest.class))).thenReturn(List.of(carResponse));
-        when(geminiService.openChatDiscussion(anyString())).thenReturn(output);
+        when(chatService.openChatReply(anyString())).thenReturn(output);
 
         String chatOutput = carSuggestionService.getChatOutput(request, tripInfo);
         assertNotNull(chatOutput);

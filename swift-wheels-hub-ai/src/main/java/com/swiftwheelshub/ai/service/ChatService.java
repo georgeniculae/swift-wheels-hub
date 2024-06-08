@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class GeminiService {
+public class ChatService {
 
     private final ChatClient chatClient;
 
-    public String openChatDiscussion(String prompt) {
+    public String openChatReply(String prompt) {
         return chatClient.prompt()
                 .user(prompt)
                 .call()
