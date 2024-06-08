@@ -39,8 +39,8 @@ public class CarSuggestionService {
     private String createChatPrompt(TripInfo tripInfo, List<String> cars) {
         return String.format(
                 """
-                        Which car from the following list %s is more suitable for rental from a rental car agency for
-                        a trip for %s people to %s, Romania in %s? The car will be used for %s.""",
+                        Which car from the following list %s is more suitable for rental from a rental car agency
+                        for a trip for %s people to %s, Romania in %s? The car will be used for %s.""",
                 cars,
                 tripInfo.peopleCount(),
                 tripInfo.destination(),
