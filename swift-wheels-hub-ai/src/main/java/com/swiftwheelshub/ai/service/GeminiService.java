@@ -14,7 +14,7 @@ public class GeminiService {
         return chatClient.prompt()
                 .user(prompt)
                 .call()
-                .entity(String.class);
+                .content();
     }
 
 }
