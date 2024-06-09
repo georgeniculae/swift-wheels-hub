@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -19,6 +20,7 @@ public class SecurityConfig {
 
     @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
     private String jwkUri;
+    private final ReactiveAuthenticationManager reactiveAuthenticationManager;
     private final LoadSecurityContextRepository loadSecurityContextRepository;
 
     @Bean
@@ -48,7 +50,8 @@ public class SecurityConfig {
                 .exceptionHandling(request ->
                         request.authenticationEntryPoint((response, _) -> getResponse(response, HttpStatus.UNAUTHORIZED))
                                 .accessDeniedHandler((response, _) -> getResponse(response, HttpStatus.FORBIDDEN)))
-                .oauth2ResourceServer(resourceServerSpec -> resourceServerSpec.jwt(jwtSpec -> jwtSpec.jwkSetUri(jwkUri)))
+                .oauth2ResourceServer(resourceServerSpec -> resourceServerSpec.jwt(jwtSpec -> jwtSpec.jwkSetUri(jwkUri)
+                        .authenticationManager(reactiveAuthenticationManager)))
                 .securityContextRepository(loadSecurityContextRepository)
                 .requestCache(request -> request.requestCache(NoOpServerRequestCache.getInstance()))
                 .build();
