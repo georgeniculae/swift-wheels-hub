@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 @EnableMethodSecurity
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "apikey", name = "secret")
-public class SecurityConfig {
+public class ApiKeySecurityConfig {
 
     private final AuthenticationFilter authenticationFilter;
 
