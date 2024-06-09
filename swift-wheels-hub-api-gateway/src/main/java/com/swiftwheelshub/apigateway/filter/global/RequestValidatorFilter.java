@@ -1,8 +1,8 @@
 package com.swiftwheelshub.apigateway.filter.global;
 
+import com.swiftwheelshub.apigateway.exception.ExceptionUtil;
 import com.swiftwheelshub.dto.IncomingRequestDetails;
 import com.swiftwheelshub.dto.RequestValidationReport;
-import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +50,7 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
                 .flatMap(this::getValidationReport)
                 .flatMap(requestValidationReport -> filterRequest(exchange, chain, requestValidationReport))
                 .switchIfEmpty(Mono.defer(() -> chain.filter(exchange)))
-                .onErrorMap(this::handleExceptions);
+                .onErrorMap(ExceptionUtil::handleException);
     }
 
     @Override
@@ -88,8 +88,7 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
                 .bodyValue(incomingRequestDetails)
                 .retrieve()
                 .bodyToMono(RequestValidationReport.class)
-                .retryWhen(Retry.fixedDelay(6, Duration.ofSeconds(10)))
-                .onErrorMap(e -> new SwiftWheelsHubException(e.getMessage()));
+                .retryWhen(Retry.fixedDelay(6, Duration.ofSeconds(10)));
     }
 
     private Mono<Void> filterRequest(ServerWebExchange exchange, GatewayFilterChain chain, RequestValidationReport requestValidationReport) {
@@ -102,22 +101,6 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
                         HttpStatus.BAD_REQUEST,
                         requestValidationReport.errorMessage()
                 )
-        );
-    }
-
-    private SwiftWheelsHubResponseStatusException handleExceptions(Throwable e) {
-        log.error("Error while trying to validate request: {}", e.getMessage());
-
-        if (e instanceof SwiftWheelsHubResponseStatusException swiftWheelsHubResponseStatusException) {
-            return new SwiftWheelsHubResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    swiftWheelsHubResponseStatusException.getMessage()
-            );
-        }
-
-        return new SwiftWheelsHubResponseStatusException(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                e.getMessage()
         );
     }
 
