@@ -272,7 +272,7 @@ public class CustomerService {
             );
         }
 
-        throw new SwiftWheelsHubException(e);
+        throw new SwiftWheelsHubException(e.getMessage());
     }
 
 }

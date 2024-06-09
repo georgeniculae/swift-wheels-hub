@@ -143,7 +143,7 @@ public class CarService {
 
             return getCarResponses(carRepository.saveAllAndFlush(cars));
         } catch (Exception e) {
-            throw new SwiftWheelsHubException(e);
+            throw new SwiftWheelsHubException(e.getMessage());
         }
     }
 

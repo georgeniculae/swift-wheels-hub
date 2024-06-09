@@ -51,7 +51,7 @@ public interface CarMapper {
 
             return multipartFile.getBytes();
         } catch (IOException e) {
-            throw new SwiftWheelsHubException(e);
+            throw new SwiftWheelsHubException(e.getMessage());
         }
     }
 

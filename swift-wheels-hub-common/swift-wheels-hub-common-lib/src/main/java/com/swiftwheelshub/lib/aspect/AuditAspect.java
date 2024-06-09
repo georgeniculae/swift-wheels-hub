@@ -52,7 +52,7 @@ public class AuditAspect {
 
             return proceed;
         } catch (Throwable e) {
-            throw new SwiftWheelsHubException(e);
+            throw new SwiftWheelsHubException(e.getMessage());
         }
     }
 

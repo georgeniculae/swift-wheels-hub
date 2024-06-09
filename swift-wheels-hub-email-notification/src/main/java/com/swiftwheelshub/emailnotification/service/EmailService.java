@@ -53,7 +53,7 @@ public class EmailService {
 
             return sendGrid.api(request);
         } catch (Exception e) {
-            throw new SwiftWheelsHubException(e);
+            throw new SwiftWheelsHubException(e.getMessage());
         }
     }
 
@@ -76,7 +76,7 @@ public class EmailService {
         try {
             mustache.execute(stringWriter, object).flush();
         } catch (Exception e) {
-            throw new SwiftWheelsHubException(e);
+            throw new SwiftWheelsHubException(e.getMessage());
         }
 
         return stringWriter.toString();

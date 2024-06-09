@@ -114,7 +114,7 @@ public class BookingService implements RetryListener {
             Booking savedBooking = bookingRepository.saveAndFlush(newBooking);
             bookingResponse = bookingMapper.mapEntityToDto(savedBooking);
         } catch (Exception e) {
-            throw new SwiftWheelsHubException(e);
+            throw new SwiftWheelsHubException(e.getMessage());
         }
 
         carService.changeCarStatus(request, carResponse.id(), CarState.NOT_AVAILABLE);
@@ -140,7 +140,7 @@ public class BookingService implements RetryListener {
             Booking updatedBooking = bookingRepository.saveAndFlush(updatedExistingBooking);
             bookingResponse = bookingMapper.mapEntityToDto(updatedBooking);
         } catch (Exception e) {
-            throw new SwiftWheelsHubException(e);
+            throw new SwiftWheelsHubException(e.getMessage());
         }
 
         getCarsForStatusUpdate(request, existingCarId, newCarId);
@@ -163,7 +163,7 @@ public class BookingService implements RetryListener {
             Booking savedBooking = bookingRepository.saveAndFlush(existingBooking);
             bookingResponse = bookingMapper.mapEntityToDto(savedBooking);
         } catch (Exception e) {
-            throw new SwiftWheelsHubException(e);
+            throw new SwiftWheelsHubException(e.getMessage());
         }
 
         updateCarWhenIsReturned(request, bookingResponse, bookingClosingDetails);
@@ -177,7 +177,7 @@ public class BookingService implements RetryListener {
         try {
             bookingRepository.deleteByCustomerUsername(username);
         } catch (Exception e) {
-            throw new SwiftWheelsHubException(e);
+            throw new SwiftWheelsHubException(e.getMessage());
         }
 
         carService.updateCarsStatus(request, getUpdateCarRequests(existingBookings));

@@ -33,7 +33,7 @@ public class RedisService {
         } catch (Exception e) {
             log.error("Error while setting swagger folder in Redis: {}", e.getMessage());
 
-            throw new SwiftWheelsHubException(e);
+            throw new SwiftWheelsHubException(e.getMessage());
         }
     }
 
@@ -56,7 +56,7 @@ public class RedisService {
                 throw swiftWheelsHubNotFoundException;
             }
 
-            throw new SwiftWheelsHubException(e);
+            throw new SwiftWheelsHubException(e.getMessage());
         }
 
         swaggerRepository.save(swaggerFile);

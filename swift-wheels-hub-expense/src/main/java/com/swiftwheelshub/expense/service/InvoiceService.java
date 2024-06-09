@@ -115,7 +115,7 @@ public class InvoiceService implements RetryListener {
 
             bookingClosingDetails = getBookingClosingDetails(invoiceRequest, invoiceRequest.receptionistEmployeeId());
         } catch (Exception e) {
-            throw new SwiftWheelsHubException(e);
+            throw new SwiftWheelsHubException(e.getMessage());
         }
 
         bookingService.closeBooking(request, bookingClosingDetails);

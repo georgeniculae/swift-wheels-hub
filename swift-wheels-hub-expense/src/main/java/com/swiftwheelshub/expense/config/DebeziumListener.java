@@ -72,7 +72,7 @@ public class DebeziumListener {
             try {
                 debeziumEngine.close();
             } catch (IOException e) {
-                throw new SwiftWheelsHubException(e);
+                throw new SwiftWheelsHubException(e.getMessage());
             }
         }
     }
