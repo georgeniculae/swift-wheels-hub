@@ -4,6 +4,7 @@ import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.TripInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.retry.RetryListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -13,7 +14,7 @@ import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
-public class CarSuggestionService {
+public class CarSuggestionService implements RetryListener {
 
     private final ChatService chatService;
     private final CarService carService;
