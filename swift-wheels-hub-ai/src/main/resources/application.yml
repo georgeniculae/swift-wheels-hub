@@ -49,6 +49,14 @@ spring:
         hostname: localhost
         failFast: false
 
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /definition/swagger-ui.html
+    operationsSorter: method
+  api-docs:
+    path: /definition/v3/api-docs
+
 management:
   server:
     port: ${server.port}
@@ -72,13 +80,14 @@ management:
     readinessstate:
       enabled: true
 
-springdoc:
-  swagger-ui:
-    enabled: true
-    path: /definition/swagger-ui.html
-    operationsSorter: method
-  api-docs:
-    path: /definition/v3/api-docs
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        web:
+          csrf:
+            CsrfFilter: DEBUG
 
 apikey:
   secret: ${API_KEY_SECRET}
