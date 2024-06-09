@@ -26,8 +26,8 @@ public class SecurityConfig {
         return http.cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request.requestMatchers(
-                                "/ai/definition/**",
                                 "/agency/definition/**",
+                                "/ai/definition/**",
                                 "/bookings/definition/**",
                                 "/customers/definition/**",
                                 "/customers/register",
@@ -35,8 +35,8 @@ public class SecurityConfig {
                                 "/actuator/**"
                         ).permitAll()
                         .requestMatchers(
-                                "/ai/**",
                                 "/agency/**",
+                                "/ai/**",
                                 "/bookings/**",
                                 "/customers/**",
                                 "/expense/**"
