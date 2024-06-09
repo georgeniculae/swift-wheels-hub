@@ -88,7 +88,12 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
                 .bodyValue(incomingRequestDetails)
                 .retrieve()
                 .bodyToMono(RequestValidationReport.class)
-                .retryWhen(Retry.fixedDelay(6, Duration.ofSeconds(10)));
+                .retryWhen(Retry.fixedDelay(6, Duration.ofSeconds(10)))
+                .onErrorMap(e -> {
+                    log.error("Error while sending request to validator");
+
+                    return ExceptionUtil.handleException(e);
+                });
     }
 
     private Mono<Void> filterRequest(ServerWebExchange exchange, GatewayFilterChain chain, RequestValidationReport requestValidationReport) {

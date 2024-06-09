@@ -6,13 +6,14 @@ import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.InvoiceRequest;
 import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.entity.Invoice;
-import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.expense.mapper.InvoiceMapper;
 import com.swiftwheelshub.expense.repository.InvoiceRepository;
+import com.swiftwheelshub.lib.exceptionhandling.ExceptionUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.retry.RetryListener;
@@ -26,6 +27,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InvoiceService implements RetryListener {
 
     private final InvoiceRepository invoiceRepository;
@@ -115,7 +117,9 @@ public class InvoiceService implements RetryListener {
 
             bookingClosingDetails = getBookingClosingDetails(invoiceRequest, invoiceRequest.receptionistEmployeeId());
         } catch (Exception e) {
-            throw new SwiftWheelsHubException(e.getMessage());
+            log.error("Error occurred while closing invoice: {}", e.getMessage());
+
+            throw ExceptionUtil.handleException(e);
         }
 
         bookingService.closeBooking(request, bookingClosingDetails);

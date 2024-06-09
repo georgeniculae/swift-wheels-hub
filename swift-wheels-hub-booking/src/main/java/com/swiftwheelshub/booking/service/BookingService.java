@@ -15,9 +15,11 @@ import com.swiftwheelshub.entity.BookingStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
+import com.swiftwheelshub.lib.exceptionhandling.ExceptionUtil;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.retry.RetryListener;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BookingService implements RetryListener {
 
     private final BookingRepository bookingRepository;
@@ -114,7 +117,9 @@ public class BookingService implements RetryListener {
             Booking savedBooking = bookingRepository.saveAndFlush(newBooking);
             bookingResponse = bookingMapper.mapEntityToDto(savedBooking);
         } catch (Exception e) {
-            throw new SwiftWheelsHubException(e.getMessage());
+            log.error("Error occurred while saving booking: {}", e.getMessage());
+
+            throw ExceptionUtil.handleException(e);
         }
 
         carService.changeCarStatus(request, carResponse.id(), CarState.NOT_AVAILABLE);
@@ -140,7 +145,9 @@ public class BookingService implements RetryListener {
             Booking updatedBooking = bookingRepository.saveAndFlush(updatedExistingBooking);
             bookingResponse = bookingMapper.mapEntityToDto(updatedBooking);
         } catch (Exception e) {
-            throw new SwiftWheelsHubException(e.getMessage());
+            log.error("Error occurred while updating booking: {}", e.getMessage());
+
+            throw ExceptionUtil.handleException(e);
         }
 
         getCarsForStatusUpdate(request, existingCarId, newCarId);
@@ -163,7 +170,9 @@ public class BookingService implements RetryListener {
             Booking savedBooking = bookingRepository.saveAndFlush(existingBooking);
             bookingResponse = bookingMapper.mapEntityToDto(savedBooking);
         } catch (Exception e) {
-            throw new SwiftWheelsHubException(e.getMessage());
+            log.error("Error occurred while closing booking: {}", e.getMessage());
+
+            throw ExceptionUtil.handleException(e);
         }
 
         updateCarWhenIsReturned(request, bookingResponse, bookingClosingDetails);

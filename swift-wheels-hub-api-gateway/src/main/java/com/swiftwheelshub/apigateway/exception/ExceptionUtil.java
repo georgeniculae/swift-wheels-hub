@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 @UtilityClass
 public class ExceptionUtil {
 
-    public SwiftWheelsHubResponseStatusException handleException(Throwable e) {
+    public RuntimeException handleException(Throwable e) {
         if (e instanceof WebClientResponseException webClientResponseException) {
             return new SwiftWheelsHubResponseStatusException(
                     webClientResponseException.getStatusCode(),
