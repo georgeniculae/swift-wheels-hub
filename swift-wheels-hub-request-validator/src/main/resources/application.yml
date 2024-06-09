@@ -64,6 +64,15 @@ management:
     readinessstate:
       enabled: true
 
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        web:
+          csrf:
+            CsrfFilter: DEBUG
+
 apikey:
   secret: ${API_KEY_SECRET}
 
