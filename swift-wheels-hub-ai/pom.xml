@@ -16,7 +16,6 @@
 
     <properties>
         <swift-wheels-hub-common.version>0.0.1-SNAPSHOT</swift-wheels-hub-common.version>
-        <langchain4j-vertex-ai-gemini.version>0.31.0</langchain4j-vertex-ai-gemini.version>
     </properties>
 
     <dependencies>
