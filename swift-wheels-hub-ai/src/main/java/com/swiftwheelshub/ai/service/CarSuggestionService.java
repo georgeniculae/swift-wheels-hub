@@ -23,7 +23,7 @@ public class CarSuggestionService implements RetryListener {
         List<String> cars = getAvailableCars(request);
         String chatPrompt = createChatPrompt(tripInfo, cars);
 
-        return chatService.openChatReply(chatPrompt);
+        return chatService.getChatReply(chatPrompt);
     }
 
     private List<String> getAvailableCars(HttpServletRequest request) {

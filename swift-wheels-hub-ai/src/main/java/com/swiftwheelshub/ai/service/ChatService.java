@@ -10,7 +10,7 @@ public class ChatService {
 
     private final ChatClient chatClient;
 
-    public String openChatReply(String prompt) {
+    public String getChatReply(String prompt) {
         return chatClient.prompt()
                 .user(prompt)
                 .call()

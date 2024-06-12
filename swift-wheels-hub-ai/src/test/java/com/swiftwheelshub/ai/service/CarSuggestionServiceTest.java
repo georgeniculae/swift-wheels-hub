@@ -38,7 +38,7 @@ class CarSuggestionServiceTest {
         TripInfo tripInfo = TestUtils.getResourceAsJson("/data/TripInfo.json", TripInfo.class);
 
         when(carService.getAllAvailableCars(any(HttpServletRequest.class))).thenReturn(List.of(carResponse));
-        when(chatService.openChatReply(anyString())).thenReturn(output);
+        when(chatService.getChatReply(anyString())).thenReturn(output);
 
         String chatOutput = carSuggestionService.getChatOutput(request, tripInfo);
         assertNotNull(chatOutput);
