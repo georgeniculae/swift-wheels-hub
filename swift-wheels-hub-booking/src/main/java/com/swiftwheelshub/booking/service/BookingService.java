@@ -29,7 +29,6 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -132,15 +131,12 @@ public class BookingService implements RetryListener {
         Booking existingBooking = findEntityById(id);
 
         final Long existingCarId = existingBooking.getCarId();
-        Long newCarId = updatedBookingRequest.carId();
 
         BookingResponse bookingResponse;
+
         try {
             Booking updatedExistingBooking =
-                    updateExistingBooking(request, updatedBookingRequest, existingCarId, newCarId, existingBooking);
-
-            updatedExistingBooking.setDateFrom(updatedBookingRequest.dateFrom());
-            updatedExistingBooking.setDateTo(updatedBookingRequest.dateTo());
+                    updateExistingBooking(request, updatedBookingRequest, existingCarId, existingBooking);
 
             Booking updatedBooking = bookingRepository.saveAndFlush(updatedExistingBooking);
             bookingResponse = bookingMapper.mapEntityToDto(updatedBooking);
@@ -150,7 +146,7 @@ public class BookingService implements RetryListener {
             throw ExceptionUtil.handleException(e);
         }
 
-        getCarsForStatusUpdate(request, existingCarId, newCarId);
+        getCarsForStatusUpdate(request, existingCarId, updatedBookingRequest.carId());
 
         return bookingResponse;
     }
@@ -208,26 +204,23 @@ public class BookingService implements RetryListener {
     }
 
     private Booking updateExistingBooking(HttpServletRequest request, BookingRequest updatedBookingRequest,
-                                          Long existingCarId, Long newCarId, Booking existingBooking) {
-        getCarIfIsChanged(request, existingCarId, newCarId)
-                .ifPresentOrElse(carResponse -> {
-                            existingBooking.setCarId(carResponse.id());
-                            existingBooking.setRentalBranchId(carResponse.actualBranchId());
-                            existingBooking.setAmount(getAmount(updatedBookingRequest, carResponse.amount()));
-                        },
-                        () -> existingBooking.setAmount(getAmount(updatedBookingRequest, existingBooking.getRentalCarPrice())));
+                                          Long existingCarId, Booking existingBooking) {
+        Long newCarId = updatedBookingRequest.carId();
 
-        return existingBooking;
-    }
-
-    private Optional<CarResponse> getCarIfIsChanged(HttpServletRequest request, Long existingCarId, Long newCarId) {
-        if (!existingCarId.equals(newCarId)) {
+        if (existingCarId.equals(newCarId)) {
+            existingBooking.setAmount(getAmount(updatedBookingRequest, existingBooking.getRentalCarPrice()));
+        } else {
             CarResponse newCarResponse = carService.findAvailableCarById(request, newCarId);
 
-            return Optional.of(newCarResponse);
+            existingBooking.setCarId(newCarResponse.id());
+            existingBooking.setRentalBranchId(newCarResponse.actualBranchId());
+            existingBooking.setAmount(getAmount(updatedBookingRequest, newCarResponse.amount()));
         }
 
-        return Optional.empty();
+        existingBooking.setDateFrom(updatedBookingRequest.dateFrom());
+        existingBooking.setDateTo(updatedBookingRequest.dateTo());
+
+        return existingBooking;
     }
 
     private BigDecimal getAmount(BookingRequest bookingRequest, BigDecimal amount) {
