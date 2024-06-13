@@ -7,6 +7,7 @@ import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.expense.mapper.InvoiceMapper;
 import com.swiftwheelshub.expense.service.EmailNotificationProducer;
 import io.debezium.config.Configuration;
+import io.debezium.data.Envelope;
 import io.debezium.embedded.Connect;
 import io.debezium.engine.DebeziumEngine;
 import io.debezium.engine.RecordChangeEvent;
@@ -15,25 +16,18 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static io.debezium.data.Envelope.FieldName.AFTER;
-import static io.debezium.data.Envelope.FieldName.BEFORE;
-import static io.debezium.data.Envelope.FieldName.OPERATION;
 import static io.debezium.data.Envelope.Operation;
 
 @Component
@@ -85,7 +79,7 @@ public class DebeziumListener {
         Struct sourceRecordChangeValue = (Struct) sourceRecord.value();
 
         if (ObjectUtils.isNotEmpty(sourceRecordChangeValue)) {
-            Operation operation = Operation.forCode((String) sourceRecordChangeValue.get(OPERATION));
+            Operation operation = Operation.forCode((String) sourceRecordChangeValue.get(Envelope.FieldName.OPERATION));
 
             if (Operation.READ != operation) {
                 Map<String, Object> payload = getPayload(operation, sourceRecordChangeValue);
@@ -97,7 +91,7 @@ public class DebeziumListener {
     }
 
     private Map<String, Object> getPayload(Operation operation, Struct sourceRecordChangeValue) {
-        String record = Operation.DELETE == operation ? BEFORE : AFTER;
+        String record = Operation.DELETE == operation ? Envelope.FieldName.BEFORE : Envelope.FieldName.AFTER;
         Struct struct = (Struct) sourceRecordChangeValue.get(record);
 
         return struct.schema()
@@ -105,41 +99,40 @@ public class DebeziumListener {
                 .stream()
                 .map(Field::name)
                 .filter(fieldName -> ObjectUtils.isNotEmpty(struct.get(fieldName)))
-                .map(fieldName -> getFieldName(struct, fieldName))
-                .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
+                .collect(Collectors.toMap(this::getUpdatedFieldName, struct::get));
     }
 
-    private Pair<String, Object> getFieldName(Struct struct, String fieldName) {
+    private String getUpdatedFieldName(String fieldName) {
         if (fieldName.contains(UNDERSCORE)) {
-            List<Integer> indexOfUnderscoreCharacters = getIndexOfUnderscoreCharacters(fieldName);
-            String updateFieldName = replaceUnderscoresWithUpperCases(fieldName, indexOfUnderscoreCharacters);
-
-            return Pair.of(updateFieldName, struct.get(fieldName));
+            return replaceUnderscoresWithUpperCases(fieldName);
         }
 
-        return Pair.of(fieldName, struct.get(fieldName));
+        return fieldName;
     }
 
-    private List<Integer> getIndexOfUnderscoreCharacters(String fieldName) {
-        List<Integer> indexes = new ArrayList<>();
+    private String replaceUnderscoresWithUpperCases(String fieldName) {
+        StringBuilder updatedFieldName = new StringBuilder();
+        int index = 0;
+        int fieldNameLength = fieldName.length() - 1;
 
-        for (int index = 0; index < fieldName.length(); index++) {
-            if (UNDERSCORE_CHAR == fieldName.charAt(index)) {
-                indexes.add(index);
+        while (index < fieldNameLength) {
+            char currentCharacter = fieldName.charAt(index);
+            char nextCharacter = fieldName.charAt(index + 1);
+
+            if (UNDERSCORE_CHAR == currentCharacter) {
+                updatedFieldName.append(Character.toUpperCase(nextCharacter));
+                index += 2;
+
+                continue;
             }
+
+            updatedFieldName.append(currentCharacter);
+            index++;
         }
 
-        return indexes;
-    }
+        updatedFieldName.append(fieldName.charAt(fieldNameLength));
 
-    private String replaceUnderscoresWithUpperCases(String fieldName, List<Integer> indexes) {
-        StringBuilder updatedFieldName = new StringBuilder(fieldName);
-
-        for (Integer index : indexes) {
-            updatedFieldName.setCharAt(index + 1, Character.toUpperCase(fieldName.charAt(index + 1)));
-        }
-
-        return updatedFieldName.toString().replace(UNDERSCORE, StringUtils.EMPTY);
+        return updatedFieldName.toString();
     }
 
     private void notifyCustomer(Operation operation, Map<String, Object> payload) {
