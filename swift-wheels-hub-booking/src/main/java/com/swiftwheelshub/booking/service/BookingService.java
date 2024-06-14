@@ -193,8 +193,7 @@ public class BookingService implements RetryListener {
         LocalDate dateTo = newBookingRequest.dateTo();
         LocalDate currentDate = LocalDate.now();
 
-        if (Objects.requireNonNull(dateFrom).isBefore(currentDate) ||
-                Objects.requireNonNull(dateTo).isBefore(currentDate)) {
+        if (dateFrom.isBefore(currentDate) || dateTo.isBefore(currentDate)) {
             throw new SwiftWheelsHubResponseStatusException(HttpStatus.BAD_REQUEST, "A date of booking cannot be in the past");
         }
 
@@ -206,17 +205,17 @@ public class BookingService implements RetryListener {
     private Booking updateExistingBooking(HttpServletRequest request, BookingRequest updatedBookingRequest,
                                           Long existingCarId, Booking existingBooking) {
         Long newCarId = updatedBookingRequest.carId();
+        BigDecimal amount = existingBooking.getRentalCarPrice();
 
-        if (existingCarId.equals(newCarId)) {
-            existingBooking.setAmount(getAmount(updatedBookingRequest, existingBooking.getRentalCarPrice()));
-        } else {
+        if (!existingCarId.equals(newCarId)) {
             CarResponse newCarResponse = carService.findAvailableCarById(request, newCarId);
 
+            amount = newCarResponse.amount();
             existingBooking.setCarId(newCarResponse.id());
             existingBooking.setRentalBranchId(newCarResponse.actualBranchId());
-            existingBooking.setAmount(getAmount(updatedBookingRequest, newCarResponse.amount()));
         }
 
+        existingBooking.setAmount(getAmount(updatedBookingRequest, amount));
         existingBooking.setDateFrom(updatedBookingRequest.dateFrom());
         existingBooking.setDateTo(updatedBookingRequest.dateTo());
 
@@ -227,7 +226,7 @@ public class BookingService implements RetryListener {
         LocalDate dateFrom = bookingRequest.dateFrom();
         LocalDate dateTo = bookingRequest.dateTo();
 
-        int bookingDays = Period.between(Objects.requireNonNull(dateFrom), Objects.requireNonNull(dateTo)).getDays();
+        int bookingDays = Period.between(dateFrom, dateTo).getDays();
 
         if (bookingDays == 0) {
             return amount;

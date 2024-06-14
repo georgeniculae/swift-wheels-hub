@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +50,7 @@ public class BranchService {
     public BranchResponse updateBranch(Long id, BranchRequest updatedBranchRequest) {
         Branch exitingBranch = findEntityById(id);
 
-        Long rentalOfficeId = Objects.requireNonNull(updatedBranchRequest.rentalOfficeId());
+        Long rentalOfficeId = updatedBranchRequest.rentalOfficeId();
         RentalOffice rentalOffice = rentalOfficeService.findEntityById(rentalOfficeId);
 
         exitingBranch.setName(updatedBranchRequest.name());

@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -107,7 +106,7 @@ public class CarService {
         existingCar.setYearOfProduction(updatedCarRequest.yearOfProduction());
         existingCar.setColor(updatedCarRequest.color());
         existingCar.setMileage(updatedCarRequest.mileage());
-        existingCar.setAmount(Objects.requireNonNull(updatedCarRequest.amount()));
+        existingCar.setAmount(updatedCarRequest.amount());
         existingCar.setCarStatus(CarStatus.valueOf(updatedCarRequest.carState().name()));
         existingCar.setOriginalBranch(branch);
         existingCar.setImage(carMapper.mapToImage(image));

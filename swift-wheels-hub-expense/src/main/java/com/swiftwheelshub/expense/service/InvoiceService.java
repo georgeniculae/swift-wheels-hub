@@ -23,7 +23,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -132,7 +131,7 @@ public class InvoiceService implements RetryListener {
     }
 
     private void validateInvoice(InvoiceRequest invoiceRequest) {
-        validateDateOfReturnOfTheCar(Objects.requireNonNull(invoiceRequest.carDateOfReturn()));
+        validateDateOfReturnOfTheCar(invoiceRequest.carDateOfReturn());
 
         if (Boolean.TRUE.equals(invoiceRequest.isVehicleDamaged()) && ObjectUtils.isEmpty(invoiceRequest.damageCost())) {
             throw new SwiftWheelsHubResponseStatusException(
