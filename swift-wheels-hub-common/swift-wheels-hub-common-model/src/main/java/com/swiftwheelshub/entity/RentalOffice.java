@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,7 +30,7 @@ public class RentalOffice extends BaseEntity {
 
     @OneToMany(mappedBy = "rentalOffice", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Branch> branches;
+    private List<Branch> branches = new ArrayList<>();
 
     @NotEmpty(message = "Name cannot be empty")
     private String name;

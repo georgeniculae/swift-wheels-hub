@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -40,6 +41,6 @@ public class Branch extends BaseEntity {
 
     @OneToMany(mappedBy = "workingBranch", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Employee> employees;
+    private List<Employee> employees = new ArrayList<>();
 
 }
