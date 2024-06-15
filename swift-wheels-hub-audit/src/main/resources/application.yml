@@ -24,6 +24,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        generate_statistics: true
   cloud:
     loadbalancer:
       enabled: true

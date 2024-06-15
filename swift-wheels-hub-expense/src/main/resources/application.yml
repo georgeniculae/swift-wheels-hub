@@ -26,6 +26,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        generate_statistics: true
   mvc:
     throw-exception-if-no-handler-found: true
   liquibase:

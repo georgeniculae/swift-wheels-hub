@@ -28,6 +28,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        generate_statistics: true
   kafka:
     bootstrap-servers: localhost:9092
   liquibase:
