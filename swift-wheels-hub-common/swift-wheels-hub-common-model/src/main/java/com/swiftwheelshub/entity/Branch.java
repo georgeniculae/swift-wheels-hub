@@ -11,7 +11,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,11 +18,11 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "branch", schema = "public")
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @Getter(onMethod_ = @JsonProperty)
 @Setter(onMethod_ = @JsonProperty)
@@ -41,6 +40,14 @@ public class Branch extends BaseEntity {
 
     @OneToMany(mappedBy = "workingBranch", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JsonIgnore
+    @Builder.Default
     private List<Employee> employees = new ArrayList<>();
+
+    public Branch(String name, String address, RentalOffice rentalOffice, List<Employee> employees) {
+        this.name = name;
+        this.address = address;
+        this.rentalOffice = rentalOffice;
+        this.employees = Objects.requireNonNullElseGet(employees, ArrayList::new);
+    }
 
 }

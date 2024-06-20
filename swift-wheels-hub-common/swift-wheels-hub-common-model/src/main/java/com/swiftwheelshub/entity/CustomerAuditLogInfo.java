@@ -36,6 +36,7 @@ public class CustomerAuditLogInfo {
 
     private LocalDateTime timestamp;
 
+    @Builder.Default
     private List<String> parametersValues = new ArrayList<>();
 
 }

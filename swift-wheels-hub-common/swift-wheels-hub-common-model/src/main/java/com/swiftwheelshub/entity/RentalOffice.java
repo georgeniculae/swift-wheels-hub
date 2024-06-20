@@ -9,7 +9,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,11 +16,11 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "rental_office", schema = "public")
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @Getter(onMethod_ = @JsonProperty)
 @Setter(onMethod_ = @JsonProperty)
@@ -30,6 +29,7 @@ public class RentalOffice extends BaseEntity {
 
     @OneToMany(mappedBy = "rentalOffice", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JsonIgnore
+    @Builder.Default
     private List<Branch> branches = new ArrayList<>();
 
     @NotEmpty(message = "Name cannot be empty")
@@ -39,5 +39,12 @@ public class RentalOffice extends BaseEntity {
     private String contactAddress;
 
     private String phoneNumber;
+
+    public RentalOffice(List<Branch> branches, String name, String contactAddress, String phoneNumber) {
+        this.branches = Objects.requireNonNullElseGet(branches, ArrayList::new);
+        this.name = name;
+        this.contactAddress = contactAddress;
+        this.phoneNumber = phoneNumber;
+    }
 
 }

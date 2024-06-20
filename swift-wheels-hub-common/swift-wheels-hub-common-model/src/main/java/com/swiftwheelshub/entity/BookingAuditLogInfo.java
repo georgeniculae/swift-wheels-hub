@@ -36,6 +36,7 @@ public class BookingAuditLogInfo {
 
     private LocalDateTime timestamp;
 
+    @Builder.Default
     private List<String> parametersValues = new ArrayList<>();
 
 }

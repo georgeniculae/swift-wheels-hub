@@ -36,6 +36,7 @@ public class ExpenseAuditLogInfo {
 
     private LocalDateTime timestamp;
 
+    @Builder.Default
     private List<String> parametersValues = new ArrayList<>();
 
 }
