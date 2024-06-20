@@ -83,9 +83,9 @@ public class DebeziumListener {
 
             if (Operation.READ != operation) {
                 Map<String, Object> payload = getPayload(operation, sourceRecordChangeValue);
-                notifyCustomer(operation, payload);
+                notifyCustomer(payload, operation);
 
-                log.info("Updated Data: {} with Operation: {}", payload, operation.name());
+                log.info("Processed payload: {} with operation: {}", payload, operation.name());
             }
         }
     }
@@ -135,7 +135,7 @@ public class DebeziumListener {
         return updatedFieldName.toString();
     }
 
-    private void notifyCustomer(Operation operation, Map<String, Object> payload) {
+    private void notifyCustomer(Map<String, Object> payload, Operation operation) {
         Invoice invoice = objectMapper.convertValue(payload, Invoice.class);
         InvoiceResponse invoiceResponse = invoiceMapper.mapEntityToDto(invoice);
 

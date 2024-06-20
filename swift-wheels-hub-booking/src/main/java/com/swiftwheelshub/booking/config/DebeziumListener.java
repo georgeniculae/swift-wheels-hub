@@ -85,7 +85,7 @@ public class DebeziumListener {
                 Map<String, Object> payload = getPayload(operation, sourceRecordChangeValue);
                 handleBookingSending(payload, operation);
 
-                log.info("Updated Data: {} with Operation: {}", payload, operation.name());
+                log.info("Processed payload: {} with operation: {}", payload, operation.name());
             }
         }
     }
