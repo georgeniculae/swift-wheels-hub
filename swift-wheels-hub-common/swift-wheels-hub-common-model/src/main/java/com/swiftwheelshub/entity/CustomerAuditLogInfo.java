@@ -1,12 +1,8 @@
 package com.swiftwheelshub.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,19 +11,15 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "customer_audit_log_info", schema = "public")
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @Getter
 @Setter
-public class CustomerAuditLogInfo {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class CustomerAuditLogInfo extends BaseEntity {
 
     @NotEmpty(message = "Method name cannot be empty")
     private String methodName;
@@ -38,5 +30,12 @@ public class CustomerAuditLogInfo {
 
     @Builder.Default
     private List<String> parametersValues = new ArrayList<>();
+
+    public CustomerAuditLogInfo(String methodName, String username, LocalDateTime timestamp, List<String> parametersValues) {
+        this.methodName = methodName;
+        this.username = username;
+        this.timestamp = timestamp;
+        this.parametersValues = Objects.requireNonNullElseGet(parametersValues, ArrayList::new);
+    }
 
 }
