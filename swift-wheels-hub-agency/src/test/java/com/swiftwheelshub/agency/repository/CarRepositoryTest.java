@@ -7,12 +7,14 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,21 +44,30 @@ class CarRepositoryTest {
     }
 
     @Test
-    void findAllCarsTest_success() {
-        List<Car> cars = carRepository.findAll();
-        assertEquals(2, cars.size());
+    @Transactional(readOnly = true)
+    void findAllCarsCarsTest_success() {
+        try (Stream<Car> carsStream = carRepository.findAllCars()) {
+            List<Car> cars = carsStream.toList();
+            assertEquals(2, cars.size());
+        }
     }
 
     @Test
+    @Transactional(readOnly = true)
     void findByFilterTest_success() {
-        List<Car> cars = carRepository.findByFilter("Golf");
-        assertEquals(1, cars.size());
+        try (Stream<Car> carStream = carRepository.findByFilter("Golf")) {
+            List<Car> cars = carStream.toList();
+            assertEquals(1, cars.size());
+        }
     }
 
     @Test
+    @Transactional(readOnly = true)
     void findCarsByMakeIgnoreCaseTest_success() {
-        List<Car> cars = carRepository.findCarsByMakeIgnoreCase("Volkswagen");
-        assertEquals(1, cars.size());
+        try (Stream<Car> carStream = carRepository.findCarsByMakeIgnoreCase("Volkswagen")) {
+            List<Car> cars = carStream.toList();
+            assertEquals(1, cars.size());
+        }
     }
 
     @Test

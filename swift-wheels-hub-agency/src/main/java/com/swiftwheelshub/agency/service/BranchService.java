@@ -9,8 +9,10 @@ import com.swiftwheelshub.entity.RentalOffice;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -66,11 +68,11 @@ public class BranchService {
         branchRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public List<BranchResponse> findBranchesByFilter(String filter) {
-        return branchRepository.findByFilter(filter)
-                .stream()
-                .map(branchMapper::mapEntityToDto)
-                .toList();
+        try (Stream<Branch> branchesStream = branchRepository.findByFilter(filter)) {
+            return branchesStream.map(branchMapper::mapEntityToDto).toList();
+        }
     }
 
     public Long countBranches() {

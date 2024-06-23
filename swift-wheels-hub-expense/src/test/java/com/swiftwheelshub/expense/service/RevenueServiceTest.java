@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,7 +54,7 @@ class RevenueServiceTest {
     void findRevenueByDateTest_success() {
         Revenue revenue = TestUtils.getResourceAsJson("/data/Revenue.json", Revenue.class);
 
-        when(revenueRepository.findByDateOfRevenue(any(LocalDate.class))).thenReturn(List.of(revenue));
+        when(revenueRepository.findByDateOfRevenue(any(LocalDate.class))).thenReturn(Stream.of(revenue));
 
         List<RevenueResponse> revenueResponses =
                 assertDoesNotThrow(() -> revenueService.findRevenuesByDate(LocalDate.parse("2050-02-20")));

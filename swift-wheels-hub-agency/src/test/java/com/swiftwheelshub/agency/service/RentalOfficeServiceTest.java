@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -120,7 +121,7 @@ class RentalOfficeServiceTest {
     void findRentalOfficeByNameTest_success() {
         RentalOffice rentalOffice = TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
-        when(rentalOfficeRepository.findRentalOfficeByFilter(anyString())).thenReturn(List.of(rentalOffice));
+        when(rentalOfficeRepository.findRentalOfficeByFilter(anyString())).thenReturn(Stream.of(rentalOffice));
 
         List<RentalOfficeResponse> rentalOfficeResponses =
                 rentalOfficeService.findRentalOfficeByFilter("Test Rental Office");

@@ -9,8 +9,10 @@ import com.swiftwheelshub.entity.Employee;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -69,18 +71,18 @@ public class EmployeeService {
         return employeeMapper.mapEntityToDto(savedEmployee);
     }
 
+    @Transactional(readOnly = true)
     public List<EmployeeResponse> findEmployeesByBranchId(Long id) {
-        return employeeRepository.findAllEmployeesByBranchId(id)
-                .stream()
-                .map(employeeMapper::mapEntityToDto)
-                .toList();
+        try (Stream<Employee> employeeStream = employeeRepository.findAllEmployeesByBranchId(id)) {
+            return employeeStream.map(employeeMapper::mapEntityToDto).toList();
+        }
     }
 
+    @Transactional(readOnly = true)
     public List<EmployeeResponse> findEmployeesByFilter(String filter) {
-        return employeeRepository.findByFilter(filter)
-                .stream()
-                .map(employeeMapper::mapEntityToDto)
-                .toList();
+        try (Stream<Employee> employeeStream = employeeRepository.findByFilter(filter)) {
+            return employeeStream.map(employeeMapper::mapEntityToDto).toList();
+        }
     }
 
     public Long countEmployees() {

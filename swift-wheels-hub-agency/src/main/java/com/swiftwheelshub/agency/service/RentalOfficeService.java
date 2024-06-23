@@ -8,8 +8,10 @@ import com.swiftwheelshub.entity.RentalOffice;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -59,11 +61,11 @@ public class RentalOfficeService {
         return rentalOfficeMapper.mapEntityToDto(savedRentalOffice);
     }
 
+    @Transactional(readOnly = true)
     public List<RentalOfficeResponse> findRentalOfficeByFilter(String filter) {
-        return rentalOfficeRepository.findRentalOfficeByFilter(filter)
-                .stream()
-                .map(rentalOfficeMapper::mapEntityToDto)
-                .toList();
+        try (Stream<RentalOffice> rentalOfficeStream = rentalOfficeRepository.findRentalOfficeByFilter(filter)) {
+            return rentalOfficeStream.map(rentalOfficeMapper::mapEntityToDto).toList();
+        }
     }
 
     public Long countRentalOffices() {

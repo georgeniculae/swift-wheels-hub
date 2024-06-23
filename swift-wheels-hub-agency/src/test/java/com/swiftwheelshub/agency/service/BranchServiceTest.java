@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -108,7 +109,7 @@ class BranchServiceTest {
     void findBranchesByFilterTest_success() {
         Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
 
-        when(branchRepository.findByFilter(anyString())).thenReturn(List.of(branch));
+        when(branchRepository.findByFilter(anyString())).thenReturn(Stream.of(branch));
 
         List<BranchResponse> branchResponses = branchService.findBranchesByFilter("Test");
         AssertionUtils.assertBranchResponse(branch, branchResponses.getFirst());

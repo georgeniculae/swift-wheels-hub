@@ -7,11 +7,13 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,15 +37,21 @@ class EmployeeRepositoryTest {
     }
 
     @Test
+    @Transactional(readOnly = true)
     void findByFilterTest_success() {
-        List<Employee> employees = employeeRepository.findByFilter("manager");
-        assertEquals(2, employees.size());
+        try (Stream<Employee> employeeStream = employeeRepository.findByFilter("manager")) {
+            List<Employee> employees = employeeStream.toList();
+            assertEquals(2, employees.size());
+        }
     }
 
     @Test
+    @Transactional(readOnly = true)
     void findAllEmployeesByBranchIdTest_success() {
-        List<Employee> employees = employeeRepository.findAllEmployeesByBranchId(1L);
-        assertEquals(2, employees.size());
+        try (Stream<Employee> employeeStream = employeeRepository.findAllEmployeesByBranchId(1L)) {
+            List<Employee> employees = employeeStream.toList();
+            assertEquals(2, employees.size());
+        }
     }
 
 }

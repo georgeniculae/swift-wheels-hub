@@ -1,12 +1,15 @@
 package com.swiftwheelshub.agency.repository;
 
 import com.swiftwheelshub.entity.Car;
+import jakarta.persistence.QueryHint;
+import org.hibernate.jpa.HibernateHints;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.lang.NonNull;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface CarRepository extends JpaRepository<Car, Long> {
 
@@ -46,7 +49,12 @@ public interface CarRepository extends JpaRepository<Car, Long> {
             From Car car
             where upper(car.make) like upper(concat('%', ?1, '%'))
             or upper(car.model) like upper(concat('%', ?1, '%'))""")
-    List<Car> findByFilter(String filter);
+    @QueryHints(value = {
+            @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),
+            @QueryHint(name = HibernateHints.HINT_READ_ONLY, value = "true")
+    })
+    Stream<Car> findByFilter(String filter);
 
     @Query("""
             Select new Car(
@@ -63,8 +71,13 @@ public interface CarRepository extends JpaRepository<Car, Long> {
             car.actualBranch
             )
             From Car car""")
+    @QueryHints(value = {
+            @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),
+            @QueryHint(name = HibernateHints.HINT_READ_ONLY, value = "true")
+    })
     @NonNull
-    List<Car> findAll();
+    Stream<Car> findAllCars();
 
     @Query("""
             Select new Car(
@@ -82,8 +95,13 @@ public interface CarRepository extends JpaRepository<Car, Long> {
             )
             From Car car
             where car.carStatus = 'AVAILABLE'""")
+    @QueryHints(value = {
+            @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),
+            @QueryHint(name = HibernateHints.HINT_READ_ONLY, value = "true")
+    })
     @NonNull
-    List<Car> findAllAvailableCars();
+    Stream<Car> findAllAvailableCars();
 
     @Query("""
             Select new Car(
@@ -101,7 +119,12 @@ public interface CarRepository extends JpaRepository<Car, Long> {
             )
             From Car car
             where upper(car.make) like upper(concat('%', ?1, '%'))""")
-    List<Car> findCarsByMakeIgnoreCase(String make);
+    @QueryHints(value = {
+            @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),
+            @QueryHint(name = HibernateHints.HINT_READ_ONLY, value = "true")
+    })
+    Stream<Car> findCarsByMakeIgnoreCase(String make);
 
     @Query("""
             Select new Car(car.image)

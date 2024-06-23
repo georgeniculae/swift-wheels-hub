@@ -30,6 +30,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
@@ -38,9 +39,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CarService {
 
     private final CarRepository carRepository;
@@ -48,10 +51,11 @@ public class CarService {
     private final EmployeeService employeeService;
     private final CarMapper carMapper;
 
+    @Transactional(readOnly = true)
     public List<CarResponse> findAllCars() {
-        List<Car> cars = carRepository.findAll();
-
-        return getCarResponses(cars);
+        try (Stream<Car> cars = carRepository.findAllCars()) {
+            return getCarResponses(cars);
+        }
     }
 
     public CarResponse findCarById(Long id) {
@@ -67,15 +71,18 @@ public class CarService {
         return carMapper.mapEntityToDto(car);
     }
 
+    @Transactional(readOnly = true)
     public List<CarResponse> findAllAvailableCars() {
-        return carRepository.findAllAvailableCars()
-                .stream()
-                .map(carMapper::mapEntityToDto)
-                .toList();
+        try (Stream<Car> allAvailableCars = carRepository.findAllAvailableCars()) {
+            return allAvailableCars.map(carMapper::mapEntityToDto).toList();
+        }
     }
 
+    @Transactional(readOnly = true)
     public List<CarResponse> findCarsByMake(String make) {
-        return getCarResponses(carRepository.findCarsByMakeIgnoreCase(make));
+        try (Stream<Car> cars = carRepository.findCarsByMakeIgnoreCase(make)) {
+            return getCarResponses(cars);
+        }
     }
 
     public byte[] getCarImage(Long id) {
@@ -140,7 +147,7 @@ public class CarService {
 
             List<Car> cars = getCarsFromSheet(sheet);
 
-            return getCarResponses(carRepository.saveAllAndFlush(cars));
+            return getCarResponses(carRepository.saveAllAndFlush(cars).stream());
         } catch (Exception e) {
             throw new SwiftWheelsHubException(e.getMessage());
         }
@@ -160,11 +167,11 @@ public class CarService {
         carRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public List<CarResponse> findCarsByFilter(String filter) {
-        return carRepository.findByFilter(filter)
-                .stream()
-                .map(carMapper::mapEntityToDto)
-                .toList();
+        try (Stream<Car> carStream = carRepository.findByFilter(filter)) {
+            return carStream.map(carMapper::mapEntityToDto).toList();
+        }
     }
 
     public Long countCars() {
@@ -279,9 +286,8 @@ public class CarService {
         return ObjectUtils.isEmpty(pictureData) ? null : pictureData.getData();
     }
 
-    private List<CarResponse> getCarResponses(List<Car> cars) {
-        return cars.stream()
-                .map(carMapper::mapEntityToDto)
+    private List<CarResponse> getCarResponses(Stream<Car> cars) {
+        return cars.map(carMapper::mapEntityToDto)
                 .toList();
     }
 

@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -60,7 +61,7 @@ class CarServiceTest {
     void findAllCarsTest_success() {
         Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
 
-        when(carRepository.findAll()).thenReturn(List.of(car));
+        when(carRepository.findAllCars()).thenReturn(Stream.of(car));
 
         List<CarResponse> carResponses = assertDoesNotThrow(() -> carService.findAllCars());
         AssertionUtils.assertCarResponse(car, carResponses.getFirst());
@@ -70,7 +71,7 @@ class CarServiceTest {
     void findCarsByFilterTest_success() {
         Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
 
-        when(carRepository.findByFilter(anyString())).thenReturn(List.of(car));
+        when(carRepository.findByFilter(anyString())).thenReturn(Stream.of(car));
 
         List<CarResponse> carResponses = assertDoesNotThrow(() -> carService.findCarsByFilter("Test"));
 
@@ -103,7 +104,7 @@ class CarServiceTest {
     void findCarsByMakeTest_success() {
         Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
 
-        when(carRepository.findCarsByMakeIgnoreCase(anyString())).thenReturn(List.of(car));
+        when(carRepository.findCarsByMakeIgnoreCase(anyString())).thenReturn(Stream.of(car));
 
         List<CarResponse> carResponses = assertDoesNotThrow(() -> carService.findCarsByMake("Test"));
 

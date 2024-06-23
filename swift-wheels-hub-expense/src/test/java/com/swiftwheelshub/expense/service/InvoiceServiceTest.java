@@ -23,6 +23,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -70,7 +71,7 @@ class InvoiceServiceTest {
     void findAllActiveInvoicesTest_success() {
         Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
 
-        when(invoiceRepository.findAllActive()).thenReturn(List.of(invoice));
+        when(invoiceRepository.findAllActive()).thenReturn(Stream.of(invoice));
 
         assertDoesNotThrow(() -> invoiceService.findAllInvoices());
         List<InvoiceResponse> allActiveInvoices = invoiceService.findAllActiveInvoices();
@@ -105,7 +106,7 @@ class InvoiceServiceTest {
     void findInvoiceByFilterTest_success() {
         Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
 
-        when(invoiceRepository.findByCommentsIgnoreCase(anyString())).thenReturn(List.of(invoice));
+        when(invoiceRepository.findByCommentsIgnoreCase(anyString())).thenReturn(Stream.of(invoice));
 
         List<InvoiceResponse> invoiceResponses =
                 assertDoesNotThrow(() -> invoiceService.findInvoiceByComments("comment"));
@@ -117,7 +118,7 @@ class InvoiceServiceTest {
     void findAllInvoicesByCustomerIdTest_success() {
         Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
 
-        when(invoiceRepository.findByCustomerUsername(anyString())).thenReturn(List.of(invoice));
+        when(invoiceRepository.findByCustomerUsername(anyString())).thenReturn(Stream.of(invoice));
 
         List<InvoiceResponse> invoices = invoiceService.findAllInvoicesByCustomerUsername("user");
 

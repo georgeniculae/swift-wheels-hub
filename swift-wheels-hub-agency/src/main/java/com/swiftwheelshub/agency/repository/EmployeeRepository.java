@@ -1,10 +1,13 @@
 package com.swiftwheelshub.agency.repository;
 
 import com.swiftwheelshub.entity.Employee;
+import jakarta.persistence.QueryHint;
+import org.hibernate.jpa.HibernateHints;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
@@ -14,11 +17,16 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             or upper(employee.lastName) like upper(concat('%', ?1, '%'))
             or upper(employee.jobPosition) like upper(concat('%', ?1, '%'))
             or upper(employee.workingBranch.name) like upper(concat('%', ?1, '%'))""")
-    List<Employee> findByFilter(String filter);
+    @QueryHints(value = {
+            @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),
+            @QueryHint(name = HibernateHints.HINT_READ_ONLY, value = "true")
+    })
+    Stream<Employee> findByFilter(String filter);
 
     @Query("""
             From Employee employee
             where employee.workingBranch.id = ?1""")
-    List<Employee> findAllEmployeesByBranchId(Long id);
+    Stream<Employee> findAllEmployeesByBranchId(Long id);
 
 }

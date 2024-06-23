@@ -18,11 +18,13 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.retry.RetryListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -41,18 +43,18 @@ public class InvoiceService implements RetryListener {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<InvoiceResponse> findAllActiveInvoices() {
-        return invoiceRepository.findAllActive()
-                .stream()
-                .map(invoiceMapper::mapEntityToDto)
-                .toList();
+        try (Stream<Invoice> invoiceStream = invoiceRepository.findAllActive()) {
+            return invoiceStream.map(invoiceMapper::mapEntityToDto).toList();
+        }
     }
 
+    @Transactional(readOnly = true)
     public List<InvoiceResponse> findAllInvoicesByCustomerUsername(String customerUsername) {
-        return invoiceRepository.findByCustomerUsername(customerUsername)
-                .stream()
-                .map(invoiceMapper::mapEntityToDto)
-                .toList();
+        try (Stream<Invoice> invoiceStream = invoiceRepository.findByCustomerUsername(customerUsername)) {
+            return invoiceStream.map(invoiceMapper::mapEntityToDto).toList();
+        }
     }
 
     public InvoiceResponse findInvoiceById(Long id) {
@@ -61,11 +63,11 @@ public class InvoiceService implements RetryListener {
         return invoiceMapper.mapEntityToDto(invoice);
     }
 
+    @Transactional(readOnly = true)
     public List<InvoiceResponse> findInvoiceByComments(String searchString) {
-        return invoiceRepository.findByCommentsIgnoreCase(searchString)
-                .stream()
-                .map(invoiceMapper::mapEntityToDto)
-                .toList();
+        try (Stream<Invoice> invoiceStream = invoiceRepository.findByCommentsIgnoreCase(searchString)) {
+            return invoiceStream.map(invoiceMapper::mapEntityToDto).toList();
+        }
     }
 
     public Long countInvoices() {

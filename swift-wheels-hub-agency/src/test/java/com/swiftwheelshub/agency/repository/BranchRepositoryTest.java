@@ -7,11 +7,13 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,9 +37,12 @@ class BranchRepositoryTest {
     }
 
     @Test
+    @Transactional(readOnly = true)
     void findByFilterTest_success() {
-        List<Branch> branches = branchRepository.findByFilter("Branch");
-        assertEquals(2, branches.size());
+        try (Stream<Branch> branchStream = branchRepository.findByFilter("Branch")) {
+            List<Branch> branches = branchStream.toList();
+            assertEquals(2, branches.size());
+        }
     }
 
 }

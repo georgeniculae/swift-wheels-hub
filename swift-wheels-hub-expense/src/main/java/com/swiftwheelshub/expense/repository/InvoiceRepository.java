@@ -1,11 +1,14 @@
 package com.swiftwheelshub.expense.repository;
 
 import com.swiftwheelshub.entity.Invoice;
+import jakarta.persistence.QueryHint;
+import org.hibernate.jpa.HibernateHints;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
@@ -17,18 +20,33 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     @Query("""
             From Invoice invoice
             where upper(invoice.comments) like upper(concat('%', ?1, '%'))""")
-    List<Invoice> findByCommentsIgnoreCase(String comments);
+    @QueryHints(value = {
+            @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),
+            @QueryHint(name = HibernateHints.HINT_READ_ONLY, value = "true")
+    })
+    Stream<Invoice> findByCommentsIgnoreCase(String comments);
 
     @Query("""
             From Invoice invoice
             where invoice.customerUsername = ?1 and
             invoice.totalAmount is not null""")
-    List<Invoice> findByCustomerUsername(String customerUsername);
+    @QueryHints(value = {
+            @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),
+            @QueryHint(name = HibernateHints.HINT_READ_ONLY, value = "true")
+    })
+    Stream<Invoice> findByCustomerUsername(String customerUsername);
 
     @Query("""
             From Invoice invoice
             where invoice.totalAmount is not null""")
-    List<Invoice> findAllActive();
+    @QueryHints(value = {
+            @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),
+            @QueryHint(name = HibernateHints.HINT_READ_ONLY, value = "true")
+    })
+    Stream<Invoice> findAllActive();
 
     @Query("""
             Select count(invoice)

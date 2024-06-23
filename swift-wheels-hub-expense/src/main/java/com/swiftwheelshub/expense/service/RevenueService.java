@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -33,11 +34,11 @@ public class RevenueService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<RevenueResponse> findRevenuesByDate(LocalDate dateOfRevenue) {
-        return revenueRepository.findByDateOfRevenue(dateOfRevenue)
-                .stream()
-                .map(revenueMapper::mapEntityToDto)
-                .toList();
+        try (Stream<Revenue> revenueStream = revenueRepository.findByDateOfRevenue(dateOfRevenue)) {
+            return revenueStream.map(revenueMapper::mapEntityToDto).toList();
+        }
     }
 
     @Transactional

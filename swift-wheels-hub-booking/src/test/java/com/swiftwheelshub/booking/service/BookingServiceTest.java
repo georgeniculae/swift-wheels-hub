@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -161,7 +162,7 @@ class BookingServiceTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("X-USERNAME", "user");
 
-        when(bookingRepository.findBookingsByUser(anyString())).thenReturn(List.of(booking));
+        when(bookingRepository.findBookingsByUser(anyString())).thenReturn(Stream.of(booking));
 
         BigDecimal amount = assertDoesNotThrow(() -> bookingService.getAmountSpentByLoggedInUser(request));
         assertEquals(BigDecimal.valueOf(500), amount);

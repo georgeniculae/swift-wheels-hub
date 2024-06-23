@@ -23,12 +23,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.retry.RetryListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -76,11 +78,13 @@ public class BookingService implements RetryListener {
         return bookingRepository.countByCustomerUsername(HttpRequestUtil.extractUsername(request));
     }
 
+    @Transactional(readOnly = true)
     public List<BookingResponse> findBookingsByLoggedInUser(HttpServletRequest request) {
-        return bookingRepository.findBookingsByUser(HttpRequestUtil.extractUsername(request))
-                .stream()
-                .map(bookingMapper::mapEntityToDto)
-                .toList();
+        String username = HttpRequestUtil.extractUsername(request);
+
+        try (Stream<Booking> bookingStream = bookingRepository.findBookingsByUser(username)) {
+            return bookingStream.map(bookingMapper::mapEntityToDto).toList();
+        }
     }
 
     public BigDecimal getAmountSpentByLoggedInUser(HttpServletRequest request) {

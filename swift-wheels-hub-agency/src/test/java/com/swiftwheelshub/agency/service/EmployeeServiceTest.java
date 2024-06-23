@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -115,7 +116,7 @@ class EmployeeServiceTest {
     void findEmployeesByBranchIdTest_success() {
         Employee employee = TestUtils.getResourceAsJson("/data/Employee.json", Employee.class);
 
-        when(employeeRepository.findAllEmployeesByBranchId(anyLong())).thenReturn(List.of(employee));
+        when(employeeRepository.findAllEmployeesByBranchId(anyLong())).thenReturn(Stream.of(employee));
 
         List<EmployeeResponse> employeeResponses = assertDoesNotThrow(() -> employeeService.findEmployeesByBranchId(1L));
         AssertionUtils.assertEmployeeResponse(employee, employeeResponses.getFirst());
@@ -125,7 +126,7 @@ class EmployeeServiceTest {
     void findEmployeesByFilterTest_success() {
         Employee employee = TestUtils.getResourceAsJson("/data/Employee.json", Employee.class);
 
-        when(employeeRepository.findByFilter(anyString())).thenReturn(List.of(employee));
+        when(employeeRepository.findByFilter(anyString())).thenReturn(Stream.of(employee));
 
         List<EmployeeResponse> employeeResponses = employeeService.findEmployeesByFilter("Ion");
         AssertionUtils.assertEmployeeResponse(employee, employeeResponses.getFirst());
