@@ -43,7 +43,6 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class CarService {
 
     private final CarRepository carRepository;
