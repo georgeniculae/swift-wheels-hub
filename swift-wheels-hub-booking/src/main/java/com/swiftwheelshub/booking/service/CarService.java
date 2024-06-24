@@ -65,7 +65,7 @@ public class CarService {
                 .build()
                 .toUri();
 
-        restClient.put()
+        restClient.patch()
                 .uri(uri)
                 .headers(HttpRequestUtil.setHttpHeaders(request))
                 .retrieve()
