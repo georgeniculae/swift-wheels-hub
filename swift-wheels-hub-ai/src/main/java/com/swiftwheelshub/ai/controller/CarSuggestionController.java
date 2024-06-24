@@ -4,11 +4,10 @@ import com.swiftwheelshub.ai.service.CarSuggestionService;
 import com.swiftwheelshub.dto.CarSuggestionResponse;
 import com.swiftwheelshub.dto.TripInfo;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,9 +18,8 @@ public class CarSuggestionController {
 
     private final CarSuggestionService carSuggestionService;
 
-    @PostMapping
-    public ResponseEntity<CarSuggestionResponse> getChatPrompt(HttpServletRequest request,
-                                                               @RequestBody @Valid TripInfo tripInfo) {
+    @GetMapping
+    public ResponseEntity<CarSuggestionResponse> getChatPrompt(HttpServletRequest request, @Validated TripInfo tripInfo) {
         CarSuggestionResponse carSuggestionResponse = carSuggestionService.getChatOutput(request, tripInfo);
 
         return ResponseEntity.ok(carSuggestionResponse);

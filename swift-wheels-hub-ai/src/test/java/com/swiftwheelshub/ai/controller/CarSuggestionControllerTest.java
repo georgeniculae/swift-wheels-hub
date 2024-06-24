@@ -21,7 +21,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = CarSuggestionController.class)
@@ -40,20 +39,16 @@ class CarSuggestionControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void getChatPromptTest_success() throws Exception {
-        TripInfo tripInfo = TestUtils.getResourceAsJson("/data/TripInfo.json", TripInfo.class);
         CarSuggestionResponse carSuggestionResponse =
                 TestUtils.getResourceAsJson("/data/CarSuggestionResponse.json", CarSuggestionResponse.class);
-        String content = TestUtils.writeValueAsString(tripInfo);
 
         when(carSuggestionService.getChatOutput(any(HttpServletRequest.class), any(TripInfo.class)))
                 .thenReturn(carSuggestionResponse);
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/car-suggestion")
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/car-suggestion?destination=Sinaia&peopleCount=3&tripKind=city&tripDate=2024-06-20")
                         .contextPath(PATH)
-                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(content))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -64,15 +59,10 @@ class CarSuggestionControllerTest {
     @Test
     @WithAnonymousUser
     void getChatPromptTest_unauthorized() throws Exception {
-        TripInfo tripInfo = TestUtils.getResourceAsJson("/data/TripInfo.json", TripInfo.class);
-        String content = TestUtils.writeValueAsString(tripInfo);
-
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/car-suggestion")
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/car-suggestion?destination=Sinaia&peopleCount=3&tripKind=city&tripDate=2024-06-20")
                         .contextPath(PATH)
-                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(content))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
                 .andReturn()
                 .getResponse();
@@ -82,22 +72,11 @@ class CarSuggestionControllerTest {
 
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
-    void getChatPromptTest_noRequestBody() throws Exception {
-        TripInfo tripInfo = TestUtils.getResourceAsJson("/data/TripInfo.json", TripInfo.class);
-        TripInfo invalidTripInfo = tripInfo.toBuilder().destination("").build();
-        CarSuggestionResponse carSuggestionResponse =
-                TestUtils.getResourceAsJson("/data/CarSuggestionResponse.json", CarSuggestionResponse.class);
-        String content = TestUtils.writeValueAsString(invalidTripInfo);
-
-        when(carSuggestionService.getChatOutput(any(HttpServletRequest.class), any(TripInfo.class)))
-                .thenReturn(carSuggestionResponse);
-
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/car-suggestion")
+    void getChatPromptTest_missingRequestParam() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/car-suggestion?destination=Sinaia&peopleCount=3&tripKind=city")
                         .contextPath(PATH)
-                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(content))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn()
                 .getResponse();

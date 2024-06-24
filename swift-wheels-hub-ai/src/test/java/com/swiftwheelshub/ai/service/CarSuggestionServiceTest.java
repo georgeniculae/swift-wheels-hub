@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -42,7 +43,7 @@ class CarSuggestionServiceTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         when(carService.getAllAvailableCars(any(HttpServletRequest.class))).thenReturn(List.of(carResponse));
-        when(chatService.getChatReply(anyString())).thenReturn(carSuggestionResponse);
+        when(chatService.getChatReply(anyString(), anyMap())).thenReturn(carSuggestionResponse);
 
         CarSuggestionResponse actualCarSuggestionResponse = carSuggestionService.getChatOutput(request, tripInfo);
         assertNotNull(actualCarSuggestionResponse);
