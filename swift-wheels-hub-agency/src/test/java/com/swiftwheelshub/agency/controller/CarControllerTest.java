@@ -40,6 +40,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -619,7 +620,7 @@ class CarControllerTest {
 
         when(carService.updateCarStatus(anyLong(), any(CarState.class))).thenReturn(carResponse);
 
-        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}/change-status?carState=NOT_AVAILABLE", 1L)
+        MockHttpServletResponse response = mockMvc.perform(patch(PATH + "/{id}/change-status?carState=NOT_AVAILABLE", 1L)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -636,7 +637,7 @@ class CarControllerTest {
 
         when(carService.updateCarStatus(anyLong(), any(CarState.class))).thenReturn(carResponse);
 
-        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}/change-status?carState=NOT_AVAILABLE", 1L)
+        MockHttpServletResponse response = mockMvc.perform(patch(PATH + "/{id}/change-status?carState=NOT_AVAILABLE", 1L)
                         .with(csrf())
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON))
