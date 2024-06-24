@@ -2,6 +2,7 @@ package com.swiftwheelshub.ai.service;
 
 import com.swiftwheelshub.ai.util.TestUtils;
 import com.swiftwheelshub.dto.CarResponse;
+import com.swiftwheelshub.dto.CarSuggestionResponse;
 import com.swiftwheelshub.dto.TripInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
@@ -32,16 +33,19 @@ class CarSuggestionServiceTest {
 
     @Test
     void getChatOutputTest_success() {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse =
+                TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        TripInfo tripInfo =
+                TestUtils.getResourceAsJson("/data/TripInfo.json", TripInfo.class);
+        CarSuggestionResponse carSuggestionResponse =
+                TestUtils.getResourceAsJson("/data/CarSuggestionResponse.json", CarSuggestionResponse.class);
         MockHttpServletRequest request = new MockHttpServletRequest();
-        String output = "Test";
-        TripInfo tripInfo = TestUtils.getResourceAsJson("/data/TripInfo.json", TripInfo.class);
 
         when(carService.getAllAvailableCars(any(HttpServletRequest.class))).thenReturn(List.of(carResponse));
-        when(chatService.getChatReply(anyString())).thenReturn(output);
+        when(chatService.getChatReply(anyString())).thenReturn(carSuggestionResponse);
 
-        String chatOutput = carSuggestionService.getChatOutput(request, tripInfo);
-        assertNotNull(chatOutput);
+        CarSuggestionResponse actualCarSuggestionResponse = carSuggestionService.getChatOutput(request, tripInfo);
+        assertNotNull(actualCarSuggestionResponse);
     }
 
 }

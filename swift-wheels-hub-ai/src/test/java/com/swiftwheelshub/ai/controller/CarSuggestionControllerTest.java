@@ -2,6 +2,7 @@ package com.swiftwheelshub.ai.controller;
 
 import com.swiftwheelshub.ai.service.CarSuggestionService;
 import com.swiftwheelshub.ai.util.TestUtils;
+import com.swiftwheelshub.dto.CarSuggestionResponse;
 import com.swiftwheelshub.dto.TripInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
@@ -40,9 +41,12 @@ class CarSuggestionControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void getChatPromptTest_success() throws Exception {
         TripInfo tripInfo = TestUtils.getResourceAsJson("/data/TripInfo.json", TripInfo.class);
+        CarSuggestionResponse carSuggestionResponse =
+                TestUtils.getResourceAsJson("/data/CarSuggestionResponse.json", CarSuggestionResponse.class);
         String content = TestUtils.writeValueAsString(tripInfo);
 
-        when(carSuggestionService.getChatOutput(any(HttpServletRequest.class), any(TripInfo.class))).thenReturn("Test");
+        when(carSuggestionService.getChatOutput(any(HttpServletRequest.class), any(TripInfo.class)))
+                .thenReturn(carSuggestionResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/car-suggestion")
                         .contextPath(PATH)
@@ -81,9 +85,12 @@ class CarSuggestionControllerTest {
     void getChatPromptTest_noRequestBody() throws Exception {
         TripInfo tripInfo = TestUtils.getResourceAsJson("/data/TripInfo.json", TripInfo.class);
         TripInfo invalidTripInfo = tripInfo.toBuilder().destination("").build();
+        CarSuggestionResponse carSuggestionResponse =
+                TestUtils.getResourceAsJson("/data/CarSuggestionResponse.json", CarSuggestionResponse.class);
         String content = TestUtils.writeValueAsString(invalidTripInfo);
 
-        when(carSuggestionService.getChatOutput(any(HttpServletRequest.class), any(TripInfo.class))).thenReturn("Test");
+        when(carSuggestionService.getChatOutput(any(HttpServletRequest.class), any(TripInfo.class)))
+                .thenReturn(carSuggestionResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/car-suggestion")
                         .contextPath(PATH)

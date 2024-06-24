@@ -1,5 +1,6 @@
 package com.swiftwheelshub.ai.service;
 
+import com.swiftwheelshub.dto.CarSuggestionResponse;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.TripInfo;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +20,7 @@ public class CarSuggestionService implements RetryListener {
     private final ChatService chatService;
     private final CarService carService;
 
-    public String getChatOutput(HttpServletRequest request, TripInfo tripInfo) {
+    public CarSuggestionResponse getChatOutput(HttpServletRequest request, TripInfo tripInfo) {
         List<String> cars = getAvailableCars(request);
         String chatPrompt = createChatPrompt(tripInfo, cars);
 

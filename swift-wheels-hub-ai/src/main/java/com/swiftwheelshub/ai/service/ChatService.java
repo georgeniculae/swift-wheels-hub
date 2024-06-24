@@ -1,5 +1,6 @@
 package com.swiftwheelshub.ai.service;
 
+import com.swiftwheelshub.dto.CarSuggestionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
@@ -10,11 +11,11 @@ public class ChatService {
 
     private final ChatClient chatClient;
 
-    public String getChatReply(String prompt) {
+    public CarSuggestionResponse getChatReply(String prompt) {
         return chatClient.prompt()
                 .user(prompt)
                 .call()
-                .content();
+                .entity(CarSuggestionResponse.class);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.swiftwheelshub.ai.controller;
 
 import com.swiftwheelshub.ai.service.CarSuggestionService;
+import com.swiftwheelshub.dto.CarSuggestionResponse;
 import com.swiftwheelshub.dto.TripInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -19,11 +20,11 @@ public class CarSuggestionController {
     private final CarSuggestionService carSuggestionService;
 
     @PostMapping
-    public ResponseEntity<String> getChatPrompt(HttpServletRequest request,
-                                                @RequestBody @Valid TripInfo tripInfo) {
-        String chatOutput = carSuggestionService.getChatOutput(request, tripInfo);
+    public ResponseEntity<CarSuggestionResponse> getChatPrompt(HttpServletRequest request,
+                                                               @RequestBody @Valid TripInfo tripInfo) {
+        CarSuggestionResponse carSuggestionResponse = carSuggestionService.getChatOutput(request, tripInfo);
 
-        return ResponseEntity.ok(chatOutput);
+        return ResponseEntity.ok(carSuggestionResponse);
     }
 
 }
