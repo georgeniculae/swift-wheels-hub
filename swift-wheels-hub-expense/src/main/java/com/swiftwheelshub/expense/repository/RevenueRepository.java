@@ -14,6 +14,15 @@ import java.util.stream.Stream;
 public interface RevenueRepository extends JpaRepository<Revenue, Long> {
 
     @Query("""
+            From Revenue revenue""")
+    @QueryHints(value = {
+            @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),
+            @QueryHint(name = HibernateHints.HINT_READ_ONLY, value = "true")
+    })
+    Stream<Revenue> findAllRevenues();
+
+    @Query("""
             From Revenue revenue where
             revenue.dateOfRevenue = ?1""")
     @QueryHints(value = {

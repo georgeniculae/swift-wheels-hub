@@ -22,11 +22,11 @@ public class BranchService {
     private final RentalOfficeService rentalOfficeService;
     private final BranchMapper branchMapper;
 
+    @Transactional(readOnly = true)
     public List<BranchResponse> findAllBranches() {
-        return branchRepository.findAll()
-                .stream()
-                .map(branchMapper::mapEntityToDto)
-                .toList();
+        try (Stream<Branch> branchStream = branchRepository.findAllBranches()) {
+            return branchStream.map(branchMapper::mapEntityToDto).toList();
+        }
     }
 
     public BranchResponse findBranchById(Long id) {

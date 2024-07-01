@@ -42,11 +42,11 @@ public class BookingService implements RetryListener {
     private final EmployeeService employeeService;
     private final BookingMapper bookingMapper;
 
+    @Transactional(readOnly = true)
     public List<BookingResponse> findAllBookings() {
-        return bookingRepository.findAll()
-                .stream()
-                .map(bookingMapper::mapEntityToDto)
-                .toList();
+        try (Stream<Booking> bookingStream = bookingRepository.findAllBookings()) {
+            return bookingStream.map(bookingMapper::mapEntityToDto).toList();
+        }
     }
 
     public BookingResponse findBookingById(Long id) {
@@ -59,12 +59,13 @@ public class BookingService implements RetryListener {
         return bookingRepository.count();
     }
 
+    @Transactional(readOnly = true)
     public Long countUsersWithBookings() {
-        return bookingRepository.findAll()
-                .stream()
-                .map(Booking::getCustomerUsername)
-                .distinct()
-                .count();
+        try (Stream<Booking> bookingStream = bookingRepository.findAllBookings()) {
+            return bookingStream.map(Booking::getCustomerUsername)
+                    .distinct()
+                    .count();
+        }
     }
 
     public BookingResponse findBookingByDateOfBooking(String searchString) {

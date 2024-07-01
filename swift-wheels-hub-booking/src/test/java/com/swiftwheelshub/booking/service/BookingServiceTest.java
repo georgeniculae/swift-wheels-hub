@@ -172,7 +172,7 @@ class BookingServiceTest {
     void getSumOfAllBookingAmountTest_success() {
         Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
 
-        when(bookingRepository.findAll()).thenReturn(List.of(booking));
+        when(bookingRepository.findAllBookings()).thenReturn(Stream.of(booking));
 
         BigDecimal sumOfAllBookingAmount = assertDoesNotThrow(() -> bookingService.getSumOfAllBookingAmount());
         assertEquals(BigDecimal.valueOf(500), sumOfAllBookingAmount);
@@ -182,10 +182,10 @@ class BookingServiceTest {
     void countCustomersWithBookingsTest_success() {
         Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
 
-        when(bookingRepository.findAll()).thenReturn(List.of(booking));
+        when(bookingRepository.findAllBookings()).thenReturn(Stream.of(booking));
 
-        assertDoesNotThrow(() -> bookingService.countUsersWithBookings());
-        assertEquals(1, bookingService.countUsersWithBookings());
+        Long bookings = bookingService.countUsersWithBookings();
+        assertEquals(1, bookings);
     }
 
     @Test

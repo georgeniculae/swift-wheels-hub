@@ -50,7 +50,7 @@ class EmployeeServiceTest {
     void findAllEmployeesTest_success() {
         Employee employee = TestUtils.getResourceAsJson("/data/Employee.json", Employee.class);
 
-        when(employeeRepository.findAll()).thenReturn(List.of(employee));
+        when(employeeRepository.findAllEmployee()).thenReturn(Stream.of(employee));
 
         List<EmployeeResponse> employeeResponses = assertDoesNotThrow(() -> employeeService.findAllEmployees());
         AssertionUtils.assertEmployeeResponse(employee, employeeResponses.getFirst());

@@ -99,7 +99,7 @@ class BranchServiceTest {
     void findAllBranchesTest_success() {
         Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
 
-        when(branchRepository.findAll()).thenReturn(List.of(branch));
+        when(branchRepository.findAllBranches()).thenReturn(Stream.of(branch));
 
         List<BranchResponse> branchResponses = assertDoesNotThrow(() -> branchService.findAllBranches());
         AssertionUtils.assertBranchResponse(branch, branchResponses.getFirst());

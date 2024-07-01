@@ -38,6 +38,15 @@ class RentalOfficeRepositoryTest {
 
     @Test
     @Transactional(readOnly = true)
+    void findAllaRentalOfficeTest_success() {
+        try (Stream<RentalOffice> rentalOfficeStream = rentalOfficeRepository.findAllRentalOffices()) {
+            List<RentalOffice> rentalOffices = rentalOfficeStream.toList();
+            assertEquals(2, rentalOffices.size());
+        }
+    }
+
+    @Test
+    @Transactional(readOnly = true)
     void findByFilterTest_success() {
         try (Stream<RentalOffice> rentalOfficeStream = rentalOfficeRepository.findRentalOfficeByFilter("Rental Office")) {
             List<RentalOffice> rentalOffices = rentalOfficeStream.toList();

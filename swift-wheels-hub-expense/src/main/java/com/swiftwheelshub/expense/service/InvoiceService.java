@@ -36,11 +36,11 @@ public class InvoiceService implements RetryListener {
     private final BookingService bookingService;
     private final InvoiceMapper invoiceMapper;
 
+    @Transactional(readOnly = true)
     public List<InvoiceResponse> findAllInvoices() {
-        return invoiceRepository.findAll()
-                .stream()
-                .map(invoiceMapper::mapEntityToDto)
-                .toList();
+        try (Stream<Invoice> invoiceStream = invoiceRepository.findAllInvoices()) {
+            return invoiceStream.map(invoiceMapper::mapEntityToDto).toList();
+        }
     }
 
     @Transactional(readOnly = true)

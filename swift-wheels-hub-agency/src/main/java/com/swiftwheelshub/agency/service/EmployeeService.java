@@ -22,11 +22,11 @@ public class EmployeeService {
     private final BranchService branchService;
     private final EmployeeMapper employeeMapper;
 
+    @Transactional(readOnly = true)
     public List<EmployeeResponse> findAllEmployees() {
-        return employeeRepository.findAll()
-                .stream()
-                .map(employeeMapper::mapEntityToDto)
-                .toList();
+        try (Stream<Employee> employeeStream = employeeRepository.findAllEmployee()) {
+            return employeeStream.map(employeeMapper::mapEntityToDto).toList();
+        }
     }
 
     public void deleteEmployeeById(Long id) {

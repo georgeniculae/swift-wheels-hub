@@ -20,11 +20,11 @@ public class RentalOfficeService {
     private final RentalOfficeRepository rentalOfficeRepository;
     private final RentalOfficeMapper rentalOfficeMapper;
 
+    @Transactional(readOnly = true)
     public List<RentalOfficeResponse> findAllRentalOffices() {
-        return rentalOfficeRepository.findAll()
-                .stream()
-                .map(rentalOfficeMapper::mapEntityToDto)
-                .toList();
+        try (Stream<RentalOffice> rentalOfficeStream = rentalOfficeRepository.findAllRentalOffices()) {
+            return rentalOfficeStream.map(rentalOfficeMapper::mapEntityToDto).toList();
+        }
     }
 
     public void deleteRentalOfficeById(Long id) {

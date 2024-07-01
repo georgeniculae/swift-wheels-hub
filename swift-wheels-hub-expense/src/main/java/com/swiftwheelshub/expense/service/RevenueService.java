@@ -27,11 +27,11 @@ public class RevenueService {
         return revenueRepository.getTotalAmount();
     }
 
+    @Transactional(readOnly = true)
     public List<RevenueResponse> findAllRevenues() {
-        return revenueRepository.findAll()
-                .stream()
-                .map(revenueMapper::mapEntityToDto)
-                .toList();
+        try (Stream<Revenue> revenueStream = revenueRepository.findAllRevenues()) {
+            return revenueStream.map(revenueMapper::mapEntityToDto).toList();
+        }
     }
 
     @Transactional(readOnly = true)

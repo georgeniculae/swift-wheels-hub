@@ -17,6 +17,15 @@ import java.util.stream.Stream;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("""
+            From Booking booking""")
+    @QueryHints(value = {
+            @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),
+            @QueryHint(name = HibernateHints.HINT_READ_ONLY, value = "true")
+    })
+    Stream<Booking> findAllBookings();
+
+    @Query("""
             From Booking booking
             where booking.dateOfBooking = ?1""")
     Optional<Booking> findByDateOfBooking(LocalDate dateOfBooking);

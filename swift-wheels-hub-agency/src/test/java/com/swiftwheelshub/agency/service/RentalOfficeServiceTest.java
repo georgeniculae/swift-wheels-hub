@@ -53,7 +53,7 @@ class RentalOfficeServiceTest {
         RentalOffice rentalOffice =
                 TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
-        when(rentalOfficeRepository.findAll()).thenReturn(List.of(rentalOffice));
+        when(rentalOfficeRepository.findAllRentalOffices()).thenReturn(Stream.of(rentalOffice));
 
         List<RentalOfficeResponse> rentalOfficeResponses =
                 assertDoesNotThrow(() -> rentalOfficeService.findAllRentalOffices());

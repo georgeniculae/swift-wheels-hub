@@ -13,6 +13,15 @@ import java.util.stream.Stream;
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
     @Query("""
+            From Invoice invoice""")
+    @QueryHints(value = {
+            @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),
+            @QueryHint(name = HibernateHints.HINT_READ_ONLY, value = "true")
+    })
+    Stream<Invoice> findAllInvoices();
+
+    @Query("""
             From Invoice invoice
             where invoice.bookingId = ?1""")
     Optional<Invoice> findByBookingId(Long bookingId);

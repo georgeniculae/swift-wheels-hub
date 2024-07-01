@@ -38,6 +38,15 @@ class EmployeeRepositoryTest {
 
     @Test
     @Transactional(readOnly = true)
+    void findAllEmployeesTest_success() {
+        try (Stream<Employee> employeeStream = employeeRepository.findAllEmployee()) {
+            List<Employee> employees = employeeStream.toList();
+            assertEquals(4, employees.size());
+        }
+    }
+
+    @Test
+    @Transactional(readOnly = true)
     void findByFilterTest_success() {
         try (Stream<Employee> employeeStream = employeeRepository.findByFilter("manager")) {
             List<Employee> employees = employeeStream.toList();

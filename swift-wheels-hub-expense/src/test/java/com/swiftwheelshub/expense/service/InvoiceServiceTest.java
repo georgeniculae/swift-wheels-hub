@@ -59,11 +59,9 @@ class InvoiceServiceTest {
     void findAllInvoicesTest_success() {
         Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
 
-        when(invoiceRepository.findAll()).thenReturn(List.of(invoice));
+        when(invoiceRepository.findAllInvoices()).thenReturn(Stream.of(invoice));
 
-        assertDoesNotThrow(() -> invoiceService.findAllInvoices());
         List<InvoiceResponse> invoiceResponses = invoiceService.findAllInvoices();
-
         AssertionUtils.assertInvoiceResponse(invoice, invoiceResponses.getFirst());
     }
 

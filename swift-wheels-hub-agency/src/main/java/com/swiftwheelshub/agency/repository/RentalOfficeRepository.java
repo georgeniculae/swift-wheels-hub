@@ -12,6 +12,15 @@ import java.util.stream.Stream;
 public interface RentalOfficeRepository extends JpaRepository<RentalOffice, Long> {
 
     @Query("""
+            From RentalOffice rentalOffice""")
+    @QueryHints(value = {
+            @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),
+            @QueryHint(name = HibernateHints.HINT_READ_ONLY, value = "true")
+    })
+    Stream<RentalOffice> findAllRentalOffices();
+
+    @Query("""
             From RentalOffice rentalOffice
             where upper(rentalOffice.name) like upper(concat('%', ?1, '%'))
             or upper(rentalOffice.contactAddress) like upper(concat('%', ?1, '%'))

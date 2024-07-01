@@ -40,14 +40,12 @@ class RevenueServiceTest {
     void findAllRevenuesTest_success() {
         Revenue revenue = TestUtils.getResourceAsJson("/data/Revenue.json", Revenue.class);
 
-        when(revenueRepository.findAll()).thenReturn(List.of(revenue));
+        when(revenueRepository.findAllRevenues()).thenReturn(Stream.of(revenue));
 
-        assertDoesNotThrow(() -> revenueService.findAllRevenues());
         List<RevenueResponse> revenueResponses = revenueService.findAllRevenues();
-
         AssertionUtils.assertRevenueResponse(revenue, revenueResponses.getFirst());
 
-        verify(revenueMapper, times(2)).mapEntityToDto(any(Revenue.class));
+        verify(revenueMapper).mapEntityToDto(any(Revenue.class));
     }
 
     @Test

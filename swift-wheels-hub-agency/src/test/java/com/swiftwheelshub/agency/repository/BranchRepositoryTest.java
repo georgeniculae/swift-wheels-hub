@@ -38,6 +38,15 @@ class BranchRepositoryTest {
 
     @Test
     @Transactional(readOnly = true)
+    void findAllBranchesTest_success() {
+        try (Stream<Branch> branchStream = branchRepository.findAllBranches()) {
+            List<Branch> branches = branchStream.toList();
+            assertEquals(2, branches.size());
+        }
+    }
+
+    @Test
+    @Transactional(readOnly = true)
     void findByFilterTest_success() {
         try (Stream<Branch> branchStream = branchRepository.findByFilter("Branch")) {
             List<Branch> branches = branchStream.toList();
