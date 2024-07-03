@@ -4,7 +4,6 @@ import com.swiftwheelshub.dto.InvoiceRequest;
 import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.expense.service.InvoiceService;
 import com.swiftwheelshub.expense.util.TestUtils;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -253,7 +252,7 @@ class InvoiceControllerTest {
         InvoiceResponse invoiceResponse =
                 TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
-        when(invoiceService.closeInvoice(any(HttpServletRequest.class), anyLong(), any(InvoiceRequest.class)))
+        when(invoiceService.closeInvoice(anyLong(), any(InvoiceRequest.class)))
                 .thenReturn(invoiceResponse);
 
         MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
@@ -279,7 +278,7 @@ class InvoiceControllerTest {
         InvoiceResponse invoiceResponse =
                 TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
-        when(invoiceService.closeInvoice(any(HttpServletRequest.class), anyLong(), any(InvoiceRequest.class)))
+        when(invoiceService.closeInvoice(anyLong(), any(InvoiceRequest.class)))
                 .thenReturn(invoiceResponse);
 
         mockMvc.perform(put(PATH + "/{id}", 1L)

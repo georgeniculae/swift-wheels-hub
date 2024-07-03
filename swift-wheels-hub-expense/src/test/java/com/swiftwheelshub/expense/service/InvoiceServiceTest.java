@@ -12,14 +12,15 @@ import com.swiftwheelshub.expense.mapper.InvoiceMapperImpl;
 import com.swiftwheelshub.expense.repository.InvoiceRepository;
 import com.swiftwheelshub.expense.util.AssertionUtils;
 import com.swiftwheelshub.expense.util.TestUtils;
-import jakarta.servlet.http.HttpServletRequest;
+import com.swiftwheelshub.lib.security.ApiKeyAuthenticationToken;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -172,16 +174,19 @@ class InvoiceServiceTest {
         BookingResponse bookingResponse =
                 TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("X-USERNAME", "user");
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
-        when(bookingService.findBookingById(any(HttpServletRequest.class), anyLong())).thenReturn(bookingResponse);
+        when(bookingService.findBookingById(anyString(), anyCollection(), anyLong())).thenReturn(bookingResponse);
         doNothing().when(revenueService).saveInvoiceAndRevenue(any(Invoice.class));
         when(invoiceRepository.saveAndFlush(any(Invoice.class))).thenReturn(invoice);
-        doNothing().when(bookingService).closeBooking(any(HttpServletRequest.class), any(BookingClosingDetails.class));
+        doNothing().when(bookingService).closeBooking(anyString(), anyCollection(), any(BookingClosingDetails.class));
 
-        assertDoesNotThrow(() -> invoiceService.closeInvoice(request, 1L, invoiceRequest));
+        assertDoesNotThrow(() -> invoiceService.closeInvoice(1L, invoiceRequest));
 
         verify(invoiceMapper).mapEntityToDto(any(Invoice.class));
     }

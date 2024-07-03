@@ -6,7 +6,6 @@ import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import com.swiftwheelshub.lib.aspect.LogActivity;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,8 +36,8 @@ public class CustomerController {
 
     @GetMapping(path = "/current")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<UserInfo> getCurrentUser(HttpServletRequest request) {
-        return ResponseEntity.ok(customerService.getCurrentUser(request));
+    public ResponseEntity<UserInfo> getCurrentUser() {
+        return ResponseEntity.ok(customerService.getCurrentUser());
     }
 
     @GetMapping(path = "/{username}")
@@ -79,9 +78,8 @@ public class CustomerController {
             sentParameters = "username",
             activityDescription = "User deletion"
     )
-    public ResponseEntity<Void> deleteUserByUsername(HttpServletRequest request,
-                                                     @PathVariable("username") String username) {
-        customerService.deleteUserByUsername(request, username);
+    public ResponseEntity<Void> deleteUserByUsername(@PathVariable("username") String username) {
+        customerService.deleteUserByUsername(username);
 
         return ResponseEntity.noContent().build();
     }
@@ -91,16 +89,16 @@ public class CustomerController {
     @LogActivity(
             activityDescription = "Current user deletion"
     )
-    public ResponseEntity<Void> deleteCurrentUser(HttpServletRequest request) {
-        customerService.deleteCurrentUser(request);
+    public ResponseEntity<Void> deleteCurrentUser() {
+        customerService.deleteCurrentUser();
 
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping(path = "/sign-out")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<Void> signOut(HttpServletRequest request) {
-        customerService.signOut(request);
+    public ResponseEntity<Void> signOut() {
+        customerService.signOut();
 
         return ResponseEntity.noContent().build();
     }

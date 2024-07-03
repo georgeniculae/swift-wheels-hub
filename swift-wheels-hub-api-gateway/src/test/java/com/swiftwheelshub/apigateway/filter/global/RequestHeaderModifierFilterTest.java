@@ -56,8 +56,7 @@ class RequestHeaderModifierFilterTest {
         Map<String, Object> headers = Map.of(HttpHeaders.AUTHORIZATION, "Bearer " + tokenValue);
         Map<String, Object> claims = Map.of("preferred_username", "user");
 
-        Jwt jwt =
-                new Jwt(tokenValue, Instant.now(), Instant.now().plus(30, ChronoUnit.MINUTES), headers, claims);
+        Jwt jwt = new Jwt(tokenValue, Instant.now(), Instant.now().plus(30, ChronoUnit.MINUTES), headers, claims);
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
 
         when(nimbusReactiveJwtDecoder.decode(anyString())).thenReturn(Mono.just(jwt));

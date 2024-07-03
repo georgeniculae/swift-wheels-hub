@@ -11,7 +11,7 @@ import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.dto.UserUpdateRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
-import jakarta.servlet.http.HttpServletRequest;
+import com.swiftwheelshub.lib.security.ApiKeyAuthenticationToken;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.core.Headers;
@@ -35,7 +35,11 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.List;
 
@@ -46,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -112,16 +117,17 @@ class CustomerServiceTest {
     void getCurrentUserTest_success() {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
+        UserRepresentation userRepresentation = TestData.getUserRepresentation();
+
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-USERNAME", "user");
-
-        UserRepresentation userRepresentation = TestData.getUserRepresentation();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(httpServletRequest));
 
         when(keycloak.realm(anyString())).thenReturn(realmResource);
         when(realmResource.users()).thenReturn(usersResource);
         when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of(userRepresentation));
 
-        UserInfo currentUser = customerService.getCurrentUser(httpServletRequest);
+        UserInfo currentUser = customerService.getCurrentUser();
 
         AssertionUtils.assertUserDetails(userRepresentation, currentUser);
 
@@ -131,9 +137,6 @@ class CustomerServiceTest {
     @Test
     void getCurrentUserTest_errorOnFindingByUsername() {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
-
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.addHeader("X-USERNAME", "user");
 
         when(keycloak.realm(anyString())).thenReturn(realmResource);
         when(realmResource.users()).thenReturn(usersResource);
@@ -146,15 +149,18 @@ class CustomerServiceTest {
     void getCurrentUserTest_noUsersFound() {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.addHeader("X-USERNAME", "user");
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(keycloak.realm(anyString())).thenReturn(realmResource);
         when(realmResource.users()).thenReturn(usersResource);
         when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of());
 
         SwiftWheelsHubNotFoundException notFoundException =
-                assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.getCurrentUser(httpServletRequest));
+                assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.getCurrentUser());
 
         assertNotNull(notFoundException);
     }
@@ -199,7 +205,7 @@ class CustomerServiceTest {
         headers.put("test", List.of());
         Response response = new ServerResponse(null, 201, headers);
 
-        try (var ignored = mockStatic(CreatedResponseUtil.class)) {
+        try (var _ = mockStatic(CreatedResponseUtil.class)) {
             when(CreatedResponseUtil.getCreatedId(any())).thenReturn("id");
             when(keycloak.realm(anyString())).thenReturn(realmResource);
             when(realmResource.roles()).thenReturn(rolesResource);
@@ -287,32 +293,35 @@ class CustomerServiceTest {
     void deleteUserByUsernameTest_success() {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.addHeader("X-API-KEY", "apikey");
-        httpServletRequest.addHeader("X-USERNAME", "user");
-
         UserRepresentation userRepresentation = TestData.getUserRepresentation();
+
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(keycloak.realm(anyString())).thenReturn(realmResource);
         when(realmResource.users()).thenReturn(usersResource);
         when(usersResource.get(anyString())).thenReturn(userResource);
-
         doNothing().when(userResource).remove();
-        doNothing().when(bookingService).deleteBookingsByUsername(any(HttpServletRequest.class));
+        doNothing().when(bookingService).deleteBookingsByUsername(anyString(), anyString(), anyCollection());
         when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of(userRepresentation));
 
-        assertDoesNotThrow(() -> customerService.deleteUserByUsername(httpServletRequest, "user"));
+        assertDoesNotThrow(() -> customerService.deleteUserByUsername("user"));
     }
 
     @Test
     void deleteUserByUsernameTest_userNotFound() {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.addHeader("X-API-KEY", "apikey");
-        httpServletRequest.addHeader("X-USERNAME", "user");
-
         UserRepresentation userRepresentation = TestData.getUserRepresentation();
+
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(keycloak.realm(anyString())).thenReturn(realmResource);
         when(realmResource.users()).thenReturn(usersResource);
@@ -321,17 +330,20 @@ class CustomerServiceTest {
 
         doThrow(new NotFoundException()).when(userResource).remove();
 
-        assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.deleteUserByUsername(httpServletRequest, "user"));
+        assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.deleteUserByUsername("user"));
     }
 
     @Test
     void logoutTest_success() {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("X-USERNAME", "user");
-
         UserRepresentation userRepresentation = TestData.getUserRepresentation();
+
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(keycloak.realm(anyString())).thenReturn(realmResource);
         when(realmResource.users()).thenReturn(usersResource);
@@ -339,17 +351,20 @@ class CustomerServiceTest {
         when(usersResource.get(anyString())).thenReturn(userResource);
         doNothing().when(userResource).logout();
 
-        assertDoesNotThrow(() -> customerService.signOut(request));
+        assertDoesNotThrow(() -> customerService.signOut());
     }
 
     @Test
     void logoutTest_errorOnLogout() {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("X-USERNAME", "user");
-
         UserRepresentation userRepresentation = TestData.getUserRepresentation();
+
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(keycloak.realm(anyString())).thenReturn(realmResource);
         when(realmResource.users()).thenReturn(usersResource);
@@ -358,7 +373,7 @@ class CustomerServiceTest {
         doThrow(new NotFoundException()).when(userResource).logout();
 
         SwiftWheelsHubNotFoundException notFoundException =
-                assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.signOut(request));
+                assertThrows(SwiftWheelsHubNotFoundException.class, () -> customerService.signOut());
 
         assertNotNull(notFoundException);
     }

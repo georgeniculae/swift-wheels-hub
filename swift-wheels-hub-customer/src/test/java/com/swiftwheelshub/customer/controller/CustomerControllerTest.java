@@ -6,7 +6,6 @@ import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.dto.UserUpdateRequest;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -88,7 +87,7 @@ class CustomerControllerTest {
     void getCurrentUserTest_success() throws Exception {
         UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
-        when(customerService.getCurrentUser(any(HttpServletRequest.class))).thenReturn(userInfo);
+        when(customerService.getCurrentUser()).thenReturn(userInfo);
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/current")
                         .contextPath(PATH)
@@ -321,7 +320,7 @@ class CustomerControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void deleteUserByUsernameTest_success() throws Exception {
-        doNothing().when(customerService).deleteUserByUsername(any(HttpServletRequest.class), anyString());
+        doNothing().when(customerService).deleteUserByUsername(anyString());
 
         MockHttpServletResponse response = mockMvc.perform(delete(PATH + "/{username}", "user")
                         .contextPath(PATH)
@@ -353,7 +352,7 @@ class CustomerControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void deleteCurrentTest_success() throws Exception {
-        doNothing().when(customerService).deleteCurrentUser(any(HttpServletRequest.class));
+        doNothing().when(customerService).deleteCurrentUser();
 
         MockHttpServletResponse response = mockMvc.perform(delete(PATH + "/current")
                         .contextPath(PATH)
@@ -385,7 +384,7 @@ class CustomerControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void logoutTest_success() throws Exception {
-        doNothing().when(customerService).signOut(any(HttpServletRequest.class));
+        doNothing().when(customerService).signOut();
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/sign-out")
                         .contextPath(PATH)
@@ -401,7 +400,7 @@ class CustomerControllerTest {
     @Test
     @WithAnonymousUser
     void logoutTest_unauthorized() throws Exception {
-        doNothing().when(customerService).signOut(any(HttpServletRequest.class));
+        doNothing().when(customerService).signOut();
 
         MockHttpServletResponse response = mockMvc.perform(get(PATH + "/sign-out")
                         .contextPath(PATH)

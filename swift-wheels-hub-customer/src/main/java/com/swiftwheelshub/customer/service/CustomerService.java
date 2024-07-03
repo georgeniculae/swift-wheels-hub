@@ -8,8 +8,9 @@ import com.swiftwheelshub.dto.UserUpdateRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
+import com.swiftwheelshub.lib.security.ApiKeyAuthenticationToken;
+import com.swiftwheelshub.lib.util.AuthenticationUtil;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
@@ -67,8 +68,8 @@ public class CustomerService {
         return customerMapper.mapUserToUserInfo(userRepresentation);
     }
 
-    public UserInfo getCurrentUser(HttpServletRequest request) {
-        String username = HttpRequestUtil.extractUsername(request);
+    public UserInfo getCurrentUser() {
+        String username = HttpRequestUtil.extractUsername();
 
         return findUserByUsername(username);
     }
@@ -111,9 +112,10 @@ public class CustomerService {
         return customerMapper.mapUserToUserInfo(userRepresentation);
     }
 
-    public void deleteUserByUsername(HttpServletRequest request, String username) {
+    public void deleteUserByUsername(String username) {
         UserRepresentation userRepresentation = getUserRepresentation(username);
         UserResource userResource = findById(userRepresentation.getId());
+        ApiKeyAuthenticationToken authentication = AuthenticationUtil.getAuthentication();
 
         try {
             userResource.remove();
@@ -121,16 +123,16 @@ public class CustomerService {
             handleRestEasyCallException(e);
         }
 
-        bookingService.deleteBookingsByUsername(request);
+        bookingService.deleteBookingsByUsername(username, authentication.getName(), authentication.getAuthorities());
     }
 
-    public void deleteCurrentUser(HttpServletRequest request) {
-        String username = HttpRequestUtil.extractUsername(request);
-        deleteUserByUsername(request, username);
+    public void deleteCurrentUser() {
+        String username = HttpRequestUtil.extractUsername();
+        deleteUserByUsername(username);
     }
 
-    public void signOut(HttpServletRequest request) {
-        String username = HttpRequestUtil.extractUsername(request);
+    public void signOut() {
+        String username = HttpRequestUtil.extractUsername();
         UserRepresentation userRepresentation = getUserRepresentation(username);
 
         try {

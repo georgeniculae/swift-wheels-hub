@@ -4,7 +4,6 @@ import com.swiftwheelshub.ai.service.CarSuggestionService;
 import com.swiftwheelshub.ai.util.TestUtils;
 import com.swiftwheelshub.dto.CarSuggestionResponse;
 import com.swiftwheelshub.dto.TripInfo;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -42,7 +41,7 @@ class CarSuggestionControllerTest {
         CarSuggestionResponse carSuggestionResponse =
                 TestUtils.getResourceAsJson("/data/CarSuggestionResponse.json", CarSuggestionResponse.class);
 
-        when(carSuggestionService.getChatOutput(any(HttpServletRequest.class), any(TripInfo.class)))
+        when(carSuggestionService.getChatOutput(any(TripInfo.class)))
                 .thenReturn(carSuggestionResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/car-suggestion?destination=Sinaia&peopleCount=3&tripKind=city&tripDate=2024-06-20")

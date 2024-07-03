@@ -5,7 +5,6 @@ import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.lib.aspect.LogActivity;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -53,8 +52,8 @@ public class BookingController {
 
     @GetMapping(path = "/count-by-current-user")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<Long> countByLoggedInUser(HttpServletRequest request) {
-        Long numberOfBookings = bookingService.countByLoggedInUser(request);
+    public ResponseEntity<Long> countByLoggedInUser() {
+        Long numberOfBookings = bookingService.countByLoggedInUser();
 
         return ResponseEntity.ok(numberOfBookings);
     }
@@ -73,18 +72,16 @@ public class BookingController {
             sentParameters = "bookingRequest",
             activityDescription = "Booking add"
     )
-    public ResponseEntity<BookingResponse> addBooking(HttpServletRequest request,
-                                                      @RequestBody @Validated BookingRequest bookingRequest) {
-        BookingResponse saveBookingResponse = bookingService.saveBooking(request, bookingRequest);
+    public ResponseEntity<BookingResponse> addBooking(@RequestBody @Validated BookingRequest bookingRequest) {
+        BookingResponse saveBookingResponse = bookingService.saveBooking(bookingRequest);
 
         return ResponseEntity.ok(saveBookingResponse);
     }
 
     @PostMapping(path = "/close-booking")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<BookingResponse> closeBooking(HttpServletRequest request,
-                                                        @RequestBody @Validated BookingClosingDetails bookingClosingDetails) {
-        BookingResponse updatedBookingResponse = bookingService.closeBooking(request, bookingClosingDetails);
+    public ResponseEntity<BookingResponse> closeBooking(@RequestBody @Validated BookingClosingDetails bookingClosingDetails) {
+        BookingResponse updatedBookingResponse = bookingService.closeBooking(bookingClosingDetails);
 
         return ResponseEntity.ok(updatedBookingResponse);
     }
@@ -95,10 +92,9 @@ public class BookingController {
             sentParameters = "bookingRequest",
             activityDescription = "Booking update"
     )
-    public ResponseEntity<BookingResponse> updateBooking(HttpServletRequest request,
-                                                         @PathVariable("id") Long id,
+    public ResponseEntity<BookingResponse> updateBooking(@PathVariable("id") Long id,
                                                          @RequestBody @Validated BookingRequest bookingRequest) {
-        BookingResponse updatedBookingResponse = bookingService.updateBooking(request, id, bookingRequest);
+        BookingResponse updatedBookingResponse = bookingService.updateBooking(id, bookingRequest);
 
         return ResponseEntity.ok(updatedBookingResponse);
     }
@@ -109,9 +105,8 @@ public class BookingController {
             sentParameters = "username",
             activityDescription = "Booking deletion"
     )
-    public ResponseEntity<Void> deleteBookingsByUsername(HttpServletRequest request,
-                                                         @PathVariable("username") String username) {
-        bookingService.deleteBookingByCustomerUsername(request, username);
+    public ResponseEntity<Void> deleteBookingsByUsername(@PathVariable("username") String username) {
+        bookingService.deleteBookingByCustomerUsername(username);
 
         return ResponseEntity.noContent().build();
     }

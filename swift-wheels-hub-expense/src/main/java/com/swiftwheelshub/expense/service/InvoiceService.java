@@ -11,18 +11,21 @@ import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.expense.mapper.InvoiceMapper;
 import com.swiftwheelshub.expense.repository.InvoiceRepository;
 import com.swiftwheelshub.lib.exceptionhandling.ExceptionUtil;
-import jakarta.servlet.http.HttpServletRequest;
+import com.swiftwheelshub.lib.security.ApiKeyAuthenticationToken;
+import com.swiftwheelshub.lib.util.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.retry.RetryListener;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -102,15 +105,19 @@ public class InvoiceService implements RetryListener {
         invoiceRepository.saveAndFlush(invoice);
     }
 
-    public InvoiceResponse closeInvoice(HttpServletRequest request, Long id, InvoiceRequest invoiceRequest) {
+    public InvoiceResponse closeInvoice(Long id, InvoiceRequest invoiceRequest) {
         Invoice savedInvoice;
         BookingClosingDetails bookingClosingDetails;
+
+        ApiKeyAuthenticationToken principal = AuthenticationUtil.getAuthentication();
+        String apikey = principal.getName();
+        Collection<GrantedAuthority> authorities = principal.getAuthorities();
 
         try {
             validateInvoice(invoiceRequest);
             Invoice existingInvoice = findEntityById(id);
 
-            BookingResponse bookingResponse = bookingService.findBookingById(request, invoiceRequest.bookingId());
+            BookingResponse bookingResponse = bookingService.findBookingById(apikey, authorities, invoiceRequest.bookingId());
             Invoice existingInvoiceUpdated = updateInvoiceWithBookingDetails(bookingResponse, invoiceRequest, existingInvoice);
 
             revenueService.saveInvoiceAndRevenue(existingInvoiceUpdated);
@@ -123,7 +130,7 @@ public class InvoiceService implements RetryListener {
             throw ExceptionUtil.handleException(e);
         }
 
-        bookingService.closeBooking(request, bookingClosingDetails);
+        bookingService.closeBooking(apikey, authorities, bookingClosingDetails);
 
         return invoiceMapper.mapEntityToDto(savedInvoice);
     }

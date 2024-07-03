@@ -5,7 +5,6 @@ import com.swiftwheelshub.booking.util.TestUtils;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -217,7 +216,7 @@ class BookingControllerTest {
 
         String content = TestUtils.writeValueAsString(bookingResponse);
 
-        when(bookingService.saveBooking(any(HttpServletRequest.class), any(BookingRequest.class))).thenReturn(bookingResponse);
+        when(bookingService.saveBooking(any(BookingRequest.class))).thenReturn(bookingResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/new")
                         .contextPath(PATH)
@@ -240,8 +239,7 @@ class BookingControllerTest {
 
         String content = TestUtils.writeValueAsString(bookingResponse);
 
-        when(bookingService.saveBooking(any(HttpServletRequest.class), any(BookingRequest.class)))
-                .thenReturn(bookingResponse);
+        when(bookingService.saveBooking(any(BookingRequest.class))).thenReturn(bookingResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .contextPath(PATH)
@@ -264,8 +262,7 @@ class BookingControllerTest {
 
         String content = TestUtils.writeValueAsString(bookingResponse);
 
-        when(bookingService.saveBooking(any(HttpServletRequest.class), any(BookingRequest.class)))
-                .thenReturn(bookingResponse);
+        when(bookingService.saveBooking(any(BookingRequest.class))).thenReturn(bookingResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .contextPath(PATH)
@@ -289,8 +286,7 @@ class BookingControllerTest {
 
         String content = TestUtils.writeValueAsString(bookingClosingDetails);
 
-        when(bookingService.closeBooking(any(HttpServletRequest.class), any(BookingClosingDetails.class)))
-                .thenReturn(bookingResponse);
+        when(bookingService.closeBooking(any(BookingClosingDetails.class))).thenReturn(bookingResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/close-booking")
                         .contextPath(PATH)
@@ -315,8 +311,7 @@ class BookingControllerTest {
 
         String content = TestUtils.writeValueAsString(bookingClosingDetails);
 
-        when(bookingService.closeBooking(any(HttpServletRequest.class), any(BookingClosingDetails.class)))
-                .thenReturn(bookingResponse);
+        when(bookingService.closeBooking(any(BookingClosingDetails.class))).thenReturn(bookingResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/close-booking")
                         .contextPath(PATH)
@@ -341,8 +336,7 @@ class BookingControllerTest {
 
         String content = TestUtils.writeValueAsString(bookingClosingDetails);
 
-        when(bookingService.closeBooking(any(HttpServletRequest.class), any(BookingClosingDetails.class)))
-                .thenReturn(bookingResponse);
+        when(bookingService.closeBooking(any(BookingClosingDetails.class))).thenReturn(bookingResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/close-booking")
                         .contextPath(PATH)
@@ -364,7 +358,7 @@ class BookingControllerTest {
 
         String content = TestUtils.writeValueAsString(bookingResponse);
 
-        when(bookingService.updateBooking(any(HttpServletRequest.class), anyLong(), any(BookingRequest.class)))
+        when(bookingService.updateBooking(anyLong(), any(BookingRequest.class)))
                 .thenReturn(bookingResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
@@ -389,8 +383,7 @@ class BookingControllerTest {
 
         String content = TestUtils.writeValueAsString(bookingResponse);
 
-        when(bookingService.updateBooking(any(HttpServletRequest.class), anyLong(), any(BookingRequest.class)))
-                .thenReturn(bookingResponse);
+        when(bookingService.updateBooking(anyLong(), any(BookingRequest.class))).thenReturn(bookingResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/edit/{id}", 1L)
                         .contextPath(PATH)
@@ -413,8 +406,7 @@ class BookingControllerTest {
 
         String content = TestUtils.writeValueAsString(bookingResponse);
 
-        when(bookingService.updateBooking(any(HttpServletRequest.class), anyLong(), any(BookingRequest.class)))
-                .thenReturn(bookingResponse);
+        when(bookingService.updateBooking(anyLong(), any(BookingRequest.class))).thenReturn(bookingResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/edit/{id}", 1L)
                         .contextPath(PATH)
@@ -431,7 +423,7 @@ class BookingControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void deleteBookingByUsernameTest_success() throws Exception {
-        doNothing().when(bookingService).deleteBookingByCustomerUsername(any(HttpServletRequest.class), anyString());
+        doNothing().when(bookingService).deleteBookingByCustomerUsername(anyString());
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
                         .contextPath(PATH)
@@ -446,7 +438,7 @@ class BookingControllerTest {
     @Test
     @WithAnonymousUser
     void deleteBookingByUnauthorizedTest_success() throws Exception {
-        doNothing().when(bookingService).deleteBookingByCustomerUsername(any(HttpServletRequest.class), anyString());
+        doNothing().when(bookingService).deleteBookingByCustomerUsername(anyString());
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
                         .contextPath(PATH)

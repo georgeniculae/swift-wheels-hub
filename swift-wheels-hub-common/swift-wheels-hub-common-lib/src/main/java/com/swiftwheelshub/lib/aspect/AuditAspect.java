@@ -3,7 +3,7 @@ package com.swiftwheelshub.lib.aspect;
 import com.swiftwheelshub.dto.AuditLogInfoRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.lib.service.AuditLogProducerService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -13,14 +13,11 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Aspect
 @Component
@@ -28,8 +25,6 @@ import java.util.Optional;
 @ConditionalOnProperty(prefix = "audit", name = "enabled")
 @Slf4j
 public class AuditAspect {
-
-    private static final String USERNAME = "X-USERNAME";
 
     private final AuditLogProducerService auditLogProducerService;
 
@@ -41,7 +36,7 @@ public class AuditAspect {
 
         log.info("Method called: {}", signature);
 
-        String username = getUsername();
+        String username = HttpRequestUtil.extractUsername();
         List<String> parametersValues = getParametersValues(joinPoint, logActivity, signature);
 
         AuditLogInfoRequest auditLogInfoRequest = getAuditLogInfoRequest(method.getName(), username, parametersValues);
@@ -54,16 +49,6 @@ public class AuditAspect {
         } catch (Throwable e) {
             throw new SwiftWheelsHubException(e.getMessage());
         }
-    }
-
-    private String getUsername() {
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = Optional.ofNullable(requestAttributes)
-                .orElseThrow()
-                .getRequest();
-
-        return Optional.ofNullable(request.getHeader(USERNAME))
-                .orElse(StringUtils.EMPTY);
     }
 
     private List<String> getParametersValues(ProceedingJoinPoint joinPoint, LogActivity logActivity,

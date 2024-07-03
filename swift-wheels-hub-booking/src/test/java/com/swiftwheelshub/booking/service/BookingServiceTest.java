@@ -13,7 +13,7 @@ import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.EmployeeResponse;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
+import com.swiftwheelshub.lib.security.ApiKeyAuthenticationToken;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +21,10 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -87,14 +92,18 @@ class BookingServiceTest {
         BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
 
-        when(carService.findAvailableCarById(any(HttpServletRequest.class), anyLong())).thenReturn(carResponse);
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
+
+        when(carService.findAvailableCarById(anyString(), anyCollection(), anyLong())).thenReturn(carResponse);
         when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(booking);
-        doNothing().when(carService).changeCarStatus(any(HttpServletRequest.class), anyLong(), any(CarState.class));
+        doNothing().when(carService).changeCarStatus(anyString(), anyCollection(), anyLong(), any(CarState.class));
 
         BookingResponse actualBookingResponse =
-                assertDoesNotThrow(() -> bookingService.saveBooking(request, bookingRequest));
+                assertDoesNotThrow(() -> bookingService.saveBooking(bookingRequest));
 
         assertNotNull(actualBookingResponse);
 
@@ -111,13 +120,17 @@ class BookingServiceTest {
         BookingClosingDetails bookingClosingDetails =
                 TestUtils.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
-        when(employeeService.findEmployeeById(any(HttpServletRequest.class), anyLong())).thenReturn(employeeRequest);
+        when(employeeService.findEmployeeById(anyString(), anyCollection(), anyLong())).thenReturn(employeeRequest);
         when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(booking);
 
-        assertDoesNotThrow(() -> bookingService.closeBooking(request, bookingClosingDetails));
+        assertDoesNotThrow(() -> bookingService.closeBooking(bookingClosingDetails));
     }
 
     @Test
@@ -125,13 +138,17 @@ class BookingServiceTest {
         Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
         BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
         when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(booking);
 
         BookingResponse updatedBookingResponse =
-                assertDoesNotThrow(() -> bookingService.updateBooking(request, 1L, bookingRequest));
+                assertDoesNotThrow(() -> bookingService.updateBooking(1L, bookingRequest));
 
         assertNotNull(updatedBookingResponse);
     }
@@ -143,14 +160,18 @@ class BookingServiceTest {
         BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/UpdatedBookingRequest.json", BookingRequest.class);
         CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
-        when(carService.findAvailableCarById(any(HttpServletRequest.class), anyLong())).thenReturn(carResponse);
+        when(carService.findAvailableCarById(anyString(), anyCollection(), anyLong())).thenReturn(carResponse);
         when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(updatedBooking);
 
         BookingResponse updatedBookingResponse =
-                assertDoesNotThrow(() -> bookingService.updateBooking(request, 1L, bookingRequest));
+                assertDoesNotThrow(() -> bookingService.updateBooking(1L, bookingRequest));
 
         assertNotNull(updatedBookingResponse);
     }
@@ -159,12 +180,13 @@ class BookingServiceTest {
     void calculateAllAmountSpentByUserTest_success() {
         Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("X-USERNAME", "user");
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader("X-USERNAME", "user");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(httpServletRequest));
 
         when(bookingRepository.findBookingsByUser(anyString())).thenReturn(Stream.of(booking));
 
-        BigDecimal amount = assertDoesNotThrow(() -> bookingService.getAmountSpentByLoggedInUser(request));
+        BigDecimal amount = assertDoesNotThrow(() -> bookingService.getAmountSpentByLoggedInUser());
         assertEquals(BigDecimal.valueOf(500), amount);
     }
 
@@ -217,14 +239,17 @@ class BookingServiceTest {
     void deleteBookingByIdTest_success() {
         Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
 
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.addHeader("X-USERNAME", "user");
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(bookingRepository.findByCustomerUsername(anyString())).thenReturn(List.of(booking));
         doNothing().when(bookingRepository).deleteByCustomerUsername(anyString());
-        doNothing().when(carService).updateCarsStatus(any(HttpServletRequest.class), anyList());
+        doNothing().when(carService).updateCarsStatus(anyString(), anyCollection(), anyList());
 
-        bookingService.deleteBookingByCustomerUsername(httpServletRequest, "user");
+        bookingService.deleteBookingByCustomerUsername("user");
     }
 
 }

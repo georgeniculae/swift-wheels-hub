@@ -4,7 +4,6 @@ import com.swiftwheelshub.dto.InvoiceRequest;
 import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.expense.service.InvoiceService;
 import com.swiftwheelshub.lib.aspect.LogActivity;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -79,10 +78,9 @@ public class InvoiceController {
             sentParameters = {"id", "invoiceRequest"},
             activityDescription = "Invoice closing"
     )
-    public ResponseEntity<InvoiceResponse> closeInvoice(HttpServletRequest request,
-                                                        @PathVariable("id") Long id,
+    public ResponseEntity<InvoiceResponse> closeInvoice(@PathVariable("id") Long id,
                                                         @RequestBody @Validated InvoiceRequest invoiceRequest) {
-        InvoiceResponse undatedinvoiceResponse = invoiceService.closeInvoice(request, id, invoiceRequest);
+        InvoiceResponse undatedinvoiceResponse = invoiceService.closeInvoice(id, invoiceRequest);
 
         return ResponseEntity.ok(undatedinvoiceResponse);
     }
