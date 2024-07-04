@@ -30,7 +30,7 @@ build/
 !**/src/test/**/build/
 
 ### P6spy ###
-spy.log
+*.log
 
 ### VS Code ###
 .vscode/
