@@ -89,10 +89,10 @@ logging:
   level:
     org:
       springframework:
-        security: DEBUG
+        security: ERROR
         web:
           csrf:
-            CsrfFilter: DEBUG
+            CsrfFilter: ERROR
 
 sendgrid:
   enabled: true
