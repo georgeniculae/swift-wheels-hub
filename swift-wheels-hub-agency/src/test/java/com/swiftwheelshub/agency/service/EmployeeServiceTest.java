@@ -87,7 +87,7 @@ class EmployeeServiceTest {
         Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
 
         when(branchService.findEntityById(anyLong())).thenReturn(branch);
-        when(employeeRepository.saveAndFlush(any(Employee.class))).thenReturn(employee);
+        when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 
         EmployeeResponse savedEmployeeResponse = assertDoesNotThrow(() -> employeeService.saveEmployee(employeeRequest));
         AssertionUtils.assertEmployeeResponse(employee, savedEmployeeResponse);
@@ -106,7 +106,7 @@ class EmployeeServiceTest {
 
         when(branchService.findEntityById(anyLong())).thenReturn(branch);
         when(employeeRepository.findById(anyLong())).thenReturn(Optional.of(employee));
-        when(employeeRepository.saveAndFlush(any(Employee.class))).thenReturn(employee);
+        when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 
         EmployeeResponse employeeResponse = assertDoesNotThrow(() -> employeeService.updateEmployee(1L, employeeRequest));
         AssertionUtils.assertEmployeeResponse(employee, employeeResponse);

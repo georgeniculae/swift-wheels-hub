@@ -43,8 +43,8 @@ public class RevenueService {
 
     @Transactional
     public void saveInvoiceAndRevenue(Invoice invoice) {
-        invoiceRepository.saveAndFlush(invoice);
-        revenueRepository.saveAndFlush(getRevenue(invoice));
+        invoiceRepository.save(invoice);
+        revenueRepository.save(getRevenue(invoice));
     }
 
     private Revenue getRevenue(Invoice invoice) {

@@ -99,7 +99,7 @@ class BookingServiceTest {
         SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(carService.findAvailableCarById(anyString(), anyCollection(), anyLong())).thenReturn(carResponse);
-        when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(booking);
+        when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
         doNothing().when(carService).changeCarStatus(anyString(), anyCollection(), anyLong(), any(CarState.class));
 
         BookingResponse actualBookingResponse =
@@ -128,7 +128,7 @@ class BookingServiceTest {
 
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
         when(employeeService.findEmployeeById(anyString(), anyCollection(), anyLong())).thenReturn(employeeRequest);
-        when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(booking);
+        when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
 
         assertDoesNotThrow(() -> bookingService.closeBooking(bookingClosingDetails));
     }
@@ -145,7 +145,7 @@ class BookingServiceTest {
         SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
-        when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(booking);
+        when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
 
         BookingResponse updatedBookingResponse =
                 assertDoesNotThrow(() -> bookingService.updateBooking(1L, bookingRequest));
@@ -168,7 +168,7 @@ class BookingServiceTest {
 
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
         when(carService.findAvailableCarById(anyString(), anyCollection(), anyLong())).thenReturn(carResponse);
-        when(bookingRepository.saveAndFlush(any(Booking.class))).thenReturn(updatedBooking);
+        when(bookingRepository.save(any(Booking.class))).thenReturn(updatedBooking);
 
         BookingResponse updatedBookingResponse =
                 assertDoesNotThrow(() -> bookingService.updateBooking(1L, bookingRequest));

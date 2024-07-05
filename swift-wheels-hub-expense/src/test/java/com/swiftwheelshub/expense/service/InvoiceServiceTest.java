@@ -133,7 +133,7 @@ class InvoiceServiceTest {
         Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
 
         when(invoiceRepository.existsByBookingId(anyLong())).thenReturn(false);
-        when(invoiceRepository.saveAndFlush(any(Invoice.class))).thenReturn(invoice);
+        when(invoiceRepository.save(any(Invoice.class))).thenReturn(invoice);
 
         assertDoesNotThrow(() -> invoiceService.saveInvoice(bookingResponse));
     }
@@ -159,7 +159,7 @@ class InvoiceServiceTest {
         Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
 
         when(invoiceRepository.findByBookingId(anyLong())).thenReturn(Optional.ofNullable(invoice));
-        when(invoiceRepository.saveAndFlush(any(Invoice.class))).thenReturn(invoice);
+        when(invoiceRepository.save(any(Invoice.class))).thenReturn(invoice);
 
         assertDoesNotThrow(() -> invoiceService.updateInvoiceAfterBookingUpdate(bookingResponse));
     }
@@ -183,7 +183,7 @@ class InvoiceServiceTest {
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
         when(bookingService.findBookingById(anyString(), anyCollection(), anyLong())).thenReturn(bookingResponse);
         doNothing().when(revenueService).saveInvoiceAndRevenue(any(Invoice.class));
-        when(invoiceRepository.saveAndFlush(any(Invoice.class))).thenReturn(invoice);
+        when(invoiceRepository.save(any(Invoice.class))).thenReturn(invoice);
         doNothing().when(bookingService).closeBooking(anyString(), anyCollection(), any(BookingClosingDetails.class));
 
         assertDoesNotThrow(() -> invoiceService.closeInvoice(1L, invoiceRequest));

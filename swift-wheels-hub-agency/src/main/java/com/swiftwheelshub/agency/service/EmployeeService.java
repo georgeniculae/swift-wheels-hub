@@ -90,7 +90,7 @@ public class EmployeeService {
     }
 
     private Employee saveEntity(Employee newEmployee) {
-        return employeeRepository.saveAndFlush(newEmployee);
+        return employeeRepository.save(newEmployee);
     }
 
 }

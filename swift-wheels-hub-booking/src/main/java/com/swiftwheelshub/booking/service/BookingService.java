@@ -123,7 +123,7 @@ public class BookingService implements RetryListener {
             carResponse = carService.findAvailableCarById(apikey, authorities, newBookingRequest.carId());
             Booking newBooking = setupNewBooking(newBookingRequest, carResponse);
 
-            Booking savedBooking = bookingRepository.saveAndFlush(newBooking);
+            Booking savedBooking = bookingRepository.save(newBooking);
             bookingResponse = bookingMapper.mapEntityToDto(savedBooking);
         } catch (Exception e) {
             log.error("Error occurred while saving booking: {}", e.getMessage());
@@ -149,7 +149,7 @@ public class BookingService implements RetryListener {
             Booking updatedExistingBooking =
                     updateExistingBooking(updatedBookingRequest, existingCarId, existingBooking);
 
-            Booking updatedBooking = bookingRepository.saveAndFlush(updatedExistingBooking);
+            Booking updatedBooking = bookingRepository.save(updatedExistingBooking);
             bookingResponse = bookingMapper.mapEntityToDto(updatedBooking);
         } catch (Exception e) {
             log.error("Error occurred while updating booking: {}", e.getMessage());
@@ -177,7 +177,7 @@ public class BookingService implements RetryListener {
             existingBooking.setStatus(BookingStatus.CLOSED);
             existingBooking.setReturnBranchId(employeeResponse.workingBranchId());
 
-            Booking savedBooking = bookingRepository.saveAndFlush(existingBooking);
+            Booking savedBooking = bookingRepository.save(existingBooking);
             bookingResponse = bookingMapper.mapEntityToDto(savedBooking);
         } catch (Exception e) {
             log.error("Error occurred while closing booking: {}", e.getMessage());

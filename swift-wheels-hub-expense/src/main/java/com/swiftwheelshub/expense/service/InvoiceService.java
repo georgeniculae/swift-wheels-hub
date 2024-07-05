@@ -90,7 +90,7 @@ public class InvoiceService implements RetryListener {
             invoice.setCarId(newBookingResponse.carId());
             invoice.setBookingId(newBookingResponse.id());
 
-            invoiceRepository.saveAndFlush(invoice);
+            invoiceRepository.save(invoice);
 
             return;
         }
@@ -102,7 +102,7 @@ public class InvoiceService implements RetryListener {
         Invoice invoice = findInvoiceByBookingId(bookingResponse.id());
         invoice.setCarId(bookingResponse.carId());
 
-        invoiceRepository.saveAndFlush(invoice);
+        invoiceRepository.save(invoice);
     }
 
     public InvoiceResponse closeInvoice(Long id, InvoiceRequest invoiceRequest) {
@@ -121,7 +121,7 @@ public class InvoiceService implements RetryListener {
             Invoice existingInvoiceUpdated = updateInvoiceWithBookingDetails(bookingResponse, invoiceRequest, existingInvoice);
 
             revenueService.saveInvoiceAndRevenue(existingInvoiceUpdated);
-            savedInvoice = invoiceRepository.saveAndFlush(existingInvoiceUpdated);
+            savedInvoice = invoiceRepository.save(existingInvoiceUpdated);
 
             bookingClosingDetails = getBookingClosingDetails(invoiceRequest, invoiceRequest.receptionistEmployeeId());
         } catch (Exception e) {

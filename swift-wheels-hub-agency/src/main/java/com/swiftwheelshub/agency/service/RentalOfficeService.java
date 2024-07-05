@@ -73,7 +73,7 @@ public class RentalOfficeService {
     }
 
     private RentalOffice saveEntity(RentalOffice existingRentalOffice) {
-        return rentalOfficeRepository.saveAndFlush(existingRentalOffice);
+        return rentalOfficeRepository.save(existingRentalOffice);
     }
 
 }

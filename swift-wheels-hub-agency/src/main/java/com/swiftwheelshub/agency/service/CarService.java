@@ -178,7 +178,7 @@ public class CarService {
     }
 
     private Car saveEntity(Car car) {
-        return carRepository.saveAndFlush(car);
+        return carRepository.save(car);
     }
 
     private Car findEntityById(Long id) {
