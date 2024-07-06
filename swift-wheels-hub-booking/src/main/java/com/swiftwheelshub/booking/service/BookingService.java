@@ -168,11 +168,10 @@ public class BookingService implements RetryListener {
         Collection<GrantedAuthority> authorities = principal.getAuthorities();
 
         try {
-            Booking existingBooking = findEntityById(bookingClosingDetails.bookingId());
-
             EmployeeResponse employeeResponse =
                     employeeService.findEmployeeById(apikey, authorities, bookingClosingDetails.receptionistEmployeeId());
 
+            Booking existingBooking = findEntityById(bookingClosingDetails.bookingId());
             existingBooking.setStatus(BookingStatus.CLOSED);
             existingBooking.setReturnBranchId(employeeResponse.workingBranchId());
 
