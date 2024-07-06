@@ -138,25 +138,19 @@ public class BookingService implements RetryListener {
 
     public BookingResponse updateBooking(Long id, BookingRequest updatedBookingRequest) {
         validateBookingDates(updatedBookingRequest);
-        Booking existingBooking = findEntityById(id);
         ApiKeyAuthenticationToken principal = AuthenticationUtil.getAuthentication();
-
-        final Long existingCarId = existingBooking.getCarId();
 
         BookingResponse bookingResponse;
 
         try {
-            Booking updatedBooking = setupUpdatedBooking(updatedBookingRequest, existingCarId, existingBooking);
+            Booking savedUpdatedBooking = updateAndSaveBooking(id, updatedBookingRequest, principal);
 
-            Booking savedUpdatedBooking = bookingRepository.save(updatedBooking);
             bookingResponse = bookingMapper.mapEntityToDto(savedUpdatedBooking);
         } catch (Exception e) {
             log.error("Error occurred while updating booking: {}", e.getMessage());
 
             throw ExceptionUtil.handleException(e);
         }
-
-        getCarsForStatusUpdate(principal.getName(), principal.getAuthorities(), existingCarId, updatedBookingRequest.carId());
 
         return bookingResponse;
     }
@@ -215,28 +209,29 @@ public class BookingService implements RetryListener {
         }
     }
 
-    private Booking setupUpdatedBooking(BookingRequest updatedBookingRequest,
-                                        Long existingCarId,
-                                        Booking existingBooking) {
+    private Booking updateAndSaveBooking(Long id, BookingRequest updatedBookingRequest, ApiKeyAuthenticationToken principal) {
+        Booking existingBooking = findEntityById(id);
+
+        final Long existingCarId = existingBooking.getCarId();
         Long newCarId = updatedBookingRequest.carId();
         BigDecimal amount = existingBooking.getRentalCarPrice();
-        ApiKeyAuthenticationToken principal = AuthenticationUtil.getAuthentication();
-
-        Booking updatedBooking = bookingMapper.getNewBookingInstance(existingBooking);
 
         if (!existingCarId.equals(newCarId)) {
             CarResponse newCarResponse = carService.findAvailableCarById(principal.getName(), principal.getAuthorities(), newCarId);
 
             amount = newCarResponse.amount();
-            updatedBooking.setCarId(newCarResponse.id());
-            updatedBooking.setRentalBranchId(newCarResponse.actualBranchId());
+            existingBooking.setCarId(newCarResponse.id());
+            existingBooking.setRentalBranchId(newCarResponse.actualBranchId());
         }
 
-        updatedBooking.setAmount(getAmount(updatedBookingRequest, amount));
-        updatedBooking.setDateFrom(updatedBookingRequest.dateFrom());
-        updatedBooking.setDateTo(updatedBookingRequest.dateTo());
+        existingBooking.setAmount(getAmount(updatedBookingRequest, amount));
+        existingBooking.setDateFrom(updatedBookingRequest.dateFrom());
+        existingBooking.setDateTo(updatedBookingRequest.dateTo());
 
-        return updatedBooking;
+        Booking savedUpdatedBooking = bookingRepository.save(existingBooking);
+        getCarsForStatusUpdate(principal.getName(), principal.getAuthorities(), existingCarId, updatedBookingRequest.carId());
+
+        return savedUpdatedBooking;
     }
 
     private BigDecimal getAmount(BookingRequest bookingRequest, BigDecimal amount) {
@@ -273,7 +268,10 @@ public class BookingService implements RetryListener {
         return newBooking;
     }
 
-    private void getCarsForStatusUpdate(String apikey, Collection<GrantedAuthority> authorities, Long existingCarId, Long newCarId) {
+    private void getCarsForStatusUpdate(String apikey,
+                                        Collection<GrantedAuthority> authorities,
+                                        Long existingCarId,
+                                        Long newCarId) {
         if (!existingCarId.equals(newCarId)) {
             List<UpdateCarRequest> carsForUpdate = List.of(
                     new UpdateCarRequest(existingCarId, CarState.AVAILABLE),

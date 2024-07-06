@@ -116,15 +116,10 @@ public class InvoiceService implements RetryListener {
         Collection<GrantedAuthority> authorities = principal.getAuthorities();
 
         try {
-            Invoice existingInvoice = findEntityById(id);
-
             BookingResponse bookingResponse =
                     bookingService.findBookingById(apikey, authorities, invoiceRequest.bookingId());
-            Invoice existingInvoiceUpdated =
-                    updateInvoiceWithBookingDetails(bookingResponse, invoiceRequest, existingInvoice);
 
-            revenueService.saveInvoiceAndRevenue(existingInvoiceUpdated);
-            savedInvoice = invoiceRepository.save(existingInvoiceUpdated);
+            savedInvoice = updateInvoiceWithBookingDetails(id, bookingResponse, invoiceRequest);
 
             bookingClosingDetails = getBookingClosingDetails(invoiceRequest, invoiceRequest.receptionistEmployeeId());
         } catch (Exception e) {
@@ -185,28 +180,28 @@ public class InvoiceService implements RetryListener {
         return ObjectUtils.isEmpty(invoiceRequest.additionalPayment()) ? BigDecimal.ZERO : invoiceRequest.additionalPayment();
     }
 
-    private Invoice updateInvoiceWithBookingDetails(BookingResponse bookingResponse,
-                                                    InvoiceRequest invoiceRequest,
-                                                    Invoice existingInvoice) {
+    private Invoice updateInvoiceWithBookingDetails(Long id,
+                                                    BookingResponse bookingResponse,
+                                                    InvoiceRequest invoiceRequest) {
+        Invoice existingInvoice = findEntityById(id);
+
         Long receptionistEmployeeId = invoiceRequest.receptionistEmployeeId();
         Long carId = invoiceRequest.carId();
         String customerUsername = bookingResponse.customerUsername();
         String customerEmail = bookingResponse.customerEmail();
 
-        Invoice updatedInvoice = invoiceMapper.getNewInvoiceInstance(existingInvoice);
+        existingInvoice.setCustomerUsername(customerUsername);
+        existingInvoice.setCustomerEmail(customerEmail);
+        existingInvoice.setCarReturnDate(invoiceRequest.carReturnDate());
+        existingInvoice.setReceptionistEmployeeId(receptionistEmployeeId);
+        existingInvoice.setCarId(carId);
+        existingInvoice.setIsVehicleDamaged(invoiceRequest.isVehicleDamaged());
+        existingInvoice.setDamageCost(getDamageCost(invoiceRequest));
+        existingInvoice.setAdditionalPayment(getAdditionalPayment(invoiceRequest));
+        existingInvoice.setComments(invoiceRequest.comments());
+        existingInvoice.setTotalAmount(getTotalAmount(existingInvoice, bookingResponse));
 
-        updatedInvoice.setCustomerUsername(customerUsername);
-        updatedInvoice.setCustomerEmail(customerEmail);
-        updatedInvoice.setCarReturnDate(invoiceRequest.carReturnDate());
-        updatedInvoice.setReceptionistEmployeeId(receptionistEmployeeId);
-        updatedInvoice.setCarId(carId);
-        updatedInvoice.setIsVehicleDamaged(invoiceRequest.isVehicleDamaged());
-        updatedInvoice.setDamageCost(getDamageCost(invoiceRequest));
-        updatedInvoice.setAdditionalPayment(getAdditionalPayment(invoiceRequest));
-        updatedInvoice.setComments(invoiceRequest.comments());
-        updatedInvoice.setTotalAmount(getTotalAmount(existingInvoice, bookingResponse));
-
-        return updatedInvoice;
+        return revenueService.saveInvoiceAndRevenue(existingInvoice);
     }
 
     private BookingClosingDetails getBookingClosingDetails(InvoiceRequest invoiceRequest, Long receptionistEmployeeId) {

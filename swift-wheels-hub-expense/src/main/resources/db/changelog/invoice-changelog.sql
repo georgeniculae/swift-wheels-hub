@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS public.invoice (
     car_id BIGINT NOT NULL,
     receptionist_employee_id BIGINT,
     booking_id BIGINT NOT NULL,
-    car_date_of_return date,
+    car_return_date date,
     is_vehicle_damaged BOOLEAN,
     damage_cost DECIMAL,
     additional_payment DECIMAL,

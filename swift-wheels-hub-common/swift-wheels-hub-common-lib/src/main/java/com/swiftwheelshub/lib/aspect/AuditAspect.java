@@ -1,7 +1,7 @@
 package com.swiftwheelshub.lib.aspect;
 
 import com.swiftwheelshub.dto.AuditLogInfoRequest;
-import com.swiftwheelshub.exception.SwiftWheelsHubException;
+import com.swiftwheelshub.lib.exceptionhandling.ExceptionUtil;
 import com.swiftwheelshub.lib.service.AuditLogProducerService;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +47,7 @@ public class AuditAspect {
 
             return proceed;
         } catch (Throwable e) {
-            throw new SwiftWheelsHubException(e.getMessage());
+            throw ExceptionUtil.handleException(e);
         }
     }
 
