@@ -51,7 +51,8 @@ public class AuditAspect {
         }
     }
 
-    private List<String> getParametersValues(ProceedingJoinPoint joinPoint, LogActivity logActivity,
+    private List<String> getParametersValues(ProceedingJoinPoint joinPoint,
+                                             LogActivity logActivity,
                                              MethodSignature signature) {
         return Arrays.stream(logActivity.sentParameters())
                 .map(parameter -> {
