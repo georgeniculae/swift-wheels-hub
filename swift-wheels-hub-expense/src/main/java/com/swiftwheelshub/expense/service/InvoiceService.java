@@ -140,7 +140,7 @@ public class InvoiceService implements RetryListener {
     }
 
     private void validateInvoice(InvoiceRequest invoiceRequest) {
-        validateDateOfReturnOfTheCar(invoiceRequest.carDateOfReturn());
+        validateDateOfReturnOfTheCar(invoiceRequest.carReturnDate());
 
         if (Boolean.TRUE.equals(invoiceRequest.isVehicleDamaged()) && ObjectUtils.isEmpty(invoiceRequest.damageCost())) {
             throw new SwiftWheelsHubResponseStatusException(
@@ -191,7 +191,7 @@ public class InvoiceService implements RetryListener {
 
         existingInvoice.setCustomerUsername(customerUsername);
         existingInvoice.setCustomerEmail(customerEmail);
-        existingInvoice.setCarDateOfReturn(invoiceRequest.carDateOfReturn());
+        existingInvoice.setCarReturnDate(invoiceRequest.carReturnDate());
         existingInvoice.setReceptionistEmployeeId(receptionistEmployeeId);
         existingInvoice.setCarId(carId);
         existingInvoice.setIsVehicleDamaged(invoiceRequest.isVehicleDamaged());
@@ -212,7 +212,7 @@ public class InvoiceService implements RetryListener {
     }
 
     private BigDecimal getTotalAmount(Invoice existingInvoice, BookingResponse bookingResponse) {
-        LocalDate carReturnDate = existingInvoice.getCarDateOfReturn();
+        LocalDate carReturnDate = existingInvoice.getCarReturnDate();
         LocalDate bookingDateTo = bookingResponse.dateTo();
         LocalDate bookingDateFrom = bookingResponse.dateFrom();
         BigDecimal carAmount = bookingResponse.rentalCarPrice();

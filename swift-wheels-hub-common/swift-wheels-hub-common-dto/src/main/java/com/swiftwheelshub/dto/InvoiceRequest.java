@@ -18,7 +18,7 @@ public record InvoiceRequest(
         Long bookingId,
 
         @DateTimeFormat(pattern = "yyyy-MM-dd")
-        LocalDate carDateOfReturn,
+        LocalDate carReturnDate,
 
         Boolean isVehicleDamaged,
 
@@ -37,7 +37,7 @@ public record InvoiceRequest(
                 "carId=" + carId + "\n" +
                 "receptionistEmployeeId=" + receptionistEmployeeId + "\n" +
                 "bookingId=" + bookingId + "\n" +
-                "carDateOfReturn=" + carDateOfReturn + "\n" +
+                "carReturnDate=" + carReturnDate + "\n" +
                 "isVehicleDamaged=" + isVehicleDamaged + "\n" +
                 "damageCost=" + damageCost + "\n" +
                 "additionalPayment=" + additionalPayment + "\n" +

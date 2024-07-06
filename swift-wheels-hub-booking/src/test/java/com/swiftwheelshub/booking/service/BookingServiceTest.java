@@ -214,25 +214,25 @@ class BookingServiceTest {
     void findBookingByDateOfBookingTest_success() {
         Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
 
-        when(bookingRepository.findByDateOfBooking(LocalDate.of(2050, Month.FEBRUARY, 20)))
+        when(bookingRepository.findByDateOfBooking(LocalDate.of(2099, Month.FEBRUARY, 20)))
                 .thenReturn(Optional.of(booking));
 
         BookingResponse bookingResponse =
-                assertDoesNotThrow(() -> bookingService.findBookingByDateOfBooking("2050-02-20"));
+                assertDoesNotThrow(() -> bookingService.findBookingByDateOfBooking("2099-02-20"));
 
         AssertionUtils.assertBooking(booking, bookingResponse);
     }
 
     @Test
     void findBookingByDateOfBookingTest_errorOnFindingByDateOfBooking() {
-        when(bookingRepository.findByDateOfBooking(LocalDate.of(2050, Month.FEBRUARY, 20)))
+        when(bookingRepository.findByDateOfBooking(LocalDate.of(2099, Month.FEBRUARY, 20)))
                 .thenReturn(Optional.empty());
 
         SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException =
-                assertThrows(SwiftWheelsHubNotFoundException.class, () -> bookingService.findBookingByDateOfBooking("2050-02-20"));
+                assertThrows(SwiftWheelsHubNotFoundException.class, () -> bookingService.findBookingByDateOfBooking("2099-02-20"));
 
         assertNotNull(swiftWheelsHubNotFoundException);
-        assertEquals("Booking from date: 2050-02-20 does not exist", swiftWheelsHubNotFoundException.getReason());
+        assertEquals("Booking from date: 2099-02-20 does not exist", swiftWheelsHubNotFoundException.getReason());
     }
 
     @Test

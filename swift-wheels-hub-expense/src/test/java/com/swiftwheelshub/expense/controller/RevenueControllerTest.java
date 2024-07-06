@@ -111,7 +111,7 @@ class RevenueControllerTest {
 
         when(revenueService.findRevenuesByDate(any(LocalDate.class))).thenReturn(List.of(revenueResponse));
 
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{date}", "2050-02-20")
+        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{date}", "2099-02-20")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -130,7 +130,7 @@ class RevenueControllerTest {
 
         when(revenueService.findRevenuesByDate(any(LocalDate.class))).thenReturn(List.of(revenueResponse));
 
-        mockMvc.perform(get(PATH + "/{date}", "2050-02-20")
+        mockMvc.perform(get(PATH + "/{date}", "2099-02-20")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

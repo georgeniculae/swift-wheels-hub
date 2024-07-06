@@ -2,7 +2,7 @@
   "carId": 1,
   "receptionistEmployeeId": 1,
   "bookingId": 1,
-  "carDateOfReturn": "2050-02-22",
+  "carReturnDate": "2099-02-22",
   "isVehicleDamaged": false,
   "damageCost": 0,
   "additionalPayment": 0,

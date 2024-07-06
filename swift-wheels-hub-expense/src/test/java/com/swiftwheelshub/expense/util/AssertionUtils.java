@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AssertionUtils {
 
     public static void assertInvoiceResponse(Invoice invoice, InvoiceResponse invoiceResponse) {
-        assertEquals(invoice.getCarDateOfReturn(), invoiceResponse.carDateOfReturn());
+        assertEquals(invoice.getCarReturnDate(), invoiceResponse.carReturnDate());
         assertEquals(invoice.getIsVehicleDamaged(), invoiceResponse.isVehicleDamaged());
         assertEquals(invoice.getDamageCost(), invoiceResponse.damageCost());
         assertEquals(invoice.getAdditionalPayment(), invoiceResponse.additionalPayment());

@@ -55,7 +55,7 @@ class RevenueServiceTest {
         when(revenueRepository.findByDateOfRevenue(any(LocalDate.class))).thenReturn(Stream.of(revenue));
 
         List<RevenueResponse> revenueResponses =
-                assertDoesNotThrow(() -> revenueService.findRevenuesByDate(LocalDate.parse("2050-02-20")));
+                assertDoesNotThrow(() -> revenueService.findRevenuesByDate(LocalDate.parse("2099-02-20")));
 
         AssertionUtils.assertRevenueResponse(revenue, revenueResponses.getFirst());
 

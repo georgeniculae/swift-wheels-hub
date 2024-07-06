@@ -41,7 +41,7 @@ public class Invoice extends BaseEntity {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
-    private LocalDate carDateOfReturn;
+    private LocalDate carReturnDate;
 
     private Boolean isVehicleDamaged;
 

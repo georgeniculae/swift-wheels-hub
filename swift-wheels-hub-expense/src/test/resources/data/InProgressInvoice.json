@@ -4,7 +4,7 @@
   "carId": 1,
   "receptionistEmployeeId": 1,
   "bookingId": 1,
-  "carDateOfReturn": null,
+  "carReturnDate": null,
   "isVehicleDamaged": null,
   "damageCost": null,
   "additionalPayment": null,
