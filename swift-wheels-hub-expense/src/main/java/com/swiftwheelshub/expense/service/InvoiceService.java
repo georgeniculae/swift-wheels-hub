@@ -199,7 +199,7 @@ public class InvoiceService implements RetryListener {
         existingInvoice.setDamageCost(getDamageCost(invoiceRequest));
         existingInvoice.setAdditionalPayment(getAdditionalPayment(invoiceRequest));
         existingInvoice.setComments(invoiceRequest.comments());
-        existingInvoice.setTotalAmount(getTotalAmount(existingInvoice, bookingResponse));
+        existingInvoice.setTotalAmount(getTotalAmount(invoiceRequest, bookingResponse));
 
         return revenueService.saveInvoiceAndRevenue(existingInvoice);
     }
@@ -212,8 +212,8 @@ public class InvoiceService implements RetryListener {
         );
     }
 
-    private BigDecimal getTotalAmount(Invoice existingInvoice, BookingResponse bookingResponse) {
-        LocalDate carReturnDate = existingInvoice.getCarReturnDate();
+    private BigDecimal getTotalAmount(InvoiceRequest invoiceRequest, BookingResponse bookingResponse) {
+        LocalDate carReturnDate = invoiceRequest.carReturnDate();
         LocalDate bookingDateTo = bookingResponse.dateTo();
         LocalDate bookingDateFrom = bookingResponse.dateFrom();
         BigDecimal carAmount = bookingResponse.rentalCarPrice();
@@ -225,7 +225,7 @@ public class InvoiceService implements RetryListener {
         }
 
         return carAmount.multiply(BigDecimal.valueOf(getDaysPeriod(bookingDateFrom, bookingDateTo)))
-                .add(ObjectUtils.isEmpty(existingInvoice.getDamageCost()) ? BigDecimal.ZERO : existingInvoice.getDamageCost());
+                .add(getDamageCost(invoiceRequest));
     }
 
     private int getDaysPeriod(LocalDate bookingDateFrom, LocalDate bookingDateTo) {
