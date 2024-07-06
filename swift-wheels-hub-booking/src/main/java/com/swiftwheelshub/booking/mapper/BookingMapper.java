@@ -18,4 +18,6 @@ public interface BookingMapper {
 
     Booking mapDtoToEntity(BookingRequest bookingRequest);
 
+    Booking getNewBookingInstance(Booking booking);
+
 }

@@ -15,4 +15,6 @@ public interface InvoiceMapper {
 
     InvoiceResponse mapEntityToDto(Invoice invoice);
 
+    Invoice getNewInvoiceInstance(Invoice existingInvoice);
+
 }

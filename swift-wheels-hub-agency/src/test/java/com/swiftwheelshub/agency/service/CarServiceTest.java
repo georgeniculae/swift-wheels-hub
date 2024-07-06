@@ -21,6 +21,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,6 +54,9 @@ class CarServiceTest {
 
     @Mock
     private BranchService branchService;
+
+    @Mock
+    private ExcelParserService excelParserService;
 
     @Spy
     private CarMapper carMapper = new CarMapperImpl();
@@ -156,7 +160,8 @@ class CarServiceTest {
 
         Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
 
-        when(carRepository.saveAllAndFlush(anyList())).thenReturn(List.of(car));
+        when(excelParserService.extractDataFromExcel(any(MultipartFile.class))).thenReturn(List.of(car));
+        when(carRepository.saveAll(anyList())).thenReturn(List.of(car));
 
         List<CarResponse> carResponses = carService.uploadCars(file);
         AssertionUtils.assertCarResponse(car, carResponses.getFirst());
@@ -168,7 +173,7 @@ class CarServiceTest {
         InputStream stream = new FileInputStream(excelFile);
         MockMultipartFile file = new MockMultipartFile("file", excelFile.getName(), MediaType.ALL_VALUE, stream);
 
-        when(carRepository.saveAllAndFlush(anyList())).thenThrow(new SwiftWheelsHubException("error"));
+        when(carRepository.saveAll(anyList())).thenThrow(new SwiftWheelsHubException("error"));
 
         SwiftWheelsHubException swiftWheelsHubException =
                 assertThrows(SwiftWheelsHubException.class, () -> carService.uploadCars(file));
@@ -184,7 +189,7 @@ class CarServiceTest {
                 TestUtils.getResourceAsJson("/data/UpdateCarRequest.json", UpdateCarRequest.class);
 
         when(carRepository.findAllById(anyList())).thenReturn(List.of(car));
-        when(carRepository.saveAllAndFlush(anyList())).thenReturn(List.of(car));
+        when(carRepository.saveAll(anyList())).thenReturn(List.of(car));
 
         List<CarResponse> carResponses = carService.updateCarsStatus(List.of(updateCarRequest));
         AssertionUtils.assertCarResponse(car, carResponses.getFirst());

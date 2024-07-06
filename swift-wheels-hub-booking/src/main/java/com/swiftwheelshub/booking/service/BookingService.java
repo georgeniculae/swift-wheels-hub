@@ -146,11 +146,10 @@ public class BookingService implements RetryListener {
         BookingResponse bookingResponse;
 
         try {
-            Booking updatedExistingBooking =
-                    updateExistingBooking(updatedBookingRequest, existingCarId, existingBooking);
+            Booking updatedBooking = setupUpdatedBooking(updatedBookingRequest, existingCarId, existingBooking);
 
-            Booking updatedBooking = bookingRepository.save(updatedExistingBooking);
-            bookingResponse = bookingMapper.mapEntityToDto(updatedBooking);
+            Booking savedUpdatedBooking = bookingRepository.save(updatedBooking);
+            bookingResponse = bookingMapper.mapEntityToDto(savedUpdatedBooking);
         } catch (Exception e) {
             log.error("Error occurred while updating booking: {}", e.getMessage());
 
@@ -217,25 +216,28 @@ public class BookingService implements RetryListener {
         }
     }
 
-    private Booking updateExistingBooking(BookingRequest updatedBookingRequest,
-                                          Long existingCarId, Booking existingBooking) {
+    private Booking setupUpdatedBooking(BookingRequest updatedBookingRequest,
+                                        Long existingCarId,
+                                        Booking existingBooking) {
         Long newCarId = updatedBookingRequest.carId();
         BigDecimal amount = existingBooking.getRentalCarPrice();
         ApiKeyAuthenticationToken principal = AuthenticationUtil.getAuthentication();
+
+        Booking updatedBooking = bookingMapper.getNewBookingInstance(existingBooking);
 
         if (!existingCarId.equals(newCarId)) {
             CarResponse newCarResponse = carService.findAvailableCarById(principal.getName(), principal.getAuthorities(), newCarId);
 
             amount = newCarResponse.amount();
-            existingBooking.setCarId(newCarResponse.id());
-            existingBooking.setRentalBranchId(newCarResponse.actualBranchId());
+            updatedBooking.setCarId(newCarResponse.id());
+            updatedBooking.setRentalBranchId(newCarResponse.actualBranchId());
         }
 
-        existingBooking.setAmount(getAmount(updatedBookingRequest, amount));
-        existingBooking.setDateFrom(updatedBookingRequest.dateFrom());
-        existingBooking.setDateTo(updatedBookingRequest.dateTo());
+        updatedBooking.setAmount(getAmount(updatedBookingRequest, amount));
+        updatedBooking.setDateFrom(updatedBookingRequest.dateFrom());
+        updatedBooking.setDateTo(updatedBookingRequest.dateTo());
 
-        return existingBooking;
+        return updatedBooking;
     }
 
     private BigDecimal getAmount(BookingRequest bookingRequest, BigDecimal amount) {

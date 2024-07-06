@@ -106,6 +106,8 @@ public class InvoiceService implements RetryListener {
     }
 
     public InvoiceResponse closeInvoice(Long id, InvoiceRequest invoiceRequest) {
+        validateInvoice(invoiceRequest);
+
         Invoice savedInvoice;
         BookingClosingDetails bookingClosingDetails;
 
@@ -114,11 +116,12 @@ public class InvoiceService implements RetryListener {
         Collection<GrantedAuthority> authorities = principal.getAuthorities();
 
         try {
-            validateInvoice(invoiceRequest);
             Invoice existingInvoice = findEntityById(id);
 
-            BookingResponse bookingResponse = bookingService.findBookingById(apikey, authorities, invoiceRequest.bookingId());
-            Invoice existingInvoiceUpdated = updateInvoiceWithBookingDetails(bookingResponse, invoiceRequest, existingInvoice);
+            BookingResponse bookingResponse =
+                    bookingService.findBookingById(apikey, authorities, invoiceRequest.bookingId());
+            Invoice existingInvoiceUpdated =
+                    updateInvoiceWithBookingDetails(bookingResponse, invoiceRequest, existingInvoice);
 
             revenueService.saveInvoiceAndRevenue(existingInvoiceUpdated);
             savedInvoice = invoiceRepository.save(existingInvoiceUpdated);
@@ -182,25 +185,28 @@ public class InvoiceService implements RetryListener {
         return ObjectUtils.isEmpty(invoiceRequest.additionalPayment()) ? BigDecimal.ZERO : invoiceRequest.additionalPayment();
     }
 
-    private Invoice updateInvoiceWithBookingDetails(BookingResponse bookingResponse, InvoiceRequest invoiceRequest,
+    private Invoice updateInvoiceWithBookingDetails(BookingResponse bookingResponse,
+                                                    InvoiceRequest invoiceRequest,
                                                     Invoice existingInvoice) {
         Long receptionistEmployeeId = invoiceRequest.receptionistEmployeeId();
         Long carId = invoiceRequest.carId();
         String customerUsername = bookingResponse.customerUsername();
         String customerEmail = bookingResponse.customerEmail();
 
-        existingInvoice.setCustomerUsername(customerUsername);
-        existingInvoice.setCustomerEmail(customerEmail);
-        existingInvoice.setCarReturnDate(invoiceRequest.carReturnDate());
-        existingInvoice.setReceptionistEmployeeId(receptionistEmployeeId);
-        existingInvoice.setCarId(carId);
-        existingInvoice.setIsVehicleDamaged(invoiceRequest.isVehicleDamaged());
-        existingInvoice.setDamageCost(getDamageCost(invoiceRequest));
-        existingInvoice.setAdditionalPayment(getAdditionalPayment(invoiceRequest));
-        existingInvoice.setComments(invoiceRequest.comments());
-        existingInvoice.setTotalAmount(getTotalAmount(existingInvoice, bookingResponse));
+        Invoice updatedInvoice = invoiceMapper.getNewInvoiceInstance(existingInvoice);
 
-        return existingInvoice;
+        updatedInvoice.setCustomerUsername(customerUsername);
+        updatedInvoice.setCustomerEmail(customerEmail);
+        updatedInvoice.setCarReturnDate(invoiceRequest.carReturnDate());
+        updatedInvoice.setReceptionistEmployeeId(receptionistEmployeeId);
+        updatedInvoice.setCarId(carId);
+        updatedInvoice.setIsVehicleDamaged(invoiceRequest.isVehicleDamaged());
+        updatedInvoice.setDamageCost(getDamageCost(invoiceRequest));
+        updatedInvoice.setAdditionalPayment(getAdditionalPayment(invoiceRequest));
+        updatedInvoice.setComments(invoiceRequest.comments());
+        updatedInvoice.setTotalAmount(getTotalAmount(existingInvoice, bookingResponse));
+
+        return updatedInvoice;
     }
 
     private BookingClosingDetails getBookingClosingDetails(InvoiceRequest invoiceRequest, Long receptionistEmployeeId) {
