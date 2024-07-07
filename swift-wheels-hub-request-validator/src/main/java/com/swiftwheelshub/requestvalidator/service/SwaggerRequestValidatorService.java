@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -40,11 +41,13 @@ public class SwaggerRequestValidatorService {
     private SimpleRequest getSimpleRequest(IncomingRequestDetails request) {
         SimpleRequest.Builder simpleRequestBuilder = new SimpleRequest.Builder(request.method(), request.path());
 
-        request.headers()
-                .forEach(simpleRequestBuilder::withHeader);
+        for (Map.Entry<String, String> entry : request.headers().entrySet()) {
+            simpleRequestBuilder.withHeader(entry.getKey(), entry.getValue());
+        }
 
-        request.queryParams()
-                .forEach(simpleRequestBuilder::withQueryParam);
+        for (Map.Entry<String, String> entry : request.queryParams().entrySet()) {
+            simpleRequestBuilder.withQueryParam(entry.getKey(), entry.getValue());
+        }
 
         simpleRequestBuilder.withBody(request.body());
 
