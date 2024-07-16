@@ -5,6 +5,7 @@ import com.swiftwheelshub.dto.CarSuggestionResponse;
 import com.swiftwheelshub.dto.TripInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ public class CarSuggestionController {
     private final CarSuggestionService carSuggestionService;
 
     @GetMapping
+    @PreAuthorize("hasRole('user')")
     public ResponseEntity<CarSuggestionResponse> getChatPrompt(@Validated TripInfo tripInfo) {
         CarSuggestionResponse carSuggestionResponse = carSuggestionService.getChatOutput(tripInfo);
 
