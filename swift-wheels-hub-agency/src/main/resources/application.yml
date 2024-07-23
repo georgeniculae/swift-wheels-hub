@@ -121,3 +121,9 @@ logging:
 
 apikey:
   secret: ${API_KEY_SECRET}
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+      logging: slf4j
