@@ -1,6 +1,6 @@
 package com.swiftwheelshub.ai.service;
 
-import com.swiftwheelshub.ai.util.TestUtils;
+import com.swiftwheelshub.ai.util.TestUtil;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarSuggestionResponse;
 import com.swiftwheelshub.dto.TripInfo;
@@ -36,11 +36,11 @@ class CarSuggestionServiceTest {
     @Test
     void getChatOutputTest_success() {
         CarResponse carResponse =
-                TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+                TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
         TripInfo tripInfo =
-                TestUtils.getResourceAsJson("/data/TripInfo.json", TripInfo.class);
+                TestUtil.getResourceAsJson("/data/TripInfo.json", TripInfo.class);
         CarSuggestionResponse carSuggestionResponse =
-                TestUtils.getResourceAsJson("/data/CarSuggestionResponse.json", CarSuggestionResponse.class);
+                TestUtil.getResourceAsJson("/data/CarSuggestionResponse.json", CarSuggestionResponse.class);
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
         ApiKeyAuthenticationToken apiKeyAuthenticationToken =

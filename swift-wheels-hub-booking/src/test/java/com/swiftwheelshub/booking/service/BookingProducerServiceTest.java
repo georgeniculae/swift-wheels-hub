@@ -1,6 +1,6 @@
 package com.swiftwheelshub.booking.service;
 
-import com.swiftwheelshub.booking.util.TestUtils;
+import com.swiftwheelshub.booking.util.TestUtil;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class BookingProducerServiceTest {
         ReflectionTestUtils.setField(bookingProducerService, "savedBookingProducerTopicName", "saved-booking-out-0");
 
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
         CompletableFuture<SendResult<String, Object>> result = new CompletableFuture<>();
 
@@ -49,7 +49,7 @@ class BookingProducerServiceTest {
         ReflectionTestUtils.setField(bookingProducerService, "savedBookingProducerTopicName", "saved-booking-out-0");
 
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
         when(kafkaTemplate.send(any(Message.class))).thenThrow(new SwiftWheelsHubException("error"));
 
@@ -64,7 +64,7 @@ class BookingProducerServiceTest {
         ReflectionTestUtils.setField(bookingProducerService, "updatedBookingProducerTopicName", "updated-booking-out-0");
 
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
         CompletableFuture<SendResult<String, Object>> result = new CompletableFuture<>();
 
@@ -78,7 +78,7 @@ class BookingProducerServiceTest {
         ReflectionTestUtils.setField(bookingProducerService, "updatedBookingProducerTopicName", "updated-booking-out-0");
 
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
         when(kafkaTemplate.send(any(Message.class))).thenThrow(new SwiftWheelsHubException("error"));
 

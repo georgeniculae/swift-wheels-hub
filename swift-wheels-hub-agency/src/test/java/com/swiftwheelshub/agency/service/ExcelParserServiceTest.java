@@ -1,6 +1,6 @@
 package com.swiftwheelshub.agency.service;
 
-import com.swiftwheelshub.agency.util.TestUtils;
+import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.entity.Branch;
 import com.swiftwheelshub.entity.Car;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ class ExcelParserServiceTest {
 
     @Test
     void extractDataFromExcelTest() throws IOException {
-        Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
+        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
         File excelFile = new File("src/test/resources/file/Cars.xlsx");
         InputStream stream = new FileInputStream(excelFile);
 

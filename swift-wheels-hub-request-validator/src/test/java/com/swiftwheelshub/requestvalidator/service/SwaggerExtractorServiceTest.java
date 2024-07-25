@@ -4,7 +4,7 @@ import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.requestvalidator.config.RegisteredEndpoints;
 import com.swiftwheelshub.requestvalidator.model.SwaggerFile;
-import com.swiftwheelshub.requestvalidator.util.TestUtils;
+import com.swiftwheelshub.requestvalidator.util.TestUtil;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -55,13 +55,13 @@ class SwaggerExtractorServiceTest {
     @SuppressWarnings("all")
     void getSwaggerIdentifierAndContent_success() {
         String agencyContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
         String bookingContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubBookingSwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubBookingSwagger.json", String.class);
         String customerContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubCustomerSwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubCustomerSwagger.json", String.class);
         String expenseContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
 
         Map<String, String> endpoints = new LinkedHashMap<>();
         endpoints.put("agency", agencyContent);
@@ -101,13 +101,13 @@ class SwaggerExtractorServiceTest {
     @SuppressWarnings("unchecked")
     void getSwaggerIdentifierAndContent_emptySwagger() {
         String agencyContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
         String bookingContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubBookingSwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubBookingSwagger.json", String.class);
         String customerContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubCustomerSwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubCustomerSwagger.json", String.class);
         String expenseContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
 
         Map<String, String> endpoints = new LinkedHashMap<>();
         endpoints.put("agency", agencyContent);
@@ -130,13 +130,13 @@ class SwaggerExtractorServiceTest {
     @SuppressWarnings("all")
     void getSwaggerFileForMicroservice_success() {
         String agencyContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
         String bookingContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubBookingSwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubBookingSwagger.json", String.class);
         String customerContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubCustomerSwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubCustomerSwagger.json", String.class);
         String expenseContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
 
         Map<String, String> endpoints = new LinkedHashMap<>();
         endpoints.put("agency", agencyContent);
@@ -176,13 +176,13 @@ class SwaggerExtractorServiceTest {
     @SuppressWarnings("all")
     void getSwaggerFileForMicroservice_nonexistentMicroservice() {
         String agencyContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
         String bookingContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubBookingSwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubBookingSwagger.json", String.class);
         String customerContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubCustomerSwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubCustomerSwagger.json", String.class);
         String expenseContent =
-                TestUtils.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
+                TestUtil.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
 
         Map<String, String> endpoints = new LinkedHashMap<>();
         endpoints.put("agency", agencyContent);

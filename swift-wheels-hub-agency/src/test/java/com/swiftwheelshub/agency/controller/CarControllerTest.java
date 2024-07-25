@@ -1,7 +1,7 @@
 package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.CarService;
-import com.swiftwheelshub.agency.util.TestUtils;
+import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
@@ -60,7 +60,7 @@ class CarControllerTest {
     @Test
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findAllCarsTest_success() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.findAllCars()).thenReturn(List.of(carResponse));
 
@@ -90,7 +90,7 @@ class CarControllerTest {
     @Test
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findCarByIdTest_success() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.findCarById(anyLong())).thenReturn(carResponse);
 
@@ -107,7 +107,7 @@ class CarControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findCarsByFilterTest_success() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.findCarsByFilter(anyString())).thenReturn(List.of(carResponse));
 
@@ -124,7 +124,7 @@ class CarControllerTest {
     @Test
     @WithAnonymousUser
     void findCarsByFilterTest_unauthorized() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.findCarsByFilter(anyString())).thenReturn(List.of(carResponse));
 
@@ -154,7 +154,7 @@ class CarControllerTest {
     @Test
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findCarsByMakeTest_success() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.findCarsByMake(anyString())).thenReturn(List.of(carResponse));
 
@@ -171,7 +171,7 @@ class CarControllerTest {
     @Test
     @WithAnonymousUser
     void findCarsByMakeTest_unauthorized() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.findCarsByMake(anyString())).thenReturn(List.of(carResponse));
 
@@ -188,7 +188,7 @@ class CarControllerTest {
     @Test
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findAvailableCarTest_success() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.findAvailableCar(anyLong())).thenReturn(carResponse);
 
@@ -205,7 +205,7 @@ class CarControllerTest {
     @Test
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findAllAvailableCarsTest_success() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.findAllAvailableCars()).thenReturn(List.of(carResponse));
 
@@ -222,7 +222,7 @@ class CarControllerTest {
     @Test
     @WithAnonymousUser
     void findAllAvailableCarsTest_unauthorized() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.findAllAvailableCars()).thenReturn(List.of(carResponse));
 
@@ -239,7 +239,7 @@ class CarControllerTest {
     @Test
     @WithAnonymousUser
     void findAvailableCarTest_unauthorized() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.findAvailableCar(anyLong())).thenReturn(carResponse);
 
@@ -316,8 +316,8 @@ class CarControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void addCarTest_success() throws Exception {
-        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarRequest carRequest = TestUtil.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         File carImage = new File("src/test/resources/image/car.jpg");
         InputStream stream = new FileInputStream(carImage);
@@ -326,7 +326,7 @@ class CarControllerTest {
                 new MockMultipartFile("image", carImage.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
 
         MockMultipartFile carRequestMockPart =
-                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtils.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
+                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtil.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
 
         when(carService.saveCar(any(CarRequest.class), any(MultipartFile.class))).thenReturn(carResponse);
 
@@ -345,7 +345,7 @@ class CarControllerTest {
     @Test
     @WithAnonymousUser
     void addCarTest_unauthorized() throws Exception {
-        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
+        CarRequest carRequest = TestUtil.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
         File carImage = new File("src/test/resources/image/car.jpg");
         InputStream stream = new FileInputStream(carImage);
@@ -354,7 +354,7 @@ class CarControllerTest {
                 new MockMultipartFile("image", carImage.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
 
         MockMultipartFile carRequestMockPart =
-                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtils.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
+                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtil.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
 
         MockHttpServletResponse response = mockMvc.perform(multipart(HttpMethod.POST, PATH)
                         .file(image)
@@ -371,7 +371,7 @@ class CarControllerTest {
     @Test
     @WithAnonymousUser
     void addCarTest_forbidden() throws Exception {
-        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
+        CarRequest carRequest = TestUtil.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
         File carImage = new File("src/test/resources/image/car.jpg");
         InputStream stream = new FileInputStream(carImage);
@@ -380,7 +380,7 @@ class CarControllerTest {
                 new MockMultipartFile("image", carImage.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
 
         MockMultipartFile carRequestMockPart =
-                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtils.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
+                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtil.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
 
         MockHttpServletResponse response = mockMvc.perform(multipart(HttpMethod.POST, PATH)
                         .file(image)
@@ -399,7 +399,7 @@ class CarControllerTest {
         MockMultipartFile file =
                 new MockMultipartFile("file", "Cars.xlsx", MediaType.TEXT_PLAIN_VALUE, "Cars".getBytes());
 
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
         List<CarResponse> carResponses = List.of(carResponse);
 
         when(carService.uploadCars(any(MultipartFile.class))).thenReturn(carResponses);
@@ -433,8 +433,8 @@ class CarControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void updateCarTest_success() throws Exception {
-        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarRequest carRequest = TestUtil.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         File carImage = new File("src/test/resources/image/car.jpg");
         InputStream stream = new FileInputStream(carImage);
@@ -443,7 +443,7 @@ class CarControllerTest {
                 new MockMultipartFile("image", carImage.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
 
         MockMultipartFile carRequestMockPart =
-                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtils.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
+                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtil.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
 
         when(carService.updateCar(anyLong(), any(CarRequest.class), any(MultipartFile.class))).thenReturn(carResponse);
 
@@ -462,7 +462,7 @@ class CarControllerTest {
     @Test
     @WithAnonymousUser
     void updateCarTest_unauthorized() throws Exception {
-        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
+        CarRequest carRequest = TestUtil.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
         File carImage = new File("src/test/resources/image/car.jpg");
         InputStream stream = new FileInputStream(carImage);
@@ -471,7 +471,7 @@ class CarControllerTest {
                 new MockMultipartFile("image", carImage.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
 
         MockMultipartFile carRequestMockPart =
-                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtils.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
+                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtil.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
 
         MockHttpServletResponse response = mockMvc.perform(multipart(HttpMethod.PUT, PATH + "/{id}", 1L)
                         .file(image)
@@ -488,7 +488,7 @@ class CarControllerTest {
     @Test
     @WithAnonymousUser
     void updateCarTest_forbidden() throws Exception {
-        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
+        CarRequest carRequest = TestUtil.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
         File carImage = new File("src/test/resources/image/car.jpg");
         InputStream stream = new FileInputStream(carImage);
@@ -497,7 +497,7 @@ class CarControllerTest {
                 new MockMultipartFile("image", carImage.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
 
         MockMultipartFile carRequestMockPart =
-                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtils.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
+                new MockMultipartFile("carRequest", "carRequest", MediaType.APPLICATION_JSON_VALUE, TestUtil.writeValueAsString(carRequest).getBytes(StandardCharsets.UTF_8));
 
         MockHttpServletResponse response = mockMvc.perform(multipart(HttpMethod.PUT, PATH + "/{id}", 1L)
                         .file(image)
@@ -513,14 +513,14 @@ class CarControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void updateCarsStatusTest_success() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         UpdateCarRequest carRequest = UpdateCarRequest.builder()
                 .carId(1L)
                 .carState(CarState.NOT_AVAILABLE)
                 .build();
 
-        String content = TestUtils.writeValueAsString(List.of(carRequest));
+        String content = TestUtil.writeValueAsString(List.of(carRequest));
 
         when(carService.updateCarsStatus(anyList())).thenReturn(List.of(carResponse));
 
@@ -539,14 +539,14 @@ class CarControllerTest {
     @Test
     @WithAnonymousUser
     void updateCarsStatusTest_unauthorized() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         UpdateCarRequest carRequest = UpdateCarRequest.builder()
                 .carId(1L)
                 .carState(CarState.NOT_AVAILABLE)
                 .build();
 
-        String content = TestUtils.writeValueAsString(List.of(carRequest));
+        String content = TestUtil.writeValueAsString(List.of(carRequest));
 
         when(carService.updateCarsStatus(anyList())).thenReturn(List.of(carResponse));
 
@@ -565,7 +565,7 @@ class CarControllerTest {
     @Test
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void updateCarWhenBookingIsClosedTest_success() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         CarUpdateDetails carUpdateDetails = CarUpdateDetails.builder()
                 .carId(1L)
@@ -573,7 +573,7 @@ class CarControllerTest {
                 .carState(CarState.NOT_AVAILABLE)
                 .build();
 
-        String content = TestUtils.writeValueAsString(carUpdateDetails);
+        String content = TestUtil.writeValueAsString(carUpdateDetails);
 
         when(carService.updateCarWhenBookingIsClosed(anyLong(), any(CarUpdateDetails.class))).thenReturn(carResponse);
 
@@ -591,14 +591,14 @@ class CarControllerTest {
     @Test
     @WithAnonymousUser
     void updateCarWhenBookingIsClosedTest_unauthorized() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         CarUpdateDetails carUpdateDetails = CarUpdateDetails.builder()
                 .carId(1L)
                 .carState(CarState.NOT_AVAILABLE)
                 .build();
 
-        String content = TestUtils.writeValueAsString(carUpdateDetails);
+        String content = TestUtil.writeValueAsString(carUpdateDetails);
 
         when(carService.updateCarWhenBookingIsClosed(anyLong(), any(CarUpdateDetails.class))).thenReturn(carResponse);
 
@@ -616,7 +616,7 @@ class CarControllerTest {
     @Test
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void updateCarStatusTest_success() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.updateCarStatus(anyLong(), any(CarState.class))).thenReturn(carResponse);
 
@@ -633,7 +633,7 @@ class CarControllerTest {
     @Test
     @WithAnonymousUser
     void updateCarStatusTest_unauthorized() throws Exception {
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         when(carService.updateCarStatus(anyLong(), any(CarState.class))).thenReturn(carResponse);
 

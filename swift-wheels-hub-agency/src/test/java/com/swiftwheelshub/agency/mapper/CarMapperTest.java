@@ -1,7 +1,7 @@
 package com.swiftwheelshub.agency.mapper;
 
 import com.swiftwheelshub.agency.util.AssertionUtils;
-import com.swiftwheelshub.agency.util.TestUtils;
+import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.entity.Car;
@@ -22,7 +22,7 @@ class CarMapperTest {
 
     @Test
     void mapEntityToDtoTest_success() {
-        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
+        Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
 
         CarResponse carResponse = Assertions.assertDoesNotThrow(() -> carMapper.mapEntityToDto(car));
 
@@ -42,7 +42,7 @@ class CarMapperTest {
         MockMultipartFile image =
                 new MockMultipartFile("car", "car.jpg", MediaType.TEXT_PLAIN_VALUE, "car".getBytes());
 
-        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
+        CarRequest carRequest = TestUtil.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
         Car car = Assertions.assertDoesNotThrow(() -> carMapper.mapDtoToEntity(carRequest, image));
 

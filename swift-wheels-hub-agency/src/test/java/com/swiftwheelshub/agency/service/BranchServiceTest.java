@@ -4,7 +4,7 @@ import com.swiftwheelshub.agency.mapper.BranchMapper;
 import com.swiftwheelshub.agency.mapper.BranchMapperImpl;
 import com.swiftwheelshub.agency.repository.BranchRepository;
 import com.swiftwheelshub.agency.util.AssertionUtils;
-import com.swiftwheelshub.agency.util.TestUtils;
+import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.BranchRequest;
 import com.swiftwheelshub.dto.BranchResponse;
 import com.swiftwheelshub.entity.Branch;
@@ -48,7 +48,7 @@ class BranchServiceTest {
 
     @Test
     void findBranchByIdTest_success() {
-        Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
+        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
 
         when(branchRepository.findById(anyLong())).thenReturn(Optional.of(branch));
 
@@ -70,9 +70,9 @@ class BranchServiceTest {
 
     @Test
     void updateBranchTest_success() {
-        Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
-        BranchRequest branchRequest = TestUtils.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
-        RentalOffice rentalOffice = TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
+        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
+        BranchRequest branchRequest = TestUtil.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
+        RentalOffice rentalOffice = TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
         when(rentalOfficeService.findEntityById(anyLong())).thenReturn(rentalOffice);
         when(branchRepository.findById(anyLong())).thenReturn(Optional.of(branch));
@@ -84,9 +84,9 @@ class BranchServiceTest {
 
     @Test
     void saveBranchTest_success() {
-        Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
-        BranchRequest branchRequest = TestUtils.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
-        RentalOffice rentalOffice = TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
+        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
+        BranchRequest branchRequest = TestUtil.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
+        RentalOffice rentalOffice = TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
         when(rentalOfficeService.findEntityById(anyLong())).thenReturn(rentalOffice);
         when(branchRepository.save(any(Branch.class))).thenReturn(branch);
@@ -97,7 +97,7 @@ class BranchServiceTest {
 
     @Test
     void findAllBranchesTest_success() {
-        Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
+        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
 
         when(branchRepository.findAllBranches()).thenReturn(Stream.of(branch));
 
@@ -107,7 +107,7 @@ class BranchServiceTest {
 
     @Test
     void findBranchesByFilterTest_success() {
-        Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
+        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
 
         when(branchRepository.findByFilter(anyString())).thenReturn(Stream.of(branch));
 

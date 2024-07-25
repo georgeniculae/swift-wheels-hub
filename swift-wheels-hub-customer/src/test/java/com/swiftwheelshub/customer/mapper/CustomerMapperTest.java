@@ -2,7 +2,7 @@ package com.swiftwheelshub.customer.mapper;
 
 import com.swiftwheelshub.customer.util.AssertionUtils;
 import com.swiftwheelshub.customer.util.TestData;
-import com.swiftwheelshub.customer.util.TestUtils;
+import com.swiftwheelshub.customer.util.TestUtil;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.dto.UserUpdateRequest;
@@ -21,7 +21,7 @@ class CustomerMapperTest {
     @Test
     void mapToUserRepresentationTest_success() {
         UserUpdateRequest userUpdateRequest =
-                TestUtils.getResourceAsJson("/data/UserUpdateRequest.json", UserUpdateRequest.class);
+                TestUtil.getResourceAsJson("/data/UserUpdateRequest.json", UserUpdateRequest.class);
 
         UserRepresentation userRepresentation = customerMapper.mapToUserRepresentation(userUpdateRequest);
 

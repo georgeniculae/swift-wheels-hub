@@ -4,7 +4,7 @@ import com.swiftwheelshub.customer.mapper.CustomerMapper;
 import com.swiftwheelshub.customer.mapper.CustomerMapperImpl;
 import com.swiftwheelshub.customer.util.AssertionUtils;
 import com.swiftwheelshub.customer.util.TestData;
-import com.swiftwheelshub.customer.util.TestUtils;
+import com.swiftwheelshub.customer.util.TestUtil;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserInfo;
@@ -199,7 +199,7 @@ class CustomerServiceTest {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
         RegisterRequest registerRequest =
-                TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
+                TestUtil.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
 
         Headers<Object> headers = new Headers<>();
         headers.put("test", List.of());
@@ -233,7 +233,7 @@ class CustomerServiceTest {
     @Test
     void registerCustomerTest_customerUnderAge() {
         RegisterRequest registerRequest =
-                TestUtils.getResourceAsJson("/data/RegisterRequestAgeBelow18.json", RegisterRequest.class);
+                TestUtil.getResourceAsJson("/data/RegisterRequestAgeBelow18.json", RegisterRequest.class);
 
         SwiftWheelsHubResponseStatusException swiftWheelsHubResponseStatusException =
                 assertThrows(SwiftWheelsHubResponseStatusException.class, () -> customerService.registerCustomer(registerRequest));
@@ -245,7 +245,7 @@ class CustomerServiceTest {
     @Test
     void registerCustomerTest_passwordTooShort() {
         RegisterRequest registerRequest =
-                TestUtils.getResourceAsJson("/data/RegisterRequestPasswordTooShort.json", RegisterRequest.class);
+                TestUtil.getResourceAsJson("/data/RegisterRequestPasswordTooShort.json", RegisterRequest.class);
 
         SwiftWheelsHubResponseStatusException swiftWheelsHubResponseStatusException =
                 assertThrows(SwiftWheelsHubResponseStatusException.class, () -> customerService.registerCustomer(registerRequest));
@@ -259,7 +259,7 @@ class CustomerServiceTest {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
         UserUpdateRequest userUpdateRequest =
-                TestUtils.getResourceAsJson("/data/UserUpdateRepresentation.json", UserUpdateRequest.class);
+                TestUtil.getResourceAsJson("/data/UserUpdateRepresentation.json", UserUpdateRequest.class);
 
         when(keycloak.realm(anyString())).thenReturn(realmResource);
         when(realmResource.users()).thenReturn(usersResource);
@@ -276,7 +276,7 @@ class CustomerServiceTest {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
         UserUpdateRequest userUpdateRequest =
-                TestUtils.getResourceAsJson("/data/UserUpdateRepresentation.json", UserUpdateRequest.class);
+                TestUtil.getResourceAsJson("/data/UserUpdateRepresentation.json", UserUpdateRequest.class);
 
         when(keycloak.realm(anyString())).thenReturn(realmResource);
         when(realmResource.users()).thenReturn(usersResource);

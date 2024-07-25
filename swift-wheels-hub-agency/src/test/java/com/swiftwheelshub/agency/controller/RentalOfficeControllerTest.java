@@ -1,7 +1,7 @@
 package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.RentalOfficeService;
-import com.swiftwheelshub.agency.util.TestUtils;
+import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.RentalOfficeRequest;
 import com.swiftwheelshub.dto.RentalOfficeResponse;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,7 @@ class RentalOfficeControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findAllRentalOfficesTest_success() throws Exception {
         RentalOfficeResponse rentalOfficeResponse =
-                TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
+                TestUtil.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
         when(rentalOfficeService.findAllRentalOffices()).thenReturn(List.of(rentalOfficeResponse));
 
@@ -78,7 +78,7 @@ class RentalOfficeControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findRentalOfficeByIdTest_success() throws Exception {
         RentalOfficeResponse rentalOfficeRequest =
-                TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
+                TestUtil.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
         when(rentalOfficeService.findRentalOfficeById(anyLong())).thenReturn(rentalOfficeRequest);
 
@@ -109,7 +109,7 @@ class RentalOfficeControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findRentalOfficesByFilterTest_success() throws Exception {
         RentalOfficeResponse rentalOfficeResponse =
-                TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
+                TestUtil.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
         when(rentalOfficeService.findRentalOfficeByFilter(anyString())).thenReturn(List.of(rentalOfficeResponse));
 
@@ -170,11 +170,11 @@ class RentalOfficeControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void addRentalOfficeTest_success() throws Exception {
         RentalOfficeRequest rentalOfficeRequest =
-                TestUtils.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
+                TestUtil.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
         RentalOfficeResponse rentalOfficeResponse =
-                TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
+                TestUtil.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
-        String valueAsString = TestUtils.writeValueAsString(rentalOfficeRequest);
+        String valueAsString = TestUtil.writeValueAsString(rentalOfficeRequest);
 
         when(rentalOfficeService.saveRentalOffice(any(RentalOfficeRequest.class))).thenReturn(rentalOfficeResponse);
 
@@ -194,9 +194,9 @@ class RentalOfficeControllerTest {
     @WithAnonymousUser
     void addRentalOfficeTest_unauthorized() throws Exception {
         RentalOfficeResponse rentalOfficeResponse =
-                TestUtils.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeResponse.class);
+                TestUtil.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeResponse.class);
 
-        String valueAsString = TestUtils.writeValueAsString(rentalOfficeResponse);
+        String valueAsString = TestUtil.writeValueAsString(rentalOfficeResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(csrf())
@@ -214,9 +214,9 @@ class RentalOfficeControllerTest {
     @WithAnonymousUser
     void addRentalOfficeTest_forbidden() throws Exception {
         RentalOfficeResponse rentalOfficeResponse =
-                TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
+                TestUtil.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
-        String valueAsString = TestUtils.writeValueAsString(rentalOfficeResponse);
+        String valueAsString = TestUtil.writeValueAsString(rentalOfficeResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -233,11 +233,11 @@ class RentalOfficeControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void updateRentalOfficeTest_success() throws Exception {
         RentalOfficeRequest rentalOfficeRequest =
-                TestUtils.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
+                TestUtil.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
         RentalOfficeResponse rentalOfficeResponse =
-                TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
+                TestUtil.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
-        String valueAsString = TestUtils.writeValueAsString(rentalOfficeRequest);
+        String valueAsString = TestUtil.writeValueAsString(rentalOfficeRequest);
 
         when(rentalOfficeService.saveRentalOffice(any(RentalOfficeRequest.class))).thenReturn(rentalOfficeResponse);
 
@@ -257,9 +257,9 @@ class RentalOfficeControllerTest {
     @WithAnonymousUser
     void updateRentalOfficeTest_unauthorized() throws Exception {
         RentalOfficeResponse rentalOfficeRequest =
-                TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
+                TestUtil.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
-        String valueAsString = TestUtils.writeValueAsString(rentalOfficeRequest);
+        String valueAsString = TestUtil.writeValueAsString(rentalOfficeRequest);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .with(csrf())
@@ -277,9 +277,9 @@ class RentalOfficeControllerTest {
     @WithAnonymousUser
     void updateRentalOfficeTest_forbidden() throws Exception {
         RentalOfficeResponse rentalOfficeResponse =
-                TestUtils.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
+                TestUtil.getResourceAsJson("/data/RentalOfficeResponse.json", RentalOfficeResponse.class);
 
-        String valueAsString = TestUtils.writeValueAsString(rentalOfficeResponse);
+        String valueAsString = TestUtil.writeValueAsString(rentalOfficeResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)

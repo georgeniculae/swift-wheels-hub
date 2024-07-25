@@ -2,7 +2,7 @@ package com.swiftwheelshub.emailnotification.consumer;
 
 import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.emailnotification.service.UserNotificationService;
-import com.swiftwheelshub.emailnotification.util.TestUtils;
+import com.swiftwheelshub.emailnotification.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +26,7 @@ class EmailNotificationMessageConsumerTest {
     @Test
     void emailNotificationConsumerTest_success() {
         InvoiceResponse invoiceResponse =
-                TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
+                TestUtil.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
         Message<InvoiceResponse> message = new GenericMessage<>(invoiceResponse);
 

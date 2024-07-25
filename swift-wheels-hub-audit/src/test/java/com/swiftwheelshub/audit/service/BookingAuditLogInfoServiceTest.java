@@ -5,7 +5,7 @@ import com.swiftwheelshub.audit.mapper.AuditLogInfoMapperImpl;
 import com.swiftwheelshub.audit.repository.BookingAuditLogInfoRepository;
 import com.swiftwheelshub.audit.repository.CustomerAuditLogInfoRepository;
 import com.swiftwheelshub.audit.repository.ExpenseAuditLogInfoRepository;
-import com.swiftwheelshub.audit.util.TestUtils;
+import com.swiftwheelshub.audit.util.TestUtil;
 import com.swiftwheelshub.dto.AuditLogInfoRequest;
 import com.swiftwheelshub.entity.BookingAuditLogInfo;
 import com.swiftwheelshub.entity.CustomerAuditLogInfo;
@@ -43,10 +43,10 @@ class BookingAuditLogInfoServiceTest {
     @Test
     void saveBookingAuditLogInfoTest_success() {
         BookingAuditLogInfo bookingAuditLogInfo =
-                TestUtils.getResourceAsJson("/data/BookingAuditLogInfo.json", BookingAuditLogInfo.class);
+                TestUtil.getResourceAsJson("/data/BookingAuditLogInfo.json", BookingAuditLogInfo.class);
 
         AuditLogInfoRequest auditLogInfoRequest =
-                TestUtils.getResourceAsJson("/data/AuditLogInfoRequest.json", AuditLogInfoRequest.class);
+                TestUtil.getResourceAsJson("/data/AuditLogInfoRequest.json", AuditLogInfoRequest.class);
 
         when(bookingAuditLogInfoRepository.save(any(BookingAuditLogInfo.class))).thenReturn(bookingAuditLogInfo);
 
@@ -58,10 +58,10 @@ class BookingAuditLogInfoServiceTest {
     @Test
     void saveCustomerAuditLogInfoTest_success() {
         CustomerAuditLogInfo customerAuditLogInfo =
-                TestUtils.getResourceAsJson("/data/CustomerAuditLogInfo.json", CustomerAuditLogInfo.class);
+                TestUtil.getResourceAsJson("/data/CustomerAuditLogInfo.json", CustomerAuditLogInfo.class);
 
         AuditLogInfoRequest auditLogInfoRequest =
-                TestUtils.getResourceAsJson("/data/AuditLogInfoRequest.json", AuditLogInfoRequest.class);
+                TestUtil.getResourceAsJson("/data/AuditLogInfoRequest.json", AuditLogInfoRequest.class);
 
         when(customerAuditLogInfoRepository.save(any(CustomerAuditLogInfo.class))).thenReturn(customerAuditLogInfo);
 
@@ -73,10 +73,10 @@ class BookingAuditLogInfoServiceTest {
     @Test
     void saveExpenseAuditLogInfoTest_success() {
         ExpenseAuditLogInfo expenseAuditLogInfo =
-                TestUtils.getResourceAsJson("/data/ExpenseAuditLogInfo.json", ExpenseAuditLogInfo.class);
+                TestUtil.getResourceAsJson("/data/ExpenseAuditLogInfo.json", ExpenseAuditLogInfo.class);
 
         AuditLogInfoRequest auditLogInfoRequest =
-                TestUtils.getResourceAsJson("/data/AuditLogInfoRequest.json", AuditLogInfoRequest.class);
+                TestUtil.getResourceAsJson("/data/AuditLogInfoRequest.json", AuditLogInfoRequest.class);
 
         when(expenseAuditLogInfoRepository.save(any(ExpenseAuditLogInfo.class))).thenReturn(expenseAuditLogInfo);
 

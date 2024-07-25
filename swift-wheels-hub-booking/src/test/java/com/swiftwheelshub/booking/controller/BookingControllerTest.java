@@ -1,7 +1,7 @@
 package com.swiftwheelshub.booking.controller;
 
 import com.swiftwheelshub.booking.service.BookingService;
-import com.swiftwheelshub.booking.util.TestUtils;
+import com.swiftwheelshub.booking.util.TestUtil;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
@@ -47,7 +47,7 @@ class BookingControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findAllBookingTest_success() throws Exception {
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
         when(bookingService.findAllBookings()).thenReturn(List.of(bookingResponse));
 
@@ -66,7 +66,7 @@ class BookingControllerTest {
     @WithAnonymousUser
     void findAllBookingTest_unauthorized() throws Exception {
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
         when(bookingService.findAllBookings()).thenReturn(List.of(bookingResponse));
 
@@ -85,7 +85,7 @@ class BookingControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findBookingByIdTest_success() throws Exception {
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
         when(bookingService.findBookingById(anyLong())).thenReturn(bookingResponse);
 
@@ -212,9 +212,9 @@ class BookingControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void addBookingTest_success() throws Exception {
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        String content = TestUtils.writeValueAsString(bookingResponse);
+        String content = TestUtil.writeValueAsString(bookingResponse);
 
         when(bookingService.saveBooking(any(BookingRequest.class))).thenReturn(bookingResponse);
 
@@ -235,9 +235,9 @@ class BookingControllerTest {
     @WithAnonymousUser
     void addBookingTest_unauthorized() throws Exception {
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        String content = TestUtils.writeValueAsString(bookingResponse);
+        String content = TestUtil.writeValueAsString(bookingResponse);
 
         when(bookingService.saveBooking(any(BookingRequest.class))).thenReturn(bookingResponse);
 
@@ -258,9 +258,9 @@ class BookingControllerTest {
     @WithAnonymousUser
     void addBookingTest_forbidden() throws Exception {
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingRequest.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingRequest.json", BookingResponse.class);
 
-        String content = TestUtils.writeValueAsString(bookingResponse);
+        String content = TestUtil.writeValueAsString(bookingResponse);
 
         when(bookingService.saveBooking(any(BookingRequest.class))).thenReturn(bookingResponse);
 
@@ -280,11 +280,11 @@ class BookingControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void closeBookingTest_success() throws Exception {
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
         BookingClosingDetails bookingClosingDetails =
-                TestUtils.getResourceAsJson("/data/CarForUpdate.json", BookingClosingDetails.class);
+                TestUtil.getResourceAsJson("/data/CarForUpdate.json", BookingClosingDetails.class);
 
-        String content = TestUtils.writeValueAsString(bookingClosingDetails);
+        String content = TestUtil.writeValueAsString(bookingClosingDetails);
 
         when(bookingService.closeBooking(any(BookingClosingDetails.class))).thenReturn(bookingResponse);
 
@@ -305,11 +305,11 @@ class BookingControllerTest {
     @WithAnonymousUser
     void closeBookingTest_unauthorized() throws Exception {
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
         BookingClosingDetails bookingClosingDetails =
-                TestUtils.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
+                TestUtil.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
 
-        String content = TestUtils.writeValueAsString(bookingClosingDetails);
+        String content = TestUtil.writeValueAsString(bookingClosingDetails);
 
         when(bookingService.closeBooking(any(BookingClosingDetails.class))).thenReturn(bookingResponse);
 
@@ -330,11 +330,11 @@ class BookingControllerTest {
     @WithAnonymousUser
     void closeBookingTest_forbidden() throws Exception {
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
         BookingClosingDetails bookingClosingDetails =
-                TestUtils.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
+                TestUtil.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
 
-        String content = TestUtils.writeValueAsString(bookingClosingDetails);
+        String content = TestUtil.writeValueAsString(bookingClosingDetails);
 
         when(bookingService.closeBooking(any(BookingClosingDetails.class))).thenReturn(bookingResponse);
 
@@ -354,9 +354,9 @@ class BookingControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void updateBookingTest_success() throws Exception {
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        String content = TestUtils.writeValueAsString(bookingResponse);
+        String content = TestUtil.writeValueAsString(bookingResponse);
 
         when(bookingService.updateBooking(anyLong(), any(BookingRequest.class)))
                 .thenReturn(bookingResponse);
@@ -379,9 +379,9 @@ class BookingControllerTest {
     @WithAnonymousUser
     void updateBookingTest_unauthorized() throws Exception {
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        String content = TestUtils.writeValueAsString(bookingResponse);
+        String content = TestUtil.writeValueAsString(bookingResponse);
 
         when(bookingService.updateBooking(anyLong(), any(BookingRequest.class))).thenReturn(bookingResponse);
 
@@ -402,9 +402,9 @@ class BookingControllerTest {
     @WithAnonymousUser
     void updateBookingTest_forbidden() throws Exception {
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        String content = TestUtils.writeValueAsString(bookingResponse);
+        String content = TestUtil.writeValueAsString(bookingResponse);
 
         when(bookingService.updateBooking(anyLong(), any(BookingRequest.class))).thenReturn(bookingResponse);
 

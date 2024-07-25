@@ -3,7 +3,7 @@ package com.swiftwheelshub.expense.mapper;
 import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.expense.util.AssertionUtils;
-import com.swiftwheelshub.expense.util.TestUtils;
+import com.swiftwheelshub.expense.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,7 +17,7 @@ class InvoiceMapperTest {
 
     @Test
     void mapEntityToDtoTest_success() {
-        Invoice invoice = TestUtils.getResourceAsJson("/data/Invoice.json", Invoice.class);
+        Invoice invoice = TestUtil.getResourceAsJson("/data/Invoice.json", Invoice.class);
 
         InvoiceResponse invoiceResponse = invoiceMapper.mapEntityToDto(invoice);
 

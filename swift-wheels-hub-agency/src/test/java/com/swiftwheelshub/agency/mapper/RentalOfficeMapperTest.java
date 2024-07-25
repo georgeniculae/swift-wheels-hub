@@ -1,7 +1,7 @@
 package com.swiftwheelshub.agency.mapper;
 
 import com.swiftwheelshub.agency.util.AssertionUtils;
-import com.swiftwheelshub.agency.util.TestUtils;
+import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.RentalOfficeRequest;
 import com.swiftwheelshub.dto.RentalOfficeResponse;
 import com.swiftwheelshub.entity.RentalOffice;
@@ -20,7 +20,7 @@ class RentalOfficeMapperTest {
 
     @Test
     void mapEntityToDtoTest_success() {
-        RentalOffice rentalOffice = TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
+        RentalOffice rentalOffice = TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
         RentalOfficeResponse rentalOfficeResponse = rentalOfficeMapper.mapEntityToDto(rentalOffice);
 
@@ -35,7 +35,7 @@ class RentalOfficeMapperTest {
 
     @Test
     void mapDtoToEntityTest_success() {
-        RentalOfficeRequest rentalOfficeRequest = TestUtils.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
+        RentalOfficeRequest rentalOfficeRequest = TestUtil.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
 
         RentalOffice rentalOffice = assertDoesNotThrow(() -> rentalOfficeMapper.mapDtoToEntity(rentalOfficeRequest));
 

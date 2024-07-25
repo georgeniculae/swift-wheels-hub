@@ -1,7 +1,7 @@
 package com.swiftwheelshub.ai.controller;
 
 import com.swiftwheelshub.ai.service.CarSuggestionService;
-import com.swiftwheelshub.ai.util.TestUtils;
+import com.swiftwheelshub.ai.util.TestUtil;
 import com.swiftwheelshub.dto.CarSuggestionResponse;
 import com.swiftwheelshub.dto.TripInfo;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ class CarSuggestionControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void getChatPromptTest_success() throws Exception {
         CarSuggestionResponse carSuggestionResponse =
-                TestUtils.getResourceAsJson("/data/CarSuggestionResponse.json", CarSuggestionResponse.class);
+                TestUtil.getResourceAsJson("/data/CarSuggestionResponse.json", CarSuggestionResponse.class);
 
         when(carSuggestionService.getChatOutput(any(TripInfo.class)))
                 .thenReturn(carSuggestionResponse);

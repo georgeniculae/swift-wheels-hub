@@ -1,6 +1,6 @@
 package com.swiftwheelshub.apigateway.security;
 
-import com.swiftwheelshub.apigateway.util.TestUtils;
+import com.swiftwheelshub.apigateway.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,7 +36,7 @@ class JwtAuthenticationTokenConverterTest {
 
     @Test
     void extractUsernameTest_success() {
-        String token = TestUtils.getResourceAsJson("/data/JwtToken.json", String.class);
+        String token = TestUtil.getResourceAsJson("/data/JwtToken.json", String.class);
 
         Map<String, Object> headers = Map.of(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         String roleUser = "ROLE_user";
@@ -50,7 +50,7 @@ class JwtAuthenticationTokenConverterTest {
 
     @Test
     void extractGrantedAuthoritiesTest_success() {
-        String token = TestUtils.getResourceAsJson("/data/JwtToken.json", String.class);
+        String token = TestUtil.getResourceAsJson("/data/JwtToken.json", String.class);
         String user = "user";
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(user);
         Collection<? extends GrantedAuthority> roles = List.of(simpleGrantedAuthority);

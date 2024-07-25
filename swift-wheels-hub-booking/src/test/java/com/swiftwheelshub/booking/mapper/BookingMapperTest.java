@@ -1,7 +1,7 @@
 package com.swiftwheelshub.booking.mapper;
 
 import com.swiftwheelshub.booking.util.AssertionUtils;
-import com.swiftwheelshub.booking.util.TestUtils;
+import com.swiftwheelshub.booking.util.TestUtil;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.entity.Booking;
@@ -16,7 +16,7 @@ class BookingMapperTest {
 
     @Test
     void mapEntityToDtoTest_success() {
-        Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
+        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
 
         BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
 
@@ -25,7 +25,7 @@ class BookingMapperTest {
 
     @Test
     void mapDtoToEntityTest_success() {
-        BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
+        BookingRequest bookingRequest = TestUtil.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
 
         Booking actualBooking = bookingMapper.mapDtoToEntity(bookingRequest);
 

@@ -1,7 +1,7 @@
 package com.swiftwheelshub.agency.mapper;
 
 import com.swiftwheelshub.agency.util.AssertionUtils;
-import com.swiftwheelshub.agency.util.TestUtils;
+import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.BranchRequest;
 import com.swiftwheelshub.dto.BranchResponse;
 import com.swiftwheelshub.entity.Branch;
@@ -20,7 +20,7 @@ class BranchMapperTest {
 
     @Test
     void mapEntityToDtoTest_success() {
-        Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
+        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
 
         BranchResponse branchResponse = assertDoesNotThrow(() -> branchMapper.mapEntityToDto(branch));
 
@@ -35,7 +35,7 @@ class BranchMapperTest {
 
     @Test
     void mapDtoToEntityTest_success() {
-        BranchRequest branchRequest = TestUtils.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
+        BranchRequest branchRequest = TestUtil.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
 
         Branch branch = assertDoesNotThrow(() -> branchMapper.mapDtoToEntity(branchRequest));
 

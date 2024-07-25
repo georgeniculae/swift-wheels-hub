@@ -4,7 +4,7 @@ import com.swiftwheelshub.agency.mapper.CarMapper;
 import com.swiftwheelshub.agency.mapper.CarMapperImpl;
 import com.swiftwheelshub.agency.repository.CarRepository;
 import com.swiftwheelshub.agency.util.AssertionUtils;
-import com.swiftwheelshub.agency.util.TestUtils;
+import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
@@ -63,7 +63,7 @@ class CarServiceTest {
 
     @Test
     void findAllCarsTest_success() {
-        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
+        Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
 
         when(carRepository.findAllCars()).thenReturn(Stream.of(car));
 
@@ -73,7 +73,7 @@ class CarServiceTest {
 
     @Test
     void findCarsByFilterTest_success() {
-        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
+        Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
 
         when(carRepository.findByFilter(anyString())).thenReturn(Stream.of(car));
 
@@ -84,7 +84,7 @@ class CarServiceTest {
 
     @Test
     void findCarByIdTest_success() {
-        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
+        Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
 
         when(carRepository.findById(anyLong())).thenReturn(Optional.of(car));
 
@@ -106,7 +106,7 @@ class CarServiceTest {
 
     @Test
     void findCarsByMakeTest_success() {
-        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
+        Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
 
         when(carRepository.findCarsByMakeIgnoreCase(anyString())).thenReturn(Stream.of(car));
 
@@ -118,9 +118,9 @@ class CarServiceTest {
 
     @Test
     void saveCarTest_success() {
-        Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
-        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
-        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
+        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
+        Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
+        CarRequest carRequest = TestUtil.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
         MockMultipartFile image =
                 new MockMultipartFile("car", "car.jpg", MediaType.TEXT_PLAIN_VALUE, "car".getBytes());
@@ -134,9 +134,9 @@ class CarServiceTest {
 
     @Test
     void updateCarTest_success() {
-        Branch branch = TestUtils.getResourceAsJson("/data/Branch.json", Branch.class);
-        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
-        CarRequest carRequest = TestUtils.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
+        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
+        Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
+        CarRequest carRequest = TestUtil.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
         MockMultipartFile image =
                 new MockMultipartFile("car", "car.jpg", MediaType.TEXT_PLAIN_VALUE, "car".getBytes());
@@ -158,7 +158,7 @@ class CarServiceTest {
         MockMultipartFile file =
                 new MockMultipartFile("file", excelFile.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
 
-        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
+        Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
 
         when(excelParserService.extractDataFromExcel(any(MultipartFile.class))).thenReturn(List.of(car));
         when(carRepository.saveAll(anyList())).thenReturn(List.of(car));
@@ -183,10 +183,10 @@ class CarServiceTest {
 
     @Test
     void updateCarsStatusTest_success() {
-        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
+        Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
 
         UpdateCarRequest updateCarRequest =
-                TestUtils.getResourceAsJson("/data/UpdateCarRequest.json", UpdateCarRequest.class);
+                TestUtil.getResourceAsJson("/data/UpdateCarRequest.json", UpdateCarRequest.class);
 
         when(carRepository.findAllById(anyList())).thenReturn(List.of(car));
         when(carRepository.saveAll(anyList())).thenReturn(List.of(car));
@@ -197,7 +197,7 @@ class CarServiceTest {
 
     @Test
     void updateCarStatusTest_success() {
-        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
+        Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
 
         when(carRepository.findById(anyLong())).thenReturn(Optional.ofNullable(car));
         when(carRepository.save(any(Car.class))).thenReturn(car);
@@ -208,7 +208,7 @@ class CarServiceTest {
 
     @Test
     void findAvailableCarTest_success() {
-        Car car = TestUtils.getResourceAsJson("/data/Car.json", Car.class);
+        Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
 
         when(carRepository.findById(anyLong())).thenReturn(Optional.ofNullable(car));
 

@@ -3,7 +3,7 @@ package com.swiftwheelshub.expense.controller;
 import com.swiftwheelshub.dto.InvoiceRequest;
 import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.expense.service.InvoiceService;
-import com.swiftwheelshub.expense.util.TestUtils;
+import com.swiftwheelshub.expense.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -45,7 +45,7 @@ class InvoiceControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findAllInvoicesTest_success() throws Exception {
         InvoiceResponse invoiceResponse =
-                TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
+                TestUtil.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
         when(invoiceService.findAllInvoices()).thenReturn(List.of(invoiceResponse));
 
@@ -64,7 +64,7 @@ class InvoiceControllerTest {
     @WithAnonymousUser
     void findAllInvoicesTest_unauthorized() throws Exception {
         InvoiceResponse invoiceResponse =
-                TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
+                TestUtil.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
         when(invoiceService.findAllInvoices()).thenReturn(List.of(invoiceResponse));
 
@@ -81,7 +81,7 @@ class InvoiceControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findAllActiveInvoicesTest_success() throws Exception {
         InvoiceResponse invoiceResponse =
-                TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
+                TestUtil.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
         when(invoiceService.findAllActiveInvoices()).thenReturn(List.of(invoiceResponse));
 
@@ -100,7 +100,7 @@ class InvoiceControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findAllActiveInvoicesTest_unauthorized() throws Exception {
         InvoiceResponse invoiceResponse =
-                TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
+                TestUtil.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
         when(invoiceService.findAllActiveInvoices()).thenReturn(List.of(invoiceResponse));
 
@@ -116,7 +116,7 @@ class InvoiceControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findInvoiceByIdTest_success() throws Exception {
         InvoiceResponse invoiceResponse =
-                TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
+                TestUtil.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
         when(invoiceService.findInvoiceById(anyLong())).thenReturn(invoiceResponse);
 
@@ -135,7 +135,7 @@ class InvoiceControllerTest {
     @WithAnonymousUser
     void findInvoiceByIdTest_unauthorized() throws Exception {
         InvoiceResponse invoiceResponse =
-                TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
+                TestUtil.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
         when(invoiceService.findInvoiceById(anyLong())).thenReturn(invoiceResponse);
 
@@ -152,7 +152,7 @@ class InvoiceControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findAllInvoicesByCustomerUsernameTest_success() throws Exception {
         InvoiceResponse invoiceResponse =
-                TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
+                TestUtil.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
         when(invoiceService.findAllInvoicesByCustomerUsername(anyString())).thenReturn(List.of(invoiceResponse));
 
@@ -171,7 +171,7 @@ class InvoiceControllerTest {
     @WithAnonymousUser
     void findAllInvoicesByCustomerUsernameTest_unauthorized() throws Exception {
         InvoiceResponse invoiceResponse =
-                TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
+                TestUtil.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
         when(invoiceService.findAllInvoicesByCustomerUsername(anyString())).thenReturn(List.of(invoiceResponse));
 
@@ -245,12 +245,12 @@ class InvoiceControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void closeInvoiceTest_success() throws Exception {
         InvoiceRequest invoiceRequest =
-                TestUtils.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
+                TestUtil.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
 
-        String content = TestUtils.writeValueAsString(invoiceRequest);
+        String content = TestUtil.writeValueAsString(invoiceRequest);
 
         InvoiceResponse invoiceResponse =
-                TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
+                TestUtil.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
         when(invoiceService.closeInvoice(anyLong(), any(InvoiceRequest.class)))
                 .thenReturn(invoiceResponse);
@@ -271,12 +271,12 @@ class InvoiceControllerTest {
     @WithAnonymousUser
     void closeInvoiceTest_unauthorized() throws Exception {
         InvoiceRequest invoiceRequest =
-                TestUtils.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
+                TestUtil.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
 
-        String content = TestUtils.writeValueAsString(invoiceRequest);
+        String content = TestUtil.writeValueAsString(invoiceRequest);
 
         InvoiceResponse invoiceResponse =
-                TestUtils.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
+                TestUtil.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
 
         when(invoiceService.closeInvoice(anyLong(), any(InvoiceRequest.class)))
                 .thenReturn(invoiceResponse);

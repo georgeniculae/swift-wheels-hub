@@ -4,7 +4,7 @@ import com.swiftwheelshub.booking.mapper.BookingMapper;
 import com.swiftwheelshub.booking.mapper.BookingMapperImpl;
 import com.swiftwheelshub.booking.repository.BookingRepository;
 import com.swiftwheelshub.booking.util.AssertionUtils;
-import com.swiftwheelshub.booking.util.TestUtils;
+import com.swiftwheelshub.booking.util.TestUtil;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
@@ -67,7 +67,7 @@ class BookingServiceTest {
 
     @Test
     void findBookingByIdTest_success() {
-        Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
+        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
 
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
@@ -88,9 +88,9 @@ class BookingServiceTest {
 
     @Test
     void saveBookingTest_success() {
-        Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
-        BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
+        BookingRequest bookingRequest = TestUtil.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
         ApiKeyAuthenticationToken apiKeyAuthenticationToken =
@@ -112,13 +112,13 @@ class BookingServiceTest {
 
     @Test
     void closeBookingTest_success() {
-        Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
+        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
 
         EmployeeResponse employeeRequest =
-                TestUtils.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
+                TestUtil.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
 
         BookingClosingDetails bookingClosingDetails =
-                TestUtils.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
+                TestUtil.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
         ApiKeyAuthenticationToken apiKeyAuthenticationToken =
@@ -135,8 +135,8 @@ class BookingServiceTest {
 
     @Test
     void updateBookingTest_success() {
-        Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
-        BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
+        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
+        BookingRequest bookingRequest = TestUtil.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
         ApiKeyAuthenticationToken apiKeyAuthenticationToken =
@@ -155,10 +155,10 @@ class BookingServiceTest {
 
     @Test
     void updateBookingTest_updatedCar_success() {
-        Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
-        Booking updatedBooking = TestUtils.getResourceAsJson("/data/UpdatedBooking.json", Booking.class);
-        BookingRequest bookingRequest = TestUtils.getResourceAsJson("/data/UpdatedBookingRequest.json", BookingRequest.class);
-        CarResponse carResponse = TestUtils.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
+        Booking updatedBooking = TestUtil.getResourceAsJson("/data/UpdatedBooking.json", Booking.class);
+        BookingRequest bookingRequest = TestUtil.getResourceAsJson("/data/UpdatedBookingRequest.json", BookingRequest.class);
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
         ApiKeyAuthenticationToken apiKeyAuthenticationToken =
@@ -178,7 +178,7 @@ class BookingServiceTest {
 
     @Test
     void calculateAllAmountSpentByUserTest_success() {
-        Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
+        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
 
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-USERNAME", "user");
@@ -192,7 +192,7 @@ class BookingServiceTest {
 
     @Test
     void getSumOfAllBookingAmountTest_success() {
-        Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
+        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
 
         when(bookingRepository.findAllBookings()).thenReturn(Stream.of(booking));
 
@@ -202,7 +202,7 @@ class BookingServiceTest {
 
     @Test
     void countCustomersWithBookingsTest_success() {
-        Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
+        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
 
         when(bookingRepository.findAllBookings()).thenReturn(Stream.of(booking));
 
@@ -212,7 +212,7 @@ class BookingServiceTest {
 
     @Test
     void findBookingByDateOfBookingTest_success() {
-        Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
+        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
 
         when(bookingRepository.findByDateOfBooking(LocalDate.of(2099, Month.FEBRUARY, 20)))
                 .thenReturn(Optional.of(booking));
@@ -237,7 +237,7 @@ class BookingServiceTest {
 
     @Test
     void deleteBookingByIdTest_success() {
-        Booking booking = TestUtils.getResourceAsJson("/data/Booking.json", Booking.class);
+        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
         ApiKeyAuthenticationToken apiKeyAuthenticationToken =

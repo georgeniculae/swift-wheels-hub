@@ -1,7 +1,7 @@
 package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.BranchService;
-import com.swiftwheelshub.agency.util.TestUtils;
+import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.BranchRequest;
 import com.swiftwheelshub.dto.BranchResponse;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class BranchControllerTest {
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findAllBranchesTest_success() throws Exception {
         BranchResponse branchResponse =
-                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
+                TestUtil.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
         when(branchService.findAllBranches()).thenReturn(List.of(branchResponse));
 
@@ -80,7 +80,7 @@ class BranchControllerTest {
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findBranchByIdTest_successWithMockUser() throws Exception {
         BranchResponse branchResponse =
-                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
+                TestUtil.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
         when(branchService.findBranchById(anyLong())).thenReturn(branchResponse);
 
@@ -111,7 +111,7 @@ class BranchControllerTest {
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void findBranchesByFilterTest_success() throws Exception {
         BranchResponse branchResponse =
-                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
+                TestUtil.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
         when(branchService.findBranchesByFilter(anyString())).thenReturn(List.of(branchResponse));
 
@@ -129,7 +129,7 @@ class BranchControllerTest {
     @WithAnonymousUser
     void findBranchesByFilterTest_unauthorized() throws Exception {
         BranchResponse branchResponse =
-                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
+                TestUtil.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
         when(branchService.findBranchesByFilter(anyString())).thenReturn(List.of(branchResponse));
 
@@ -176,9 +176,9 @@ class BranchControllerTest {
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void addBranchTest_success() throws Exception {
         BranchResponse branchResponse =
-                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
+                TestUtil.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
-        String content = TestUtils.writeValueAsString(branchResponse);
+        String content = TestUtil.writeValueAsString(branchResponse);
 
         when(branchService.saveBranch(any(BranchRequest.class))).thenReturn(branchResponse);
 
@@ -198,9 +198,9 @@ class BranchControllerTest {
     @WithAnonymousUser
     void addBranchTest_unauthorized() throws Exception {
         BranchResponse branchResponse =
-                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
+                TestUtil.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
-        String content = TestUtils.writeValueAsString(branchResponse);
+        String content = TestUtil.writeValueAsString(branchResponse);
 
         MockHttpServletResponse response = mockMvc.perform(post(PATH)
                         .with(csrf())
@@ -217,8 +217,8 @@ class BranchControllerTest {
     @Test
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void addBranchTest_forbidden() throws Exception {
-        BranchRequest branchRequest = TestUtils.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
-        String content = TestUtils.writeValueAsString(branchRequest);
+        BranchRequest branchRequest = TestUtil.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
+        String content = TestUtil.writeValueAsString(branchRequest);
 
         MockHttpServletResponse response = mockMvc.perform(post(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -235,9 +235,9 @@ class BranchControllerTest {
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void updateBranchTest_success() throws Exception {
         BranchResponse branchRequest =
-                TestUtils.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
+                TestUtil.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
-        String content = TestUtils.writeValueAsString(branchRequest);
+        String content = TestUtil.writeValueAsString(branchRequest);
 
         when(branchService.updateBranch(anyLong(), any(BranchRequest.class))).thenReturn(branchRequest);
 
@@ -256,8 +256,8 @@ class BranchControllerTest {
     @Test
     @WithAnonymousUser
     void updateBranchTest_forbidden() throws Exception {
-        BranchRequest branchRequest = TestUtils.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
-        String content = TestUtils.writeValueAsString(branchRequest);
+        BranchRequest branchRequest = TestUtil.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
+        String content = TestUtil.writeValueAsString(branchRequest);
 
         MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN"))

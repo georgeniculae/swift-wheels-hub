@@ -1,7 +1,7 @@
 package com.swiftwheelshub.audit.consumer;
 
 import com.swiftwheelshub.audit.service.AuditLogInfoService;
-import com.swiftwheelshub.audit.util.TestUtils;
+import com.swiftwheelshub.audit.util.TestUtil;
 import com.swiftwheelshub.dto.AuditLogInfoRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +26,7 @@ class ExpenseBookingAuditLogInfoMessageConsumerTest {
     @Test
     void expenseAuditInfoConsumerTest_success() {
         AuditLogInfoRequest auditLogInfoRequest =
-                TestUtils.getResourceAsJson("/data/AuditLogInfoRequest.json", AuditLogInfoRequest.class);
+                TestUtil.getResourceAsJson("/data/AuditLogInfoRequest.json", AuditLogInfoRequest.class);
 
         Message<AuditLogInfoRequest> message = new GenericMessage<>(auditLogInfoRequest);
 

@@ -3,7 +3,7 @@ package com.swiftwheelshub.expense.mapper;
 import com.swiftwheelshub.dto.RevenueResponse;
 import com.swiftwheelshub.entity.Revenue;
 import com.swiftwheelshub.expense.util.AssertionUtils;
-import com.swiftwheelshub.expense.util.TestUtils;
+import com.swiftwheelshub.expense.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,7 +17,7 @@ class RevenueMapperTest {
 
     @Test
     void mapEntityToDtoTest_success() {
-        Revenue revenue = TestUtils.getResourceAsJson("/data/Revenue.json", Revenue.class);
+        Revenue revenue = TestUtil.getResourceAsJson("/data/Revenue.json", Revenue.class);
 
         RevenueResponse revenueResponse = rentalOfficeMapper.mapEntityToDto(revenue);
 

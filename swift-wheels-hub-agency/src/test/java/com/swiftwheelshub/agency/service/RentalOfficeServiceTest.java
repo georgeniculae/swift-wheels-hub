@@ -4,7 +4,7 @@ import com.swiftwheelshub.agency.mapper.RentalOfficeMapper;
 import com.swiftwheelshub.agency.mapper.RentalOfficeMapperImpl;
 import com.swiftwheelshub.agency.repository.RentalOfficeRepository;
 import com.swiftwheelshub.agency.util.AssertionUtils;
-import com.swiftwheelshub.agency.util.TestUtils;
+import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.RentalOfficeRequest;
 import com.swiftwheelshub.dto.RentalOfficeResponse;
 import com.swiftwheelshub.entity.RentalOffice;
@@ -51,7 +51,7 @@ class RentalOfficeServiceTest {
     @Test
     void findAllRentalOfficesTest_success() {
         RentalOffice rentalOffice =
-                TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
+                TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
         when(rentalOfficeRepository.findAllRentalOffices()).thenReturn(Stream.of(rentalOffice));
 
@@ -64,7 +64,7 @@ class RentalOfficeServiceTest {
     @Test
     void findRentalOfficeByIdTest_success() {
         RentalOffice rentalOffice =
-                TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
+                TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
         when(rentalOfficeRepository.findById(anyLong())).thenReturn(Optional.of(rentalOffice));
 
@@ -88,9 +88,9 @@ class RentalOfficeServiceTest {
     @Test
     void saveRentalOfficeTest_success() {
         RentalOffice rentalOffice =
-                TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
+                TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
         RentalOfficeRequest rentalOfficeRequest =
-                TestUtils.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
+                TestUtil.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
 
         when(rentalOfficeRepository.save(any(RentalOffice.class))).thenReturn(rentalOffice);
 
@@ -105,8 +105,8 @@ class RentalOfficeServiceTest {
 
     @Test
     void updateRentalOfficeTest_success() {
-        RentalOffice rentalOffice = TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
-        RentalOfficeRequest rentalOfficeRequest = TestUtils.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
+        RentalOffice rentalOffice = TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
+        RentalOfficeRequest rentalOfficeRequest = TestUtil.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
 
         when(rentalOfficeRepository.findById(anyLong())).thenReturn(Optional.of(rentalOffice));
         when(rentalOfficeRepository.save(any(RentalOffice.class))).thenReturn(rentalOffice);
@@ -119,7 +119,7 @@ class RentalOfficeServiceTest {
 
     @Test
     void findRentalOfficeByNameTest_success() {
-        RentalOffice rentalOffice = TestUtils.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
+        RentalOffice rentalOffice = TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
         when(rentalOfficeRepository.findRentalOfficeByFilter(anyString())).thenReturn(Stream.of(rentalOffice));
 

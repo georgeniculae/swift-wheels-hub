@@ -4,7 +4,7 @@ import com.swiftwheelshub.dto.IncomingRequestDetails;
 import com.swiftwheelshub.dto.RequestValidationReport;
 import com.swiftwheelshub.requestvalidator.service.RedisService;
 import com.swiftwheelshub.requestvalidator.service.SwaggerRequestValidatorService;
-import com.swiftwheelshub.requestvalidator.util.TestUtils;
+import com.swiftwheelshub.requestvalidator.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -44,12 +44,12 @@ class RequestValidatorControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void validateRequestTest_success() throws Exception {
         RequestValidationReport requestValidationReport =
-                TestUtils.getResourceAsJson("/data/RequestValidationReport.json", RequestValidationReport.class);
+                TestUtil.getResourceAsJson("/data/RequestValidationReport.json", RequestValidationReport.class);
 
         IncomingRequestDetails incomingRequestDetails =
-                TestUtils.getResourceAsJson("/data/IncomingRequestDetails.json", IncomingRequestDetails.class);
+                TestUtil.getResourceAsJson("/data/IncomingRequestDetails.json", IncomingRequestDetails.class);
 
-        String content = TestUtils.writeValueAsString(incomingRequestDetails);
+        String content = TestUtil.writeValueAsString(incomingRequestDetails);
 
         when(swaggerRequestValidatorService.validateRequest(any(IncomingRequestDetails.class)))
                 .thenReturn(requestValidationReport);
@@ -67,12 +67,12 @@ class RequestValidatorControllerTest {
     @WithAnonymousUser
     void validateRequestTest_unauthorized() throws Exception {
         RequestValidationReport requestValidationReport =
-                TestUtils.getResourceAsJson("/data/RequestValidationReport.json", RequestValidationReport.class);
+                TestUtil.getResourceAsJson("/data/RequestValidationReport.json", RequestValidationReport.class);
 
         IncomingRequestDetails incomingRequestDetails =
-                TestUtils.getResourceAsJson("/data/IncomingRequestDetails.json", IncomingRequestDetails.class);
+                TestUtil.getResourceAsJson("/data/IncomingRequestDetails.json", IncomingRequestDetails.class);
 
-        String content = TestUtils.writeValueAsString(incomingRequestDetails);
+        String content = TestUtil.writeValueAsString(incomingRequestDetails);
 
         when(swaggerRequestValidatorService.validateRequest(any(IncomingRequestDetails.class)))
                 .thenReturn(requestValidationReport);

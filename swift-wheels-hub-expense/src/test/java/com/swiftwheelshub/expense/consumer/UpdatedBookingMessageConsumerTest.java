@@ -2,7 +2,7 @@ package com.swiftwheelshub.expense.consumer;
 
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.expense.service.InvoiceService;
-import com.swiftwheelshub.expense.util.TestUtils;
+import com.swiftwheelshub.expense.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +26,7 @@ class UpdatedBookingMessageConsumerTest {
     @Test
     void updatedBookingConsumerTest_success() {
         BookingResponse bookingResponse =
-                TestUtils.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
         Message<BookingResponse> message = new GenericMessage<>(bookingResponse);
 

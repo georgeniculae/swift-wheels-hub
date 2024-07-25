@@ -1,7 +1,7 @@
 package com.swiftwheelshub.customer.controller;
 
 import com.swiftwheelshub.customer.service.CustomerService;
-import com.swiftwheelshub.customer.util.TestUtils;
+import com.swiftwheelshub.customer.util.TestUtil;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserInfo;
@@ -49,7 +49,7 @@ class CustomerControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findAllUsersTest_success() throws Exception {
-        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
+        UserInfo userInfo = TestUtil.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
         when(customerService.findAllUsers()).thenReturn(List.of(userInfo));
 
@@ -67,7 +67,7 @@ class CustomerControllerTest {
     @Test
     @WithAnonymousUser
     void findAllUsersTest_unauthorized() throws Exception {
-        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
+        UserInfo userInfo = TestUtil.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
         when(customerService.findAllUsers()).thenReturn(List.of(userInfo));
 
@@ -85,7 +85,7 @@ class CustomerControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void getCurrentUserTest_success() throws Exception {
-        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
+        UserInfo userInfo = TestUtil.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
         when(customerService.getCurrentUser()).thenReturn(userInfo);
 
@@ -118,12 +118,12 @@ class CustomerControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void registerUserTest_success() throws Exception {
         RegisterRequest registerRequest =
-                TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
+                TestUtil.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
 
         RegistrationResponse registrationResponse =
-                TestUtils.getResourceAsJson("/data/RegistrationResponse.json", RegistrationResponse.class);
+                TestUtil.getResourceAsJson("/data/RegistrationResponse.json", RegistrationResponse.class);
 
-        String content = TestUtils.writeValueAsString(registerRequest);
+        String content = TestUtil.writeValueAsString(registerRequest);
 
         when(customerService.registerCustomer(any(RegisterRequest.class))).thenReturn(registrationResponse);
 
@@ -144,12 +144,12 @@ class CustomerControllerTest {
     @WithAnonymousUser
     void registerUserTest_forbidden() throws Exception {
         RegisterRequest registerRequest =
-                TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
+                TestUtil.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
 
         RegistrationResponse registrationResponse =
-                TestUtils.getResourceAsJson("/data/RegistrationResponse.json", RegistrationResponse.class);
+                TestUtil.getResourceAsJson("/data/RegistrationResponse.json", RegistrationResponse.class);
 
-        String content = TestUtils.writeValueAsString(registerRequest);
+        String content = TestUtil.writeValueAsString(registerRequest);
 
         when(customerService.registerCustomer(any(RegisterRequest.class)))
                 .thenReturn(registrationResponse);
@@ -170,12 +170,12 @@ class CustomerControllerTest {
     @WithAnonymousUser
     void registerUserTest_unauthorized() throws Exception {
         RegisterRequest registerRequest =
-                TestUtils.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
+                TestUtil.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
 
         RegistrationResponse registrationResponse =
-                TestUtils.getResourceAsJson("/data/RegistrationResponse.json", RegistrationResponse.class);
+                TestUtil.getResourceAsJson("/data/RegistrationResponse.json", RegistrationResponse.class);
 
-        String content = TestUtils.writeValueAsString(registerRequest);
+        String content = TestUtil.writeValueAsString(registerRequest);
 
         when(customerService.registerCustomer(any(RegisterRequest.class))).thenReturn(registrationResponse);
 
@@ -195,9 +195,9 @@ class CustomerControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void updateUserTest_success() throws Exception {
-        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
+        UserInfo userInfo = TestUtil.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
-        String content = TestUtils.writeValueAsString(userInfo);
+        String content = TestUtil.writeValueAsString(userInfo);
 
         when(customerService.updateUser(anyString(), any(UserUpdateRequest.class))).thenReturn(userInfo);
 
@@ -218,9 +218,9 @@ class CustomerControllerTest {
     @Test
     @WithAnonymousUser
     void updateUserTest_forbidden() throws Exception {
-        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
+        UserInfo userInfo = TestUtil.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
-        String content = TestUtils.writeValueAsString(userInfo);
+        String content = TestUtil.writeValueAsString(userInfo);
 
         MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
                         .contextPath(PATH)
@@ -238,9 +238,9 @@ class CustomerControllerTest {
     @Test
     @WithAnonymousUser
     void updateUserTest_unauthorized() throws Exception {
-        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
+        UserInfo userInfo = TestUtil.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
-        String content = TestUtils.writeValueAsString(userInfo);
+        String content = TestUtil.writeValueAsString(userInfo);
 
         MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
                         .contextPath(PATH)
@@ -258,7 +258,7 @@ class CustomerControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findUserByUsernameTest_success() throws Exception {
-        UserInfo userInfo = TestUtils.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
+        UserInfo userInfo = TestUtil.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
         when(customerService.findUserByUsername(anyString())).thenReturn(userInfo);
 

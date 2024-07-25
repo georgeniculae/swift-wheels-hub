@@ -1,7 +1,7 @@
 package com.swiftwheelshub.agency.mapper;
 
 import com.swiftwheelshub.agency.util.AssertionUtils;
-import com.swiftwheelshub.agency.util.TestUtils;
+import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.EmployeeRequest;
 import com.swiftwheelshub.dto.EmployeeResponse;
 import com.swiftwheelshub.entity.Employee;
@@ -20,7 +20,7 @@ class EmployeeMapperTest {
 
     @Test
     void mapEntityToDtoTest_success() {
-        Employee employee = TestUtils.getResourceAsJson("/data/Employee.json", Employee.class);
+        Employee employee = TestUtil.getResourceAsJson("/data/Employee.json", Employee.class);
 
         EmployeeResponse employeeResponse = assertDoesNotThrow(() -> employeeMapper.mapEntityToDto(employee));
 
@@ -36,7 +36,7 @@ class EmployeeMapperTest {
     @Test
     void mapDtoToEntityTest_success() {
         EmployeeRequest employeeRequest =
-                TestUtils.getResourceAsJson("/data/EmployeeRequest.json", EmployeeRequest.class);
+                TestUtil.getResourceAsJson("/data/EmployeeRequest.json", EmployeeRequest.class);
 
         Employee employee = assertDoesNotThrow(() -> employeeMapper.mapDtoToEntity(employeeRequest));
 

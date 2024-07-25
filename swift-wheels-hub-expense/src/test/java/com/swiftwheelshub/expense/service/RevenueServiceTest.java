@@ -6,7 +6,7 @@ import com.swiftwheelshub.expense.mapper.RevenueMapper;
 import com.swiftwheelshub.expense.mapper.RevenueMapperImpl;
 import com.swiftwheelshub.expense.repository.RevenueRepository;
 import com.swiftwheelshub.expense.util.AssertionUtils;
-import com.swiftwheelshub.expense.util.TestUtils;
+import com.swiftwheelshub.expense.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,7 +38,7 @@ class RevenueServiceTest {
 
     @Test
     void findAllRevenuesTest_success() {
-        Revenue revenue = TestUtils.getResourceAsJson("/data/Revenue.json", Revenue.class);
+        Revenue revenue = TestUtil.getResourceAsJson("/data/Revenue.json", Revenue.class);
 
         when(revenueRepository.findAllRevenues()).thenReturn(Stream.of(revenue));
 
@@ -50,7 +50,7 @@ class RevenueServiceTest {
 
     @Test
     void findRevenueByDateTest_success() {
-        Revenue revenue = TestUtils.getResourceAsJson("/data/Revenue.json", Revenue.class);
+        Revenue revenue = TestUtil.getResourceAsJson("/data/Revenue.json", Revenue.class);
 
         when(revenueRepository.findByDateOfRevenue(any(LocalDate.class))).thenReturn(Stream.of(revenue));
 

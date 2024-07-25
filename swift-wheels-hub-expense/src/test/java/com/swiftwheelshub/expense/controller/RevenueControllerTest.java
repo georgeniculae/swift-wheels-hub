@@ -2,7 +2,7 @@ package com.swiftwheelshub.expense.controller;
 
 import com.swiftwheelshub.dto.RevenueResponse;
 import com.swiftwheelshub.expense.service.RevenueService;
-import com.swiftwheelshub.expense.util.TestUtils;
+import com.swiftwheelshub.expense.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -43,7 +43,7 @@ class RevenueControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findAllRevenuesTest_success() throws Exception {
         RevenueResponse revenueResponse =
-                TestUtils.getResourceAsJson("/data/RevenueResponse.json", RevenueResponse.class);
+                TestUtil.getResourceAsJson("/data/RevenueResponse.json", RevenueResponse.class);
 
         when(revenueService.findAllRevenues()).thenReturn(List.of(revenueResponse));
 
@@ -62,7 +62,7 @@ class RevenueControllerTest {
     @WithAnonymousUser
     void findAllRevenuesTest_unauthorized() throws Exception {
         RevenueResponse revenueResponse =
-                TestUtils.getResourceAsJson("/data/RevenueResponse.json", RevenueResponse.class);
+                TestUtil.getResourceAsJson("/data/RevenueResponse.json", RevenueResponse.class);
 
         when(revenueService.findAllRevenues()).thenReturn(List.of(revenueResponse));
 
@@ -107,7 +107,7 @@ class RevenueControllerTest {
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findRevenuesByDateTest_success() throws Exception {
         RevenueResponse revenueResponse =
-                TestUtils.getResourceAsJson("/data/RevenueResponse.json", RevenueResponse.class);
+                TestUtil.getResourceAsJson("/data/RevenueResponse.json", RevenueResponse.class);
 
         when(revenueService.findRevenuesByDate(any(LocalDate.class))).thenReturn(List.of(revenueResponse));
 
@@ -126,7 +126,7 @@ class RevenueControllerTest {
     @WithAnonymousUser
     void findRevenuesByDateTest_unauthorized() throws Exception {
         RevenueResponse revenueResponse =
-                TestUtils.getResourceAsJson("/data/RevenueResponse.json", RevenueResponse.class);
+                TestUtil.getResourceAsJson("/data/RevenueResponse.json", RevenueResponse.class);
 
         when(revenueService.findRevenuesByDate(any(LocalDate.class))).thenReturn(List.of(revenueResponse));
 
