@@ -48,7 +48,8 @@ public class BookingService {
 
     @Retryable(
             retryFor = Exception.class,
-            maxAttempts = 5, backoff = @Backoff(value = 5000L),
+            maxAttempts = 5,
+            backoff = @Backoff(value = 5000L),
             listeners = "invoiceService"
     )
     public void closeBooking(String apikey, Collection<GrantedAuthority> authorities, BookingClosingDetails bookingClosingDetails) {

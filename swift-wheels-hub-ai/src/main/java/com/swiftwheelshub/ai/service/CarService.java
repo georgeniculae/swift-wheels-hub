@@ -31,7 +31,8 @@ public class CarService {
 
     @Retryable(
             retryFor = Exception.class,
-            maxAttempts = 5, backoff = @Backoff(value = 5000L),
+            maxAttempts = 5,
+            backoff = @Backoff(value = 5000L),
             listeners = "carSuggestionService"
     )
     public List<CarResponse> getAllAvailableCars(String apiKey, Collection<GrantedAuthority> authorities) {

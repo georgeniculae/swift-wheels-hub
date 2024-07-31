@@ -29,7 +29,8 @@ public class EmployeeService {
 
     @Retryable(
             retryFor = Exception.class,
-            maxAttempts = 5, backoff = @Backoff(value = 5000L),
+            maxAttempts = 5,
+            backoff = @Backoff(value = 5000L),
             listeners = "bookingService"
     )
     public EmployeeResponse findEmployeeById(String apikey, Collection<GrantedAuthority> authorities, Long receptionistEmployeeId) {

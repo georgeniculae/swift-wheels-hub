@@ -54,7 +54,8 @@ public class CarService {
 
     @Retryable(
             retryFor = Exception.class,
-            maxAttempts = 5, backoff = @Backoff(value = 5000L),
+            maxAttempts = 5,
+            backoff = @Backoff(value = 5000L),
             listeners = "bookingService"
     )
     public void changeCarStatus(String apikey, Collection<GrantedAuthority> authorities, Long carId, CarState carState) {
@@ -78,7 +79,8 @@ public class CarService {
 
     @Retryable(
             retryFor = Exception.class,
-            maxAttempts = 5, backoff = @Backoff(value = 5000L),
+            maxAttempts = 5,
+            backoff = @Backoff(value = 5000L),
             listeners = "bookingService"
     )
     public void updateCarWhenBookingIsFinished(String apikey,
@@ -99,7 +101,8 @@ public class CarService {
 
     @Retryable(
             retryFor = Exception.class,
-            maxAttempts = 5, backoff = @Backoff(value = 5000L),
+            maxAttempts = 5,
+            backoff = @Backoff(value = 5000L),
             listeners = "bookingService"
     )
     public void updateCarsStatus(String apikey, Collection<GrantedAuthority> authorities, List<UpdateCarRequest> carsForUpdate) {
