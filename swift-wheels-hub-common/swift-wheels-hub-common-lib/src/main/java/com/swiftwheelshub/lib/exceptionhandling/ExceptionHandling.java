@@ -92,12 +92,6 @@ public class ExceptionHandling extends DefaultErrorAttributes {
                                                       HttpStatus httpStatus) {
         Map<String, Object> errorAttributes = super.getErrorAttributes(webRequest, ErrorAttributeOptions.defaults());
 
-        return addErrorAttributes(errorAttributes, errorMessage, cause, httpStatus);
-    }
-
-    private Map<String, Object> addErrorAttributes(Map<String, Object> errorAttributes,
-                                                   String errorMessage,
-                                                   String cause, HttpStatus httpStatus) {
         errorAttributes.put(MESSAGE, errorMessage);
         errorAttributes.put(STATUS, httpStatus.value());
         errorAttributes.put(ERROR, cause);
