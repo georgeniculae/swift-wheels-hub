@@ -86,14 +86,17 @@ public class ExceptionHandling extends DefaultErrorAttributes {
         return e.getMessage();
     }
 
-    private Map<String, Object> getErrorAttributesMap(WebRequest webRequest, String errorMessage, String cause,
+    private Map<String, Object> getErrorAttributesMap(WebRequest webRequest,
+                                                      String errorMessage,
+                                                      String cause,
                                                       HttpStatus httpStatus) {
         Map<String, Object> errorAttributes = super.getErrorAttributes(webRequest, ErrorAttributeOptions.defaults());
 
         return addErrorAttributes(errorAttributes, errorMessage, cause, httpStatus);
     }
 
-    private Map<String, Object> addErrorAttributes(Map<String, Object> errorAttributes, String errorMessage,
+    private Map<String, Object> addErrorAttributes(Map<String, Object> errorAttributes,
+                                                   String errorMessage,
                                                    String cause, HttpStatus httpStatus) {
         errorAttributes.put(MESSAGE, errorMessage);
         errorAttributes.put(STATUS, httpStatus.value());
