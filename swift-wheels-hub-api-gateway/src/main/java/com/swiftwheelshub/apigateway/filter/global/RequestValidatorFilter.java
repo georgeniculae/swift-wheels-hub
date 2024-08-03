@@ -13,6 +13,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,7 +21,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
 @Component
@@ -50,7 +51,14 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
                 .flatMap(this::getValidationReport)
                 .flatMap(requestValidationReport -> filterRequest(exchange, chain, requestValidationReport))
                 .switchIfEmpty(Mono.defer(() -> chain.filter(exchange)))
-                .onErrorMap(ExceptionUtil::handleException);
+                .onErrorResume(e -> {
+                    log.error("Error while validating request: {}", e.getMessage());
+
+                    HttpStatusCode statusCode = ExceptionUtil.extractExceptionStatusCode(e);
+                    exchange.getResponse().setStatusCode(statusCode);
+
+                    return exchange.getResponse().setComplete();
+                });
     }
 
     @Override
@@ -66,7 +74,7 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
 
     private Mono<IncomingRequestDetails> getIncomingRequestDetails(ServerHttpRequest request) {
         return request.getBody()
-                .map(dataBuffer -> dataBuffer.toString(Charset.defaultCharset()))
+                .map(dataBuffer -> dataBuffer.toString(StandardCharsets.UTF_8))
                 .reduce(StringUtils.EMPTY, (current, next) -> current + next)
                 .map(bodyAsString -> getIncomingRequestDetails(request, bodyAsString));
     }
@@ -90,7 +98,7 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
                 .bodyToMono(RequestValidationReport.class)
                 .retryWhen(Retry.fixedDelay(6, Duration.ofSeconds(10)))
                 .onErrorMap(e -> {
-                    log.error("Error while sending request to validator");
+                    log.error("Error while sending request to validator: {}", e.getMessage());
 
                     return ExceptionUtil.handleException(e);
                 });

@@ -1,8 +1,10 @@
 package com.swiftwheelshub.apigateway.exception;
 
+import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @UtilityClass
@@ -24,6 +26,22 @@ public class ExceptionUtil {
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 e.getMessage()
         );
+    }
+
+    public static HttpStatusCode extractExceptionStatusCode(Throwable e) {
+        if (e instanceof WebClientResponseException webClientResponseException) {
+            return webClientResponseException.getStatusCode();
+        }
+
+        if (e instanceof SwiftWheelsHubNotFoundException swiftWheelsHubNotFoundException) {
+            return swiftWheelsHubNotFoundException.getStatusCode();
+        }
+
+        if (e instanceof SwiftWheelsHubResponseStatusException swiftWheelsHubResponseStatusException) {
+            return swiftWheelsHubResponseStatusException.getStatusCode();
+        }
+
+        return HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
 }

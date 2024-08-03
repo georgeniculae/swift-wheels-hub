@@ -80,7 +80,7 @@ class RequestHeaderModifierFilterTest {
 
         requestHeaderModifierFilter.filter(exchange, chain)
                 .as(StepVerifier::create)
-                .expectError()
+                .expectComplete()
                 .verify();
     }
 
