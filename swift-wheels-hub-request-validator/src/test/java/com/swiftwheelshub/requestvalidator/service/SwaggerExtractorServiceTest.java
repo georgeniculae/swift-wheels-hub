@@ -19,6 +19,7 @@ import org.springframework.web.client.RestClient;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -53,7 +54,7 @@ class SwaggerExtractorServiceTest {
 
     @Test
     @SuppressWarnings("all")
-    void getSwaggerIdentifierAndContent_success() {
+    void getSwaggerFiles_success() {
         String agencyContent =
                 TestUtil.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
         String bookingContent =
@@ -74,6 +75,8 @@ class SwaggerExtractorServiceTest {
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.header(anyString(), any(String[].class))).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.onStatus(any(Predicate.class), any(RestClient.ResponseSpec.ErrorHandler.class)))
+                .thenReturn(responseSpec);
 
         when(responseSpec.body(eq(String.class))).thenAnswer(new Answer() {
             private int count = 0;
@@ -99,7 +102,7 @@ class SwaggerExtractorServiceTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    void getSwaggerIdentifierAndContent_emptySwagger() {
+    void getSwaggerFiles_emptySwagger() {
         String agencyContent =
                 TestUtil.getResourceAsJson("/data/SwiftWheelsHubAgencySwagger.json", String.class);
         String bookingContent =
@@ -122,6 +125,8 @@ class SwaggerExtractorServiceTest {
         when(requestHeadersSpec.header(anyString(), any(String[].class))).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.body(eq(String.class))).thenReturn(StringUtils.EMPTY);
+        when(responseSpec.onStatus(any(Predicate.class), any(RestClient.ResponseSpec.ErrorHandler.class)))
+                .thenReturn(responseSpec);
 
         assertThrows(SwiftWheelsHubException.class, () -> swaggerExtractorService.getSwaggerFiles());
     }
@@ -149,6 +154,8 @@ class SwaggerExtractorServiceTest {
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.header(anyString(), any(String[].class))).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.onStatus(any(Predicate.class), any(RestClient.ResponseSpec.ErrorHandler.class)))
+                .thenReturn(responseSpec);
 
         when(responseSpec.body(eq(String.class))).thenAnswer(new Answer() {
             private int count = 0;
@@ -195,6 +202,8 @@ class SwaggerExtractorServiceTest {
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.header(anyString(), any(String[].class))).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.onStatus(any(Predicate.class), any(RestClient.ResponseSpec.ErrorHandler.class)))
+                .thenReturn(responseSpec);
 
         when(responseSpec.body(eq(String.class))).thenAnswer(new Answer() {
             private int count = 0;

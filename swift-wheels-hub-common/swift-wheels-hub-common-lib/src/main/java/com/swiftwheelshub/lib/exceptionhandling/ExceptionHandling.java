@@ -39,7 +39,7 @@ public class ExceptionHandling extends DefaultErrorAttributes {
                                                                                      WebRequest request) {
         HttpStatus notFound = HttpStatus.NOT_FOUND;
         String cause = "Resource not found";
-        Map<String, Object> errorAttributes = getErrorAttributesMap(request, e.getMessage(), cause, notFound);
+        Map<String, Object> errorAttributes = getErrorAttributesMap(request, e.getReason(), cause, notFound);
 
         return ResponseEntity.status(notFound).body(errorAttributes);
     }

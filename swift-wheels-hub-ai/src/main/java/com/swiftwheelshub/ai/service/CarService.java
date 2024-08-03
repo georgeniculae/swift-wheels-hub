@@ -3,12 +3,14 @@ package com.swiftwheelshub.ai.service;
 import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
+import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -38,8 +40,13 @@ public class CarService {
         return restClient.get()
                 .uri(url + SEPARATOR + "available")
                 .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
-                .exchange((_, clientResponse) -> {
+                .exchange((request, clientResponse) -> {
                     HttpStatusCode statusCode = clientResponse.getStatusCode();
+                    String path = request.getURI().getPath();
+
+                    if (statusCode.isSameCodeAs(HttpStatus.NOT_FOUND)) {
+                        throw new SwiftWheelsHubNotFoundException("Path: " + path + " not found");
+                    }
 
                     if (statusCode.isError()) {
                         throw new SwiftWheelsHubResponseStatusException(statusCode, clientResponse.getStatusText());

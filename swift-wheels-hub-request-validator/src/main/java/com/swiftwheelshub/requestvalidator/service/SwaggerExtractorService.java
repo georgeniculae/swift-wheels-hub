@@ -2,11 +2,13 @@ package com.swiftwheelshub.requestvalidator.service;
 
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
+import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.requestvalidator.config.RegisteredEndpoints;
 import com.swiftwheelshub.requestvalidator.model.SwaggerFile;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -57,6 +59,9 @@ public class SwaggerExtractorService {
                 .uri(url)
                 .header(X_API_KEY, apikey)
                 .retrieve()
+                .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
+                    throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());
+                })
                 .body(String.class);
 
         return Optional.ofNullable(body)
