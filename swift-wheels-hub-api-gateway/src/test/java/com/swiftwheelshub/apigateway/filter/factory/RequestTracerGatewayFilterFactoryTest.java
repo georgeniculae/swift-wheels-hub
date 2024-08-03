@@ -14,10 +14,10 @@ import org.springframework.mock.web.server.MockServerWebExchange;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
-class ServiceIdHeaderGatewayFilterFactoryTest {
+class RequestTracerGatewayFilterFactoryTest {
 
     @InjectMocks
-    private ServiceIdHeaderGatewayFilterFactory serviceIdHeaderGatewayFilterFactory;
+    private RequestTracerGatewayFilterFactory requestTracerGatewayFilterFactory;
 
     @Test
     void applyTest_success() {
@@ -29,10 +29,10 @@ class ServiceIdHeaderGatewayFilterFactoryTest {
                 .build();
         MockServerWebExchange.builder(request).build();
 
-        ServiceIdHeaderGatewayFilterFactory.ServiceIdConfig serviceIdConfig =
-                new ServiceIdHeaderGatewayFilterFactory.ServiceIdConfig("EN");
+        RequestTracerGatewayFilterFactory.ServiceIdConfig serviceIdConfig =
+                new RequestTracerGatewayFilterFactory.ServiceIdConfig("EN");
 
-        GatewayFilter apply = serviceIdHeaderGatewayFilterFactory.apply(serviceIdConfig);
+        GatewayFilter apply = requestTracerGatewayFilterFactory.apply(serviceIdConfig);
         assertNotNull(apply);
     }
 

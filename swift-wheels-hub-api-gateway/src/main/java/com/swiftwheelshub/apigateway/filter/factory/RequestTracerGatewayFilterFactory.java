@@ -10,12 +10,12 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @Component
-public class ServiceIdHeaderGatewayFilterFactory extends AbstractGatewayFilterFactory<ServiceIdHeaderGatewayFilterFactory.ServiceIdConfig> {
+public class RequestTracerGatewayFilterFactory extends AbstractGatewayFilterFactory<RequestTracerGatewayFilterFactory.ServiceIdConfig> {
 
     private static final String SERVICE_ID = "X_SERVICE_ID";
     private static final String X_REQUEST_PATH = "X-REQUEST-PATH";
 
-    public ServiceIdHeaderGatewayFilterFactory() {
+    public RequestTracerGatewayFilterFactory() {
         super(ServiceIdConfig.class);
     }
 
