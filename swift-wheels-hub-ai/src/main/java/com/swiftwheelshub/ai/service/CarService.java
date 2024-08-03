@@ -1,5 +1,6 @@
 package com.swiftwheelshub.ai.service;
 
+import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
@@ -11,11 +12,9 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -35,10 +34,10 @@ public class CarService {
             backoff = @Backoff(value = 5000L),
             listeners = "carSuggestionService"
     )
-    public List<CarResponse> getAllAvailableCars(String apiKey, Collection<GrantedAuthority> authorities) {
+    public List<CarResponse> getAllAvailableCars(AuthenticationInfo authenticationInfo) {
         return restClient.get()
                 .uri(url + SEPARATOR + "available")
-                .headers(HttpRequestUtil.setHttpHeaders(apiKey, authorities))
+                .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
                 .exchange((_, clientResponse) -> {
                     HttpStatusCode statusCode = clientResponse.getStatusCode();
 

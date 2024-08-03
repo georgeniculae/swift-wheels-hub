@@ -1,5 +1,6 @@
 package com.swiftwheelshub.expense.service;
 
+import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.dto.InvoiceRequest;
@@ -19,8 +20,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -174,6 +178,13 @@ class InvoiceServiceTest {
         BookingResponse bookingResponse =
                 TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader("X-API-KEY", "apikey");
+        httpServletRequest.addHeader("X-ROLES", "ROLE_user");
+
+        RequestAttributes servletWebRequest = new ServletWebRequest(httpServletRequest);
+        RequestContextHolder.setRequestAttributes(servletWebRequest);
+
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
         ApiKeyAuthenticationToken apiKeyAuthenticationToken =
                 new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
@@ -181,9 +192,9 @@ class InvoiceServiceTest {
         SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
-        when(bookingService.findBookingById(anyString(), anyCollection(), anyLong())).thenReturn(bookingResponse);
+        when(bookingService.findBookingById(any(AuthenticationInfo.class), anyLong())).thenReturn(bookingResponse);
         when(revenueService.saveInvoiceAndRevenue(any(Invoice.class))).thenReturn(invoice);
-        doNothing().when(bookingService).closeBooking(anyString(), anyCollection(), any(BookingClosingDetails.class));
+        doNothing().when(bookingService).closeBooking(any(AuthenticationInfo.class), any(BookingClosingDetails.class));
 
         InvoiceResponse invoiceResponse = invoiceService.closeInvoice(1L, invoiceRequest);
         AssertionUtils.assertInvoiceResponse(invoice, invoiceResponse);

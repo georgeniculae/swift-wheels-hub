@@ -1,18 +1,16 @@
 package com.swiftwheelshub.ai.service;
 
+import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarSuggestionResponse;
 import com.swiftwheelshub.dto.TripInfo;
-import com.swiftwheelshub.lib.security.ApiKeyAuthenticationToken;
 import com.swiftwheelshub.lib.util.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.retry.RetryListener;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.TextStyle;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -25,16 +23,16 @@ public class CarSuggestionService implements RetryListener {
     private final CarService carService;
 
     public CarSuggestionResponse getChatOutput(TripInfo tripInfo) {
-        ApiKeyAuthenticationToken principal = AuthenticationUtil.getAuthentication();
-        List<String> cars = getAvailableCars(principal.getName(), principal.getAuthorities());
+        AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
+        List<String> cars = getAvailableCars(authenticationInfo);
         String text = getText();
         Map<String, Object> params = getParams(tripInfo, cars);
 
         return chatService.getChatReply(text, params);
     }
 
-    private List<String> getAvailableCars(String apiKey, Collection<GrantedAuthority> authorities) {
-        return carService.getAllAvailableCars(apiKey, authorities)
+    private List<String> getAvailableCars(AuthenticationInfo authenticationInfo) {
+        return carService.getAllAvailableCars(authenticationInfo)
                 .stream()
                 .map(this::getCarDetails)
                 .toList();

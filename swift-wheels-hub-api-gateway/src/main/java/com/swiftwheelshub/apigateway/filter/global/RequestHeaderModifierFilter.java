@@ -1,9 +1,9 @@
 package com.swiftwheelshub.apigateway.filter.global;
 
 import com.swiftwheelshub.apigateway.security.JwtAuthenticationTokenConverter;
+import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -69,6 +69,7 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
                 .filter(this::doesPathContainPattern)
                 .flatMap(serverHttpRequest -> nimbusReactiveJwtDecoder.decode(getAuthorizationToken(serverHttpRequest)))
                 .flatMap(this::getAuthenticationInfo)
+                .switchIfEmpty(Mono.just(AuthenticationInfo.builder().build()))
                 .map(authenticationInfo -> createMutatedServerWebExchange(exchange, authenticationInfo));
     }
 
@@ -82,7 +83,7 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
         return Mono.zip(
                 getUsername(jwt),
                 getRoles(jwt),
-                AuthenticationInfo::new
+                (username, roles) -> AuthenticationInfo.builder().username(username).roles(roles).build()
         );
     }
 
@@ -111,7 +112,7 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     private ServerWebExchange createMutatedServerWebExchange(ServerWebExchange exchange,
                                                              AuthenticationInfo authenticationInfo) {
         return exchange.mutate()
-                .request(mutateHeaders(authenticationInfo.username, authenticationInfo.roles))
+                .request(mutateHeaders(authenticationInfo.username(), authenticationInfo.roles()))
                 .build();
     }
 
@@ -129,10 +130,6 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
 
             requestBuilder.headers(headers -> headers.remove(HttpHeaders.AUTHORIZATION));
         };
-    }
-
-    @Builder
-    private record AuthenticationInfo(String username, List<String> roles) {
     }
 
 }

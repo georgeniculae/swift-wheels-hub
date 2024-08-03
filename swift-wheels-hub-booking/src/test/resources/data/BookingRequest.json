@@ -1,7 +1,4 @@
 {
-  "customerUsername": "user",
-  "customerEmail": "user@email.com",
-  "dateOfBooking": "2099-02-20",
   "status": "IN_PROGRESS",
   "carId": 1,
   "dateFrom": "2099-02-21",

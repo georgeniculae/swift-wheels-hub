@@ -1,5 +1,6 @@
 package com.swiftwheelshub.expense.service;
 
+import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
@@ -10,11 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -28,12 +27,12 @@ public class BookingService {
 
     private final RestClient restClient;
 
-    public BookingResponse findBookingById(String apikey, Collection<GrantedAuthority> authorities, Long bookingId) {
+    public BookingResponse findBookingById(AuthenticationInfo authenticationInfo, Long bookingId) {
         String finalUrl = url + SEPARATOR + bookingId;
 
         return restClient.get()
                 .uri(finalUrl)
-                .headers(HttpRequestUtil.setHttpHeaders(apikey, authorities))
+                .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
                 .exchange((_, clientResponse) -> {
                     HttpStatusCode statusCode = clientResponse.getStatusCode();
 
@@ -52,12 +51,12 @@ public class BookingService {
             backoff = @Backoff(value = 5000L),
             listeners = "invoiceService"
     )
-    public void closeBooking(String apikey, Collection<GrantedAuthority> authorities, BookingClosingDetails bookingClosingDetails) {
+    public void closeBooking(AuthenticationInfo authenticationInfo, BookingClosingDetails bookingClosingDetails) {
         String finalUrl = url + SEPARATOR + "close-booking";
 
         restClient.post()
                 .uri(finalUrl)
-                .headers(HttpRequestUtil.setHttpHeaders(apikey, authorities))
+                .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
                 .body(bookingClosingDetails)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {

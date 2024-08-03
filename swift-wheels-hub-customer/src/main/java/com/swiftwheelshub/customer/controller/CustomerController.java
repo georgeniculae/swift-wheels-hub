@@ -41,7 +41,7 @@ public class CustomerController {
     }
 
     @GetMapping(path = "/{username}")
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('user')")
     public ResponseEntity<UserInfo> findUserByUsername(@PathVariable("username") String username) {
         return ResponseEntity.ok(customerService.findUserByUsername(username));
     }

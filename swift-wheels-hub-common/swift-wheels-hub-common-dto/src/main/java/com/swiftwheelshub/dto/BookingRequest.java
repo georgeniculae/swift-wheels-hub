@@ -1,6 +1,5 @@
 package com.swiftwheelshub.dto;
 
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,12 +14,6 @@ public record BookingRequest(
         LocalDate dateOfBooking,
 
         BookingState status,
-
-        @NotEmpty(message = "Username cannot be empty")
-        String customerUsername,
-
-        @NotEmpty(message = "Customer email cannot be empty")
-        String customerEmail,
 
         @NotNull(message = "Car id cannot be null")
         Long carId,
@@ -48,8 +41,6 @@ public record BookingRequest(
         return "BookingRequest{" + "\n" +
                 "dateOfBooking=" + dateOfBooking + "\n" +
                 "status=" + status +
-                "customerUsername='" + customerUsername + "\n" +
-                "customerEmail='" + customerEmail + "\n" +
                 "carId=" + carId + "\n" +
                 "dateFrom=" + dateFrom + "\n" +
                 "dateTo=" + dateTo + "\n" +

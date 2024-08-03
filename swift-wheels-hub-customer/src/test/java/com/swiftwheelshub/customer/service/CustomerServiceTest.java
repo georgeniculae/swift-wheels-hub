@@ -5,6 +5,7 @@ import com.swiftwheelshub.customer.mapper.CustomerMapperImpl;
 import com.swiftwheelshub.customer.util.AssertionUtils;
 import com.swiftwheelshub.customer.util.TestData;
 import com.swiftwheelshub.customer.util.TestUtil;
+import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserInfo;
@@ -38,8 +39,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.List;
 
@@ -50,7 +53,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -305,7 +307,7 @@ class CustomerServiceTest {
         when(realmResource.users()).thenReturn(usersResource);
         when(usersResource.get(anyString())).thenReturn(userResource);
         doNothing().when(userResource).remove();
-        doNothing().when(bookingService).deleteBookingsByUsername(anyString(), anyString(), anyCollection());
+        doNothing().when(bookingService).deleteBookingsByUsername(any(AuthenticationInfo.class), anyString());
         when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of(userRepresentation));
 
         assertDoesNotThrow(() -> customerService.deleteUserByUsername("user"));
@@ -316,6 +318,13 @@ class CustomerServiceTest {
         ReflectionTestUtils.setField(customerService, "realm", "realm");
 
         UserRepresentation userRepresentation = TestData.getUserRepresentation();
+
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader("X-API-KEY", "apikey");
+        httpServletRequest.addHeader("X-ROLES", "ROLE_user");
+
+        RequestAttributes servletWebRequest = new ServletWebRequest(httpServletRequest);
+        RequestContextHolder.setRequestAttributes(servletWebRequest);
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
         ApiKeyAuthenticationToken apiKeyAuthenticationToken =

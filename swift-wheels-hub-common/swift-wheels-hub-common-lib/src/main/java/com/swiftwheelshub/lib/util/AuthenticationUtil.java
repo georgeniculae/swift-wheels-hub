@@ -1,14 +1,42 @@
 package com.swiftwheelshub.lib.util;
 
+import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.lib.security.ApiKeyAuthenticationToken;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.Collection;
+import java.util.List;
 
 @UtilityClass
 public class AuthenticationUtil {
 
-    public static ApiKeyAuthenticationToken getAuthentication() {
+    public static AuthenticationInfo getAuthenticationInfo() {
+        ApiKeyAuthenticationToken principal = AuthenticationUtil.getAuthentication();
+        String apikey = principal.getName();
+        Collection<GrantedAuthority> authorities = principal.getAuthorities();
+        String username = HttpRequestUtil.extractUsername();
+
+        return AuthenticationInfo.builder().apikey(apikey)
+                .username(username)
+                .roles(extractRoles(authorities))
+                .build();
+    }
+
+    private static ApiKeyAuthenticationToken getAuthentication() {
         return (ApiKeyAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    private static List<String> extractRoles(Collection<GrantedAuthority> authorities) {
+        if (ObjectUtils.isEmpty(authorities)) {
+            return List.of();
+        }
+
+        return authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
     }
 
 }

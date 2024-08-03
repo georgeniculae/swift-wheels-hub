@@ -1,5 +1,6 @@
 package com.swiftwheelshub.booking.service;
 
+import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.CarUpdateDetails;
@@ -12,13 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,12 +34,12 @@ public class CarService {
 
     private final RestClient restClient;
 
-    public CarResponse findAvailableCarById(String apikey, Collection<GrantedAuthority> authorities, Long carId) {
+    public CarResponse findAvailableCarById(AuthenticationInfo authenticationInfo, Long carId) {
         String finalUrl = url + SEPARATOR + carId + SEPARATOR + "availability";
 
         return restClient.get()
                 .uri(finalUrl)
-                .headers(HttpRequestUtil.setHttpHeaders(apikey, authorities))
+                .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
                 .exchange((_, clientResponse) -> {
                     HttpStatusCode statusCode = clientResponse.getStatusCode();
                     if (statusCode.isError()) {
@@ -58,7 +57,7 @@ public class CarService {
             backoff = @Backoff(value = 5000L),
             listeners = "bookingService"
     )
-    public void changeCarStatus(String apikey, Collection<GrantedAuthority> authorities, Long carId, CarState carState) {
+    public void changeCarStatus(AuthenticationInfo authenticationInfo, Long carId, CarState carState) {
         String finalUrl = url + SEPARATOR + carId + SEPARATOR + "change-status";
 
         URI uri = UriComponentsBuilder
@@ -69,7 +68,7 @@ public class CarService {
 
         restClient.patch()
                 .uri(uri)
-                .headers(HttpRequestUtil.setHttpHeaders(apikey, authorities))
+                .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
                     throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());
@@ -83,14 +82,13 @@ public class CarService {
             backoff = @Backoff(value = 5000L),
             listeners = "bookingService"
     )
-    public void updateCarWhenBookingIsFinished(String apikey,
-                                               Collection<GrantedAuthority> authorities,
+    public void updateCarWhenBookingIsFinished(AuthenticationInfo authenticationInfo,
                                                CarUpdateDetails carUpdateDetails) {
         String finalUrl = url + SEPARATOR + carUpdateDetails.carId() + SEPARATOR + "update-after-return";
 
         restClient.put()
                 .uri(finalUrl)
-                .headers(HttpRequestUtil.setHttpHeaders(apikey, authorities))
+                .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
                 .body(carUpdateDetails)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
@@ -105,12 +103,12 @@ public class CarService {
             backoff = @Backoff(value = 5000L),
             listeners = "bookingService"
     )
-    public void updateCarsStatus(String apikey, Collection<GrantedAuthority> authorities, List<UpdateCarRequest> carsForUpdate) {
+    public void updateCarsStatus(AuthenticationInfo authenticationInfo, List<UpdateCarRequest> carsForUpdate) {
         String finalUrl = url + SEPARATOR + "update-statuses";
 
         restClient.put()
                 .uri(finalUrl)
-                .headers(HttpRequestUtil.setHttpHeaders(apikey, authorities))
+                .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
                 .body(carsForUpdate)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {

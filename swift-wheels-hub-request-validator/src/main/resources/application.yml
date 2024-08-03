@@ -80,6 +80,6 @@ swagger:
   endpoints:
     agency: http://swift-wheels-hub-agency/agency/definition/v3/api-docs
     ai: http://swift-wheels-hub-ai/ai/definition/v3/api-docs
-    booking: http://swift-wheels-hub-booking/bookings/definition/v3/api-docs
-    customer: http://swift-wheels-hub-customer/customers/definition/v3/api-docs
+    bookings: http://swift-wheels-hub-booking/bookings/definition/v3/api-docs
+    customers: http://swift-wheels-hub-customer/customers/definition/v3/api-docs
     expense: http://swift-wheels-hub-expense/expense/definition/v3/api-docs

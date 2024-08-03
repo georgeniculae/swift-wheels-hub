@@ -2,6 +2,7 @@ package com.swiftwheelshub.booking.service;
 
 import com.swiftwheelshub.booking.mapper.BookingMapper;
 import com.swiftwheelshub.booking.repository.BookingRepository;
+import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
@@ -10,27 +11,25 @@ import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.EmployeeResponse;
 import com.swiftwheelshub.dto.UpdateCarRequest;
+import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.entity.BookingStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.lib.exceptionhandling.ExceptionUtil;
-import com.swiftwheelshub.lib.security.ApiKeyAuthenticationToken;
 import com.swiftwheelshub.lib.util.AuthenticationUtil;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.retry.RetryListener;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -43,6 +42,7 @@ public class BookingService implements RetryListener {
     private final BookingRepository bookingRepository;
     private final CarService carService;
     private final EmployeeService employeeService;
+    private final CustomerService customerService;
     private final BookingMapper bookingMapper;
 
     @Transactional(readOnly = true)
@@ -113,15 +113,13 @@ public class BookingService implements RetryListener {
     public BookingResponse saveBooking(BookingRequest newBookingRequest) {
         BookingResponse bookingResponse;
         CarResponse carResponse;
-        ApiKeyAuthenticationToken principal = AuthenticationUtil.getAuthentication();
-        String apikey = principal.getName();
-        Collection<GrantedAuthority> authorities = principal.getAuthorities();
+        AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
 
         try {
             validateBookingDates(newBookingRequest);
 
-            carResponse = carService.findAvailableCarById(apikey, authorities, newBookingRequest.carId());
-            Booking newBooking = setupNewBooking(newBookingRequest, carResponse);
+            carResponse = carService.findAvailableCarById(authenticationInfo, newBookingRequest.carId());
+            Booking newBooking = setupNewBooking(authenticationInfo, newBookingRequest, carResponse);
 
             Booking savedBooking = bookingRepository.save(newBooking);
             bookingResponse = bookingMapper.mapEntityToDto(savedBooking);
@@ -131,19 +129,20 @@ public class BookingService implements RetryListener {
             throw ExceptionUtil.handleException(e);
         }
 
-        carService.changeCarStatus(apikey, authorities, carResponse.id(), CarState.NOT_AVAILABLE);
+        carService.changeCarStatus(authenticationInfo, carResponse.id(), CarState.NOT_AVAILABLE);
 
         return bookingResponse;
     }
 
+
     public BookingResponse updateBooking(Long id, BookingRequest updatedBookingRequest) {
         validateBookingDates(updatedBookingRequest);
-        ApiKeyAuthenticationToken principal = AuthenticationUtil.getAuthentication();
+        AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
 
         BookingResponse bookingResponse;
 
         try {
-            Booking savedUpdatedBooking = updateAndSaveBooking(id, updatedBookingRequest, principal);
+            Booking savedUpdatedBooking = updateAndSaveBooking(id, updatedBookingRequest, authenticationInfo);
 
             bookingResponse = bookingMapper.mapEntityToDto(savedUpdatedBooking);
         } catch (Exception e) {
@@ -157,13 +156,11 @@ public class BookingService implements RetryListener {
 
     public BookingResponse closeBooking(BookingClosingDetails bookingClosingDetails) {
         BookingResponse bookingResponse;
-        ApiKeyAuthenticationToken principal = AuthenticationUtil.getAuthentication();
-        String apikey = principal.getName();
-        Collection<GrantedAuthority> authorities = principal.getAuthorities();
+        AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
 
         try {
             EmployeeResponse employeeResponse =
-                    employeeService.findEmployeeById(apikey, authorities, bookingClosingDetails.receptionistEmployeeId());
+                    employeeService.findEmployeeById(authenticationInfo, bookingClosingDetails.receptionistEmployeeId());
 
             Booking existingBooking = findEntityById(bookingClosingDetails.bookingId());
             existingBooking.setStatus(BookingStatus.CLOSED);
@@ -177,14 +174,14 @@ public class BookingService implements RetryListener {
             throw ExceptionUtil.handleException(e);
         }
 
-        updateCarWhenIsReturned(apikey, authorities, bookingResponse, bookingClosingDetails);
+        updateCarWhenIsReturned(authenticationInfo, bookingResponse, bookingClosingDetails);
 
         return bookingResponse;
     }
 
     public void deleteBookingByCustomerUsername(String username) {
         List<Booking> existingBookings = bookingRepository.findByCustomerUsername(username);
-        ApiKeyAuthenticationToken principal = AuthenticationUtil.getAuthentication();
+        AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
 
         try {
             bookingRepository.deleteByCustomerUsername(username);
@@ -192,7 +189,7 @@ public class BookingService implements RetryListener {
             throw new SwiftWheelsHubException(e.getMessage());
         }
 
-        carService.updateCarsStatus(principal.getName(), principal.getAuthorities(), getUpdateCarRequests(existingBookings));
+        carService.updateCarsStatus(authenticationInfo, getUpdateCarRequests(existingBookings));
     }
 
     private void validateBookingDates(BookingRequest newBookingRequest) {
@@ -209,7 +206,9 @@ public class BookingService implements RetryListener {
         }
     }
 
-    private Booking updateAndSaveBooking(Long id, BookingRequest updatedBookingRequest, ApiKeyAuthenticationToken principal) {
+    private Booking updateAndSaveBooking(Long id,
+                                         BookingRequest updatedBookingRequest,
+                                         AuthenticationInfo authenticationInfo) {
         Booking existingBooking = findEntityById(id);
 
         final Long existingCarId = existingBooking.getCarId();
@@ -217,7 +216,7 @@ public class BookingService implements RetryListener {
         BigDecimal amount = existingBooking.getRentalCarPrice();
 
         if (!existingCarId.equals(newCarId)) {
-            CarResponse newCarResponse = carService.findAvailableCarById(principal.getName(), principal.getAuthorities(), newCarId);
+            CarResponse newCarResponse = carService.findAvailableCarById(authenticationInfo, newCarId);
 
             amount = newCarResponse.amount();
             existingBooking.setCarId(newCarResponse.id());
@@ -229,7 +228,7 @@ public class BookingService implements RetryListener {
         existingBooking.setDateTo(updatedBookingRequest.dateTo());
 
         Booking savedUpdatedBooking = bookingRepository.save(existingBooking);
-        getCarsForStatusUpdate(principal.getName(), principal.getAuthorities(), existingCarId, updatedBookingRequest.carId());
+        getCarsForStatusUpdate(authenticationInfo, existingCarId, updatedBookingRequest.carId());
 
         return savedUpdatedBooking;
     }
@@ -252,12 +251,16 @@ public class BookingService implements RetryListener {
                 .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Booking with id " + id + " does not exist"));
     }
 
-    private Booking setupNewBooking(BookingRequest newBookingRequest, CarResponse carResponse) {
+    private Booking setupNewBooking(AuthenticationInfo authenticationInfo,
+                                    BookingRequest newBookingRequest,
+                                    CarResponse carResponse) {
+        UserInfo userInfo = customerService.getUserByUsername(authenticationInfo);
+
         Booking newBooking = bookingMapper.mapDtoToEntity(newBookingRequest);
         BigDecimal amount = carResponse.amount();
 
-        newBooking.setCustomerUsername(newBookingRequest.customerUsername());
-        newBooking.setCustomerEmail(newBooking.getCustomerEmail());
+        newBooking.setCustomerUsername(userInfo.username());
+        newBooking.setCustomerEmail(userInfo.email());
         newBooking.setCarId(carResponse.id());
         newBooking.setDateOfBooking(LocalDate.now());
         newBooking.setRentalBranchId(carResponse.actualBranchId());
@@ -268,8 +271,7 @@ public class BookingService implements RetryListener {
         return newBooking;
     }
 
-    private void getCarsForStatusUpdate(String apikey,
-                                        Collection<GrantedAuthority> authorities,
+    private void getCarsForStatusUpdate(AuthenticationInfo authenticationInfo,
                                         Long existingCarId,
                                         Long newCarId) {
         if (!existingCarId.equals(newCarId)) {
@@ -278,12 +280,11 @@ public class BookingService implements RetryListener {
                     new UpdateCarRequest(newCarId, CarState.NOT_AVAILABLE)
             );
 
-            carService.updateCarsStatus(apikey, authorities, carsForUpdate);
+            carService.updateCarsStatus(authenticationInfo, carsForUpdate);
         }
     }
 
-    private void updateCarWhenIsReturned(String apikey,
-                                         Collection<GrantedAuthority> authorities,
+    private void updateCarWhenIsReturned(AuthenticationInfo authenticationInfo,
                                          BookingResponse bookingResponse,
                                          BookingClosingDetails bookingClosingDetails) {
         CarUpdateDetails carUpdateDetails = new CarUpdateDetails(
@@ -292,7 +293,7 @@ public class BookingService implements RetryListener {
                 bookingClosingDetails.receptionistEmployeeId()
         );
 
-        carService.updateCarWhenBookingIsFinished(apikey, authorities, carUpdateDetails);
+        carService.updateCarWhenBookingIsFinished(authenticationInfo, carUpdateDetails);
     }
 
     private List<UpdateCarRequest> getUpdateCarRequests(List<Booking> existingBookings) {

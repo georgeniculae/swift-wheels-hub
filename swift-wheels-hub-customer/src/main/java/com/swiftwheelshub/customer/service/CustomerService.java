@@ -1,6 +1,7 @@
 package com.swiftwheelshub.customer.service;
 
 import com.swiftwheelshub.customer.mapper.CustomerMapper;
+import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserInfo;
@@ -8,7 +9,6 @@ import com.swiftwheelshub.dto.UserUpdateRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
-import com.swiftwheelshub.lib.security.ApiKeyAuthenticationToken;
 import com.swiftwheelshub.lib.util.AuthenticationUtil;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import jakarta.ws.rs.NotFoundException;
@@ -115,7 +115,7 @@ public class CustomerService {
     public void deleteUserByUsername(String username) {
         UserRepresentation userRepresentation = getUserRepresentation(username);
         UserResource userResource = findById(userRepresentation.getId());
-        ApiKeyAuthenticationToken authentication = AuthenticationUtil.getAuthentication();
+        AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
 
         try {
             userResource.remove();
@@ -123,7 +123,7 @@ public class CustomerService {
             handleRestEasyCallException(e);
         }
 
-        bookingService.deleteBookingsByUsername(username, authentication.getName(), authentication.getAuthorities());
+        bookingService.deleteBookingsByUsername(authenticationInfo, username);
     }
 
     public void deleteCurrentUser() {
