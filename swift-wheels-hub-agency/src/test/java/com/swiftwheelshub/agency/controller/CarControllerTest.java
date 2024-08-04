@@ -396,8 +396,12 @@ class CarControllerTest {
     @Test
     @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
     void uploadCarsTest_success() throws Exception {
+        File excelFile = new File("src/test/resources/file/Cars.xlsx");
+
+        InputStream stream = new FileInputStream(excelFile);
+
         MockMultipartFile file =
-                new MockMultipartFile("file", "Cars.xlsx", MediaType.TEXT_PLAIN_VALUE, "Cars".getBytes());
+                new MockMultipartFile("file", excelFile.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
 
         CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
         List<CarResponse> carResponses = List.of(carResponse);
@@ -418,9 +422,12 @@ class CarControllerTest {
     @Test
     @WithAnonymousUser
     void uploadCarsTest_unauthorized() throws Exception {
-        MockMultipartFile file =
-                new MockMultipartFile("file", "Cars.xlsx", MediaType.TEXT_PLAIN_VALUE, "Cars".getBytes());
+        File excelFile = new File("src/test/resources/file/Cars.xlsx");
 
+        InputStream stream = new FileInputStream(excelFile);
+
+        MockMultipartFile file =
+                new MockMultipartFile("file", excelFile.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
         mockMvc.perform(multipart(HttpMethod.POST, PATH + "/upload")
                         .file(file)
                         .with(csrf())
