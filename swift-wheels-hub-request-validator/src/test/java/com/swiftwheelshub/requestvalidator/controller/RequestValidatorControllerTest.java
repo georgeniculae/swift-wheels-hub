@@ -67,27 +67,17 @@ class RequestValidatorControllerTest {
     @Test
     @WithAnonymousUser
     void validateRequestTest_unauthorized() throws Exception {
-        RequestValidationReport requestValidationReport =
-                TestUtil.getResourceAsJson("/data/RequestValidationReport.json", RequestValidationReport.class);
-
         IncomingRequestDetails incomingRequestDetails =
                 TestUtil.getResourceAsJson("/data/IncomingRequestDetails.json", IncomingRequestDetails.class);
 
         String content = TestUtil.writeValueAsString(incomingRequestDetails);
 
-        when(swaggerRequestValidatorService.validateRequest(any(IncomingRequestDetails.class)))
-                .thenReturn(requestValidationReport);
-
-        MockHttpServletResponse response = mockMvc.perform(post("/validate")
+        mockMvc.perform(post("/validate")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(content))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -109,17 +99,11 @@ class RequestValidatorControllerTest {
     @Test
     @WithAnonymousUser
     void invalidateSwaggerCacheTest_unauthorized() throws Exception {
-        doNothing().when(redisService).repopulateRedisWithSwaggerFiles(anyString());
-
-        MockHttpServletResponse response = mockMvc.perform(put("/invalidate/{microserviceName}", "agency")
+        mockMvc.perform(put("/invalidate/{microserviceName}", "agency")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
 }

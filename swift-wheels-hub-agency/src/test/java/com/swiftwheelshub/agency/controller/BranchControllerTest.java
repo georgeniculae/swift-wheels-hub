@@ -46,7 +46,7 @@ class BranchControllerTest {
     private BranchService branchService;
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findAllBranchesTest_success() throws Exception {
         BranchResponse branchResponse =
                 TestUtil.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
@@ -66,19 +66,15 @@ class BranchControllerTest {
     @Test
     @WithAnonymousUser
     void findAllBranchesTest_unauthorized() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(PATH)
+        mockMvc.perform(get(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
-    void findBranchByIdTest_successWithMockUser() throws Exception {
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
+    void findBranchByIdTest_success() throws Exception {
         BranchResponse branchResponse =
                 TestUtil.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
 
@@ -97,18 +93,14 @@ class BranchControllerTest {
     @Test
     @WithAnonymousUser()
     void findBranchByIdTest_unauthorized() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{id}", 1)
+        mockMvc.perform(get(PATH + "/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findBranchesByFilterTest_success() throws Exception {
         BranchResponse branchResponse =
                 TestUtil.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
@@ -133,18 +125,14 @@ class BranchControllerTest {
 
         when(branchService.findBranchesByFilter(anyString())).thenReturn(List.of(branchResponse));
 
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/filter/{filter}", "filter")
+        mockMvc.perform(get(PATH + "/filter/{filter}", "filter")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void countBranchesTest_success() throws Exception {
         when(branchService.countBranches()).thenReturn(1L);
 
@@ -162,18 +150,14 @@ class BranchControllerTest {
     @Test
     @WithAnonymousUser
     void countBranchesTest_unauthorized() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/count")
+        mockMvc.perform(get(PATH + "/count")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void addBranchTest_success() throws Exception {
         BranchResponse branchResponse =
                 TestUtil.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
@@ -202,37 +186,29 @@ class BranchControllerTest {
 
         String content = TestUtil.writeValueAsString(branchResponse);
 
-        MockHttpServletResponse response = mockMvc.perform(post(PATH)
+        mockMvc.perform(post(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(content))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void addBranchTest_forbidden() throws Exception {
         BranchRequest branchRequest = TestUtil.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
         String content = TestUtil.writeValueAsString(branchRequest);
 
-        MockHttpServletResponse response = mockMvc.perform(post(PATH)
+        mockMvc.perform(post(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(content))
-                .andExpect(status().isForbidden())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void updateBranchTest_success() throws Exception {
         BranchResponse branchRequest =
                 TestUtil.getResourceAsJson("/data/BranchResponse.json", BranchResponse.class);
@@ -259,20 +235,16 @@ class BranchControllerTest {
         BranchRequest branchRequest = TestUtil.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
         String content = TestUtil.writeValueAsString(branchRequest);
 
-        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
+        mockMvc.perform(put(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(content))
-                .andExpect(status().isForbidden())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void deleteBranchByIdTest_success() throws Exception {
         doNothing().when(branchService).deleteBranchById(anyLong());
 
@@ -288,12 +260,10 @@ class BranchControllerTest {
     @Test
     @WithAnonymousUser
     void deleteBranchByIdTest_forbidden() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(delete(PATH + "/{id}", 1L))
+        mockMvc.perform(delete(PATH + "/{id}", 1L))
                 .andExpect(status().isForbidden())
                 .andReturn()
                 .getResponse();
-
-        assertNotNull(response.getContentAsString());
     }
 
 }

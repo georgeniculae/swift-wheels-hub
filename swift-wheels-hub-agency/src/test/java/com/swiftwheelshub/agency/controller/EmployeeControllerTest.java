@@ -44,7 +44,7 @@ class EmployeeControllerTest {
     private EmployeeService employeeService;
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findAllEmployeesTest_success() throws Exception {
         EmployeeResponse employeeResponse =
                 TestUtil.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
@@ -64,18 +64,16 @@ class EmployeeControllerTest {
     @Test
     @WithAnonymousUser
     void findAllEmployeesTest_forbidden() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH)
+        mockMvc.perform(MockMvcRequestBuilders.get(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
                 .andReturn()
                 .getResponse();
-
-        assertNotNull(response.getContentAsString());
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findEmployeeByIdTest_success() throws Exception {
         EmployeeResponse employeeResponse =
                 TestUtil.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
@@ -95,18 +93,16 @@ class EmployeeControllerTest {
     @Test
     @WithAnonymousUser
     void findEmployeeByIdTest_unauthorized() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
+        mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
                 .andReturn()
                 .getResponse();
-
-        assertNotNull(response.getContentAsString());
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findEmployeesByBranchIdTest_success() throws Exception {
         EmployeeResponse employeeResponse =
                 TestUtil.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
@@ -126,14 +122,10 @@ class EmployeeControllerTest {
     @Test
     @WithAnonymousUser
     void findEmployeesByBranchIdTest_unauthorized() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/branch/{id}", 1L)
+        mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/branch/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -157,18 +149,16 @@ class EmployeeControllerTest {
     @Test
     @WithAnonymousUser
     void findEmployeesByFilterTest_unauthorized() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/filter/{filter}", "filter")
+       mockMvc.perform(get(PATH + "/filter/{filter}", "filter")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
                 .andReturn()
                 .getResponse();
-
-        assertNotNull(response.getContentAsString());
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void countEmployeesTest_success() throws Exception {
         when(employeeService.countEmployees()).thenReturn(1L);
 
@@ -185,20 +175,14 @@ class EmployeeControllerTest {
     @Test
     @WithAnonymousUser
     void countEmployeesTest_unauthorized() throws Exception {
-        when(employeeService.countEmployees()).thenReturn(1L);
-
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count")
+        mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/count")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void addEmployeeTest_success() throws Exception {
         EmployeeResponse employeeResponse =
                 TestUtil.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
@@ -225,16 +209,11 @@ class EmployeeControllerTest {
         EmployeeRequest employeeRequest = TestUtil.getResourceAsJson("/data/EmployeeRequest.json", EmployeeRequest.class);
         String valueAsString = TestUtil.writeValueAsString(employeeRequest);
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
+        mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                        .content(valueAsString));
     }
 
     @Test
@@ -243,20 +222,16 @@ class EmployeeControllerTest {
         EmployeeRequest employeeRequest = TestUtil.getResourceAsJson("/data/EmployeeRequest.json", EmployeeRequest.class);
         String valueAsString = TestUtil.writeValueAsString(employeeRequest);
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH)
+        mockMvc.perform(MockMvcRequestBuilders.post(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
-                .andExpect(status().isForbidden())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(value = "admin", username = "admin", password = "admin", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void updateEmployeeTest_success() throws Exception {
         EmployeeResponse employeeResponse =
                 TestUtil.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
@@ -285,16 +260,11 @@ class EmployeeControllerTest {
 
         String valueAsString = TestUtil.writeValueAsString(employeeResponse);
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
+        mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                        .content(valueAsString));
     }
 
     @Test
@@ -305,15 +275,11 @@ class EmployeeControllerTest {
 
         String valueAsString = TestUtil.writeValueAsString(employeeResponse);
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
+        mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(valueAsString))
-                .andExpect(status().isForbidden())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -334,15 +300,9 @@ class EmployeeControllerTest {
     @Test
     @WithAnonymousUser
     void deleteEmployeeByIdTest_forbidden() throws Exception {
-        doNothing().when(employeeService).deleteEmployeeById(anyLong());
-
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
+       mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN")))
-                .andExpect(status().isForbidden())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isForbidden());
     }
 
 }

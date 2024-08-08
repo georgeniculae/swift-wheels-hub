@@ -67,51 +67,31 @@ class CustomerControllerTest {
     @Test
     @WithAnonymousUser
     void findAllUsersTest_unauthorized() throws Exception {
-        UserInfo userInfo = TestUtil.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
-
-        when(customerService.findAllUsers()).thenReturn(List.of(userInfo));
-
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/infos")
+        mockMvc.perform(get(PATH + "/infos")
                         .contextPath(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void getCurrentUserTest_success() throws Exception {
-        UserInfo userInfo = TestUtil.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
-
-        when(customerService.getCurrentUser()).thenReturn(userInfo);
-
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/current")
+        mockMvc.perform(get(PATH + "/current")
                         .contextPath(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isOk());
     }
 
     @Test
     @WithAnonymousUser
     void getCurrentUserTest_unauthorized() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/current")
+        mockMvc.perform(get(PATH + "/current")
                         .contextPath(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -146,24 +126,14 @@ class CustomerControllerTest {
         RegisterRequest registerRequest =
                 TestUtil.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
 
-        RegistrationResponse registrationResponse =
-                TestUtil.getResourceAsJson("/data/RegistrationResponse.json", RegistrationResponse.class);
-
         String content = TestUtil.writeValueAsString(registerRequest);
 
-        when(customerService.registerCustomer(any(RegisterRequest.class)))
-                .thenReturn(registrationResponse);
-
-        MockHttpServletResponse response = mockMvc.perform(post(PATH + "/register")
+        mockMvc.perform(post(PATH + "/register")
                         .contextPath(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(content))
-                .andExpect(status().isForbidden())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -172,24 +142,15 @@ class CustomerControllerTest {
         RegisterRequest registerRequest =
                 TestUtil.getResourceAsJson("/data/RegisterRequest.json", RegisterRequest.class);
 
-        RegistrationResponse registrationResponse =
-                TestUtil.getResourceAsJson("/data/RegistrationResponse.json", RegistrationResponse.class);
-
         String content = TestUtil.writeValueAsString(registerRequest);
 
-        when(customerService.registerCustomer(any(RegisterRequest.class))).thenReturn(registrationResponse);
-
-        MockHttpServletResponse response = mockMvc.perform(post(PATH + "/register")
+        mockMvc.perform(post(PATH + "/register")
                         .contextPath(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(content))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -222,17 +183,13 @@ class CustomerControllerTest {
 
         String content = TestUtil.writeValueAsString(userInfo);
 
-        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
+        mockMvc.perform(put(PATH + "/{id}", 1L)
                         .contextPath(PATH)
                         .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(content))
-                .andExpect(status().isForbidden())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -242,17 +199,13 @@ class CustomerControllerTest {
 
         String content = TestUtil.writeValueAsString(userInfo);
 
-        MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
+        mockMvc.perform(put(PATH + "/{id}", 1L)
                         .contextPath(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(content))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -276,15 +229,11 @@ class CustomerControllerTest {
     @Test
     @WithAnonymousUser
     void findUserByUsernameTest_unauthorized() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/{username}", "admin")
+        mockMvc.perform(get(PATH + "/{username}", "admin")
                         .contextPath(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -306,15 +255,11 @@ class CustomerControllerTest {
     @Test
     @WithAnonymousUser
     void countUsersTest_unauthorized() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/count")
+        mockMvc.perform(get(PATH + "/count")
                         .contextPath(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -337,16 +282,12 @@ class CustomerControllerTest {
     @Test
     @WithAnonymousUser
     void deleteUserByUsernameTest_unauthorized() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(delete(PATH + "/{username}", "user")
+        mockMvc.perform(delete(PATH + "/{username}", "user")
                         .contextPath(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -369,16 +310,12 @@ class CustomerControllerTest {
     @Test
     @WithAnonymousUser
     void deleteCurrentTest_unauthorized() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(delete(PATH + "/current")
+        mockMvc.perform(delete(PATH + "/current")
                         .contextPath(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -400,17 +337,11 @@ class CustomerControllerTest {
     @Test
     @WithAnonymousUser
     void logoutTest_unauthorized() throws Exception {
-        doNothing().when(customerService).signOut();
-
-        MockHttpServletResponse response = mockMvc.perform(get(PATH + "/sign-out")
+        mockMvc.perform(get(PATH + "/sign-out")
                         .contextPath(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
+                .andExpect(status().isUnauthorized());
     }
 
 }
