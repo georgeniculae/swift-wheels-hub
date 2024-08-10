@@ -16,6 +16,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.text.CaseUtils;
 import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
@@ -104,35 +105,10 @@ public class DebeziumListener {
 
     private String getUpdatedFieldName(String fieldName) {
         if (fieldName.contains(UNDERSCORE)) {
-            return replaceUnderscoresWithUpperCases(fieldName);
+            return CaseUtils.toCamelCase(fieldName, false, UNDERSCORE_CHAR);
         }
 
         return fieldName;
-    }
-
-    private String replaceUnderscoresWithUpperCases(String fieldName) {
-        StringBuilder updatedFieldName = new StringBuilder();
-        int index = 0;
-        int fieldNameLength = fieldName.length() - 1;
-
-        while (index < fieldNameLength) {
-            char currentCharacter = fieldName.charAt(index);
-            char nextCharacter = fieldName.charAt(index + 1);
-
-            if (UNDERSCORE_CHAR == currentCharacter) {
-                updatedFieldName.append(Character.toUpperCase(nextCharacter));
-                index += 2;
-
-                continue;
-            }
-
-            updatedFieldName.append(currentCharacter);
-            index++;
-        }
-
-        updatedFieldName.append(fieldName.charAt(fieldNameLength));
-
-        return updatedFieldName.toString();
     }
 
     private void notifyCustomer(Map<String, Object> payload, Operation operation) {
