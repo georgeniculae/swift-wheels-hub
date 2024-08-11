@@ -39,20 +39,20 @@ public class DebeziumListener {
     private static final char UNDERSCORE_CHAR = '_';
     private final Executor executor = Executors.newVirtualThreadPerTaskExecutor();
     private final DebeziumEngine<RecordChangeEvent<SourceRecord>> debeziumEngine;
-    private final ObjectMapper objectMapper;
     private final BookingProducerService bookingProducerService;
+    private final ObjectMapper objectMapper;
     private final BookingMapper bookingMapper;
 
     public DebeziumListener(Configuration userConnectorConfiguration,
-                            ObjectMapper objectMapper,
                             BookingProducerService bookingProducerService,
+                            ObjectMapper objectMapper,
                             BookingMapper bookingMapper) {
         this.debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect.class))
                 .using(userConnectorConfiguration.asProperties())
                 .notifying(this::handleChangeEvent)
                 .build();
-        this.objectMapper = objectMapper;
         this.bookingProducerService = bookingProducerService;
+        this.objectMapper = objectMapper;
         this.bookingMapper = bookingMapper;
     }
 
