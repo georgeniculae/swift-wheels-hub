@@ -1,4 +1,4 @@
-package com.swiftwheelshub.booking.config;
+package com.swiftwheelshub.booking.eventhandling;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiftwheelshub.booking.mapper.BookingMapper;

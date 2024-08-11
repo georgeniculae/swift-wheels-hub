@@ -1,4 +1,4 @@
-package com.swiftwheelshub.expense.config;
+package com.swiftwheelshub.expense.eventhandling;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiftwheelshub.dto.InvoiceResponse;
