@@ -1,7 +1,6 @@
 package com.swiftwheelshub.lib.config.debezium;
 
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,8 +12,7 @@ import java.io.File;
 public class DebeziumConnectorConfig {
 
     @Bean
-    public io.debezium.config.Configuration debeziumConnector(@Value("${spring.datasource.username}") String databaseUsername,
-                                                              @Value("${spring.datasource.password}") String databasePassword,
+    public io.debezium.config.Configuration debeziumConnector(DatabaseProperties databaseProperties,
                                                               DebeziumProperties debeziumProperties) {
         try {
             File offsetStorageTempFile = File.createTempFile("offsets_", ".dat");
@@ -30,8 +28,8 @@ public class DebeziumConnectorConfig {
                     .with("decimal.handling.mode", "string")
                     .with("database.hostname", debeziumProperties.getDatabaseHost())
                     .with("database.port", debeziumProperties.getDatabasePort())
-                    .with("database.user", databaseUsername)
-                    .with("database.password", databasePassword)
+                    .with("database.user", databaseProperties.getUsername())
+                    .with("database.password", databaseProperties.getPassword())
                     .with("database.dbname", debeziumProperties.getDatabaseName())
                     .with("table.include.list", debeziumProperties.getSchemaName() + "." + debeziumProperties.getTableName())
                     .with("include.schema.changes", "false")
