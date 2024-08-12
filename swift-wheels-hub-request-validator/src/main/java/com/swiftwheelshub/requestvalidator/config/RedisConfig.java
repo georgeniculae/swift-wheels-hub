@@ -14,17 +14,10 @@ import org.springframework.data.redis.serializer.GenericToStringSerializer;
 @Configuration
 public class RedisConfig {
 
-    @Value("${spring.redis.host}")
-    private String host;
-
-    @Value("${spring.redis.port}")
-    private int port;
-
-    @Value("${spring.redis.password}")
-    private String password;
-
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
+    public RedisConnectionFactory redisConnectionFactory(@Value("${spring.redis.host}") String host,
+                                                         @Value("${spring.redis.port}") int port,
+                                                         @Value("${spring.redis.password}") String password) {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
         redisStandaloneConfiguration.setHostName(host);
         redisStandaloneConfiguration.setPort(port);
@@ -39,9 +32,9 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, SwaggerFile> redisTemplate() {
+    public RedisTemplate<String, SwaggerFile> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, SwaggerFile> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setValueSerializer(new GenericToStringSerializer<>(SwaggerFile.class));
 
         return redisTemplate;

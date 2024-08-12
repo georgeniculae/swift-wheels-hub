@@ -14,10 +14,8 @@ import java.util.List;
 @ConditionalOnProperty(prefix = "apikey", name = "secret")
 public class AuthenticationManagerConfig {
 
-    private final ApiKeyAuthenticationProvider apiKeyAuthenticationProvider;
-
     @Bean
-    public AuthenticationManager authenticationManager() {
+    public AuthenticationManager authenticationManager(ApiKeyAuthenticationProvider apiKeyAuthenticationProvider) {
         return new ProviderManager(List.of(apiKeyAuthenticationProvider));
     }
 
