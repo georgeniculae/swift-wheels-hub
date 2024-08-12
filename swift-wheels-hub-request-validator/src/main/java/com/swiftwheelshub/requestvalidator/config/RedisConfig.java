@@ -16,6 +16,7 @@ public class RedisConfig {
     @Bean
     public RedisConnectionFactory redisConnectionFactory(RedisProperties redisProperties) {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+
         redisStandaloneConfiguration.setHostName(redisProperties.getHost());
         redisStandaloneConfiguration.setPort(redisProperties.getPort());
         redisStandaloneConfiguration.setPassword(redisProperties.getPassword());
@@ -31,6 +32,7 @@ public class RedisConfig {
     @Bean
     public RedisTemplate<String, SwaggerFile> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, SwaggerFile> redisTemplate = new RedisTemplate<>();
+
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setValueSerializer(new GenericToStringSerializer<>(SwaggerFile.class));
 
