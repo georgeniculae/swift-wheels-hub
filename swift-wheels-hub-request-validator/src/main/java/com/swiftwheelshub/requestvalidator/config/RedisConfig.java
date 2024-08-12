@@ -1,7 +1,6 @@
 package com.swiftwheelshub.requestvalidator.config;
 
 import com.swiftwheelshub.requestvalidator.model.SwaggerFile;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -15,13 +14,11 @@ import org.springframework.data.redis.serializer.GenericToStringSerializer;
 public class RedisConfig {
 
     @Bean
-    public RedisConnectionFactory redisConnectionFactory(@Value("${spring.redis.host}") String host,
-                                                         @Value("${spring.redis.port}") int port,
-                                                         @Value("${spring.redis.password}") String password) {
+    public RedisConnectionFactory redisConnectionFactory(RedisProperties redisProperties) {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setHostName(host);
-        redisStandaloneConfiguration.setPort(port);
-        redisStandaloneConfiguration.setPassword(password);
+        redisStandaloneConfiguration.setHostName(redisProperties.getHost());
+        redisStandaloneConfiguration.setPort(redisProperties.getPort());
+        redisStandaloneConfiguration.setPassword(redisProperties.getPassword());
 
         LettuceClientConfiguration.LettuceClientConfigurationBuilder lettuceClientConfigurationBuilder =
                 LettuceClientConfiguration.builder();
