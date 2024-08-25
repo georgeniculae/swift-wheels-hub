@@ -16,9 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.web.client.RestClient;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -64,11 +62,12 @@ class SwaggerExtractorServiceTest {
         String expenseContent =
                 TestUtil.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
 
-        Map<String, String> endpoints = new LinkedHashMap<>();
-        endpoints.put("agency", agencyContent);
-        endpoints.put("booking", bookingContent);
-        endpoints.put("customer", customerContent);
-        endpoints.put("expense", expenseContent);
+        List<RegisteredEndpoints.RegisteredEndpoint> endpoints = List.of(
+                new RegisteredEndpoints.RegisteredEndpoint("agency", agencyContent),
+                new RegisteredEndpoints.RegisteredEndpoint("bookings", bookingContent),
+                new RegisteredEndpoints.RegisteredEndpoint("customers", customerContent),
+                new RegisteredEndpoints.RegisteredEndpoint("expense", expenseContent)
+        );
 
         when(registeredEndpoints.getEndpoints()).thenReturn(endpoints);
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
@@ -112,11 +111,12 @@ class SwaggerExtractorServiceTest {
         String expenseContent =
                 TestUtil.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
 
-        Map<String, String> endpoints = new LinkedHashMap<>();
-        endpoints.put("agency", agencyContent);
-        endpoints.put("booking", bookingContent);
-        endpoints.put("customer", customerContent);
-        endpoints.put("expense", expenseContent);
+        List<RegisteredEndpoints.RegisteredEndpoint> endpoints = List.of(
+                new RegisteredEndpoints.RegisteredEndpoint("agency", agencyContent),
+                new RegisteredEndpoints.RegisteredEndpoint("bookings", bookingContent),
+                new RegisteredEndpoints.RegisteredEndpoint("customers", customerContent),
+                new RegisteredEndpoints.RegisteredEndpoint("expense", expenseContent)
+        );
 
         when(registeredEndpoints.getEndpoints()).thenReturn(endpoints);
 
@@ -143,11 +143,12 @@ class SwaggerExtractorServiceTest {
         String expenseContent =
                 TestUtil.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
 
-        Map<String, String> endpoints = new LinkedHashMap<>();
-        endpoints.put("agency", agencyContent);
-        endpoints.put("booking", bookingContent);
-        endpoints.put("customer", customerContent);
-        endpoints.put("expense", expenseContent);
+        List<RegisteredEndpoints.RegisteredEndpoint> endpoints = List.of(
+                new RegisteredEndpoints.RegisteredEndpoint("agency", agencyContent),
+                new RegisteredEndpoints.RegisteredEndpoint("bookings", bookingContent),
+                new RegisteredEndpoints.RegisteredEndpoint("customers", customerContent),
+                new RegisteredEndpoints.RegisteredEndpoint("expense", expenseContent)
+        );
 
         when(registeredEndpoints.getEndpoints()).thenReturn(endpoints);
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
@@ -191,11 +192,12 @@ class SwaggerExtractorServiceTest {
         String expenseContent =
                 TestUtil.getResourceAsJson("/data/SwiftWheelsHubExpenseSwagger.json", String.class);
 
-        Map<String, String> endpoints = new LinkedHashMap<>();
-        endpoints.put("agency", agencyContent);
-        endpoints.put("booking", bookingContent);
-        endpoints.put("customer", customerContent);
-        endpoints.put("expense", expenseContent);
+        List<RegisteredEndpoints.RegisteredEndpoint> endpoints = List.of(
+                new RegisteredEndpoints.RegisteredEndpoint("agency", agencyContent),
+                new RegisteredEndpoints.RegisteredEndpoint("bookings", bookingContent),
+                new RegisteredEndpoints.RegisteredEndpoint("customers", customerContent),
+                new RegisteredEndpoints.RegisteredEndpoint("expense", expenseContent)
+        );
 
         when(registeredEndpoints.getEndpoints()).thenReturn(endpoints);
         when(restClient.get()).thenReturn(requestHeadersUriSpec);

@@ -67,7 +67,9 @@ public class SwaggerRequestValidatorService {
     }
 
     private String getMicroserviceIdentifier(SimpleRequest simpleRequest) {
-        return simpleRequest.getPath().replaceFirst(SEPARATOR_REGEX, StringUtils.EMPTY).split(SEPARATOR_REGEX)[0];
+        return simpleRequest.getPath()
+                .replaceFirst(SEPARATOR_REGEX, StringUtils.EMPTY)
+                .split(SEPARATOR_REGEX)[0];
     }
 
     private String getValidationErrorMessage(ValidationReport validationReport) {

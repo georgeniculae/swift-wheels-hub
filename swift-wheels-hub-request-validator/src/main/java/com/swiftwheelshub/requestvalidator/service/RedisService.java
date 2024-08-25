@@ -2,6 +2,7 @@ package com.swiftwheelshub.requestvalidator.service;
 
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
+import com.swiftwheelshub.lib.exceptionhandling.ExceptionUtil;
 import com.swiftwheelshub.requestvalidator.model.SwaggerFile;
 import com.swiftwheelshub.requestvalidator.repository.SwaggerRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class RedisService {
         } catch (Exception e) {
             log.error("Error while setting swagger folder in Redis: {}", e.getMessage());
 
-            throw new SwiftWheelsHubException(e.getMessage());
+            throw ExceptionUtil.handleException(e);
         }
     }
 

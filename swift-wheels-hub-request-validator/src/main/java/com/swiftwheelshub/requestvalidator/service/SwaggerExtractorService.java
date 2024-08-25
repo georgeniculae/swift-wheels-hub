@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -31,7 +30,6 @@ public class SwaggerExtractorService {
 
     public List<SwaggerFile> getSwaggerFiles() {
         return registeredEndpoints.getEndpoints()
-                .entrySet()
                 .stream()
                 .map(this::getSwaggerFile)
                 .toList();
@@ -45,11 +43,12 @@ public class SwaggerExtractorService {
                 .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Microservice not existent"));
     }
 
-    private SwaggerFile getSwaggerFile(Map.Entry<String, String> endpoints) {
-        String swaggerContent = getRestCallResponse(endpoints.getKey(), endpoints.getValue());
+    private SwaggerFile getSwaggerFile(RegisteredEndpoints.RegisteredEndpoint registeredEndpoint) {
+        String identifier = registeredEndpoint.getIdentifier();
+        String swaggerContent = getRestCallResponse(identifier, registeredEndpoint.getUrl());
 
         return SwaggerFile.builder()
-                .identifier(endpoints.getKey())
+                .identifier(identifier)
                 .swaggerContent(swaggerContent)
                 .build();
     }
