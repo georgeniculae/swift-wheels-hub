@@ -122,6 +122,12 @@ logging:
 apikey:
   secret: ${API_KEY_SECRET}
 
+cors:
+  mapping: '/**'
+  allowedOrigins: '*'
+  allowedMethods: '*'
+  allowedHeaders: '*'
+
 decorator:
   datasource:
     p6spy:

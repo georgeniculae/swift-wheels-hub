@@ -92,6 +92,12 @@ logging:
 apikey:
   secret: ${API_KEY_SECRET}
 
+cors:
+  mapping: '/**'
+  allowedOrigins: '*'
+  allowedMethods: '*'
+  allowedHeaders: '*'
+
 keycloak:
   serverUrl: http://localhost:8080
   realm: ${KEYCLOAK_REALM}

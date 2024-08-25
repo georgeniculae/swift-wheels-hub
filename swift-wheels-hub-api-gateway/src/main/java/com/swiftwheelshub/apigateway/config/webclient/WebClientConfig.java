@@ -1,4 +1,4 @@
-package com.swiftwheelshub.apigateway.config;
+package com.swiftwheelshub.apigateway.config.webclient;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;

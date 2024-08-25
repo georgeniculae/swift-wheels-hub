@@ -166,6 +166,12 @@ debezium:
   slot-name: invoice_slot
   groupId: ${EXPENSE_CONSUMER_GROUP}
 
+cors:
+  mapping: '/**'
+  allowedOrigins: '*'
+  allowedMethods: '*'
+  allowedHeaders: '*'
+
 rest-client:
   url:
     swift-wheels-hub-bookings: http://swift-wheels-hub-booking/bookings

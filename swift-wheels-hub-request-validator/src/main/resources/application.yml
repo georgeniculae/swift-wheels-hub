@@ -76,6 +76,12 @@ logging:
 apikey:
   secret: ${API_KEY_SECRET}
 
+cors:
+  mapping: '/**'
+  allowedOrigins: '*'
+  allowedMethods: '*'
+  allowedHeaders: '*'
+
 swagger:
   endpoints:
     agency: http://swift-wheels-hub-agency/agency/definition/v3/api-docs
