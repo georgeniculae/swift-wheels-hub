@@ -134,7 +134,6 @@ public class BookingService implements RetryListener {
         return bookingResponse;
     }
 
-
     public BookingResponse updateBooking(Long id, BookingRequest updatedBookingRequest) {
         validateBookingDates(updatedBookingRequest);
         AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
