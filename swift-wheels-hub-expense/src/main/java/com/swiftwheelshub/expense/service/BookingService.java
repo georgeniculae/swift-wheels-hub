@@ -21,11 +21,10 @@ import java.util.Optional;
 public class BookingService {
 
     private static final String SEPARATOR = "/";
+    private final RestClient restClient;
 
     @Value("${rest-client.url.swift-wheels-hub-bookings}")
     private String url;
-
-    private final RestClient restClient;
 
     public BookingResponse findBookingById(AuthenticationInfo authenticationInfo, Long bookingId) {
         String finalUrl = url + SEPARATOR + bookingId;

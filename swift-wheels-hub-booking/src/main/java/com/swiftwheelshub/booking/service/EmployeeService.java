@@ -20,11 +20,10 @@ import java.util.Optional;
 public class EmployeeService {
 
     private static final String SEPARATOR = "/";
+    private final RestClient restClient;
 
     @Value("${rest-client.url.swift-wheels-hub-agency-employees}")
     private String url;
-
-    private final RestClient restClient;
 
     @Retryable(
             retryFor = Exception.class,

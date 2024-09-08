@@ -22,11 +22,10 @@ import java.util.List;
 public class CarService {
 
     private static final String SEPARATOR = "/";
+    private final RestClient restClient;
 
     @Value("${rest-client.url.swift-wheels-hub-agency-cars}")
     private String url;
-
-    private final RestClient restClient;
 
     @Retryable(
             retryFor = Exception.class,

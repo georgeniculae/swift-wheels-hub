@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class BookingProducerService {
 
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+
     @Value("${spring.cloud.stream.bindings.savedBookingProducer-out-0.destination}")
     private String savedBookingProducerTopicName;
 
@@ -26,8 +28,6 @@ public class BookingProducerService {
 
     @Value("${spring.cloud.stream.bindings.deletedBookingProducer-out-0.destination}")
     private String deletedBookingProducerTopicName;
-
-    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void sendSavedBooking(BookingResponse bookingResponse) {
         kafkaTemplate.send(buildMessage(bookingResponse, savedBookingProducerTopicName))

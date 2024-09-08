@@ -26,13 +26,11 @@ import java.util.Optional;
 public class CarService {
 
     private static final String SEPARATOR = "/";
-
     private static final String CAR_STATUS = "carState";
+    private final RestClient restClient;
 
     @Value("${rest-client.url.swift-wheels-hub-agency-cars}")
     private String url;
-
-    private final RestClient restClient;
 
     public CarResponse findAvailableCarById(AuthenticationInfo authenticationInfo, Long carId) {
         String finalUrl = url + SEPARATOR + carId + SEPARATOR + "availability";

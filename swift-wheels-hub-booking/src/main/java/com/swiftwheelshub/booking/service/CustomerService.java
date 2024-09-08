@@ -18,11 +18,10 @@ import java.util.Optional;
 public class CustomerService {
 
     private static final String SEPARATOR = "/";
+    private final RestClient restClient;
 
     @Value("${rest-client.url.swift-wheels-hub-customers}")
     private String url;
-
-    private final RestClient restClient;
 
     public UserInfo getUserByUsername(AuthenticationInfo authenticationInfo) {
         String username = authenticationInfo.username();

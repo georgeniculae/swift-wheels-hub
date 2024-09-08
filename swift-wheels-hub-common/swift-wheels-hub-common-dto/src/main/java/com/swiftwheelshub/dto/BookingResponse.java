@@ -50,7 +50,7 @@ public record BookingResponse(
         return "BookingResponse{" + "\n" +
                 "id=" + id + "\n" +
                 "dateOfBooking=" + dateOfBooking + "\n" +
-                "status=" + status  + "\n" +
+                "status=" + status + "\n" +
                 "customerUsername='" + customerUsername + "\n" +
                 "customerEmail='" + customerEmail + "\n" +
                 "carId=" + carId + "\n" +

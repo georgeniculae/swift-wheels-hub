@@ -149,7 +149,7 @@ class EmployeeControllerTest {
     @Test
     @WithAnonymousUser
     void findEmployeesByFilterTest_unauthorized() throws Exception {
-       mockMvc.perform(get(PATH + "/filter/{filter}", "filter")
+        mockMvc.perform(get(PATH + "/filter/{filter}", "filter")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
@@ -210,10 +210,10 @@ class EmployeeControllerTest {
         String valueAsString = TestUtil.writeValueAsString(employeeRequest);
 
         mockMvc.perform(MockMvcRequestBuilders.post(PATH)
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString));
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(valueAsString));
     }
 
     @Test
@@ -261,10 +261,10 @@ class EmployeeControllerTest {
         String valueAsString = TestUtil.writeValueAsString(employeeResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(valueAsString));
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(valueAsString));
     }
 
     @Test
@@ -300,7 +300,7 @@ class EmployeeControllerTest {
     @Test
     @WithAnonymousUser
     void deleteEmployeeByIdTest_forbidden() throws Exception {
-       mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
+        mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
                         .with(user("admin").password("admin").roles("ADMIN")))
                 .andExpect(status().isForbidden());
     }

@@ -17,10 +17,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class EmailNotificationProducer {
 
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+
     @Value("${spring.cloud.stream.bindings.emailNotificationProducer-out-0.destination}")
     private String emailNotificationProducerTopicName;
-
-    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void sendMessage(InvoiceResponse invoiceResponse) {
         kafkaTemplate.send(buildMessage(invoiceResponse, emailNotificationProducerTopicName))

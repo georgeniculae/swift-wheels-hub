@@ -14,11 +14,10 @@ import org.springframework.web.client.RestClient;
 public class BookingService {
 
     private static final String SEPARATOR = "/";
+    private final RestClient restClient;
 
     @Value("${booking-service.url}")
     private String url;
-
-    private final RestClient restClient;
 
     public void deleteBookingsByUsername(AuthenticationInfo authenticationInfo, String username) {
         restClient.delete()

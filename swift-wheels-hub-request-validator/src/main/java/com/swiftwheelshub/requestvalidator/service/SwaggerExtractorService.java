@@ -20,13 +20,11 @@ import java.util.Optional;
 public class SwaggerExtractorService {
 
     private static final String X_API_KEY = "X-API-KEY";
+    private final RestClient restClient;
+    private final RegisteredEndpoints registeredEndpoints;
 
     @Value("${apikey.secret}")
     private String apikey;
-
-    private final RestClient restClient;
-
-    private final RegisteredEndpoints registeredEndpoints;
 
     public List<SwaggerFile> getSwaggerFiles() {
         return registeredEndpoints.getEndpoints()
