@@ -5,7 +5,7 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
 import java.time.Duration;
@@ -26,12 +26,12 @@ public class RestClientConfig {
     }
 
     private ClientHttpRequestFactory getClientHttpRequestFactory() {
-        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
 
-        clientHttpRequestFactory.setConnectTimeout(Duration.ofSeconds(20));
-        clientHttpRequestFactory.setConnectionRequestTimeout(Duration.ofSeconds(15));
+        simpleClientHttpRequestFactory.setConnectTimeout(Duration.ofSeconds(20));
+        simpleClientHttpRequestFactory.setReadTimeout(Duration.ofSeconds(20));
 
-        return clientHttpRequestFactory;
+        return simpleClientHttpRequestFactory;
     }
 
 }
