@@ -32,6 +32,7 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
     private final static String API_KEY_HEADER = "X-API-KEY";
     private static final String DEFINITION = "definition";
     private static final String ACTUATOR = "actuator";
+    private static final String FALLBACK = "/fallback";
     private final WebClient webClient;
 
     @Value("${apikey-secret}")
@@ -66,7 +67,7 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
     private boolean containsRightPath(ServerHttpRequest serverHttpRequest) {
         String path = serverHttpRequest.getPath().value();
 
-        return !path.contains(DEFINITION) && !path.contains(ACTUATOR);
+        return !path.contains(DEFINITION) && !path.contains(ACTUATOR) && !path.contains(FALLBACK);
     }
 
     private Mono<IncomingRequestDetails> getIncomingRequestDetails(ServerHttpRequest request) {
@@ -93,7 +94,7 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
                 .bodyValue(incomingRequestDetails)
                 .retrieve()
                 .bodyToMono(RequestValidationReport.class)
-                .retryWhen(Retry.fixedDelay(6, Duration.ofSeconds(10)))
+                .retryWhen(Retry.fixedDelay(5, Duration.ofSeconds(5)))
                 .onErrorMap(e -> {
                     log.error("Error while sending request to validator: {}", e.getMessage());
 
