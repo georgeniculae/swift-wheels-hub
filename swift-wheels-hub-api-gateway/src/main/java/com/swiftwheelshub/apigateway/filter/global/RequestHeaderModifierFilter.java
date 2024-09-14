@@ -35,9 +35,9 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     private static final String X_API_KEY_HEADER = "X-API-KEY";
     private static final String X_USERNAME = "X-USERNAME";
     private static final String X_ROLES = "X-ROLES";
-    private static final String REGISTER_PATH = "/register";
-    private static final String DEFINITION_PATH = "/definition";
-    private static final String FALLBACK = "/fallback";
+    private static final String REGISTER_PATH = "register";
+    private static final String DEFINITION_PATH = "definition";
+    private static final String FALLBACK = "fallback";
     private final JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
     private final NimbusReactiveJwtDecoder nimbusReactiveJwtDecoder;
 
