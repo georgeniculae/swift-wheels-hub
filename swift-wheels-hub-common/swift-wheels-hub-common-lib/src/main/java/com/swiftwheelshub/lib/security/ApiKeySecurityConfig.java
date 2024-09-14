@@ -34,15 +34,10 @@ public class ApiKeySecurityConfig {
                                 "/expense/definition/**",
                                 "/actuator/**",
                                 "/validate"
-                        ).permitAll()
-                        .requestMatchers(
-                                "/agency/**",
-                                "/ai/**",
-                                "/bookings/**",
-                                "/customers/**",
-                                "/expense/**"
-                        ).authenticated()
-                        .anyRequest().authenticated())
+                        )
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(authenticationFilter, AnonymousAuthenticationFilter.class)
                 .build();
