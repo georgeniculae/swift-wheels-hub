@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 
 import java.util.List;
@@ -15,8 +16,8 @@ import java.util.List;
 public class AuthenticationManagerConfig {
 
     @Bean
-    public AuthenticationManager authenticationManager(ApiKeyAuthenticationProvider apiKeyAuthenticationProvider) {
-        return new ProviderManager(List.of(apiKeyAuthenticationProvider));
+    public AuthenticationManager authenticationManager(AuthenticationProvider authenticationProvider) {
+        return new ProviderManager(List.of(authenticationProvider));
     }
 
 }

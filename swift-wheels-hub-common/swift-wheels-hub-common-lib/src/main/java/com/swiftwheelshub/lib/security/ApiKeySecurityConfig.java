@@ -32,7 +32,8 @@ public class ApiKeySecurityConfig {
                                 "/customers/definition/**",
                                 "/customers/register",
                                 "/expense/definition/**",
-                                "/actuator/**"
+                                "/actuator/**",
+                                "/validate"
                         ).permitAll()
                         .requestMatchers(
                                 "/agency/**",
