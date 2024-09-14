@@ -8,8 +8,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 
-import java.util.List;
-
 @Configuration
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "apikey", name = "secret")
@@ -17,7 +15,7 @@ public class AuthenticationManagerConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationProvider authenticationProvider) {
-        return new ProviderManager(List.of(authenticationProvider));
+        return new ProviderManager(authenticationProvider);
     }
 
 }
