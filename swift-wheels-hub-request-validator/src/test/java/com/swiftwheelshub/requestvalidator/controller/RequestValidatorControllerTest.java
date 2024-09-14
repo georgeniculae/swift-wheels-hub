@@ -87,7 +87,7 @@ class RequestValidatorControllerTest {
     }
 
     @Test
-    void invalidateSwaggerCacheTest_missingRequestBody() throws Exception {
+    void invalidateSwaggerCacheTest_emptyPathVariable_notFound() throws Exception {
         mockMvc.perform(delete("/invalidate/{microserviceName}", "")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
