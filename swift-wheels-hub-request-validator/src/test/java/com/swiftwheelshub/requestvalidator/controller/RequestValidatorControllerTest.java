@@ -61,11 +61,6 @@ class RequestValidatorControllerTest {
 
     @Test
     void validateRequestTest_missingRequestBody() throws Exception {
-        IncomingRequestDetails incomingRequestDetails =
-                TestUtil.getResourceAsJson("/data/IncomingRequestDetails.json", IncomingRequestDetails.class);
-
-        String content = TestUtil.writeValueAsString(incomingRequestDetails);
-
         mockMvc.perform(post("/validate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
