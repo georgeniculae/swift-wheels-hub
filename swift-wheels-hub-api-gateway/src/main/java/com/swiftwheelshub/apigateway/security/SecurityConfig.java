@@ -39,15 +39,10 @@ public class SecurityConfig {
                                         "/customers/register",
                                         "/expense/definition/**",
                                         "/actuator/**"
-                                ).permitAll()
-                                .pathMatchers(
-                                        "/agency/**",
-                                        "/ai/**",
-                                        "/bookings/**",
-                                        "/customers/**",
-                                        "/expense/**"
-                                ).authenticated()
-                                .anyExchange().authenticated())
+                                )
+                                .permitAll()
+                                .anyExchange()
+                                .authenticated())
                 .exceptionHandling(request ->
                         request.authenticationEntryPoint((response, _) -> getResponse(response, HttpStatus.UNAUTHORIZED))
                                 .accessDeniedHandler((response, _) -> getResponse(response, HttpStatus.FORBIDDEN)))
