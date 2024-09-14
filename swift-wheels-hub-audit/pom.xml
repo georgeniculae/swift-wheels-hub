@@ -30,6 +30,12 @@
             <groupId>com.swiftwheelshub</groupId>
             <artifactId>swift-wheels-hub-common-lib</artifactId>
             <version>${swift-wheels-hub-common.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-security</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

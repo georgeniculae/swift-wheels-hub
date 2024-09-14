@@ -12,8 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -22,9 +20,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = RequestValidatorController.class)
@@ -42,7 +39,6 @@ class RequestValidatorControllerTest {
     private RedisService redisService;
 
     @Test
-    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void validateRequestTest_success() throws Exception {
         RequestValidationReport requestValidationReport =
                 TestUtil.getResourceAsJson("/data/RequestValidationReport.json", RequestValidationReport.class);
@@ -56,7 +52,6 @@ class RequestValidatorControllerTest {
                 .thenReturn(requestValidationReport);
 
         mockMvc.perform(post("/validate")
-                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(content))
@@ -65,28 +60,23 @@ class RequestValidatorControllerTest {
     }
 
     @Test
-    @WithAnonymousUser
-    void validateRequestTest_unauthorized() throws Exception {
+    void validateRequestTest_missingRequestBody() throws Exception {
         IncomingRequestDetails incomingRequestDetails =
                 TestUtil.getResourceAsJson("/data/IncomingRequestDetails.json", IncomingRequestDetails.class);
 
         String content = TestUtil.writeValueAsString(incomingRequestDetails);
 
         mockMvc.perform(post("/validate")
-                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(content))
-                .andExpect(status().isUnauthorized());
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void invalidateSwaggerCacheTest_success() throws Exception {
         doNothing().when(redisService).repopulateRedisWithSwaggerFiles(anyString());
 
-        MockHttpServletResponse response = mockMvc.perform(put("/invalidate/{microserviceName}", "agency")
-                        .with(csrf())
+        MockHttpServletResponse response = mockMvc.perform(delete("/invalidate/{microserviceName}", "agency")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
@@ -97,13 +87,11 @@ class RequestValidatorControllerTest {
     }
 
     @Test
-    @WithAnonymousUser
-    void invalidateSwaggerCacheTest_unauthorized() throws Exception {
-        mockMvc.perform(put("/invalidate/{microserviceName}", "agency")
-                        .with(csrf())
+    void invalidateSwaggerCacheTest_missingRequestBody() throws Exception {
+        mockMvc.perform(delete("/invalidate/{microserviceName}", "")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isNotFound());
     }
 
 }

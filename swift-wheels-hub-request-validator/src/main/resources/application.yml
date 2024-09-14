@@ -64,18 +64,6 @@ management:
     readinessstate:
       enabled: true
 
-logging:
-  level:
-    org:
-      springframework:
-        security: ERROR
-        web:
-          csrf:
-            CsrfFilter: ERROR
-
-apikey:
-  secret: ${API_KEY_SECRET}
-
 cors:
   mapping: '/**'
   allowedOrigins: '*'

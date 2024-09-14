@@ -7,7 +7,6 @@ import com.swiftwheelshub.requestvalidator.config.RegisteredEndpoints;
 import com.swiftwheelshub.requestvalidator.model.SwaggerFile;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -19,12 +18,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SwaggerExtractorService {
 
-    private static final String X_API_KEY = "X-API-KEY";
     private final RestClient restClient;
     private final RegisteredEndpoints registeredEndpoints;
-
-    @Value("${apikey.secret}")
-    private String apikey;
 
     public List<SwaggerFile> getSwaggerFiles() {
         return registeredEndpoints.getEndpoints()
@@ -54,7 +49,6 @@ public class SwaggerExtractorService {
     private String getRestCallResponse(String microservice, String url) {
         String body = restClient.get()
                 .uri(url)
-                .header(X_API_KEY, apikey)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
                     throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());

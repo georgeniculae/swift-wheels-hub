@@ -1,45 +1,48 @@
-package com.swiftwheelshub.lib.security;
+package com.swiftwheelshub.booking.security;
 
+import com.swiftwheelshub.lib.security.AuthenticationFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "apikey", name = "secret")
-public class ApiKeySecurityConfig {
+public class SecurityConfig {
 
+    private final AuthenticationManager authenticationManager;
+    private final AuthenticationProvider authenticationProvider;
     private final AuthenticationFilter authenticationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(Customizer.withDefaults())
+                .securityMatcher("/bookings/**")
                 .authorizeHttpRequests(request -> request.requestMatchers(
-                                "/agency/definition/**",
-                                "/ai/definition/**",
-                                "/bookings/definition/**",
-                                "/customers/definition/**",
-                                "/customers/register",
-                                "/expense/definition/**",
-                                "/actuator/**",
-                                "/validate"
-                        )
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
+                                        "/bookings/definition/**",
+                                        "/actuator/**"
+                                )
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated()
+                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(authenticationFilter, AnonymousAuthenticationFilter.class)
+                .authenticationManager(authenticationManager)
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
