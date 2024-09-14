@@ -17,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 @Component
@@ -46,11 +47,13 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     }
 
     private List<SimpleGrantedAuthority> getRoles(HttpServletRequest request) {
-        return ObjectUtils.isEmpty(request.getHeader(X_ROLES)) ? List.of() : getRolesList(request);
+        Enumeration<String> rolesHeader = request.getHeaders(X_ROLES);
+
+        return ObjectUtils.isEmpty(rolesHeader) ? List.of() : getRolesList(rolesHeader);
     }
 
-    private List<SimpleGrantedAuthority> getRolesList(HttpServletRequest request) {
-        return Collections.list(request.getHeaders(X_ROLES))
+    private List<SimpleGrantedAuthority> getRolesList(Enumeration<String> rolesHeader) {
+        return Collections.list(rolesHeader)
                 .stream()
                 .map(SimpleGrantedAuthority::new)
                 .toList();
