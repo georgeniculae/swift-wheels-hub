@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .securityMatcher("/customers/**")
                 .authorizeHttpRequests(request -> request.requestMatchers(
                                         "/customers/definition/**",
+                                        "/customers/register",
                                         "/actuator/**"
                                 )
                                 .permitAll()
