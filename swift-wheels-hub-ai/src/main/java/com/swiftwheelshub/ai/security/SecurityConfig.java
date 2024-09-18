@@ -30,9 +30,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .securityMatcher("/ai/**")
                 .authorizeHttpRequests(request -> request.requestMatchers(
-                                        "/ai/definition/**",
+                                        "/definition/**",
                                         "/actuator/**"
                                 )
                                 .permitAll()

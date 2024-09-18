@@ -39,24 +39,24 @@ class JwtAuthenticationTokenConverterTest {
         String token = TestUtil.getResourceAsJson("/data/JwtToken.json", String.class);
 
         Map<String, Object> headers = Map.of(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-        String roleUser = "ROLE_user";
-        Map<String, Object> claims = Map.of("preferred_username", roleUser);
+        String user = "user";
+        Map<String, Object> claims = Map.of("preferred_username", user);
 
         Jwt jwt = new Jwt(token, Instant.now(), Instant.now().plus(30, ChronoUnit.MINUTES), headers, claims);
 
         String username = jwtAuthenticationTokenConverter.extractUsername(jwt);
-        assertEquals(roleUser, username);
+        assertEquals(user, username);
     }
 
     @Test
     void extractGrantedAuthoritiesTest_success() {
         String token = TestUtil.getResourceAsJson("/data/JwtToken.json", String.class);
-        String user = "user";
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(user);
+        String roleUser = "ROLE_user";
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(roleUser);
         Collection<? extends GrantedAuthority> roles = List.of(simpleGrantedAuthority);
 
         Map<String, Object> headers = Map.of(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-        Map<String, Object> claims = Map.of("realm_access", List.of(user));
+        Map<String, Object> claims = Map.of("realm_access", List.of(roleUser));
 
         Jwt jwt = new Jwt(token, Instant.now(), Instant.now().plus(30, ChronoUnit.MINUTES), headers, claims);
 

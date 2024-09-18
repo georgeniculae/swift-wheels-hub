@@ -1,6 +1,6 @@
 package com.swiftwheelshub.apigateway.filter.factory;
 
-import com.swiftwheelshub.apigateway.exception.ExceptionUtil;
+import com.swiftwheelshub.apigateway.exceptionhandler.handler.ExceptionUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

@@ -3,7 +3,7 @@ package com.swiftwheelshub.apigateway.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.swiftwheelshub.exception.SwiftWheelsHubException;
+import com.swiftwheelshub.apigateway.exceptionhandler.exception.SwiftWheelsHubException;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;

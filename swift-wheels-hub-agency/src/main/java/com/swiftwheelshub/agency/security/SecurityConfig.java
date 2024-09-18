@@ -30,9 +30,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .securityMatcher("/agency/**")
                 .authorizeHttpRequests(request -> request.requestMatchers(
-                                        "/agency/definition/**",
+                                        "/definition/**",
                                         "/actuator/**"
                                 )
                                 .permitAll()

@@ -1,11 +1,12 @@
 package com.swiftwheelshub.apigateway.filter.global;
 
-import com.swiftwheelshub.apigateway.exception.ExceptionUtil;
+import com.swiftwheelshub.apigateway.exceptionhandler.exception.SwiftWheelsHubResponseStatusException;
+import com.swiftwheelshub.apigateway.exceptionhandler.handler.ExceptionUtil;
 import com.swiftwheelshub.apigateway.security.JwtAuthenticationTokenConverter;
 import com.swiftwheelshub.dto.AuthenticationInfo;
-import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -45,9 +46,8 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        return createMutatedHeaders(exchange)
-                .flatMap(chain::filter)
-                .switchIfEmpty(Mono.defer(() -> chain.filter(exchange)))
+        return Mono.just(exchange)
+                .flatMap(serverWebExchange -> forwardRequest(exchange, chain, serverWebExchange))
                 .onErrorResume(e -> {
                     log.error("Error while trying to mutate headers: {}", e.getMessage());
 
@@ -63,18 +63,24 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
         return 0;
     }
 
-    private Mono<ServerWebExchange> createMutatedHeaders(ServerWebExchange exchange) {
-        return Mono.just(exchange.getRequest())
-                .filter(this::doesPathContainPattern)
-                .flatMap(request -> nimbusReactiveJwtDecoder.decode(getAuthorizationToken(request)))
-                .flatMap(this::getAuthenticationInfo)
-                .map(authenticationInfo -> createMutatedServerWebExchange(exchange, authenticationInfo));
+    private Mono<Void> forwardRequest(ServerWebExchange exchange, GatewayFilterChain chain, ServerWebExchange serverWebExchange) {
+        if (isRequestValidatable(serverWebExchange.getRequest())) {
+            return filterValidatedRequest(exchange, chain);
+        }
+
+        return chain.filter(exchange);
     }
 
-    private boolean doesPathContainPattern(ServerHttpRequest serverHttpRequest) {
+    private boolean isRequestValidatable(ServerHttpRequest serverHttpRequest) {
         String path = serverHttpRequest.getPath().value();
 
         return !path.contains(REGISTER_PATH) && !path.contains(DEFINITION_PATH) && !path.contains(FALLBACK);
+    }
+
+    private Mono<Void> filterValidatedRequest(ServerWebExchange exchange, GatewayFilterChain chain) {
+        return nimbusReactiveJwtDecoder.decode(getAuthorizationToken(exchange.getRequest()))
+                .flatMap(this::getAuthenticationInfo)
+                .flatMap(authenticationInfo -> filterValidatedRequest(chain, exchange, authenticationInfo));
     }
 
     private Mono<AuthenticationInfo> getAuthenticationInfo(Jwt jwt) {
@@ -107,6 +113,12 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
                 .substring(7);
     }
 
+    private Mono<Void> filterValidatedRequest(GatewayFilterChain chain,
+                                              ServerWebExchange exchange,
+                                              AuthenticationInfo authenticationInfo) {
+        return chain.filter(createMutatedServerWebExchange(exchange, authenticationInfo));
+    }
+
     private ServerWebExchange createMutatedServerWebExchange(ServerWebExchange exchange,
                                                              AuthenticationInfo authenticationInfo) {
         return exchange.mutate()
@@ -117,8 +129,15 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     private Consumer<ServerHttpRequest.Builder> mutateHeaders(String username, List<String> roles) {
         return requestBuilder -> {
             requestBuilder.header(X_API_KEY_HEADER, apikey);
-            requestBuilder.header(X_USERNAME, username);
-            requestBuilder.header(X_ROLES, roles.toArray(new String[]{}));
+
+            if (ObjectUtils.isNotEmpty(username)) {
+                requestBuilder.header(X_USERNAME, username);
+            }
+
+            if (ObjectUtils.isNotEmpty(roles)) {
+                requestBuilder.header(X_ROLES, roles.toArray(new String[]{}));
+            }
+
             requestBuilder.headers(headers -> headers.remove(HttpHeaders.AUTHORIZATION));
         };
     }

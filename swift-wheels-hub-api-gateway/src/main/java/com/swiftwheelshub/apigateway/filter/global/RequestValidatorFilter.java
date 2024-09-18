@@ -1,9 +1,9 @@
 package com.swiftwheelshub.apigateway.filter.global;
 
-import com.swiftwheelshub.apigateway.exception.ExceptionUtil;
+import com.swiftwheelshub.apigateway.exceptionhandler.exception.SwiftWheelsHubResponseStatusException;
+import com.swiftwheelshub.apigateway.exceptionhandler.handler.ExceptionUtil;
 import com.swiftwheelshub.dto.IncomingRequestDetails;
 import com.swiftwheelshub.dto.RequestValidationReport;
-import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -29,26 +29,18 @@ import java.time.Duration;
 @Slf4j
 public class RequestValidatorFilter implements GlobalFilter, Ordered {
 
-    private final static String API_KEY_HEADER = "X-API-KEY";
     private static final String DEFINITION = "definition";
     private static final String ACTUATOR = "actuator";
     private static final String FALLBACK = "fallback";
     private final WebClient webClient;
-
-    @Value("${apikey-secret}")
-    private String apikeySecret;
 
     @Value("${request-validator-url}")
     private String requestValidatorUrl;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        return Mono.just(exchange.getRequest())
-                .filter(this::containsRightPath)
-                .flatMap(this::getIncomingRequestDetails)
-                .flatMap(this::getValidationReport)
-                .flatMap(requestValidationReport -> filterRequest(exchange, chain, requestValidationReport))
-                .switchIfEmpty(Mono.defer(() -> chain.filter(exchange)))
+        return Mono.just(exchange)
+                .flatMap(serverWebExchange -> forwardRequest(chain, serverWebExchange))
                 .onErrorResume(e -> {
                     log.error("Error while validating request: {}", e.getMessage());
 
@@ -64,10 +56,24 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
         return 1;
     }
 
-    private boolean containsRightPath(ServerHttpRequest serverHttpRequest) {
+    private Mono<Void> forwardRequest(GatewayFilterChain chain, ServerWebExchange serverWebExchange) {
+        if (isRequestValidatable(serverWebExchange.getRequest())) {
+            return filterValidatedRequest(serverWebExchange, chain);
+        }
+
+        return chain.filter(serverWebExchange);
+    }
+
+    private boolean isRequestValidatable(ServerHttpRequest serverHttpRequest) {
         String path = serverHttpRequest.getPath().value();
 
         return !path.contains(DEFINITION) && !path.contains(ACTUATOR) && !path.contains(FALLBACK);
+    }
+
+    private Mono<Void> filterValidatedRequest(ServerWebExchange exchange, GatewayFilterChain chain) {
+        return getIncomingRequestDetails(exchange.getRequest())
+                .flatMap(this::getValidationReport)
+                .flatMap(requestValidationReport -> validateResponse(exchange, chain, requestValidationReport));
     }
 
     private Mono<IncomingRequestDetails> getIncomingRequestDetails(ServerHttpRequest request) {
@@ -90,7 +96,6 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
     private Mono<RequestValidationReport> getValidationReport(IncomingRequestDetails incomingRequestDetails) {
         return webClient.post()
                 .uri(requestValidatorUrl)
-                .header(API_KEY_HEADER, apikeySecret)
                 .bodyValue(incomingRequestDetails)
                 .retrieve()
                 .bodyToMono(RequestValidationReport.class)
@@ -102,7 +107,7 @@ public class RequestValidatorFilter implements GlobalFilter, Ordered {
                 });
     }
 
-    private Mono<Void> filterRequest(ServerWebExchange exchange, GatewayFilterChain chain, RequestValidationReport requestValidationReport) {
+    private Mono<Void> validateResponse(ServerWebExchange exchange, GatewayFilterChain chain, RequestValidationReport requestValidationReport) {
         if (ObjectUtils.isEmpty(requestValidationReport.errorMessage())) {
             return chain.filter(exchange);
         }

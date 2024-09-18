@@ -1,6 +1,6 @@
 package com.swiftwheelshub.apigateway.filter.global;
 
-import com.swiftwheelshub.apigateway.exception.ExceptionUtil;
+import com.swiftwheelshub.apigateway.exceptionhandler.handler.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

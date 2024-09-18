@@ -53,10 +53,6 @@ spring:
             - name: RequestTrace
               args:
                 serviceId: "swift-wheels-hub-agency"
-            - name: CircuitBreaker
-              args:
-                name: fallbackHandler
-                fallbackUri: forward:/fallback
         - id: ai
           uri: lb://swift-wheels-hub-ai
           predicates:
@@ -65,10 +61,6 @@ spring:
             - name: RequestTrace
               args:
                 serviceId: "swift-wheels-hub-ai"
-            - name: CircuitBreaker
-              args:
-                name: fallbackHandler
-                fallbackUri: forward:/fallback
         - id: booking
           uri: lb://swift-wheels-hub-booking
           predicates:
@@ -77,10 +69,6 @@ spring:
             - name: RequestTrace
               args:
                 serviceId: "swift-wheels-hub-booking"
-            - name: CircuitBreaker
-              args:
-                name: fallbackHandler
-                fallbackUri: forward:/fallback
         - id: customer
           uri: lb://swift-wheels-hub-customer
           predicates:
@@ -89,10 +77,6 @@ spring:
             - name: RequestTrace
               args:
                 serviceId: "swift-wheels-hub-customer"
-            - name: CircuitBreaker
-              args:
-                name: fallbackHandler
-                fallbackUri: forward:/fallback
         - id: expense
           uri: lb://swift-wheels-hub-expense
           predicates:
@@ -101,29 +85,6 @@ spring:
             - name: RequestTrace
               args:
                 serviceId: "swift-wheels-hub-expense"
-            - name: CircuitBreaker
-              args:
-                name: fallbackHandler
-                fallbackUri: forward:/fallback
-
-resilience4j:
-  circuitbreaker:
-    instances:
-      fallbackHandler:
-        registerHealthIndicator: true
-        ringBufferSizeInClosedState: 10
-        ringBufferSizeInHalfOpenState: 5
-        waitDurationInOpenState: 10000
-        failureRateThreshold: 50
-        eventConsumerBufferSize: 10
-        slidingWindowSize: 20
-        minimumNumberOfCalls: 5
-        permittedNumberOfCallsInHalfOpenState: 3
-        automaticTransitionFromOpenToHalfOpenEnabled: true
-  timelimiter:
-    instances:
-      fallbackHandler:
-        timeoutDuration: 10s
 
 management:
   server:

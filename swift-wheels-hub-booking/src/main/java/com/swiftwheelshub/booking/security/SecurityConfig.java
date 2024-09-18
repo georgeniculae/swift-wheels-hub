@@ -30,9 +30,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .securityMatcher("/bookings/**")
                 .authorizeHttpRequests(request -> request.requestMatchers(
-                                        "/bookings/definition/**",
+                                        "/definition/**",
                                         "/actuator/**"
                                 )
                                 .permitAll()

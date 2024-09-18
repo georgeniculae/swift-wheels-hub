@@ -1,7 +1,7 @@
-package com.swiftwheelshub.apigateway.exception;
+package com.swiftwheelshub.apigateway.exceptionhandler.handler;
 
-import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
-import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
+import com.swiftwheelshub.apigateway.exceptionhandler.exception.SwiftWheelsHubNotFoundException;
+import com.swiftwheelshub.apigateway.exceptionhandler.exception.SwiftWheelsHubResponseStatusException;
 import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
