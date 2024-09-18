@@ -1,6 +1,6 @@
-package com.swiftwheelshub.apigateway.exceptionhandler.handler;
+package com.swiftwheelshub.apigateway.exceptionhandling.handler;
 
-import com.swiftwheelshub.apigateway.exceptionhandler.exception.SwiftWheelsHubResponseStatusException;
+import com.swiftwheelshub.apigateway.exceptionhandling.exception.SwiftWheelsHubResponseStatusException;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.http.HttpStatus;

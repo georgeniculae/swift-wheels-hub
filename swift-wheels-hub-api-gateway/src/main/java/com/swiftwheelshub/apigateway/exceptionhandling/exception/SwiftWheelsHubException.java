@@ -1,4 +1,4 @@
-package com.swiftwheelshub.apigateway.exceptionhandler.exception;
+package com.swiftwheelshub.apigateway.exceptionhandling.exception;
 
 public class SwiftWheelsHubException extends RuntimeException {
 

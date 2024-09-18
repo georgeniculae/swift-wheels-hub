@@ -1,7 +1,7 @@
 package com.swiftwheelshub.apigateway.filter.global;
 
-import com.swiftwheelshub.apigateway.exceptionhandler.exception.SwiftWheelsHubResponseStatusException;
-import com.swiftwheelshub.apigateway.exceptionhandler.handler.ExceptionUtil;
+import com.swiftwheelshub.apigateway.exceptionhandling.exception.SwiftWheelsHubResponseStatusException;
+import com.swiftwheelshub.apigateway.exceptionhandling.handler.ExceptionUtil;
 import com.swiftwheelshub.dto.IncomingRequestDetails;
 import com.swiftwheelshub.dto.RequestValidationReport;
 import lombok.RequiredArgsConstructor;

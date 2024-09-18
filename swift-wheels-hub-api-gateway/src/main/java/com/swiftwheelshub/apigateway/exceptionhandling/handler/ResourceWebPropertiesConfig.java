@@ -1,4 +1,4 @@
-package com.swiftwheelshub.apigateway.exceptionhandler.handler;
+package com.swiftwheelshub.apigateway.exceptionhandling.handler;
 
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.context.annotation.Bean;

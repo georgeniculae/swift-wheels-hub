@@ -1,4 +1,4 @@
-package com.swiftwheelshub.apigateway.exceptionhandler.exception;
+package com.swiftwheelshub.apigateway.exceptionhandling.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
