@@ -64,14 +64,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Long countByCustomerUsername(String customerUsername);
 
     @Query("""
-            select count(distinct b.customerUsername)
-            from Booking b""")
+            Select count(distinct b.customerUsername)
+            From Booking b""")
     long countUsersWithBookings();
 
     @Transactional
     @Modifying
     @Query("""
-            delete from Booking b
+            Delete
+            From Booking b
             where b.customerUsername = ?1""")
     void deleteByCustomerUsername(String customerUsername);
 
