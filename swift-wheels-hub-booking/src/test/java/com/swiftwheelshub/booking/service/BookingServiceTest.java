@@ -11,9 +11,12 @@ import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
+import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.EmployeeResponse;
+import com.swiftwheelshub.dto.StatusUpdateResponse;
 import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.entity.Booking;
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.lib.security.ApiKeyAuthenticationToken;
 import org.junit.jupiter.api.Test;
@@ -98,6 +101,9 @@ class BookingServiceTest {
         CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
         UserInfo userInfo = TestUtil.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
+        StatusUpdateResponse statusUpdateResponse =
+                TestUtil.getResourceAsJson("/data/SuccessfulStatusUpdateResponse.json", StatusUpdateResponse.class);
+
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
         ApiKeyAuthenticationToken apiKeyAuthenticationToken =
                 new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
@@ -107,7 +113,8 @@ class BookingServiceTest {
         when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(carResponse);
         when(customerService.getUserByUsername(any(AuthenticationInfo.class))).thenReturn(userInfo);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
-        doNothing().when(carService).changeCarStatus(any(AuthenticationInfo.class), anyLong(), any(CarState.class));
+        when(carService.changeCarStatus(any(AuthenticationInfo.class), anyLong(), any(CarState.class)))
+                .thenReturn(statusUpdateResponse);
 
         BookingResponse actualBookingResponse =
                 assertDoesNotThrow(() -> bookingService.saveBooking(bookingRequest));
@@ -127,6 +134,9 @@ class BookingServiceTest {
         BookingClosingDetails bookingClosingDetails =
                 TestUtil.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
 
+        StatusUpdateResponse statusUpdateResponse =
+                TestUtil.getResourceAsJson("/data/SuccessfulStatusUpdateResponse.json", StatusUpdateResponse.class);
+
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-API-KEY", "apikey");
         httpServletRequest.addHeader("X-ROLES", "ROLE_user");
@@ -143,6 +153,8 @@ class BookingServiceTest {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
         when(employeeService.findEmployeeById(any(AuthenticationInfo.class), anyLong())).thenReturn(employeeRequest);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
+        when(carService.updateCarWhenBookingIsFinished(any(AuthenticationInfo.class), any(CarUpdateDetails.class)))
+                .thenReturn(statusUpdateResponse);
 
         assertDoesNotThrow(() -> bookingService.closeBooking(bookingClosingDetails));
     }
@@ -174,6 +186,9 @@ class BookingServiceTest {
         BookingRequest bookingRequest = TestUtil.getResourceAsJson("/data/UpdatedBookingRequest.json", BookingRequest.class);
         CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
+        StatusUpdateResponse statusUpdateResponse =
+                TestUtil.getResourceAsJson("/data/SuccessfulStatusUpdateResponse.json", StatusUpdateResponse.class);
+
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-API-KEY", "apikey");
         httpServletRequest.addHeader("X-ROLES", "ROLE_user");
@@ -190,6 +205,7 @@ class BookingServiceTest {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
         when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(carResponse);
         when(bookingRepository.save(any(Booking.class))).thenReturn(updatedBooking);
+        when(carService.updateCarsStatuses(any(AuthenticationInfo.class), anyList())).thenReturn(statusUpdateResponse);
 
         BookingResponse updatedBookingResponse =
                 assertDoesNotThrow(() -> bookingService.updateBooking(1L, bookingRequest));
@@ -252,19 +268,32 @@ class BookingServiceTest {
 
     @Test
     void deleteBookingByIdTest_success() {
-        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
-
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
         ApiKeyAuthenticationToken apiKeyAuthenticationToken =
                 new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
 
         SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
-        when(bookingRepository.findByCustomerUsername(anyString())).thenReturn(List.of(booking));
+        when(bookingRepository.existsInProgressBookingsByCustomerUsername(anyString())).thenReturn(false);
         doNothing().when(bookingRepository).deleteByCustomerUsername(anyString());
-        doNothing().when(carService).updateCarsStatus(any(AuthenticationInfo.class), anyList());
 
-        bookingService.deleteBookingByCustomerUsername("user");
+        assertDoesNotThrow(() -> bookingService.deleteBookingByCustomerUsername("user"));
+    }
+
+    @Test
+    void deleteBookingByIdTest_error_bookingsInProgress() {
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
+
+        when(bookingRepository.existsInProgressBookingsByCustomerUsername(anyString())).thenReturn(true);
+
+        SwiftWheelsHubException swiftWheelsHubException =
+                assertThrows(SwiftWheelsHubException.class, () -> bookingService.deleteBookingByCustomerUsername("user"));
+
+        assertNotNull(swiftWheelsHubException);
     }
 
 }

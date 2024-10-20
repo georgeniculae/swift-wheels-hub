@@ -68,6 +68,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             From Booking b""")
     long countUsersWithBookings();
 
+    @Query("""
+            Select (count(b) > 0)
+            from Booking b
+            where b.customerUsername = ?1
+            and b.status = 'IN_PROGRESS'""")
+    boolean existsInProgressBookingsByCustomerUsername(String customerUsername);
+
     @Transactional
     @Modifying
     @Query("""

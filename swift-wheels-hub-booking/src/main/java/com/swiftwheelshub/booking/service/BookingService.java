@@ -10,9 +10,11 @@ import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.EmployeeResponse;
+import com.swiftwheelshub.dto.StatusUpdateResponse;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.entity.Booking;
+import com.swiftwheelshub.entity.BookingProcessStatus;
 import com.swiftwheelshub.entity.BookingStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
@@ -31,6 +33,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -98,84 +101,86 @@ public class BookingService implements RetryListener {
     }
 
     public BookingResponse saveBooking(BookingRequest newBookingRequest) {
-        BookingResponse bookingResponse;
-        CarResponse carResponse;
+        validateBookingDates(newBookingRequest);
         AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
 
         try {
-            validateBookingDates(newBookingRequest);
+            CarResponse carResponse = carService.findAvailableCarById(authenticationInfo, newBookingRequest.carId());
+            Booking createdBooking = createNewBooking(authenticationInfo, newBookingRequest, carResponse);
 
-            carResponse = carService.findAvailableCarById(authenticationInfo, newBookingRequest.carId());
-            Booking newBooking = setupNewBooking(authenticationInfo, newBookingRequest, carResponse);
+            Booking savedCreatedBooking = bookingRepository.save(createdBooking);
 
-            Booking savedBooking = bookingRepository.save(newBooking);
-            bookingResponse = bookingMapper.mapEntityToDto(savedBooking);
+            StatusUpdateResponse statusUpdateResponse =
+                    carService.changeCarStatus(authenticationInfo, carResponse.id(), CarState.NOT_AVAILABLE);
+
+            if (statusUpdateResponse.isUpdateSuccessful()) {
+                savedCreatedBooking.setBookingProcessStatus(BookingProcessStatus.SAVED_CREATED_BOOKING);
+            }
+
+            Booking savedBooking = bookingRepository.save(savedCreatedBooking);
+
+            return bookingMapper.mapEntityToDto(savedBooking);
         } catch (Exception e) {
             log.error("Error occurred while saving booking: {}", e.getMessage());
 
             throw ExceptionUtil.handleException(e);
         }
-
-        carService.changeCarStatus(authenticationInfo, carResponse.id(), CarState.NOT_AVAILABLE);
-
-        return bookingResponse;
     }
 
     public BookingResponse updateBooking(Long id, BookingRequest updatedBookingRequest) {
         validateBookingDates(updatedBookingRequest);
-        AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
-
-        BookingResponse bookingResponse;
 
         try {
-            Booking savedUpdatedBooking = updateAndSaveBooking(id, updatedBookingRequest, authenticationInfo);
+            Booking savedUpdatedBooking = processUpdatedBooking(id, updatedBookingRequest);
 
-            bookingResponse = bookingMapper.mapEntityToDto(savedUpdatedBooking);
+            return bookingMapper.mapEntityToDto(savedUpdatedBooking);
         } catch (Exception e) {
             log.error("Error occurred while updating booking: {}", e.getMessage());
 
             throw ExceptionUtil.handleException(e);
         }
-
-        return bookingResponse;
     }
 
     public BookingResponse closeBooking(BookingClosingDetails bookingClosingDetails) {
-        BookingResponse bookingResponse;
-        AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
-
         try {
-            EmployeeResponse employeeResponse =
-                    employeeService.findEmployeeById(authenticationInfo, bookingClosingDetails.receptionistEmployeeId());
+            AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
+            EmployeeResponse employeeResponse = employeeService.findEmployeeById(authenticationInfo, bookingClosingDetails.receptionistEmployeeId());
 
             Booking existingBooking = findEntityById(bookingClosingDetails.bookingId());
             existingBooking.setStatus(BookingStatus.CLOSED);
             existingBooking.setReturnBranchId(employeeResponse.workingBranchId());
+            existingBooking.setBookingProcessStatus(BookingProcessStatus.IN_CLOSING);
+            Booking savedIntermediateBooking = bookingRepository.save(existingBooking);
 
-            Booking savedBooking = bookingRepository.save(existingBooking);
-            bookingResponse = bookingMapper.mapEntityToDto(savedBooking);
+            StatusUpdateResponse statusUpdateResponse =
+                    changeCarStatusWhenIsReturned(authenticationInfo, savedIntermediateBooking, bookingClosingDetails);
+
+            if (statusUpdateResponse.isUpdateSuccessful()) {
+                savedIntermediateBooking.setBookingProcessStatus(BookingProcessStatus.SAVED_CLOSED_BOOKING);
+            }
+
+            Booking savedClosedBooking = bookingRepository.save(savedIntermediateBooking);
+
+            return bookingMapper.mapEntityToDto(savedClosedBooking);
         } catch (Exception e) {
             log.error("Error occurred while closing booking: {}", e.getMessage());
 
             throw ExceptionUtil.handleException(e);
         }
-
-        updateCarWhenIsReturned(authenticationInfo, bookingResponse, bookingClosingDetails);
-
-        return bookingResponse;
     }
 
     public void deleteBookingByCustomerUsername(String username) {
-        List<Booking> existingBookings = bookingRepository.findByCustomerUsername(username);
-        AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
+        boolean existsInProgressBookingsByCustomer = bookingRepository.existsInProgressBookingsByCustomerUsername(username);
+
+        if (existsInProgressBookingsByCustomer) {
+            throw new SwiftWheelsHubException("There are bookings in progress for this user");
+        }
 
         try {
             bookingRepository.deleteByCustomerUsername(username);
         } catch (Exception e) {
             throw new SwiftWheelsHubException(e.getMessage());
         }
-
-        carService.updateCarsStatus(authenticationInfo, getUpdateCarRequests(existingBookings));
     }
 
     private void validateBookingDates(BookingRequest newBookingRequest) {
@@ -192,31 +197,75 @@ public class BookingService implements RetryListener {
         }
     }
 
-    private Booking updateAndSaveBooking(Long id,
-                                         BookingRequest updatedBookingRequest,
-                                         AuthenticationInfo authenticationInfo) {
+    private Booking findEntityById(Long id) {
+        return bookingRepository.findById(id)
+                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Booking with id " + id + " does not exist"));
+    }
+
+    private Booking createNewBooking(AuthenticationInfo authenticationInfo,
+                                     BookingRequest newBookingRequest,
+                                     CarResponse carResponse) {
+        UserInfo userInfo = customerService.getUserByUsername(authenticationInfo);
+
+        Booking newBooking = bookingMapper.mapDtoToEntity(newBookingRequest);
+        BigDecimal amount = carResponse.amount();
+
+        newBooking.setCustomerUsername(userInfo.username());
+        newBooking.setCustomerEmail(userInfo.email());
+        newBooking.setCarId(carResponse.id());
+        newBooking.setDateOfBooking(LocalDate.now());
+        newBooking.setRentalBranchId(carResponse.actualBranchId());
+        newBooking.setStatus(BookingStatus.IN_PROGRESS);
+        newBooking.setAmount(getAmount(newBookingRequest, amount));
+        newBooking.setRentalCarPrice(carResponse.amount());
+        newBooking.setBookingProcessStatus(BookingProcessStatus.IN_CREATION);
+
+        return newBooking;
+    }
+
+    private Booking processUpdatedBooking(Long id, BookingRequest updatedBookingRequest) {
         Booking existingBooking = findEntityById(id);
 
-        final Long existingCarId = existingBooking.getCarId();
-        Long newCarId = updatedBookingRequest.carId();
-        BigDecimal amount = existingBooking.getRentalCarPrice();
-
-        if (!existingCarId.equals(newCarId)) {
-            CarResponse newCarResponse = carService.findAvailableCarById(authenticationInfo, newCarId);
-
-            amount = newCarResponse.amount();
-            existingBooking.setCarId(newCarResponse.id());
-            existingBooking.setRentalBranchId(newCarResponse.actualBranchId());
-        }
-
-        existingBooking.setAmount(getAmount(updatedBookingRequest, amount));
+        final long existingCarId = existingBooking.getCarId();
+        existingBooking.setAmount(getAmount(updatedBookingRequest, existingBooking.getRentalCarPrice()));
         existingBooking.setDateFrom(updatedBookingRequest.dateFrom());
         existingBooking.setDateTo(updatedBookingRequest.dateTo());
+        existingBooking.setBookingProcessStatus(BookingProcessStatus.SAVED_UPDATED_BOOKING);
 
-        Booking savedUpdatedBooking = bookingRepository.save(existingBooking);
-        getCarsForStatusUpdate(authenticationInfo, existingCarId, updatedBookingRequest.carId());
+        Optional<Booking> bookingWithChangedCar =
+                processBookingWhenCarIsChanged(updatedBookingRequest, existingCarId, existingBooking);
 
-        return savedUpdatedBooking;
+        Booking processedBooking = bookingWithChangedCar.orElse(existingBooking);
+
+        return bookingRepository.save(processedBooking);
+    }
+
+    private Optional<Booking> processBookingWhenCarIsChanged(BookingRequest updatedBookingRequest,
+                                                             long existingCarId,
+                                                             Booking existingBooking) {
+        long newCarId = updatedBookingRequest.carId();
+
+        if (existingCarId == newCarId) {
+            return Optional.empty();
+        }
+
+        AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
+        CarResponse newCarResponse = carService.findAvailableCarById(authenticationInfo, newCarId);
+
+        existingBooking.setAmount(getAmount(updatedBookingRequest, newCarResponse.amount()));
+        existingBooking.setCarId(newCarResponse.id());
+        existingBooking.setRentalBranchId(newCarResponse.actualBranchId());
+        existingBooking.setBookingProcessStatus(BookingProcessStatus.IN_UPDATE);
+        Booking savedIntermediateBooking = bookingRepository.save(existingBooking);
+
+        StatusUpdateResponse statusUpdateResponse =
+                updateCarsStatuses(authenticationInfo, existingCarId, updatedBookingRequest.carId());
+
+        if (statusUpdateResponse.isUpdateSuccessful()) {
+            savedIntermediateBooking.setBookingProcessStatus(BookingProcessStatus.SAVED_UPDATED_BOOKING);
+        }
+
+        return Optional.of(savedIntermediateBooking);
     }
 
     private BigDecimal getAmount(BookingRequest bookingRequest, BigDecimal amount) {
@@ -232,63 +281,27 @@ public class BookingService implements RetryListener {
         return amount.multiply(BigDecimal.valueOf(bookingDays));
     }
 
-    private Booking findEntityById(Long id) {
-        return bookingRepository.findById(id)
-                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Booking with id " + id + " does not exist"));
+    private StatusUpdateResponse updateCarsStatuses(AuthenticationInfo authenticationInfo,
+                                                    Long existingCarId,
+                                                    Long newCarId) {
+        List<UpdateCarRequest> carsForUpdate = List.of(
+                new UpdateCarRequest(existingCarId, CarState.AVAILABLE),
+                new UpdateCarRequest(newCarId, CarState.NOT_AVAILABLE)
+        );
+
+        return carService.updateCarsStatuses(authenticationInfo, carsForUpdate);
     }
 
-    private Booking setupNewBooking(AuthenticationInfo authenticationInfo,
-                                    BookingRequest newBookingRequest,
-                                    CarResponse carResponse) {
-        UserInfo userInfo = customerService.getUserByUsername(authenticationInfo);
-
-        Booking newBooking = bookingMapper.mapDtoToEntity(newBookingRequest);
-        BigDecimal amount = carResponse.amount();
-
-        newBooking.setCustomerUsername(userInfo.username());
-        newBooking.setCustomerEmail(userInfo.email());
-        newBooking.setCarId(carResponse.id());
-        newBooking.setDateOfBooking(LocalDate.now());
-        newBooking.setRentalBranchId(carResponse.actualBranchId());
-        newBooking.setStatus(BookingStatus.IN_PROGRESS);
-        newBooking.setAmount(getAmount(newBookingRequest, amount));
-        newBooking.setRentalCarPrice(carResponse.amount());
-
-        return newBooking;
-    }
-
-    private void getCarsForStatusUpdate(AuthenticationInfo authenticationInfo,
-                                        Long existingCarId,
-                                        Long newCarId) {
-        if (!existingCarId.equals(newCarId)) {
-            List<UpdateCarRequest> carsForUpdate = List.of(
-                    new UpdateCarRequest(existingCarId, CarState.AVAILABLE),
-                    new UpdateCarRequest(newCarId, CarState.NOT_AVAILABLE)
-            );
-
-            carService.updateCarsStatus(authenticationInfo, carsForUpdate);
-        }
-    }
-
-    private void updateCarWhenIsReturned(AuthenticationInfo authenticationInfo,
-                                         BookingResponse bookingResponse,
-                                         BookingClosingDetails bookingClosingDetails) {
+    private StatusUpdateResponse changeCarStatusWhenIsReturned(AuthenticationInfo authenticationInfo,
+                                                               Booking savedIntermediateBooking,
+                                                               BookingClosingDetails bookingClosingDetails) {
         CarUpdateDetails carUpdateDetails = new CarUpdateDetails(
-                bookingResponse.carId(),
+                savedIntermediateBooking.getCarId(),
                 bookingClosingDetails.carState(),
                 bookingClosingDetails.receptionistEmployeeId()
         );
 
-        carService.updateCarWhenBookingIsFinished(authenticationInfo, carUpdateDetails);
-    }
-
-    private List<UpdateCarRequest> getUpdateCarRequests(List<Booking> existingBookings) {
-        return existingBookings.stream()
-                .map(booking -> UpdateCarRequest.builder()
-                        .carId(booking.getCarId())
-                        .carState(CarState.AVAILABLE)
-                        .build())
-                .toList();
+        return carService.updateCarWhenBookingIsFinished(authenticationInfo, carUpdateDetails);
     }
 
 }

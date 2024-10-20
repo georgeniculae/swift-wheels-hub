@@ -4,11 +4,13 @@ import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.CarUpdateDetails;
+import com.swiftwheelshub.dto.StatusUpdateResponse;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.retry.annotation.Backoff;
@@ -23,6 +25,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CarService {
 
     private static final String SEPARATOR = "/";
@@ -56,7 +59,7 @@ public class CarService {
             backoff = @Backoff(value = 5000L),
             listeners = "bookingService"
     )
-    public void changeCarStatus(AuthenticationInfo authenticationInfo, Long carId, CarState carState) {
+    public StatusUpdateResponse changeCarStatus(AuthenticationInfo authenticationInfo, Long carId, CarState carState) {
         String finalUrl = url + SEPARATOR + carId + SEPARATOR + "change-status";
 
         URI uri = UriComponentsBuilder
@@ -65,14 +68,18 @@ public class CarService {
                 .build()
                 .toUri();
 
-        restClient.patch()
+        return restClient.patch()
                 .uri(uri)
                 .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
-                    throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());
-                })
-                .toBodilessEntity();
+                .exchange((_, clientResponse) -> {
+                    if (clientResponse.getStatusCode().isError()) {
+                        log.warn("Error occurred while changing car status: {}", clientResponse.getStatusText());
+
+                        return new StatusUpdateResponse(false);
+                    }
+
+                    return new StatusUpdateResponse(true);
+                });
     }
 
     @Retryable(
@@ -81,19 +88,23 @@ public class CarService {
             backoff = @Backoff(value = 5000L),
             listeners = "bookingService"
     )
-    public void updateCarWhenBookingIsFinished(AuthenticationInfo authenticationInfo,
-                                               CarUpdateDetails carUpdateDetails) {
+    public StatusUpdateResponse updateCarWhenBookingIsFinished(AuthenticationInfo authenticationInfo,
+                                                               CarUpdateDetails carUpdateDetails) {
         String finalUrl = url + SEPARATOR + carUpdateDetails.carId() + SEPARATOR + "update-after-return";
 
-        restClient.put()
+        return restClient.put()
                 .uri(finalUrl)
                 .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
                 .body(carUpdateDetails)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
-                    throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());
-                })
-                .toBodilessEntity();
+                .exchange((_, clientResponse) -> {
+                    if (clientResponse.getStatusCode().isError()) {
+                        log.warn("Error occurred while updating car status: {}", clientResponse.getStatusText());
+
+                        return new StatusUpdateResponse(false);
+                    }
+
+                    return new StatusUpdateResponse(true);
+                });
     }
 
     @Retryable(
@@ -102,18 +113,22 @@ public class CarService {
             backoff = @Backoff(value = 5000L),
             listeners = "bookingService"
     )
-    public void updateCarsStatus(AuthenticationInfo authenticationInfo, List<UpdateCarRequest> carsForUpdate) {
+    public StatusUpdateResponse updateCarsStatuses(AuthenticationInfo authenticationInfo, List<UpdateCarRequest> carsForUpdate) {
         String finalUrl = url + SEPARATOR + "update-statuses";
 
-        restClient.put()
+        return restClient.put()
                 .uri(finalUrl)
                 .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
                 .body(carsForUpdate)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
-                    throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());
-                })
-                .toBodilessEntity();
+                .exchange((_, clientResponse) -> {
+                    if (clientResponse.getStatusCode().isError()) {
+                        log.warn("Error occurred while updating cars statuses: {}", clientResponse.getStatusText());
+
+                        return new StatusUpdateResponse(false);
+                    }
+
+                    return new StatusUpdateResponse(true);
+                });
     }
 
 }

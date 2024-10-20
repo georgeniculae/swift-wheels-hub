@@ -9,5 +9,6 @@
   "amount": 500,
   "rentalCarPrice": 500,
   "rentalBranchId": 1,
-  "returnBranchId": 1
+  "returnBranchId": 1,
+  "bookingProcessStatus": "IN_CREATION"
 }

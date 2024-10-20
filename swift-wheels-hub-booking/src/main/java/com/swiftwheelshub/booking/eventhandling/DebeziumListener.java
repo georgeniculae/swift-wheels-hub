@@ -37,6 +37,7 @@ public class DebeziumListener {
 
     private static final String UNDERSCORE = "_";
     private static final char UNDERSCORE_CHAR = '_';
+    private static final String BOOKING_PROCESS_STATE_PREFIX = "IN_";
     private final Executor executor = Executors.newVirtualThreadPerTaskExecutor();
     private final DebeziumEngine<RecordChangeEvent<SourceRecord>> debeziumEngine;
     private final BookingProducerService bookingProducerService;
@@ -105,22 +106,25 @@ public class DebeziumListener {
 
     private void handleBookingSending(Map<String, Object> payload, Operation operation) {
         Booking booking = objectMapper.convertValue(payload, Booking.class);
-        BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
 
-        if (Operation.CREATE.equals(operation)) {
-            bookingProducerService.sendSavedBooking(bookingResponse);
+        if (booking.getBookingProcessStatus().name().startsWith(BOOKING_PROCESS_STATE_PREFIX)) {
+            BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
 
-            return;
-        }
+            if (Operation.CREATE.equals(operation)) {
+                bookingProducerService.sendSavedBooking(bookingResponse);
 
-        if (Operation.UPDATE.equals(operation)) {
-            bookingProducerService.sendUpdatedBooking(bookingResponse);
+                return;
+            }
 
-            return;
-        }
+            if (Operation.UPDATE.equals(operation)) {
+                bookingProducerService.sendUpdatedBooking(bookingResponse);
 
-        if (Operation.DELETE.equals(operation)) {
-            bookingProducerService.sendDeletedBooking(bookingResponse.id());
+                return;
+            }
+
+            if (Operation.DELETE.equals(operation)) {
+                bookingProducerService.sendDeletedBooking(bookingResponse.id());
+            }
         }
     }
 
