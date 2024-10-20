@@ -22,9 +22,11 @@ public class RestClientConfig {
 
     @Bean
     public RestClient restClient(@Qualifier("loadBalancedRestClientBuilder") RestClient.Builder restClientBuilder) {
-        ClientHttpRequestFactory requestFactory = ClientHttpRequestFactories.get(ClientHttpRequestFactorySettings.DEFAULTS
-                .withConnectTimeout(Duration.ofSeconds(60))
-                .withReadTimeout(Duration.ofSeconds(60)));
+        ClientHttpRequestFactory requestFactory = ClientHttpRequestFactories.get(
+                ClientHttpRequestFactorySettings.DEFAULTS
+                        .withConnectTimeout(Duration.ofSeconds(60))
+                        .withReadTimeout(Duration.ofSeconds(60))
+        );
 
         return restClientBuilder.requestFactory(requestFactory)
                 .build();
