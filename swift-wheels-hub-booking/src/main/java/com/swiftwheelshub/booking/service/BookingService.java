@@ -31,7 +31,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 @Service
@@ -62,13 +61,8 @@ public class BookingService implements RetryListener {
         return bookingRepository.count();
     }
 
-    @Transactional(readOnly = true)
     public Long countUsersWithBookings() {
-        try (Stream<Booking> bookingStream = bookingRepository.findAllBookings()) {
-            return bookingStream.map(Booking::getCustomerUsername)
-                    .distinct()
-                    .count();
-        }
+        return bookingRepository.countUsersWithBookings();
     }
 
     public BookingResponse findBookingByDateOfBooking(String searchString) {
@@ -92,18 +86,11 @@ public class BookingService implements RetryListener {
     }
 
     public BigDecimal getAmountSpentByLoggedInUser() {
-        return findBookingsByLoggedInUser().stream()
-                .map(BookingResponse::amount)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return bookingRepository.sumAmountSpentByLoggedInUser(HttpRequestUtil.extractUsername());
     }
 
     public BigDecimal getSumOfAllBookingAmount() {
-        return findAllBookings()
-                .stream()
-                .map(BookingResponse::amount)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return bookingRepository.sumAllBookingsAmount();
     }
 
     public LocalDate getCurrentDate() {

@@ -103,6 +103,42 @@ class BookingControllerTest {
 
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
+    void getBookingsByLoggedInUserTest_success() throws Exception {
+        BookingResponse bookingResponse =
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+
+        when(bookingService.findBookingsByLoggedInUser()).thenReturn(List.of(bookingResponse));
+
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/by-logged-in-user")
+                        .contextPath(PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void getBookingsByLoggedInUserTest_unauthorized() throws Exception {
+        BookingResponse bookingResponse =
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+
+        when(bookingService.findBookingsByLoggedInUser()).thenReturn(List.of(bookingResponse));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/by-logged-in-user")
+                        .contextPath(PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+
+
+    @Test
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void countBookingsTest_success() throws Exception {
         when(bookingService.countBookings()).thenReturn(1L);
 

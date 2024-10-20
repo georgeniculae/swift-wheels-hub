@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByCustomerUsername(String customerUsername);
 
     @Query("""
+            Select sum(booking.amount)
+            From Booking booking
+            where booking.customerUsername = ?1""")
+    BigDecimal sumAmountSpentByLoggedInUser(String username);
+
+    @Query("""
+            Select sum(booking.amount)
+            From Booking booking""")
+    BigDecimal sumAllBookingsAmount();
+
+    @Query("""
             From Booking booking
             where booking.customerUsername = ?1""")
     @QueryHints(value = {
@@ -50,6 +62,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             From Booking booking
             where booking.customerUsername = ?1""")
     Long countByCustomerUsername(String customerUsername);
+
+    @Query("""
+            select count(distinct b.customerUsername)
+            from Booking b""")
+    long countUsersWithBookings();
 
     @Transactional
     @Modifying

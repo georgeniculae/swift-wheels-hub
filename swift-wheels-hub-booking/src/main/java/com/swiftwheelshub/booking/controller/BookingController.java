@@ -66,6 +66,14 @@ public class BookingController {
         return ResponseEntity.ok(currentDate);
     }
 
+    @GetMapping(path = "/by-logged-in-user")
+    @PreAuthorize("hasRole('user')")
+    public ResponseEntity<List<BookingResponse>> getBookingsByLoggedInUser() {
+        List<BookingResponse> bookings = bookingService.findBookingsByLoggedInUser();
+
+        return ResponseEntity.ok(bookings);
+    }
+
     @PostMapping("/new")
     @PreAuthorize("hasRole('user')")
     @LogActivity(

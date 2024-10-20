@@ -35,7 +35,6 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -200,13 +199,11 @@ class BookingServiceTest {
 
     @Test
     void calculateAllAmountSpentByUserTest_success() {
-        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
-
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-USERNAME", "user");
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(httpServletRequest));
 
-        when(bookingRepository.findBookingsByUser(anyString())).thenReturn(Stream.of(booking));
+        when(bookingRepository.sumAmountSpentByLoggedInUser(anyString())).thenReturn(BigDecimal.valueOf(500));
 
         BigDecimal amount = assertDoesNotThrow(() -> bookingService.getAmountSpentByLoggedInUser());
         assertEquals(BigDecimal.valueOf(500), amount);
@@ -214,9 +211,7 @@ class BookingServiceTest {
 
     @Test
     void getSumOfAllBookingAmountTest_success() {
-        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
-
-        when(bookingRepository.findAllBookings()).thenReturn(Stream.of(booking));
+        when(bookingRepository.sumAllBookingsAmount()).thenReturn(BigDecimal.valueOf(500));
 
         BigDecimal sumOfAllBookingAmount = assertDoesNotThrow(() -> bookingService.getSumOfAllBookingAmount());
         assertEquals(BigDecimal.valueOf(500), sumOfAllBookingAmount);
@@ -224,9 +219,7 @@ class BookingServiceTest {
 
     @Test
     void countCustomersWithBookingsTest_success() {
-        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
-
-        when(bookingRepository.findAllBookings()).thenReturn(Stream.of(booking));
+        when(bookingRepository.countUsersWithBookings()).thenReturn(1L);
 
         Long bookings = bookingService.countUsersWithBookings();
         assertEquals(1, bookings);
