@@ -107,7 +107,7 @@ public class DebeziumListener {
     private void handleBookingSending(Map<String, Object> payload, Operation operation) {
         Booking booking = objectMapper.convertValue(payload, Booking.class);
 
-        if (booking.getBookingProcessStatus().name().startsWith(FAILED_PROCESS_STATE_PREFIX)) {
+        if (!booking.getBookingProcessStatus().name().startsWith(FAILED_PROCESS_STATE_PREFIX)) {
             BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
 
             if (Operation.CREATE.equals(operation)) {
