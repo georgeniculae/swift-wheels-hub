@@ -113,9 +113,8 @@ public class BookingService implements RetryListener {
             StatusUpdateResponse statusUpdateResponse =
                     carService.changeCarStatus(authenticationInfo, carResponse.id(), CarState.NOT_AVAILABLE);
 
-            if (statusUpdateResponse.isUpdateSuccessful()) {
-                savedCreatedBooking.setBookingProcessStatus(BookingProcessStatus.SAVED_CREATED_BOOKING);
-            }
+            BookingProcessStatus bookingProcessStatus = getBookingProcessStatus(statusUpdateResponse);
+            savedCreatedBooking.setBookingProcessStatus(bookingProcessStatus);
 
             Booking savedBooking = bookingRepository.save(savedCreatedBooking);
 
@@ -155,9 +154,8 @@ public class BookingService implements RetryListener {
             StatusUpdateResponse statusUpdateResponse =
                     changeCarStatusWhenIsReturned(authenticationInfo, savedIntermediateBooking, bookingClosingDetails);
 
-            if (statusUpdateResponse.isUpdateSuccessful()) {
-                savedIntermediateBooking.setBookingProcessStatus(BookingProcessStatus.SAVED_CLOSED_BOOKING);
-            }
+            BookingProcessStatus bookingProcessStatus = getBookingProcessStatus(statusUpdateResponse);
+            savedIntermediateBooking.setBookingProcessStatus(bookingProcessStatus);
 
             Booking savedClosedBooking = bookingRepository.save(savedIntermediateBooking);
 
@@ -223,6 +221,14 @@ public class BookingService implements RetryListener {
         return newBooking;
     }
 
+    private BookingProcessStatus getBookingProcessStatus(StatusUpdateResponse statusUpdateResponse) {
+        if (statusUpdateResponse.isUpdateSuccessful()) {
+            return BookingProcessStatus.SAVED_CREATED_BOOKING;
+        }
+
+        return BookingProcessStatus.FAILED_CREATED_BOOKING;
+    }
+
     private Booking processUpdatedBooking(Long id, BookingRequest updatedBookingRequest) {
         Booking existingBooking = findEntityById(id);
 
@@ -261,9 +267,8 @@ public class BookingService implements RetryListener {
         StatusUpdateResponse statusUpdateResponse =
                 updateCarsStatuses(authenticationInfo, existingCarId, updatedBookingRequest.carId());
 
-        if (statusUpdateResponse.isUpdateSuccessful()) {
-            savedIntermediateBooking.setBookingProcessStatus(BookingProcessStatus.SAVED_UPDATED_BOOKING);
-        }
+        BookingProcessStatus bookingProcessStatus = getBookingProcessStatus(statusUpdateResponse);
+        savedIntermediateBooking.setBookingProcessStatus(bookingProcessStatus);
 
         return Optional.of(savedIntermediateBooking);
     }
