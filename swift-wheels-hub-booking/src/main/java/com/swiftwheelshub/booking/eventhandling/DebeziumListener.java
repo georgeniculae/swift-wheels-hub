@@ -5,6 +5,7 @@ import com.swiftwheelshub.booking.mapper.BookingMapper;
 import com.swiftwheelshub.booking.service.BookingProducerService;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.entity.Booking;
+import com.swiftwheelshub.entity.BookingProcessStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import io.debezium.config.Configuration;
 import io.debezium.data.Envelope;
@@ -112,26 +113,26 @@ public class DebeziumListener {
         if (isProcessable(bookingProcessStatusName)) {
             BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
 
-            if (Operation.CREATE.equals(operation)) {
+            if (isCreated(bookingProcessStatusName)) {
                 bookingProducerService.sendSavedBooking(bookingResponse);
 
                 return;
             }
 
-            if (Operation.UPDATE.equals(operation)) {
+            if (isUpdated(operation, bookingProcessStatusName)) {
                 bookingProducerService.sendUpdatedBooking(bookingResponse);
 
                 return;
             }
 
-            if (Operation.DELETE.equals(operation)) {
+            if (isDeleted(operation)) {
                 bookingProducerService.sendDeletedBooking(bookingResponse.id());
             }
         }
     }
 
     private boolean isProcessable(String bookingProcessStatusName) {
-        return !bookingProcessStatusName.startsWith(FAILED_PROCESS_STATUS_PREFIX) ||
+        return !bookingProcessStatusName.startsWith(FAILED_PROCESS_STATUS_PREFIX) &&
                 !bookingProcessStatusName.startsWith(IN_PROCESS_STATUS_PREFIX);
     }
 
@@ -141,6 +142,19 @@ public class DebeziumListener {
         }
 
         return fieldName;
+    }
+
+    private boolean isCreated(String bookingProcessStatusName) {
+        return BookingProcessStatus.SAVED_CREATED_BOOKING.name().equals(bookingProcessStatusName);
+    }
+
+    private boolean isUpdated(Operation operation, String bookingProcessStatusName) {
+        return Operation.UPDATE.equals(operation) &&
+                BookingProcessStatus.SAVED_UPDATED_BOOKING.name().equals(bookingProcessStatusName);
+    }
+
+    private boolean isDeleted(Operation operation) {
+        return Operation.DELETE.equals(operation);
     }
 
 }

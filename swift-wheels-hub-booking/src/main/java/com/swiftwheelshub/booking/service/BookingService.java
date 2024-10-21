@@ -110,9 +110,7 @@ public class BookingService implements RetryListener {
 
             Booking savedCreatedBooking = bookingRepository.save(createdBooking);
 
-            StatusUpdateResponse statusUpdateResponse =
-                    carService.changeCarStatus(authenticationInfo, carResponse.id(), CarState.NOT_AVAILABLE);
-
+            StatusUpdateResponse statusUpdateResponse = changeCarStatus(authenticationInfo, carResponse);
             BookingProcessStatus bookingProcessStatus = getCreatedBookingProcessStatus(statusUpdateResponse);
             savedCreatedBooking.setBookingProcessStatus(bookingProcessStatus);
 
@@ -221,6 +219,14 @@ public class BookingService implements RetryListener {
         return newBooking;
     }
 
+    private StatusUpdateResponse changeCarStatus(AuthenticationInfo authenticationInfo, CarResponse carResponse) {
+        try {
+            return carService.changeCarStatus(authenticationInfo, carResponse.id(), CarState.NOT_AVAILABLE);
+        } catch (Exception e) {
+            return new StatusUpdateResponse(false);
+        }
+    }
+
     private BookingProcessStatus getCreatedBookingProcessStatus(StatusUpdateResponse statusUpdateResponse) {
         if (statusUpdateResponse.isUpdateSuccessful()) {
             return BookingProcessStatus.SAVED_CREATED_BOOKING;
@@ -242,7 +248,7 @@ public class BookingService implements RetryListener {
             return BookingProcessStatus.SAVED_CLOSED_BOOKING;
         }
 
-        return BookingProcessStatus.SAVED_CLOSED_BOOKING;
+        return BookingProcessStatus.FAILED_CLOSED_BOOKING;
     }
 
     private Booking processUpdatedBooking(Long id, BookingRequest updatedBookingRequest) {

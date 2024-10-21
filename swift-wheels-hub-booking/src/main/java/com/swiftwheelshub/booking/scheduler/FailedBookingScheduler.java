@@ -6,9 +6,6 @@ import com.swiftwheelshub.entity.BookingProcessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
@@ -17,14 +14,11 @@ public class FailedBookingScheduler {
     private final BookingRepository bookingRepository;
 
     @Scheduled(fixedDelay = 5000)
-    @Transactional(readOnly = true)
     public void processFailedBookings() {
-        try (Stream<Booking> failedBookings = bookingRepository.findAllFailedBookings()) {
-            failedBookings.forEach(failedBooking -> {
-                BookingProcessStatus bookingProcessStatus = getBookingProcessStatus(failedBooking.getBookingProcessStatus());
-                failedBooking.setBookingProcessStatus(bookingProcessStatus);
-                bookingRepository.save(failedBooking);
-            });
+        for (Booking failedBooking : bookingRepository.findAllFailedBookings()) {
+            BookingProcessStatus bookingProcessStatus = getBookingProcessStatus(failedBooking.getBookingProcessStatus());
+            failedBooking.setBookingProcessStatus(bookingProcessStatus);
+            bookingRepository.save(failedBooking);
         }
     }
 
