@@ -37,7 +37,8 @@ public class DebeziumListener {
 
     private static final String UNDERSCORE = "_";
     private static final char UNDERSCORE_CHAR = '_';
-    private static final String FAILED_PROCESS_STATE_PREFIX = "FAILED";
+    private static final String FAILED_PROCESS_STATUS_PREFIX = "FAILED";
+    public static final String IN_PROCESS_STATUS_PREFIX = "IN_";
     private final Executor executor = Executors.newVirtualThreadPerTaskExecutor();
     private final DebeziumEngine<RecordChangeEvent<SourceRecord>> debeziumEngine;
     private final BookingProducerService bookingProducerService;
@@ -106,8 +107,9 @@ public class DebeziumListener {
 
     private void handleBookingSending(Map<String, Object> payload, Operation operation) {
         Booking booking = objectMapper.convertValue(payload, Booking.class);
+        String bookingProcessStatusName = booking.getBookingProcessStatus().name();
 
-        if (!booking.getBookingProcessStatus().name().startsWith(FAILED_PROCESS_STATE_PREFIX)) {
+        if (isProcessable(bookingProcessStatusName)) {
             BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
 
             if (Operation.CREATE.equals(operation)) {
@@ -126,6 +128,11 @@ public class DebeziumListener {
                 bookingProducerService.sendDeletedBooking(bookingResponse.id());
             }
         }
+    }
+
+    private boolean isProcessable(String bookingProcessStatusName) {
+        return !bookingProcessStatusName.startsWith(FAILED_PROCESS_STATUS_PREFIX) ||
+                !bookingProcessStatusName.startsWith(IN_PROCESS_STATUS_PREFIX);
     }
 
     private String getCamelCaseFieldName(String fieldName) {
