@@ -128,9 +128,9 @@ public class FailedBookingScheduler {
         return List.of(machineRole);
     }
 
-    private List<UpdateCarRequest> getCarsToUpdate(Long existingCarId, Long newCarId) {
+    private List<UpdateCarRequest> getCarsToUpdate(Long previousCarId, Long newCarId) {
         return List.of(
-                new UpdateCarRequest(existingCarId, CarState.AVAILABLE),
+                new UpdateCarRequest(previousCarId, CarState.AVAILABLE),
                 new UpdateCarRequest(newCarId, CarState.NOT_AVAILABLE)
         );
     }
