@@ -1,5 +1,5 @@
 {
   "bookingId": 1,
-  "carState": "AVAILABLE",
+  "carPhase": "AVAILABLE",
   "receptionistEmployeeId": 1
 }

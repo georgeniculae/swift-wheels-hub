@@ -29,7 +29,7 @@ import java.util.Optional;
 public class CarService {
 
     private static final String SEPARATOR = "/";
-    private static final String CAR_STATUS = "carState";
+    private static final String CAR_STATE = "carState";
     private final RestClient restClient;
 
     @Value("${rest-client.url.swift-wheels-hub-agency-cars}")
@@ -64,7 +64,7 @@ public class CarService {
 
         URI uri = UriComponentsBuilder
                 .fromUri(URI.create(finalUrl))
-                .queryParam(CAR_STATUS, carState.name())
+                .queryParam(CAR_STATE, carState.name())
                 .build()
                 .toUri();
 

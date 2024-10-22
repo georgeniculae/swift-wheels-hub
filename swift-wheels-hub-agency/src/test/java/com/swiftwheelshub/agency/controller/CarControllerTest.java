@@ -2,6 +2,7 @@ package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.CarService;
 import com.swiftwheelshub.agency.util.TestUtil;
+import com.swiftwheelshub.dto.CarPhase;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
@@ -473,7 +474,7 @@ class CarControllerTest {
 
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
-    void updateCarsStatusTest_success() throws Exception {
+    void updateCarsStatusesTest_success() throws Exception {
         CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         UpdateCarRequest carRequest = UpdateCarRequest.builder()
@@ -499,7 +500,7 @@ class CarControllerTest {
 
     @Test
     @WithAnonymousUser
-    void updateCarsStatusTest_unauthorized() throws Exception {
+    void updateCarsStatusesTest_unauthorized() throws Exception {
         CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
         UpdateCarRequest carRequest = UpdateCarRequest.builder()
@@ -527,7 +528,7 @@ class CarControllerTest {
         CarUpdateDetails carUpdateDetails = CarUpdateDetails.builder()
                 .carId(1L)
                 .receptionistEmployeeId(1L)
-                .carState(CarState.NOT_AVAILABLE)
+                .carPhase(CarPhase.AVAILABLE)
                 .build();
 
         String content = TestUtil.writeValueAsString(carUpdateDetails);
@@ -552,7 +553,7 @@ class CarControllerTest {
 
         CarUpdateDetails carUpdateDetails = CarUpdateDetails.builder()
                 .carId(1L)
-                .carState(CarState.NOT_AVAILABLE)
+                .carPhase(CarPhase.AVAILABLE)
                 .build();
 
         String content = TestUtil.writeValueAsString(carUpdateDetails);

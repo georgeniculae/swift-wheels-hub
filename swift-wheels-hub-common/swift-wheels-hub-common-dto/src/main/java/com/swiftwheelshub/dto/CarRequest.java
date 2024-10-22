@@ -47,7 +47,7 @@ public record CarRequest(
                 "yearOfProduction=" + yearOfProduction + "\n" +
                 "color='" + color + "\n" +
                 "mileage=" + mileage + "\n" +
-                "carState=" + carState + "\n" +
+                "carStage=" + carState + "\n" +
                 "amount=" + amount + "\n" +
                 "originalBranchId=" + originalBranchId + "\n" +
                 "actualBranchId=" + actualBranchId + "\n" +

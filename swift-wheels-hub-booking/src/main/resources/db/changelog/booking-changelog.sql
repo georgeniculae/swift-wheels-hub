@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS public.booking (
     status VARCHAR(255),
     customer_username VARCHAR(255),
     customer_email VARCHAR(255),
-    car_id BIGINT NOT NULL,
+    actual_car_id BIGINT NOT NULL,
+    previous_car_id BIGINT,
     date_from date NOT NULL,
     date_to date NOT NULL,
     amount DECIMAL,
@@ -15,6 +16,7 @@ CREATE TABLE IF NOT EXISTS public.booking (
     rental_branch_id BIGINT NOT NULL,
     return_branch_id BIGINT,
     booking_process_status VARCHAR(255),
+    car_stage VARCHAR(255),
     CONSTRAINT pk_booking PRIMARY KEY (id)
 );
 

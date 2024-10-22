@@ -276,8 +276,9 @@ class BookingControllerTest {
     void closeBookingTest_success() throws Exception {
         BookingResponse bookingResponse =
                 TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+
         BookingClosingDetails bookingClosingDetails =
-                TestUtil.getResourceAsJson("/data/CarForUpdate.json", BookingClosingDetails.class);
+                TestUtil.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
 
         String content = TestUtil.writeValueAsString(bookingClosingDetails);
 

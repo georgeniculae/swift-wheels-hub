@@ -6,6 +6,7 @@ import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
+import com.swiftwheelshub.dto.CarPhase;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.CarUpdateDetails;
@@ -16,6 +17,7 @@ import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.entity.BookingProcessStatus;
 import com.swiftwheelshub.entity.BookingStatus;
+import com.swiftwheelshub.entity.CarStage;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
@@ -147,6 +149,7 @@ public class BookingService implements RetryListener {
             existingBooking.setStatus(BookingStatus.CLOSED);
             existingBooking.setReturnBranchId(employeeResponse.workingBranchId());
             existingBooking.setBookingProcessStatus(BookingProcessStatus.IN_CLOSING);
+            existingBooking.setCarStage(getCarStage(bookingClosingDetails.carPhase()));
             Booking savedIntermediateBooking = bookingRepository.save(existingBooking);
 
             StatusUpdateResponse statusUpdateResponse =
@@ -208,7 +211,7 @@ public class BookingService implements RetryListener {
 
         newBooking.setCustomerUsername(userInfo.username());
         newBooking.setCustomerEmail(userInfo.email());
-        newBooking.setCarId(carResponse.id());
+        newBooking.setActualCarId(carResponse.id());
         newBooking.setDateOfBooking(LocalDate.now());
         newBooking.setRentalBranchId(carResponse.actualBranchId());
         newBooking.setStatus(BookingStatus.IN_PROGRESS);
@@ -254,7 +257,7 @@ public class BookingService implements RetryListener {
     private Booking processUpdatedBooking(Long id, BookingRequest updatedBookingRequest) {
         Booking existingBooking = findEntityById(id);
 
-        final long existingCarId = existingBooking.getCarId();
+        final long existingCarId = existingBooking.getActualCarId();
         existingBooking.setAmount(getAmount(updatedBookingRequest, existingBooking.getRentalCarPrice()));
         existingBooking.setDateFrom(updatedBookingRequest.dateFrom());
         existingBooking.setDateTo(updatedBookingRequest.dateTo());
@@ -281,7 +284,8 @@ public class BookingService implements RetryListener {
         CarResponse newCarResponse = carService.findAvailableCarById(authenticationInfo, newCarId);
 
         existingBooking.setAmount(getAmount(updatedBookingRequest, newCarResponse.amount()));
-        existingBooking.setCarId(newCarResponse.id());
+        existingBooking.setActualCarId(newCarResponse.id());
+        existingBooking.setPreviousCarId(existingCarId);
         existingBooking.setRentalBranchId(newCarResponse.actualBranchId());
         existingBooking.setBookingProcessStatus(BookingProcessStatus.IN_UPDATE);
         Booking savedIntermediateBooking = bookingRepository.save(existingBooking);
@@ -319,12 +323,19 @@ public class BookingService implements RetryListener {
         return carService.updateCarsStatuses(authenticationInfo, carsForUpdate);
     }
 
+    private CarStage getCarStage(CarPhase carPhase) {
+        return switch (carPhase) {
+            case AVAILABLE -> CarStage.AVAILABLE;
+            case BROKEN -> CarStage.BROKEN;
+        };
+    }
+
     private StatusUpdateResponse changeCarStatusWhenIsReturned(AuthenticationInfo authenticationInfo,
                                                                Booking savedIntermediateBooking,
                                                                BookingClosingDetails bookingClosingDetails) {
         CarUpdateDetails carUpdateDetails = new CarUpdateDetails(
-                savedIntermediateBooking.getCarId(),
-                bookingClosingDetails.carState(),
+                savedIntermediateBooking.getActualCarId(),
+                bookingClosingDetails.carPhase(),
                 bookingClosingDetails.receptionistEmployeeId()
         );
 

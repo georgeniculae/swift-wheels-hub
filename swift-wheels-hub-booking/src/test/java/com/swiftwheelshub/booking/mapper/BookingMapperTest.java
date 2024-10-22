@@ -25,7 +25,8 @@ class BookingMapperTest {
 
     @Test
     void mapDtoToEntityTest_success() {
-        BookingRequest bookingRequest = TestUtil.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
+        BookingRequest bookingRequest =
+                TestUtil.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
 
         Booking actualBooking = bookingMapper.mapDtoToEntity(bookingRequest);
 

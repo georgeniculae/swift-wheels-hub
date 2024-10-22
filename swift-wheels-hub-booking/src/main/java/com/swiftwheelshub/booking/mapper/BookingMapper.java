@@ -5,6 +5,7 @@ import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.entity.Booking;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(
@@ -14,6 +15,7 @@ import org.mapstruct.ReportingPolicy;
 )
 public interface BookingMapper {
 
+    @Mapping(target = "carId", source = "actualCarId")
     BookingResponse mapEntityToDto(Booking booking);
 
     Booking mapDtoToEntity(BookingRequest bookingRequest);

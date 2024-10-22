@@ -42,7 +42,9 @@ public class Booking extends BaseEntity {
     private String customerEmail;
 
     @NotNull(message = "Car id cannot be null")
-    private Long carId;
+    private Long actualCarId;
+
+    private Long previousCarId;
 
     @NotNull(message = "Date from cannot be null")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -65,5 +67,8 @@ public class Booking extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private BookingProcessStatus bookingProcessStatus;
+
+    @Enumerated(EnumType.STRING)
+    private CarStage carStage;
 
 }

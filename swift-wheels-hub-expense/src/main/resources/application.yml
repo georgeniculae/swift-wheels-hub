@@ -27,8 +27,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  mvc:
-    throw-exception-if-no-handler-found: true
+    open-in-view: false
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml

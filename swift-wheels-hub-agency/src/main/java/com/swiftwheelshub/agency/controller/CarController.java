@@ -125,7 +125,7 @@ public class CarController {
     }
 
     @PatchMapping(path = "/{id}/change-status")
-    @PreAuthorize("hasRole('user')")
+    @PreAuthorize("hasAnyRole('user', 'booking_service')")
     public ResponseEntity<CarResponse> updateCarStatus(@PathVariable("id") Long id, @RequestParam CarState carState) {
         CarResponse updatedCarResponse = carService.updateCarStatus(id, carState);
 
@@ -133,15 +133,15 @@ public class CarController {
     }
 
     @PutMapping(path = "/update-statuses")
-    @PreAuthorize("hasRole('user')")
-    public ResponseEntity<List<CarResponse>> updateCarsStatus(@RequestBody @Validated List<UpdateCarRequest> carsForUpdate) {
+    @PreAuthorize("hasAnyRole('user', 'booking_service')")
+    public ResponseEntity<List<CarResponse>> updateCarsStatuses(@RequestBody @Validated List<UpdateCarRequest> carsForUpdate) {
         List<CarResponse> updatedCarResponses = carService.updateCarsStatus(carsForUpdate);
 
         return ResponseEntity.ok(updatedCarResponses);
     }
 
     @PutMapping(path = "/{id}/update-after-return")
-    @PreAuthorize("hasRole('user')")
+    @PreAuthorize("hasAnyRole('user', 'booking_service')")
     public ResponseEntity<CarResponse> updateCarWhenBookingIsClosed(@PathVariable("id") Long id,
                                                                     @RequestBody @Validated CarUpdateDetails carUpdateDetails) {
         CarResponse updatedCarResponse = carService.updateCarWhenBookingIsClosed(id, carUpdateDetails);

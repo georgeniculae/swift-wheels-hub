@@ -9,7 +9,7 @@ public record CarUpdateDetails(
         Long carId,
 
         @NotNull(message = "Car state cannot be null")
-        CarState carState,
+        CarPhase carPhase,
 
         @NotNull(message = "Receptionist employee id cannot be null")
         Long receptionistEmployeeId
@@ -19,7 +19,7 @@ public record CarUpdateDetails(
     public String toString() {
         return "CarUpdateDetails{" + "\n" +
                 "carId=" + carId + "\n" +
-                "carState=" + carState + "\n" +
+                "carPhase=" + carPhase + "\n" +
                 "receptionistEmployeeId=" + receptionistEmployeeId + "\n" +
                 "}";
     }

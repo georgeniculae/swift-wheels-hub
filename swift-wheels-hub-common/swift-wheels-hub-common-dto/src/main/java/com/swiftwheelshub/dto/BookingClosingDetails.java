@@ -11,8 +11,8 @@ public record BookingClosingDetails(
         @NotNull(message = "Receptionist employee id cannot be null")
         Long receptionistEmployeeId,
 
-        @NotNull(message = "Car state cannot be null")
-        CarState carState
+        @NotNull(message = "Car phase cannot be null")
+        CarPhase carPhase
 ) {
 
     @Override
@@ -20,7 +20,7 @@ public record BookingClosingDetails(
         return "BookingClosingDetails{" + "\n" +
                 "bookingId=" + bookingId + "\n" +
                 "receptionistEmployeeId=" + receptionistEmployeeId + "\n" +
-                "carState=" + carState + "\n" +
+                "carPhase=" + carPhase + "\n" +
                 "}";
     }
 

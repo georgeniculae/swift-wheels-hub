@@ -3,7 +3,7 @@ package com.swiftwheelshub.expense.service;
 import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.CarState;
+import com.swiftwheelshub.dto.CarPhase;
 import com.swiftwheelshub.dto.InvoiceRequest;
 import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.entity.Invoice;
@@ -201,11 +201,11 @@ public class InvoiceService implements RetryListener {
     }
 
     private BookingClosingDetails getBookingClosingDetails(InvoiceRequest invoiceRequest, Long receptionistEmployeeId) {
-        return new BookingClosingDetails(
-                invoiceRequest.bookingId(),
-                receptionistEmployeeId,
-                getCarStatus(invoiceRequest.isVehicleDamaged())
-        );
+        return BookingClosingDetails.builder()
+                .bookingId(invoiceRequest.bookingId())
+                .receptionistEmployeeId(receptionistEmployeeId)
+                .carPhase(getCarPhase(invoiceRequest.isVehicleDamaged()))
+                .build();
     }
 
     private BigDecimal getTotalAmount(InvoiceRequest invoiceRequest, BookingResponse bookingResponse) {
@@ -234,8 +234,8 @@ public class InvoiceService implements RetryListener {
                 .add(BigDecimal.valueOf(getDaysPeriod(bookingDateTo, carReturnDate)).multiply(BigDecimal.valueOf(2)).multiply(carAmount));
     }
 
-    private CarState getCarStatus(boolean isVehicleDamaged) {
-        return Boolean.TRUE.equals(isVehicleDamaged) ? CarState.BROKEN : CarState.AVAILABLE;
+    private CarPhase getCarPhase(boolean isVehicleDamaged) {
+        return Boolean.TRUE.equals(isVehicleDamaged) ? CarPhase.BROKEN : CarPhase.AVAILABLE;
     }
 
 }
