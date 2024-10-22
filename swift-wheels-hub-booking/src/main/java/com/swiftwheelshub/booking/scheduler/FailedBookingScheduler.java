@@ -44,8 +44,8 @@ public class FailedBookingScheduler {
     @Scheduled(fixedDelay = 5000)
     public void processFailedBookings() {
         try {
-            List<Callable<StatusUpdateResponse>> failedBookingsCallables = getFailedBookingsCallables();
-            List<Future<StatusUpdateResponse>> bookingFutures = executorService.invokeAll(failedBookingsCallables);
+            List<Callable<StatusUpdateResponse>> callables = getCallables();
+            List<Future<StatusUpdateResponse>> bookingFutures = executorService.invokeAll(callables);
 
             waitToComplete(bookingFutures);
         } catch (Exception e) {
@@ -55,14 +55,14 @@ public class FailedBookingScheduler {
         }
     }
 
-    private List<Callable<StatusUpdateResponse>> getFailedBookingsCallables() {
+    private List<Callable<StatusUpdateResponse>> getCallables() {
         return bookingRepository.findAllFailedBookings()
                 .stream()
-                .map(this::getFailedbookingCallable)
+                .map(this::getCallable)
                 .toList();
     }
 
-    private Callable<StatusUpdateResponse> getFailedbookingCallable(Booking failedBooking) {
+    private Callable<StatusUpdateResponse> getCallable(Booking failedBooking) {
         return () -> {
             StatusUpdateResponse statusUpdateResponse = updateCar(failedBooking);
 
