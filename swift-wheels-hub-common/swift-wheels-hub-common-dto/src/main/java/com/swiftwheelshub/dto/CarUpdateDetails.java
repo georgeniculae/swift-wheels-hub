@@ -8,7 +8,7 @@ public record CarUpdateDetails(
         @NotNull(message = "Car id cannot be null")
         Long carId,
 
-        @NotNull(message = "Car state cannot be null")
+        @NotNull(message = "Car phase cannot be null")
         CarPhase carPhase,
 
         @NotNull(message = "Receptionist employee id cannot be null")
