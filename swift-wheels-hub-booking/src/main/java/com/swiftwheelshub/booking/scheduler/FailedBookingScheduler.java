@@ -3,7 +3,6 @@ package com.swiftwheelshub.booking.scheduler;
 import com.swiftwheelshub.booking.repository.BookingRepository;
 import com.swiftwheelshub.booking.service.CarService;
 import com.swiftwheelshub.dto.AuthenticationInfo;
-import com.swiftwheelshub.dto.CarPhase;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.StatusUpdateResponse;
@@ -140,14 +139,14 @@ public class FailedBookingScheduler {
         return CarUpdateDetails.builder()
                 .carId(booking.getActualCarId())
                 .receptionistEmployeeId(booking.getReturnBranchId())
-                .carPhase(getCarPhase(booking.getCarStage()))
+                .carState(getCarPhase(booking.getCarStage()))
                 .build();
     }
 
-    private CarPhase getCarPhase(CarStage carStage) {
+    private CarState getCarPhase(CarStage carStage) {
         return switch (carStage) {
-            case AVAILABLE -> CarPhase.AVAILABLE;
-            case BROKEN -> CarPhase.BROKEN;
+            case AVAILABLE -> CarState.AVAILABLE;
+            case BROKEN -> CarState.BROKEN;
         };
     }
 

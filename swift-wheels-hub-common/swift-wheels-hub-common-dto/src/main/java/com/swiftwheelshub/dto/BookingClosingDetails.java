@@ -20,7 +20,7 @@ public record BookingClosingDetails(
         return "BookingClosingDetails{" + "\n" +
                 "bookingId=" + bookingId + "\n" +
                 "receptionistEmployeeId=" + receptionistEmployeeId + "\n" +
-                "carPhase=" + carPhase + "\n" +
+                "carState=" + carPhase + "\n" +
                 "}";
     }
 

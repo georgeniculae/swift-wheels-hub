@@ -2,7 +2,6 @@ package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.CarService;
 import com.swiftwheelshub.agency.util.TestUtil;
-import com.swiftwheelshub.dto.CarPhase;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
@@ -528,7 +527,7 @@ class CarControllerTest {
         CarUpdateDetails carUpdateDetails = CarUpdateDetails.builder()
                 .carId(1L)
                 .receptionistEmployeeId(1L)
-                .carPhase(CarPhase.AVAILABLE)
+                .carState(CarState.AVAILABLE)
                 .build();
 
         String content = TestUtil.writeValueAsString(carUpdateDetails);
@@ -553,7 +552,7 @@ class CarControllerTest {
 
         CarUpdateDetails carUpdateDetails = CarUpdateDetails.builder()
                 .carId(1L)
-                .carPhase(CarPhase.AVAILABLE)
+                .carState(CarState.AVAILABLE)
                 .build();
 
         String content = TestUtil.writeValueAsString(carUpdateDetails);

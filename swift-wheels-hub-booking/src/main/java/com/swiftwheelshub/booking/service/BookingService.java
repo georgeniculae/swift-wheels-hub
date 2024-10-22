@@ -154,8 +154,7 @@ public class BookingService implements RetryListener {
             existingBooking.setCarStage(getCarStage(bookingClosingDetails.carPhase()));
             Booking savedIntermediateBooking = bookingRepository.save(existingBooking);
 
-            StatusUpdateResponse statusUpdateResponse =
-                    changeCarStatusWhenIsReturned(authenticationInfo, savedIntermediateBooking, bookingClosingDetails);
+            StatusUpdateResponse statusUpdateResponse = changeCarStatusWhenIsReturned(authenticationInfo, savedIntermediateBooking);
 
             BookingProcessStatus bookingProcessStatus = getClosedBookingProcessStatus(statusUpdateResponse);
             savedIntermediateBooking.setBookingProcessStatus(bookingProcessStatus);
@@ -325,15 +324,21 @@ public class BookingService implements RetryListener {
     }
 
     private StatusUpdateResponse changeCarStatusWhenIsReturned(AuthenticationInfo authenticationInfo,
-                                                               Booking savedIntermediateBooking,
-                                                               BookingClosingDetails bookingClosingDetails) {
+                                                               Booking savedIntermediateBooking) {
         CarUpdateDetails carUpdateDetails = new CarUpdateDetails(
                 savedIntermediateBooking.getActualCarId(),
-                bookingClosingDetails.carPhase(),
-                bookingClosingDetails.receptionistEmployeeId()
+                getCarPhase(savedIntermediateBooking.getCarStage()),
+                savedIntermediateBooking.getReturnBranchId()
         );
 
         return carStatusUpdaterService.updateCarWhenBookingIsFinished(authenticationInfo, carUpdateDetails);
+    }
+
+    private CarState getCarPhase(CarStage carStage) {
+        return switch (carStage) {
+            case AVAILABLE -> CarState.AVAILABLE;
+            case BROKEN -> CarState.BROKEN;
+        };
     }
 
 }
