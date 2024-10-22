@@ -47,6 +47,7 @@ public class BookingService implements RetryListener {
     private final CarService carService;
     private final EmployeeService employeeService;
     private final CustomerService customerService;
+    private final CarStatusUpdaterService carStatusUpdaterService;
     private final BookingMapper bookingMapper;
 
     @Transactional(readOnly = true)
@@ -112,7 +113,8 @@ public class BookingService implements RetryListener {
 
             Booking savedCreatedBooking = bookingRepository.save(createdBooking);
 
-            StatusUpdateResponse statusUpdateResponse = changeCarStatus(authenticationInfo, carResponse);
+            StatusUpdateResponse statusUpdateResponse =
+                    carStatusUpdaterService.changeCarStatus(authenticationInfo, carResponse.id(), CarState.NOT_AVAILABLE);
             BookingProcessStatus bookingProcessStatus = getCreatedBookingProcessStatus(statusUpdateResponse);
             savedCreatedBooking.setBookingProcessStatus(bookingProcessStatus);
 
@@ -222,14 +224,6 @@ public class BookingService implements RetryListener {
         return newBooking;
     }
 
-    private StatusUpdateResponse changeCarStatus(AuthenticationInfo authenticationInfo, CarResponse carResponse) {
-        try {
-            return carService.changeCarStatus(authenticationInfo, carResponse.id(), CarState.NOT_AVAILABLE);
-        } catch (Exception e) {
-            return new StatusUpdateResponse(false);
-        }
-    }
-
     private BookingProcessStatus getCreatedBookingProcessStatus(StatusUpdateResponse statusUpdateResponse) {
         if (statusUpdateResponse.isUpdateSuccessful()) {
             return BookingProcessStatus.SAVED_CREATED_BOOKING;
@@ -320,7 +314,7 @@ public class BookingService implements RetryListener {
                 new UpdateCarRequest(newCarId, CarState.NOT_AVAILABLE)
         );
 
-        return carService.updateCarsStatuses(authenticationInfo, carsForUpdate);
+        return carStatusUpdaterService.updateCarsStatuses(authenticationInfo, carsForUpdate);
     }
 
     private CarStage getCarStage(CarPhase carPhase) {
@@ -339,7 +333,7 @@ public class BookingService implements RetryListener {
                 bookingClosingDetails.receptionistEmployeeId()
         );
 
-        return carService.updateCarWhenBookingIsFinished(authenticationInfo, carUpdateDetails);
+        return carStatusUpdaterService.updateCarWhenBookingIsFinished(authenticationInfo, carUpdateDetails);
     }
 
 }

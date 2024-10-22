@@ -88,17 +88,17 @@ public class CarService {
             backoff = @Backoff(value = 5000L),
             listeners = "bookingService"
     )
-    public StatusUpdateResponse updateCarWhenBookingIsFinished(AuthenticationInfo authenticationInfo,
-                                                               CarUpdateDetails carUpdateDetails) {
-        String finalUrl = url + SEPARATOR + carUpdateDetails.carId() + SEPARATOR + "update-after-return";
+    public StatusUpdateResponse updateCarsStatuses(AuthenticationInfo authenticationInfo,
+                                                   List<UpdateCarRequest> carsForUpdate) {
+        String finalUrl = url + SEPARATOR + "update-statuses";
 
         return restClient.put()
                 .uri(finalUrl)
                 .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
-                .body(carUpdateDetails)
+                .body(carsForUpdate)
                 .exchange((_, clientResponse) -> {
                     if (clientResponse.getStatusCode().isError()) {
-                        log.warn("Error occurred while updating car status: {}", clientResponse.getStatusText());
+                        log.warn("Error occurred while updating cars statuses: {}", clientResponse.getStatusText());
 
                         return new StatusUpdateResponse(false);
                     }
@@ -113,16 +113,17 @@ public class CarService {
             backoff = @Backoff(value = 5000L),
             listeners = "bookingService"
     )
-    public StatusUpdateResponse updateCarsStatuses(AuthenticationInfo authenticationInfo, List<UpdateCarRequest> carsForUpdate) {
-        String finalUrl = url + SEPARATOR + "update-statuses";
+    public StatusUpdateResponse updateCarWhenBookingIsFinished(AuthenticationInfo authenticationInfo,
+                                                               CarUpdateDetails carUpdateDetails) {
+        String finalUrl = url + SEPARATOR + carUpdateDetails.carId() + SEPARATOR + "update-after-return";
 
         return restClient.put()
                 .uri(finalUrl)
                 .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
-                .body(carsForUpdate)
+                .body(carUpdateDetails)
                 .exchange((_, clientResponse) -> {
                     if (clientResponse.getStatusCode().isError()) {
-                        log.warn("Error occurred while updating cars statuses: {}", clientResponse.getStatusText());
+                        log.warn("Error occurred while updating car status: {}", clientResponse.getStatusText());
 
                         return new StatusUpdateResponse(false);
                     }

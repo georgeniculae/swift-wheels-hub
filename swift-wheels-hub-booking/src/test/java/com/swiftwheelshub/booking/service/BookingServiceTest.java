@@ -70,6 +70,9 @@ class BookingServiceTest {
     @Mock
     private CustomerService customerService;
 
+    @Mock
+    private CarStatusUpdaterService carStatusUpdaterService;
+
     @Spy
     private BookingMapper bookingMapper = new BookingMapperImpl();
 
@@ -113,7 +116,7 @@ class BookingServiceTest {
         when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(carResponse);
         when(customerService.getUserByUsername(any(AuthenticationInfo.class))).thenReturn(userInfo);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
-        when(carService.changeCarStatus(any(AuthenticationInfo.class), anyLong(), any(CarState.class)))
+        when(carStatusUpdaterService.changeCarStatus(any(AuthenticationInfo.class), anyLong(), any(CarState.class)))
                 .thenReturn(statusUpdateResponse);
 
         BookingResponse actualBookingResponse =
@@ -153,7 +156,7 @@ class BookingServiceTest {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
         when(employeeService.findEmployeeById(any(AuthenticationInfo.class), anyLong())).thenReturn(employeeRequest);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
-        when(carService.updateCarWhenBookingIsFinished(any(AuthenticationInfo.class), any(CarUpdateDetails.class)))
+        when(carStatusUpdaterService.updateCarWhenBookingIsFinished(any(AuthenticationInfo.class), any(CarUpdateDetails.class)))
                 .thenReturn(statusUpdateResponse);
 
         assertDoesNotThrow(() -> bookingService.closeBooking(bookingClosingDetails));
@@ -205,7 +208,8 @@ class BookingServiceTest {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
         when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(carResponse);
         when(bookingRepository.save(any(Booking.class))).thenReturn(updatedBooking);
-        when(carService.updateCarsStatuses(any(AuthenticationInfo.class), anyList())).thenReturn(statusUpdateResponse);
+        when(carStatusUpdaterService.updateCarsStatuses(any(AuthenticationInfo.class), anyList()))
+                .thenReturn(statusUpdateResponse);
 
         BookingResponse updatedBookingResponse =
                 assertDoesNotThrow(() -> bookingService.updateBooking(1L, bookingRequest));
