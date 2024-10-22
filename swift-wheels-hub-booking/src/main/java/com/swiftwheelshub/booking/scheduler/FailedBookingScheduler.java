@@ -63,7 +63,7 @@ public class FailedBookingScheduler {
 
     private Callable<StatusUpdateResponse> getCallable(Booking failedBooking) {
         return () -> {
-            StatusUpdateResponse statusUpdateResponse = updateCar(failedBooking);
+            StatusUpdateResponse statusUpdateResponse = processCarServiceCall(failedBooking);
 
             if (statusUpdateResponse.isUpdateSuccessful()) {
                 BookingProcessStatus bookingProcessStatus = getBookingProcessStatus(failedBooking.getBookingProcessStatus());
@@ -101,7 +101,7 @@ public class FailedBookingScheduler {
         }
     }
 
-    private StatusUpdateResponse updateCar(Booking failedBooking) {
+    private StatusUpdateResponse processCarServiceCall(Booking failedBooking) {
         BookingStatus status = failedBooking.getStatus();
         Long actualCarId = failedBooking.getActualCarId();
         Long previousCarId = failedBooking.getPreviousCarId();
