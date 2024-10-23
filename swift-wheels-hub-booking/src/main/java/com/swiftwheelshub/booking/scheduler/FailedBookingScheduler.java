@@ -9,12 +9,10 @@ import com.swiftwheelshub.dto.StatusUpdateResponse;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.entity.BookingProcessStatus;
-import com.swiftwheelshub.entity.BookingStatus;
 import com.swiftwheelshub.entity.CarStage;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.lib.exceptionhandling.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -102,19 +100,19 @@ public class FailedBookingScheduler {
     }
 
     private StatusUpdateResponse processCarServiceCall(Booking failedBooking) {
-        BookingStatus status = failedBooking.getStatus();
+        BookingProcessStatus bookingProcessStatus = failedBooking.getBookingProcessStatus();
         Long actualCarId = failedBooking.getActualCarId();
         Long previousCarId = failedBooking.getPreviousCarId();
 
-        if (ObjectUtils.isNotEmpty(previousCarId) && BookingStatus.IN_PROGRESS == status) {
+        if (BookingProcessStatus.FAILED_CREATED_BOOKING == bookingProcessStatus) {
+            return carService.changeCarStatus(getAuthenticationInfo(), actualCarId, CarState.NOT_AVAILABLE);
+        }
+
+        if (BookingProcessStatus.FAILED_UPDATED_BOOKING == bookingProcessStatus) {
             return carService.updateCarsStatuses(getAuthenticationInfo(), getCarsToUpdate(previousCarId, actualCarId));
         }
 
-        if (BookingStatus.CLOSED == status) {
-            return carService.updateCarWhenBookingIsFinished(getAuthenticationInfo(), getCarUpdateDetails(failedBooking));
-        }
-
-        return carService.changeCarStatus(getAuthenticationInfo(), actualCarId, CarState.NOT_AVAILABLE);
+        return carService.updateCarWhenBookingIsFinished(getAuthenticationInfo(), getCarUpdateDetails(failedBooking));
     }
 
     private AuthenticationInfo getAuthenticationInfo() {
