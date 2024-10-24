@@ -57,7 +57,7 @@ public class CarService {
             retryFor = Exception.class,
             maxAttempts = 5,
             backoff = @Backoff(value = 5000L),
-            listeners = "bookingService"
+            listeners = "carStatusUpdaterService"
     )
     public StatusUpdateResponse changeCarStatus(AuthenticationInfo authenticationInfo, Long carId, CarState carState) {
         String finalUrl = url + SEPARATOR + carId + SEPARATOR + "change-status";
@@ -86,7 +86,7 @@ public class CarService {
             retryFor = Exception.class,
             maxAttempts = 5,
             backoff = @Backoff(value = 5000L),
-            listeners = "bookingService"
+            listeners = "carStatusUpdaterService"
     )
     public StatusUpdateResponse updateCarsStatuses(AuthenticationInfo authenticationInfo,
                                                    List<UpdateCarRequest> carsForUpdate) {
@@ -111,7 +111,7 @@ public class CarService {
             retryFor = Exception.class,
             maxAttempts = 5,
             backoff = @Backoff(value = 5000L),
-            listeners = "bookingService"
+            listeners = "carStatusUpdaterService"
     )
     public StatusUpdateResponse updateCarWhenBookingIsFinished(AuthenticationInfo authenticationInfo,
                                                                CarUpdateDetails carUpdateDetails) {

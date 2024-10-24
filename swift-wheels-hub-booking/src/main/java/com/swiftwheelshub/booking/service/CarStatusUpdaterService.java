@@ -7,6 +7,7 @@ import com.swiftwheelshub.dto.StatusUpdateResponse;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.retry.RetryListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CarStatusUpdaterService {
+public class CarStatusUpdaterService implements RetryListener {
 
     private final CarService carService;
 
