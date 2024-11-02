@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -56,6 +57,11 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
             @QueryHint(name = HibernateHints.HINT_READ_ONLY, value = "true")
     })
     Stream<Invoice> findAllActive();
+
+    @Query("""
+            From Invoice i
+            where cast(i.invoiceProcessStatus as string) like 'FAILED%'""")
+    List<Invoice> findAllFailedInvoices();
 
     @Query("""
             Select count(invoice)
