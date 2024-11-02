@@ -12,6 +12,11 @@ spring:
   threads:
     virtual:
       enabled: true
+  datasource:
+    url: jdbc:p6spy:postgresql://localhost:5432/swift_wheels_hub_email_notification
+    username: ${POSTGRESQL_USERNAME}
+    password: ${POSTGRESQL_PASSWORD}
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
   cloud:
     loadbalancer:
       enabled: true
@@ -64,8 +69,6 @@ spring:
       missing-topics-fatal: false
   sendgrid:
     api-key: ${SENDGRID_API_KEY}
-  mvc:
-    throw-exception-if-no-handler-found: true
 
 management:
   server:
