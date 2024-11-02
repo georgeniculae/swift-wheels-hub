@@ -1,0 +1,3 @@
+databaseChangeLog:
+  - include:
+      file: db/a/customer-info-a.sql
