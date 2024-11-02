@@ -4,12 +4,10 @@ import com.swiftwheelshub.booking.repository.BookingRepository;
 import com.swiftwheelshub.booking.service.CarService;
 import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.CarState;
-import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.StatusUpdateResponse;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.entity.BookingProcessStatus;
-import com.swiftwheelshub.entity.CarStage;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.lib.exceptionhandling.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
@@ -108,11 +106,7 @@ public class FailedBookingScheduler {
             return carService.changeCarStatus(getAuthenticationInfo(), actualCarId, CarState.NOT_AVAILABLE);
         }
 
-        if (BookingProcessStatus.FAILED_UPDATED_BOOKING == bookingProcessStatus) {
-            return carService.updateCarsStatuses(getAuthenticationInfo(), getCarsToUpdate(previousCarId, actualCarId));
-        }
-
-        return carService.updateCarWhenBookingIsFinished(getAuthenticationInfo(), getCarUpdateDetails(failedBooking));
+        return carService.updateCarsStatuses(getAuthenticationInfo(), getCarsToUpdate(previousCarId, actualCarId));
     }
 
     private AuthenticationInfo getAuthenticationInfo() {
@@ -131,21 +125,6 @@ public class FailedBookingScheduler {
                 new UpdateCarRequest(previousCarId, CarState.AVAILABLE),
                 new UpdateCarRequest(newCarId, CarState.NOT_AVAILABLE)
         );
-    }
-
-    private CarUpdateDetails getCarUpdateDetails(Booking booking) {
-        return CarUpdateDetails.builder()
-                .carId(booking.getActualCarId())
-                .receptionistEmployeeId(booking.getReturnBranchId())
-                .carState(getCarPhase(booking.getCarStage()))
-                .build();
-    }
-
-    private CarState getCarPhase(CarStage carStage) {
-        return switch (carStage) {
-            case AVAILABLE -> CarState.AVAILABLE;
-            case BROKEN -> CarState.BROKEN;
-        };
     }
 
     private BookingProcessStatus getBookingProcessStatus(BookingProcessStatus bookingProcessStatus) {

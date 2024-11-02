@@ -6,18 +6,14 @@ import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.CarPhase;
+import com.swiftwheelshub.dto.BookingUpdateResponse;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
-import com.swiftwheelshub.dto.CarUpdateDetails;
-import com.swiftwheelshub.dto.EmployeeResponse;
 import com.swiftwheelshub.dto.StatusUpdateResponse;
 import com.swiftwheelshub.dto.UpdateCarRequest;
-import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.entity.BookingProcessStatus;
 import com.swiftwheelshub.entity.BookingStatus;
-import com.swiftwheelshub.entity.CarStage;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
@@ -26,6 +22,7 @@ import com.swiftwheelshub.lib.util.AuthenticationUtil;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.retry.RetryListener;
 import org.springframework.stereotype.Service;
@@ -43,11 +40,11 @@ import java.util.stream.Stream;
 @Slf4j
 public class BookingService implements RetryListener {
 
+    private static final String LOCKED = "Locked";
     private final BookingRepository bookingRepository;
     private final CarService carService;
-    private final EmployeeService employeeService;
-    private final CustomerService customerService;
     private final CarStatusUpdaterService carStatusUpdaterService;
+    private final RedisTemplate<String, String> redisTemplate;
     private final BookingMapper bookingMapper;
 
     @Transactional(readOnly = true)
@@ -104,12 +101,13 @@ public class BookingService implements RetryListener {
     }
 
     public BookingResponse saveBooking(BookingRequest newBookingRequest) {
-        validateBookingDates(newBookingRequest);
-        AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
-
         try {
+            validateBookingDates(newBookingRequest);
+            AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
+            lockCar(newBookingRequest.carId().toString());
+
             CarResponse carResponse = carService.findAvailableCarById(authenticationInfo, newBookingRequest.carId());
-            Booking createdBooking = createNewBooking(authenticationInfo, newBookingRequest, carResponse);
+            Booking createdBooking = createNewBooking(authenticationInfo.username(), newBookingRequest, carResponse);
 
             Booking savedCreatedBooking = bookingRepository.save(createdBooking);
 
@@ -117,6 +115,7 @@ public class BookingService implements RetryListener {
                     carStatusUpdaterService.changeCarStatus(authenticationInfo, carResponse.id(), CarState.NOT_AVAILABLE);
             BookingProcessStatus bookingProcessStatus = getCreatedBookingProcessStatus(statusUpdateResponse);
             savedCreatedBooking.setBookingProcessStatus(bookingProcessStatus);
+            unlockCar(savedCreatedBooking.getActualCarId().toString());
 
             Booking savedBooking = bookingRepository.save(savedCreatedBooking);
 
@@ -142,30 +141,19 @@ public class BookingService implements RetryListener {
         }
     }
 
-    public BookingResponse closeBooking(BookingClosingDetails bookingClosingDetails) {
+    public BookingUpdateResponse closeBooking(BookingClosingDetails bookingClosingDetails) {
         try {
-            AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
-            EmployeeResponse employeeResponse = employeeService.findEmployeeById(authenticationInfo, bookingClosingDetails.receptionistEmployeeId());
-
             Booking existingBooking = findEntityById(bookingClosingDetails.bookingId());
             existingBooking.setStatus(BookingStatus.CLOSED);
-            existingBooking.setReturnBranchId(employeeResponse.workingBranchId());
-            existingBooking.setBookingProcessStatus(BookingProcessStatus.IN_CLOSING);
-            existingBooking.setCarStage(getCarStage(bookingClosingDetails.carPhase()));
-            Booking savedIntermediateBooking = bookingRepository.save(existingBooking);
+            existingBooking.setReturnBranchId(bookingClosingDetails.returnBranchId());
+            existingBooking.setBookingProcessStatus(BookingProcessStatus.SAVED_CLOSED_BOOKING);
+            bookingRepository.save(existingBooking);
 
-            StatusUpdateResponse statusUpdateResponse = changeCarStatusWhenIsReturned(authenticationInfo, savedIntermediateBooking);
-
-            BookingProcessStatus bookingProcessStatus = getClosedBookingProcessStatus(statusUpdateResponse);
-            savedIntermediateBooking.setBookingProcessStatus(bookingProcessStatus);
-
-            Booking savedClosedBooking = bookingRepository.save(savedIntermediateBooking);
-
-            return bookingMapper.mapEntityToDto(savedClosedBooking);
+            return new BookingUpdateResponse(true);
         } catch (Exception e) {
             log.error("Error occurred while closing booking: {}", e.getMessage());
 
-            throw ExceptionUtil.handleException(e);
+            return new BookingUpdateResponse(false);
         }
     }
 
@@ -202,16 +190,13 @@ public class BookingService implements RetryListener {
                 .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Booking with id " + id + " does not exist"));
     }
 
-    private Booking createNewBooking(AuthenticationInfo authenticationInfo,
+    private Booking createNewBooking(String username,
                                      BookingRequest newBookingRequest,
                                      CarResponse carResponse) {
-        UserInfo userInfo = customerService.getUserByUsername(authenticationInfo);
-
         Booking newBooking = bookingMapper.mapDtoToEntity(newBookingRequest);
         BigDecimal amount = carResponse.amount();
 
-        newBooking.setCustomerUsername(userInfo.username());
-        newBooking.setCustomerEmail(userInfo.email());
+        newBooking.setCustomerUsername(username);
         newBooking.setActualCarId(carResponse.id());
         newBooking.setDateOfBooking(LocalDate.now());
         newBooking.setRentalBranchId(carResponse.actualBranchId());
@@ -237,14 +222,6 @@ public class BookingService implements RetryListener {
         }
 
         return BookingProcessStatus.FAILED_UPDATED_BOOKING;
-    }
-
-    private BookingProcessStatus getClosedBookingProcessStatus(StatusUpdateResponse statusUpdateResponse) {
-        if (statusUpdateResponse.isUpdateSuccessful()) {
-            return BookingProcessStatus.SAVED_CLOSED_BOOKING;
-        }
-
-        return BookingProcessStatus.FAILED_CLOSED_BOOKING;
     }
 
     private Booking processUpdatedBooking(Long id, BookingRequest updatedBookingRequest) {
@@ -273,6 +250,7 @@ public class BookingService implements RetryListener {
             return Optional.empty();
         }
 
+        lockCar(updatedBookingRequest.carId().toString());
         AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
         CarResponse newCarResponse = carService.findAvailableCarById(authenticationInfo, newCarId);
 
@@ -288,8 +266,21 @@ public class BookingService implements RetryListener {
 
         BookingProcessStatus bookingProcessStatus = getUpdatedBookingProcessStatus(statusUpdateResponse);
         savedIntermediateBooking.setBookingProcessStatus(bookingProcessStatus);
+        unlockCar(savedIntermediateBooking.getActualCarId().toString());
 
         return Optional.of(savedIntermediateBooking);
+    }
+
+    private void lockCar(String carId) {
+        Boolean isLocked = redisTemplate.opsForValue().setIfAbsent(carId, LOCKED);
+
+        if (Boolean.TRUE.equals(isLocked)) {
+            throw new SwiftWheelsHubResponseStatusException(HttpStatus.BAD_REQUEST, "Car is unavailable");
+        }
+    }
+
+    private void unlockCar(String carId) {
+        redisTemplate.delete(carId);
     }
 
     private BigDecimal getAmount(BookingRequest bookingRequest, BigDecimal amount) {
@@ -314,31 +305,6 @@ public class BookingService implements RetryListener {
         );
 
         return carStatusUpdaterService.updateCarsStatuses(authenticationInfo, carsForUpdate);
-    }
-
-    private CarStage getCarStage(CarPhase carPhase) {
-        return switch (carPhase) {
-            case AVAILABLE -> CarStage.AVAILABLE;
-            case BROKEN -> CarStage.BROKEN;
-        };
-    }
-
-    private StatusUpdateResponse changeCarStatusWhenIsReturned(AuthenticationInfo authenticationInfo,
-                                                               Booking savedIntermediateBooking) {
-        CarUpdateDetails carUpdateDetails = new CarUpdateDetails(
-                savedIntermediateBooking.getActualCarId(),
-                getCarPhase(savedIntermediateBooking.getCarStage()),
-                savedIntermediateBooking.getReturnBranchId()
-        );
-
-        return carStatusUpdaterService.updateCarWhenBookingIsFinished(authenticationInfo, carUpdateDetails);
-    }
-
-    private CarState getCarPhase(CarStage carStage) {
-        return switch (carStage) {
-            case AVAILABLE -> CarState.AVAILABLE;
-            case BROKEN -> CarState.BROKEN;
-        };
     }
 
 }

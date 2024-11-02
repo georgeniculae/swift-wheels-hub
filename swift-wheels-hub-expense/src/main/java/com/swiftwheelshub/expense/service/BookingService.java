@@ -3,10 +3,12 @@ package com.swiftwheelshub.expense.service;
 import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingResponse;
+import com.swiftwheelshub.dto.BookingUpdateResponse;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.retry.annotation.Backoff;
@@ -18,6 +20,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BookingService {
 
     private static final String SEPARATOR = "/";
@@ -50,18 +53,22 @@ public class BookingService {
             backoff = @Backoff(value = 5000L),
             listeners = "invoiceService"
     )
-    public void closeBooking(AuthenticationInfo authenticationInfo, BookingClosingDetails bookingClosingDetails) {
+    public BookingUpdateResponse closeBooking(AuthenticationInfo authenticationInfo, BookingClosingDetails bookingClosingDetails) {
         String finalUrl = url + SEPARATOR + "close-booking";
 
-        restClient.post()
+        return restClient.post()
                 .uri(finalUrl)
                 .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
                 .body(bookingClosingDetails)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, (_, clientResponse) -> {
-                    throw new SwiftWheelsHubResponseStatusException(clientResponse.getStatusCode(), clientResponse.getStatusText());
-                })
-                .toBodilessEntity();
+                .exchange((_, clientResponse) -> {
+                    if (clientResponse.getStatusCode().isError()) {
+                        log.warn("Error occurred while closing booking: {}", clientResponse.getStatusText());
+
+                        return new BookingUpdateResponse(false);
+                    }
+
+                    return new BookingUpdateResponse(true);
+                });
     }
 
 }

@@ -28,13 +28,12 @@ public class Invoice extends BaseEntity {
     @NotEmpty(message = "Username cannot be empty")
     private String customerUsername;
 
-    @NotEmpty(message = "Customer email cannot be empty")
-    private String customerEmail;
-
     @NotNull(message = "Car id cannot be null")
     private Long carId;
 
     private Long receptionistEmployeeId;
+
+    private Long returnBranchId;
 
     @NotNull(message = "Booking id cannot be null")
     private Long bookingId;
@@ -52,5 +51,7 @@ public class Invoice extends BaseEntity {
     private BigDecimal totalAmount;
 
     private String comments;
+
+    private InvoiceProcessStatus invoiceProcessStatus;
 
 }

@@ -4,6 +4,7 @@ import com.swiftwheelshub.booking.service.BookingService;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
+import com.swiftwheelshub.dto.BookingUpdateResponse;
 import com.swiftwheelshub.lib.aspect.LogActivity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -88,10 +89,10 @@ public class BookingController {
 
     @PostMapping(path = "/close-booking")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<BookingResponse> closeBooking(@RequestBody @Validated BookingClosingDetails bookingClosingDetails) {
-        BookingResponse updatedBookingResponse = bookingService.closeBooking(bookingClosingDetails);
+    public ResponseEntity<BookingUpdateResponse> closeBooking(@RequestBody @Validated BookingClosingDetails bookingClosingDetails) {
+        BookingUpdateResponse bookingUpdateResponse = bookingService.closeBooking(bookingClosingDetails);
 
-        return ResponseEntity.ok(updatedBookingResponse);
+        return ResponseEntity.ok(bookingUpdateResponse);
     }
 
     @PutMapping(path = "/{id}")

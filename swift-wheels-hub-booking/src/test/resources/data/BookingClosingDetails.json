@@ -1,5 +1,4 @@
 {
   "bookingId": 1,
-  "carPhase": "AVAILABLE",
-  "receptionistEmployeeId": 1
+  "returnBranchId": 1
 }

@@ -3,8 +3,11 @@ package com.swiftwheelshub.expense.service;
 import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingResponse;
+import com.swiftwheelshub.dto.BookingUpdateResponse;
+import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.InvoiceRequest;
 import com.swiftwheelshub.dto.InvoiceResponse;
+import com.swiftwheelshub.dto.StatusUpdateResponse;
 import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
@@ -29,6 +32,9 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -57,6 +63,12 @@ class InvoiceServiceTest {
 
     @Mock
     private InvoiceRepository invoiceRepository;
+
+    @Mock
+    private CarService carService;
+
+    @Spy
+    private ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
     @Spy
     private InvoiceMapper invoiceMapper = new InvoiceMapperImpl();
@@ -169,14 +181,23 @@ class InvoiceServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void closeInvoiceTest_success() {
         Invoice invoice = TestUtil.getResourceAsJson("/data/Invoice.json", Invoice.class);
+
+        Invoice closedInvoice = TestUtil.getResourceAsJson("/data/ClosedInvoice.json", Invoice.class);
 
         InvoiceRequest invoiceRequest =
                 TestUtil.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
 
         BookingResponse bookingResponse =
                 TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+
+        BookingUpdateResponse bookingUpdateResponse =
+                TestUtil.getResourceAsJson("/data/BookingUpdateResponse.json", BookingUpdateResponse.class);
+
+        StatusUpdateResponse statusUpdateResponse =
+                TestUtil.getResourceAsJson("/data/StatusUpdateResponse.json", StatusUpdateResponse.class);
 
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-API-KEY", "apikey");
@@ -193,13 +214,18 @@ class InvoiceServiceTest {
 
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
         when(bookingService.findBookingById(any(AuthenticationInfo.class), anyLong())).thenReturn(bookingResponse);
-        when(revenueService.saveInvoiceAndRevenue(any(Invoice.class))).thenReturn(invoice);
-        doNothing().when(bookingService).closeBooking(any(AuthenticationInfo.class), any(BookingClosingDetails.class));
+        when(invoiceRepository.save(any(Invoice.class))).thenReturn(closedInvoice);
+        when(carService.markCarAsAvailable(any(AuthenticationInfo.class), any(CarUpdateDetails.class)))
+                .thenReturn(statusUpdateResponse);
+        when(bookingService.closeBooking(any(AuthenticationInfo.class), any(BookingClosingDetails.class)))
+                .thenReturn(bookingUpdateResponse);
+        when(revenueService.processClosing(any(Invoice.class))).thenReturn(invoice);
 
         InvoiceResponse invoiceResponse = invoiceService.closeInvoice(1L, invoiceRequest);
         AssertionUtils.assertInvoiceResponse(invoice, invoiceResponse);
 
         verify(invoiceMapper).mapEntityToDto(any(Invoice.class));
+        verify(executorService, times(4)).submit(any(Callable.class));
     }
 
 }

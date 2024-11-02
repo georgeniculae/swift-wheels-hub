@@ -42,7 +42,7 @@ public class RevenueService {
     }
 
     @Transactional
-    public Invoice saveInvoiceAndRevenue(Invoice invoice) {
+    public Invoice processClosing(Invoice invoice) {
         Invoice savedInvoice = invoiceRepository.save(invoice);
         revenueRepository.save(getRevenue(invoice));
 

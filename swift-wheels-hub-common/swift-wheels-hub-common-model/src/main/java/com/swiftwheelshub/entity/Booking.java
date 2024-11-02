@@ -38,9 +38,6 @@ public class Booking extends BaseEntity {
     @NotEmpty(message = "Username cannot be empty")
     private String customerUsername;
 
-    @NotEmpty(message = "Customer email cannot be empty")
-    private String customerEmail;
-
     @NotNull(message = "Car id cannot be null")
     private Long actualCarId;
 
@@ -67,8 +64,5 @@ public class Booking extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private BookingProcessStatus bookingProcessStatus;
-
-    @Enumerated(EnumType.STRING)
-    private CarStage carStage;
 
 }

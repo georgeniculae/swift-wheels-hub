@@ -5,11 +5,9 @@ import com.swiftwheelshub.booking.service.CarService;
 import com.swiftwheelshub.booking.util.TestUtil;
 import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.CarState;
-import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.StatusUpdateResponse;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.entity.BookingProcessStatus;
-import com.swiftwheelshub.entity.CarStage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -79,23 +77,6 @@ class FailedBookingSchedulerTest {
 
         when(bookingRepository.findAllFailedBookings()).thenReturn(List.of(booking));
         when(carService.updateCarsStatuses(any(AuthenticationInfo.class), anyList())).thenReturn(statusUpdateResponse);
-
-        assertDoesNotThrow(() -> failedBookingScheduler.processFailedBookings());
-    }
-
-    @Test
-    void processFailedBookingsTest_success_failedClosedBooking() {
-        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
-        booking.setBookingProcessStatus(BookingProcessStatus.FAILED_CLOSED_BOOKING);
-        booking.setCarStage(CarStage.AVAILABLE);
-
-        StatusUpdateResponse statusUpdateResponse =
-                TestUtil.getResourceAsJson("/data/SuccessfulStatusUpdateResponse.json", StatusUpdateResponse.class);
-
-        when(bookingRepository.findAllFailedBookings()).thenReturn(List.of(booking));
-        when(carService.updateCarWhenBookingIsFinished(any(AuthenticationInfo.class), any(CarUpdateDetails.class)))
-                .thenReturn(statusUpdateResponse);
-        when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
 
         assertDoesNotThrow(() -> failedBookingScheduler.processFailedBookings());
     }

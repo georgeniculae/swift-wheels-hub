@@ -1,4 +1,4 @@
-package com.swiftwheelshub.requestvalidator.config;
+package com.swiftwheelshub.booking.config;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -14,6 +14,9 @@ public record InvoiceRequest(
 
         Long receptionistEmployeeId,
 
+        @NotNull(message = "Return branch id cannot be null")
+        Long returnBranchId,
+
         @NotNull(message = "Booking id cannot be null")
         Long bookingId,
 

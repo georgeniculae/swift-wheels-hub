@@ -21,9 +21,6 @@ public record BookingResponse(
         @NotEmpty(message = "Username cannot be empty")
         String customerUsername,
 
-        @NotEmpty(message = "Customer email cannot be empty")
-        String customerEmail,
-
         @NotNull(message = "Car id cannot be null")
         Long carId,
 
@@ -52,7 +49,6 @@ public record BookingResponse(
                 "dateOfBooking=" + dateOfBooking + "\n" +
                 "status=" + status + "\n" +
                 "customerUsername='" + customerUsername + "\n" +
-                "customerEmail='" + customerEmail + "\n" +
                 "carId=" + carId + "\n" +
                 "dateFrom=" + dateFrom + "\n" +
                 "dateTo=" + dateTo + "\n" +

@@ -3,7 +3,6 @@ package com.swiftwheelshub.booking.service;
 import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
-import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.StatusUpdateResponse;
 import com.swiftwheelshub.dto.UpdateCarRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
@@ -99,31 +98,6 @@ public class CarService {
                 .exchange((_, clientResponse) -> {
                     if (clientResponse.getStatusCode().isError()) {
                         log.warn("Error occurred while updating cars statuses: {}", clientResponse.getStatusText());
-
-                        return new StatusUpdateResponse(false);
-                    }
-
-                    return new StatusUpdateResponse(true);
-                });
-    }
-
-    @Retryable(
-            retryFor = Exception.class,
-            maxAttempts = 5,
-            backoff = @Backoff(value = 5000L),
-            listeners = "carStatusUpdaterService"
-    )
-    public StatusUpdateResponse updateCarWhenBookingIsFinished(AuthenticationInfo authenticationInfo,
-                                                               CarUpdateDetails carUpdateDetails) {
-        String finalUrl = url + SEPARATOR + carUpdateDetails.carId() + SEPARATOR + "update-after-return";
-
-        return restClient.put()
-                .uri(finalUrl)
-                .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
-                .body(carUpdateDetails)
-                .exchange((_, clientResponse) -> {
-                    if (clientResponse.getStatusCode().isError()) {
-                        log.warn("Error occurred while updating car status: {}", clientResponse.getStatusText());
 
                         return new StatusUpdateResponse(false);
                     }

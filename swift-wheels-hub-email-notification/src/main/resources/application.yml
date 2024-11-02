@@ -36,13 +36,18 @@ spring:
         hostname: localhost
         failFast: false
     function:
-      definition: emailNotificationConsumer
+      definition: emailNotificationConsumer;customerInfoConsumer
     stream:
       defaultBinder: kafka
       bindings:
         emailNotificationConsumer-in-0:
           binder: kafka
           destination: ${EMAIL_NOTIFICATION_TOPIC}
+          contentType: application/json
+          group: ${EMAIL_NOTIFICATION_CONSUMER_GROUP}
+        customerInfoConsumer-in-0:
+          binder: kafka
+          destination: ${CUSTOMER_INFO_TOPIC}
           contentType: application/json
           group: ${EMAIL_NOTIFICATION_CONSUMER_GROUP}
       kafka:

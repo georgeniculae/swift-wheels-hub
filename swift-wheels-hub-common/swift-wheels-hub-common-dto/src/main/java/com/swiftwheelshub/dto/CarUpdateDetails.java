@@ -2,6 +2,7 @@ package com.swiftwheelshub.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import org.springframework.lang.NonNull;
 
 @Builder
 public record CarUpdateDetails(
@@ -11,7 +12,7 @@ public record CarUpdateDetails(
         @NotNull(message = "Car phase cannot be null")
         CarState carState,
 
-        @NotNull(message = "Receptionist employee id cannot be null")
+        @NonNull
         Long receptionistEmployeeId
 ) {
 
@@ -20,7 +21,7 @@ public record CarUpdateDetails(
         return "CarUpdateDetails{" + "\n" +
                 "carId=" + carId + "\n" +
                 "carState=" + carState + "\n" +
-                "receptionistEmployeeId=" + receptionistEmployeeId + "\n" +
+                "returnBranchId=" + receptionistEmployeeId + "\n" +
                 "}";
     }
 

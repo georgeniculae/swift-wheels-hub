@@ -3,10 +3,14 @@ package com.swiftwheelshub.expense.service;
 import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.CarPhase;
+import com.swiftwheelshub.dto.BookingUpdateResponse;
+import com.swiftwheelshub.dto.CarState;
+import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.InvoiceRequest;
 import com.swiftwheelshub.dto.InvoiceResponse;
+import com.swiftwheelshub.dto.StatusUpdateResponse;
 import com.swiftwheelshub.entity.Invoice;
+import com.swiftwheelshub.entity.InvoiceProcessStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.expense.mapper.InvoiceMapper;
@@ -25,6 +29,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.stream.Stream;
 
 @Service
@@ -35,7 +42,9 @@ public class InvoiceService implements RetryListener {
     private final InvoiceRepository invoiceRepository;
     private final RevenueService revenueService;
     private final BookingService bookingService;
+    private final CarService carService;
     private final InvoiceMapper invoiceMapper;
+    private final ExecutorService executorService;
 
     @Transactional(readOnly = true)
     public List<InvoiceResponse> findAllInvoices() {
@@ -84,7 +93,6 @@ public class InvoiceService implements RetryListener {
             Invoice invoice = new Invoice();
 
             invoice.setCustomerUsername(newBookingResponse.customerUsername());
-            invoice.setCustomerEmail(newBookingResponse.customerEmail());
             invoice.setCarId(newBookingResponse.carId());
             invoice.setBookingId(newBookingResponse.id());
 
@@ -104,29 +112,77 @@ public class InvoiceService implements RetryListener {
     }
 
     public InvoiceResponse closeInvoice(Long id, InvoiceRequest invoiceRequest) {
-        validateInvoice(invoiceRequest);
-
-        Invoice savedInvoice;
-        BookingClosingDetails bookingClosingDetails;
-
-        AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
-
         try {
-            BookingResponse bookingResponse =
-                    bookingService.findBookingById(authenticationInfo, invoiceRequest.bookingId());
+            validateInvoice(invoiceRequest);
 
-            savedInvoice = updateInvoiceWithBookingDetails(id, bookingResponse, invoiceRequest);
+            AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
+            Invoice existingInvoiceUpdated = updateInvoiceWithBookingDetails(id, authenticationInfo, invoiceRequest);
 
-            bookingClosingDetails = getBookingClosingDetails(invoiceRequest, invoiceRequest.receptionistEmployeeId());
+            boolean successful = updateProcesses(invoiceRequest, authenticationInfo, existingInvoiceUpdated);
+            InvoiceProcessStatus invoiceProcessStatus = getInvoiceProcessStatus(successful);
+
+            existingInvoiceUpdated.setInvoiceProcessStatus(invoiceProcessStatus);
+            Invoice savedInvoice = revenueService.processClosing(existingInvoiceUpdated);
+
+            return invoiceMapper.mapEntityToDto(savedInvoice);
         } catch (Exception e) {
             log.error("Error occurred while closing invoice: {}", e.getMessage());
 
             throw ExceptionUtil.handleException(e);
         }
+    }
 
-        bookingService.closeBooking(authenticationInfo, bookingClosingDetails);
+    private InvoiceProcessStatus getInvoiceProcessStatus(boolean successful) {
+        if (successful) {
+            return InvoiceProcessStatus.SAVED_CLOSED_INVOICE;
+        }
 
-        return invoiceMapper.mapEntityToDto(savedInvoice);
+        return InvoiceProcessStatus.FAILED_CLOSED_INVOICE;
+    }
+
+    private boolean updateProcesses(InvoiceRequest invoiceRequest, AuthenticationInfo authenticationInfo, Invoice savedInvoice) {
+        StatusUpdateResponse statusUpdateResponse = getStatusUpdateResponse(authenticationInfo, savedInvoice);
+        BookingUpdateResponse bookingUpdateResponse = getBookingUpdateResponse(invoiceRequest, authenticationInfo);
+
+        return statusUpdateResponse.isUpdateSuccessful() && bookingUpdateResponse.isSuccessful();
+    }
+
+    private StatusUpdateResponse getStatusUpdateResponse(AuthenticationInfo authenticationInfo, Invoice savedInvoice) {
+        try {
+            return executorService.submit(
+                            () -> carService.markCarAsAvailable(
+                                    authenticationInfo,
+                                    getCarUpdateDetails(savedInvoice)
+                            )
+                    )
+                    .get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw ExceptionUtil.handleException(e);
+        } catch (ExecutionException e) {
+            throw ExceptionUtil.handleException(e);
+        }
+    }
+
+    private BookingUpdateResponse getBookingUpdateResponse(InvoiceRequest invoiceRequest, AuthenticationInfo authenticationInfo) {
+        BookingClosingDetails bookingClosingDetails =
+                getBookingClosingDetails(invoiceRequest, invoiceRequest.receptionistEmployeeId());
+
+        try {
+            Future<BookingUpdateResponse> bookingUpdateResponseFuture = executorService.submit(
+                    () -> bookingService.closeBooking(
+                            authenticationInfo,
+                            bookingClosingDetails
+                    )
+            );
+            return bookingUpdateResponseFuture
+                    .get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw ExceptionUtil.handleException(e);
+        } catch (ExecutionException e) {
+            throw ExceptionUtil.handleException(e);
+        }
     }
 
     public void deleteInvoiceByBookingId(Long bookingId) {
@@ -177,17 +233,16 @@ public class InvoiceService implements RetryListener {
     }
 
     private Invoice updateInvoiceWithBookingDetails(Long id,
-                                                    BookingResponse bookingResponse,
+                                                    AuthenticationInfo authenticationInfo,
                                                     InvoiceRequest invoiceRequest) {
-        Invoice existingInvoice = findEntityById(id);
+        Invoice existingInvoice = getExistingInvoice(id);
+        BookingResponse bookingResponse = getBookingResponse(authenticationInfo, invoiceRequest);
 
         Long receptionistEmployeeId = invoiceRequest.receptionistEmployeeId();
         Long carId = invoiceRequest.carId();
         String customerUsername = bookingResponse.customerUsername();
-        String customerEmail = bookingResponse.customerEmail();
 
         existingInvoice.setCustomerUsername(customerUsername);
-        existingInvoice.setCustomerEmail(customerEmail);
         existingInvoice.setCarReturnDate(invoiceRequest.carReturnDate());
         existingInvoice.setReceptionistEmployeeId(receptionistEmployeeId);
         existingInvoice.setCarId(carId);
@@ -196,15 +251,51 @@ public class InvoiceService implements RetryListener {
         existingInvoice.setAdditionalPayment(getAdditionalPayment(invoiceRequest));
         existingInvoice.setComments(invoiceRequest.comments());
         existingInvoice.setTotalAmount(getTotalAmount(invoiceRequest, bookingResponse));
+        existingInvoice.setInvoiceProcessStatus(InvoiceProcessStatus.IN_CLOSING);
 
-        return revenueService.saveInvoiceAndRevenue(existingInvoice);
+        return invoiceRepository.save(existingInvoice);
     }
 
-    private BookingClosingDetails getBookingClosingDetails(InvoiceRequest invoiceRequest, Long receptionistEmployeeId) {
+    private BookingResponse getBookingResponse(AuthenticationInfo authenticationInfo, InvoiceRequest invoiceRequest) {
+        try {
+            return executorService.submit(
+                            () -> bookingService.findBookingById(
+                                    authenticationInfo,
+                                    invoiceRequest.bookingId()
+                            )
+                    )
+                    .get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw ExceptionUtil.handleException(e);
+        } catch (ExecutionException e) {
+            throw ExceptionUtil.handleException(e);
+        }
+    }
+
+    private Invoice getExistingInvoice(Long id) {
+        try {
+            return executorService.submit(() -> findEntityById(id)).get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw ExceptionUtil.handleException(e);
+        } catch (ExecutionException e) {
+            throw ExceptionUtil.handleException(e);
+        }
+    }
+
+    private CarUpdateDetails getCarUpdateDetails(Invoice invoice) {
+        return CarUpdateDetails.builder()
+                .carId(invoice.getCarId())
+                .receptionistEmployeeId(invoice.getReceptionistEmployeeId())
+                .carState(invoice.getIsVehicleDamaged() ? CarState.BROKEN : CarState.AVAILABLE)
+                .build();
+    }
+
+    private BookingClosingDetails getBookingClosingDetails(InvoiceRequest invoiceRequest, Long returnBranchId) {
         return BookingClosingDetails.builder()
                 .bookingId(invoiceRequest.bookingId())
-                .receptionistEmployeeId(receptionistEmployeeId)
-                .carPhase(getCarPhase(invoiceRequest.isVehicleDamaged()))
+                .returnBranchId(returnBranchId)
                 .build();
     }
 
@@ -228,14 +319,11 @@ public class InvoiceService implements RetryListener {
         return Period.between(bookingDateFrom, bookingDateTo).getDays();
     }
 
-    private BigDecimal getAmountForLateReturn(LocalDate carReturnDate, LocalDate bookingDateTo, LocalDate bookingDateFrom,
+    private BigDecimal getAmountForLateReturn(LocalDate carReturnDate, LocalDate bookingDateTo, LocalDate
+            bookingDateFrom,
                                               BigDecimal carAmount) {
         return carAmount.multiply(BigDecimal.valueOf(getDaysPeriod(bookingDateFrom, bookingDateTo)))
                 .add(BigDecimal.valueOf(getDaysPeriod(bookingDateTo, carReturnDate)).multiply(BigDecimal.valueOf(2)).multiply(carAmount));
-    }
-
-    private CarPhase getCarPhase(boolean isVehicleDamaged) {
-        return Boolean.TRUE.equals(isVehicleDamaged) ? CarPhase.BROKEN : CarPhase.AVAILABLE;
     }
 
 }

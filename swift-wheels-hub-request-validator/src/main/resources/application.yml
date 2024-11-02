@@ -35,11 +35,12 @@ spring:
         healthCheckInterval: 10s
         hostname: localhost
         failFast: false
-  redis:
-    host: ${REDIS_HOST}
-    password: ${REDIS_PASSWORD}
-    port: 6379
-    database: 0
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      password: ${REDIS_PASSWORD}
+      port: 6379
+      database: 0
 
 management:
   server:

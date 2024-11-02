@@ -15,10 +15,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
-class SavedBookingMessageConsumerTest {
+class CreatedBookingMessageConsumerTest {
 
     @InjectMocks
-    private SavedBookingMessageConsumer savedBookingMessageConsumer;
+    private CreatedBookingMessageConsumer createdBookingMessageConsumer;
 
     @Mock
     private InvoiceService invoiceService;
@@ -32,7 +32,7 @@ class SavedBookingMessageConsumerTest {
 
         doNothing().when(invoiceService).saveInvoice(any(BookingResponse.class));
 
-        savedBookingMessageConsumer.savedBookingConsumer().accept(message);
+        createdBookingMessageConsumer.savedBookingConsumer().accept(message);
     }
 
 }

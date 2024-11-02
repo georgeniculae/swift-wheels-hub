@@ -9,12 +9,10 @@ import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
+import com.swiftwheelshub.dto.BookingUpdateResponse;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
-import com.swiftwheelshub.dto.CarUpdateDetails;
-import com.swiftwheelshub.dto.EmployeeResponse;
 import com.swiftwheelshub.dto.StatusUpdateResponse;
-import com.swiftwheelshub.dto.UserInfo;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
@@ -25,6 +23,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -65,13 +66,13 @@ class BookingServiceTest {
     private CarService carService;
 
     @Mock
-    private EmployeeService employeeService;
-
-    @Mock
-    private CustomerService customerService;
-
-    @Mock
     private CarStatusUpdaterService carStatusUpdaterService;
+
+    @Mock
+    private RedisTemplate<String, String> redisTemplate;
+
+    @Mock
+    private ValueOperations<String, String> valueOperations;
 
     @Spy
     private BookingMapper bookingMapper = new BookingMapperImpl();
@@ -100,9 +101,10 @@ class BookingServiceTest {
     @Test
     void saveBookingTest_success() {
         Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
+
         BookingRequest bookingRequest = TestUtil.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
+
         CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
-        UserInfo userInfo = TestUtil.getResourceAsJson("/data/UserInfo.json", UserInfo.class);
 
         StatusUpdateResponse statusUpdateResponse =
                 TestUtil.getResourceAsJson("/data/SuccessfulStatusUpdateResponse.json", StatusUpdateResponse.class);
@@ -113,11 +115,13 @@ class BookingServiceTest {
 
         SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.setIfAbsent(anyString(), anyString())).thenReturn(false);
         when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(carResponse);
-        when(customerService.getUserByUsername(any(AuthenticationInfo.class))).thenReturn(userInfo);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
         when(carStatusUpdaterService.changeCarStatus(any(AuthenticationInfo.class), anyLong(), any(CarState.class)))
                 .thenReturn(statusUpdateResponse);
+        when(redisTemplate.delete(anyString())).thenReturn(true);
 
         BookingResponse actualBookingResponse =
                 assertDoesNotThrow(() -> bookingService.saveBooking(bookingRequest));
@@ -131,14 +135,8 @@ class BookingServiceTest {
     void closeBookingTest_success() {
         Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
 
-        EmployeeResponse employeeRequest =
-                TestUtil.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
-
         BookingClosingDetails bookingClosingDetails =
                 TestUtil.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
-
-        StatusUpdateResponse statusUpdateResponse =
-                TestUtil.getResourceAsJson("/data/SuccessfulStatusUpdateResponse.json", StatusUpdateResponse.class);
 
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-API-KEY", "apikey");
@@ -154,12 +152,10 @@ class BookingServiceTest {
         SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
-        when(employeeService.findEmployeeById(any(AuthenticationInfo.class), anyLong())).thenReturn(employeeRequest);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
-        when(carStatusUpdaterService.updateCarWhenBookingIsFinished(any(AuthenticationInfo.class), any(CarUpdateDetails.class)))
-                .thenReturn(statusUpdateResponse);
 
-        assertDoesNotThrow(() -> bookingService.closeBooking(bookingClosingDetails));
+        BookingUpdateResponse bookingUpdateResponse = bookingService.closeBooking(bookingClosingDetails);
+        assertTrue(bookingUpdateResponse.isSuccessful());
     }
 
     @Test
@@ -205,11 +201,14 @@ class BookingServiceTest {
 
         SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.setIfAbsent(anyString(), anyString())).thenReturn(false);
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
         when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(carResponse);
         when(bookingRepository.save(any(Booking.class))).thenReturn(updatedBooking);
         when(carStatusUpdaterService.updateCarsStatuses(any(AuthenticationInfo.class), anyList()))
                 .thenReturn(statusUpdateResponse);
+        when(redisTemplate.delete(anyString())).thenReturn(true);
 
         BookingResponse updatedBookingResponse =
                 assertDoesNotThrow(() -> bookingService.updateBooking(1L, bookingRequest));

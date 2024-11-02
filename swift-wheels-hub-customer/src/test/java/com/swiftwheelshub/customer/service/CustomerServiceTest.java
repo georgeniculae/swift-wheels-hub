@@ -97,6 +97,9 @@ class CustomerServiceTest {
     @Mock
     private BookingService bookingService;
 
+    @Mock
+    private CustomerInfoProducerService customerInfoProducerService;
+
     @Spy
     private CustomerMapper customerMapper = new CustomerMapperImpl();
 
@@ -223,6 +226,7 @@ class CustomerServiceTest {
             when(userResource.roles()).thenReturn(roleMappingResource);
             when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
             doNothing().when(roleScopeResource).add(anyList());
+            doNothing().when(customerInfoProducerService).sendMessage(any(UserRepresentation.class));
 
             RegistrationResponse registrationResponse = customerService.registerCustomer(registerRequest);
 

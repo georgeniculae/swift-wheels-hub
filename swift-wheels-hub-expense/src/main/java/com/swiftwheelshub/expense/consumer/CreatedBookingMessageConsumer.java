@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 @Configuration
 @RequiredArgsConstructor
-public class SavedBookingMessageConsumer {
+public class CreatedBookingMessageConsumer {
 
     private final InvoiceService invoiceService;
 
