@@ -28,7 +28,7 @@ public class FailedBookingScheduler {
 
     private final BookingRepository bookingRepository;
     private final CarService carService;
-    private final ExecutorService executorService;
+    private final ExecutorService scheduledExecutorService;
 
     @Value("${apikey.secret}")
     private String apikey;
@@ -40,7 +40,7 @@ public class FailedBookingScheduler {
     public void processFailedBookings() {
         try {
             List<Callable<StatusUpdateResponse>> callables = getCallables();
-            List<Future<StatusUpdateResponse>> bookingFutures = executorService.invokeAll(callables);
+            List<Future<StatusUpdateResponse>> bookingFutures = scheduledExecutorService.invokeAll(callables);
 
             waitToComplete(bookingFutures);
         } catch (Exception e) {
@@ -85,14 +85,14 @@ public class FailedBookingScheduler {
     }
 
     private void shutdownExecutor() {
-        executorService.shutdown();
+        scheduledExecutorService.shutdown();
 
         try {
-            if (executorService.awaitTermination(60, TimeUnit.SECONDS)) {
-                executorService.shutdownNow();
+            if (scheduledExecutorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                scheduledExecutorService.shutdownNow();
             }
         } catch (InterruptedException e) {
-            executorService.shutdownNow();
+            scheduledExecutorService.shutdownNow();
             Thread.currentThread().interrupt();
         }
     }
