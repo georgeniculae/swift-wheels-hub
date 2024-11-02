@@ -12,4 +12,8 @@ public class FailedInvoiceScheduler {
 
     private final InvoiceRepository invoiceRepository;
 
+    public void processFailedInvoices() {
+
+    }
+
 }
