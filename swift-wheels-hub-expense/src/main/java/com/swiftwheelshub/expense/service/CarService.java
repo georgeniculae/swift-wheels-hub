@@ -27,7 +27,7 @@ public class CarService {
             retryFor = Exception.class,
             maxAttempts = 5,
             backoff = @Backoff(value = 5000L),
-            listeners = "carStatusUpdaterService"
+            listeners = "invoiceService"
     )
     public StatusUpdateResponse markCarAsAvailable(AuthenticationInfo authenticationInfo,
                                                    CarUpdateDetails carUpdateDetails) {
