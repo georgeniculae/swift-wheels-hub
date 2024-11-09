@@ -128,9 +128,8 @@ public class BookingService implements RetryListener {
     }
 
     public BookingResponse updateBooking(Long id, BookingRequest updatedBookingRequest) {
-        validateBookingDates(updatedBookingRequest);
-
         try {
+            validateBookingDates(updatedBookingRequest);
             Booking savedUpdatedBooking = processUpdatedBooking(id, updatedBookingRequest);
 
             return bookingMapper.mapEntityToDto(savedUpdatedBooking);
