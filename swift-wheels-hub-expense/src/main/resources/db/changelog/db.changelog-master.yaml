@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/invoice-changelog.sql
   - include:
       file: db/changelog/revenue-changelog.sql
+  - include:
+      file: db/changelog/failed-booking-rollback-changelog.sql

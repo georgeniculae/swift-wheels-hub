@@ -194,7 +194,7 @@ class InvoiceServiceTest {
                 TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
         BookingUpdateResponse bookingUpdateResponse =
-                TestUtil.getResourceAsJson("/data/BookingUpdateResponse.json", BookingUpdateResponse.class);
+                TestUtil.getResourceAsJson("/data/SuccessfulBookingUpdateResponse.json", BookingUpdateResponse.class);
 
         StatusUpdateResponse statusUpdateResponse =
                 TestUtil.getResourceAsJson("/data/StatusUpdateResponse.json", StatusUpdateResponse.class);
@@ -225,7 +225,55 @@ class InvoiceServiceTest {
         AssertionUtils.assertInvoiceResponse(invoice, invoiceResponse);
 
         verify(invoiceMapper).mapEntityToDto(any(Invoice.class));
-        verify(executorService, times(4)).submit(any(Callable.class));
+        verify(executorService, times(2)).submit(any(Callable.class));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void closeInvoiceTest_failedBookingCall() {
+        Invoice invoice = TestUtil.getResourceAsJson("/data/Invoice.json", Invoice.class);
+
+        Invoice closedInvoice = TestUtil.getResourceAsJson("/data/ClosedInvoice.json", Invoice.class);
+
+        InvoiceRequest invoiceRequest =
+                TestUtil.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
+
+        BookingResponse bookingResponse =
+                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
+
+        BookingUpdateResponse bookingUpdateResponse =
+                TestUtil.getResourceAsJson("/data/FailedBookingUpdateResponse.json", BookingUpdateResponse.class);
+
+        StatusUpdateResponse statusUpdateResponse =
+                TestUtil.getResourceAsJson("/data/StatusUpdateResponse.json", StatusUpdateResponse.class);
+
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader("X-API-KEY", "apikey");
+        httpServletRequest.addHeader("X-ROLES", "ROLE_user");
+
+        RequestAttributes servletWebRequest = new ServletWebRequest(httpServletRequest);
+        RequestContextHolder.setRequestAttributes(servletWebRequest);
+
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
+
+        when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
+        when(bookingService.findBookingById(any(AuthenticationInfo.class), anyLong())).thenReturn(bookingResponse);
+        when(invoiceRepository.save(any(Invoice.class))).thenReturn(closedInvoice);
+        when(carService.markCarAsAvailable(any(AuthenticationInfo.class), any(CarUpdateDetails.class)))
+                .thenReturn(statusUpdateResponse);
+        when(bookingService.closeBooking(any(AuthenticationInfo.class), any(BookingClosingDetails.class)))
+                .thenReturn(bookingUpdateResponse);
+        when(revenueService.processClosing(any(Invoice.class))).thenReturn(invoice);
+
+        InvoiceResponse invoiceResponse = invoiceService.closeInvoice(1L, invoiceRequest);
+        AssertionUtils.assertInvoiceResponse(invoice, invoiceResponse);
+
+        verify(invoiceMapper).mapEntityToDto(any(Invoice.class));
+        verify(executorService, times(2)).submit(any(Callable.class));
     }
 
 }

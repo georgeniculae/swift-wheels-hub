@@ -71,4 +71,28 @@ public class BookingService {
                 });
     }
 
+    @Retryable(
+            retryFor = Exception.class,
+            maxAttempts = 5,
+            backoff = @Backoff(value = 5000L),
+            listeners = "invoiceService"
+    )
+    public BookingUpdateResponse rollbackBooking(AuthenticationInfo authenticationInfo, Long bookingId) {
+        String finalUrl = url + SEPARATOR + "rollback-booking";
+
+        return restClient.patch()
+                .uri(finalUrl)
+                .headers(HttpRequestUtil.setHttpHeaders(authenticationInfo.apikey(), authenticationInfo.roles()))
+                .body(bookingId)
+                .exchange((_, clientResponse) -> {
+                    if (clientResponse.getStatusCode().isError()) {
+                        log.warn("Error occurred while rolling back booking: {}", clientResponse.getStatusText());
+
+                        return new BookingUpdateResponse(false);
+                    }
+
+                    return new BookingUpdateResponse(true);
+                });
+    }
+
 }

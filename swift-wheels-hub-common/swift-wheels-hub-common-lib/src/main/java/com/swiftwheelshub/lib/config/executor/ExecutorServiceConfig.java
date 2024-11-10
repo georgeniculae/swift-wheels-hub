@@ -16,9 +16,4 @@ public class ExecutorServiceConfig {
         return Executors.newVirtualThreadPerTaskExecutor();
     }
 
-    @Bean
-    public ExecutorService scheduledExecutorService() {
-        return Executors.newVirtualThreadPerTaskExecutor();
-    }
-
 }

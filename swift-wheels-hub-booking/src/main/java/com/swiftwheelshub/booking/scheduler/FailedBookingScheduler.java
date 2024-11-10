@@ -20,7 +20,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class FailedBookingScheduler {
 
     private final BookingRepository bookingRepository;
     private final CarService carService;
-    private final ExecutorService scheduledExecutorService;
+    private final ExecutorService executorService;
 
     @Value("${apikey.secret}")
     private String apikey;
@@ -40,13 +39,11 @@ public class FailedBookingScheduler {
     public void processFailedBookings() {
         try {
             List<Callable<StatusUpdateResponse>> callables = getCallables();
-            List<Future<StatusUpdateResponse>> bookingFutures = scheduledExecutorService.invokeAll(callables);
+            List<Future<StatusUpdateResponse>> bookingFutures = executorService.invokeAll(callables);
 
             waitToComplete(bookingFutures);
         } catch (Exception e) {
             throw ExceptionUtil.handleException(e);
-        } finally {
-            shutdownExecutor();
         }
     }
 
@@ -81,19 +78,6 @@ public class FailedBookingScheduler {
             } catch (ExecutionException e) {
                 throw new SwiftWheelsHubException(e.getMessage());
             }
-        }
-    }
-
-    private void shutdownExecutor() {
-        scheduledExecutorService.shutdown();
-
-        try {
-            if (scheduledExecutorService.awaitTermination(60, TimeUnit.SECONDS)) {
-                scheduledExecutorService.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            scheduledExecutorService.shutdownNow();
-            Thread.currentThread().interrupt();
         }
     }
 
