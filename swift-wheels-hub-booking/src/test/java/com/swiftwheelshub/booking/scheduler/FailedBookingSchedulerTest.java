@@ -41,7 +41,7 @@ class FailedBookingSchedulerTest {
     private CarService carService;
 
     @Spy
-    private ExecutorService scheduledExecutorService = Executors.newVirtualThreadPerTaskExecutor();
+    private ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
     @BeforeEach
     void init() {
@@ -63,7 +63,7 @@ class FailedBookingSchedulerTest {
 
         assertDoesNotThrow(() -> failedBookingScheduler.processFailedBookings());
 
-        verify(scheduledExecutorService).invokeAll(anyList());
+        verify(executorService).invokeAll(anyList());
     }
 
     @Test
