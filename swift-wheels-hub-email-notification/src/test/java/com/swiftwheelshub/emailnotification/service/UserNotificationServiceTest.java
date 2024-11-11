@@ -3,12 +3,15 @@ package com.swiftwheelshub.emailnotification.service;
 import com.sendgrid.Response;
 import com.sendgrid.helpers.mail.Mail;
 import com.swiftwheelshub.dto.InvoiceResponse;
+import com.swiftwheelshub.emailnotification.repository.CustomerDetailsRepository;
 import com.swiftwheelshub.emailnotification.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,6 +27,9 @@ class UserNotificationServiceTest {
     @Mock
     private EmailService emailService;
 
+    @Mock
+    private CustomerDetailsRepository customerDetailsRepository;
+
     @Test
     void notifyCustomerTest_success() {
         InvoiceResponse invoiceResponse =
@@ -31,6 +37,7 @@ class UserNotificationServiceTest {
 
         Response response = new Response();
 
+        when(customerDetailsRepository.findByUsername(invoiceResponse.customerUsername())).thenReturn(Optional.of("user"));
         when(emailService.createMail(anyString(), any(Object.class))).thenReturn(new Mail());
         when(emailService.sendEmail(any(Mail.class))).thenReturn(response);
 
