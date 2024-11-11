@@ -2,6 +2,7 @@ package com.swiftwheelshub.expense.scheduler;
 
 import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
+import com.swiftwheelshub.dto.BookingRollbackResponse;
 import com.swiftwheelshub.dto.BookingUpdateResponse;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.CarUpdateDetails;
@@ -149,7 +150,7 @@ public class FailedInvoiceScheduler {
     private void handleBookingRollback(AuthenticationInfo authenticationInfo, Invoice savedInvoice) {
         Long bookingId = savedInvoice.getBookingId();
 
-        BookingUpdateResponse rollbackBookingResponse =
+        BookingRollbackResponse rollbackBookingResponse =
                 bookingService.rollbackBooking(authenticationInfo, bookingId);
 
         if (rollbackBookingResponse.isSuccessful()) {

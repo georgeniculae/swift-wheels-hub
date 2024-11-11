@@ -3,6 +3,7 @@ package com.swiftwheelshub.expense.service;
 import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingResponse;
+import com.swiftwheelshub.dto.BookingRollbackResponse;
 import com.swiftwheelshub.dto.BookingUpdateResponse;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
@@ -77,7 +78,7 @@ public class BookingService {
             backoff = @Backoff(value = 5000L),
             listeners = "invoiceService"
     )
-    public BookingUpdateResponse rollbackBooking(AuthenticationInfo authenticationInfo, Long bookingId) {
+    public BookingRollbackResponse rollbackBooking(AuthenticationInfo authenticationInfo, Long bookingId) {
         String finalUrl = url + SEPARATOR + "rollback-booking";
 
         return restClient.patch()
@@ -88,10 +89,11 @@ public class BookingService {
                     if (clientResponse.getStatusCode().isError()) {
                         log.warn("Error occurred while rolling back booking: {}", clientResponse.getStatusText());
 
-                        return new BookingUpdateResponse(false);
+                        return new BookingRollbackResponse(false, bookingId);
                     }
 
-                    return new BookingUpdateResponse(true);
+                    return Optional.ofNullable(clientResponse.bodyTo(BookingRollbackResponse.class))
+                            .orElse(new BookingRollbackResponse(false, bookingId));
                 });
     }
 
