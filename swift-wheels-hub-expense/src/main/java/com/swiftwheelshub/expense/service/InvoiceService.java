@@ -187,7 +187,7 @@ public class InvoiceService implements RetryListener {
         BookingRollbackResponse rollbackBookingResponse =
                 bookingService.rollbackBooking(authenticationInfo, bookingId);
 
-        if (rollbackBookingResponse.isSuccessful()) {
+        if (!rollbackBookingResponse.isSuccessful()) {
             failedBookingRollbackRepository.save(new FailedBookingRollback(bookingId));
         }
     }
