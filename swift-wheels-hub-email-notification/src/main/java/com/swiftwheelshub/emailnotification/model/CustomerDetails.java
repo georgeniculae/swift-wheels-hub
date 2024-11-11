@@ -25,4 +25,8 @@ public class CustomerDetails extends BaseEntity {
     @NonNull
     private String email;
 
+    public CustomerDetails(String email) {
+        this.email = email;
+    }
+
 }

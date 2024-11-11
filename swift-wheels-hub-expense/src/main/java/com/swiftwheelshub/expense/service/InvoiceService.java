@@ -120,11 +120,7 @@ public class InvoiceService implements RetryListener {
             AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
             Invoice existingInvoiceUpdated = updateInvoiceWithBookingDetails(id, authenticationInfo, invoiceRequest);
 
-            boolean successful = updateProcesses(invoiceRequest, authenticationInfo, existingInvoiceUpdated);
-            InvoiceProcessStatus invoiceProcessStatus = getInvoiceProcessStatus(successful);
-
-            existingInvoiceUpdated.setInvoiceProcessStatus(invoiceProcessStatus);
-            Invoice savedInvoice = revenueService.processClosing(existingInvoiceUpdated);
+            Invoice savedInvoice = completeInvoiceAfterBookingAndCarUpdate(invoiceRequest, authenticationInfo, existingInvoiceUpdated);
 
             return invoiceMapper.mapEntityToDto(savedInvoice);
         } catch (Exception e) {
@@ -138,22 +134,31 @@ public class InvoiceService implements RetryListener {
         invoiceRepository.deleteByBookingId(bookingId);
     }
 
-    private InvoiceProcessStatus getInvoiceProcessStatus(boolean successful) {
+    private Invoice completeInvoiceAfterBookingAndCarUpdate(InvoiceRequest invoiceRequest,
+                                                            AuthenticationInfo authenticationInfo,
+                                                            Invoice existingInvoiceUpdated) {
+        boolean successful = updateBookingAndCar(invoiceRequest, authenticationInfo, existingInvoiceUpdated);
+
         if (successful) {
-            return InvoiceProcessStatus.SAVED_CLOSED_INVOICE;
+            existingInvoiceUpdated.setInvoiceProcessStatus(InvoiceProcessStatus.SAVED_CLOSED_INVOICE);
+
+            return revenueService.processClosing(existingInvoiceUpdated);
         }
 
-        return InvoiceProcessStatus.FAILED_CLOSED_INVOICE;
+        existingInvoiceUpdated.setInvoiceProcessStatus(InvoiceProcessStatus.FAILED_CLOSED_INVOICE);
+
+        return invoiceRepository.save(existingInvoiceUpdated);
     }
 
-    private boolean updateProcesses(InvoiceRequest invoiceRequest, AuthenticationInfo authenticationInfo, Invoice savedInvoice) {
-        StatusUpdateResponse statusUpdateResponse =
-                carService.markCarAsAvailable(authenticationInfo, getCarUpdateDetails(savedInvoice));
+    private boolean updateBookingAndCar(InvoiceRequest invoiceRequest,
+                                        AuthenticationInfo authenticationInfo,
+                                        Invoice savedInvoice) {
+        BookingUpdateResponse bookingUpdateResponse = closeBooking(invoiceRequest, authenticationInfo);
 
-        if (statusUpdateResponse.isUpdateSuccessful()) {
-            BookingUpdateResponse bookingUpdateResponse = closeBooking(invoiceRequest, authenticationInfo);
+        if (bookingUpdateResponse.isSuccessful()) {
+            StatusUpdateResponse statusUpdateResponse = markCarAsAvailable(authenticationInfo, savedInvoice);
 
-            if (bookingUpdateResponse.isSuccessful()) {
+            if (statusUpdateResponse.isUpdateSuccessful()) {
                 return true;
             } else {
                 handleBookingRollback(authenticationInfo, savedInvoice);
@@ -163,9 +168,13 @@ public class InvoiceService implements RetryListener {
         return false;
     }
 
+    private StatusUpdateResponse markCarAsAvailable(AuthenticationInfo authenticationInfo, Invoice savedInvoice) {
+        return carService.markCarAsAvailable(authenticationInfo, getCarUpdateDetails(savedInvoice));
+    }
+
     private BookingUpdateResponse closeBooking(InvoiceRequest invoiceRequest, AuthenticationInfo authenticationInfo) {
         Long bookingId = invoiceRequest.bookingId();
-        Long returnBranchId = invoiceRequest.receptionistEmployeeId();
+        Long returnBranchId = invoiceRequest.returnBranchId();
         BookingClosingDetails bookingClosingDetails = getBookingClosingDetails(bookingId, returnBranchId);
 
         return bookingService.closeBooking(authenticationInfo, bookingClosingDetails);

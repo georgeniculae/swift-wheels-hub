@@ -18,7 +18,6 @@ import com.swiftwheelshub.expense.service.RevenueService;
 import com.swiftwheelshub.lib.exceptionhandling.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -59,7 +58,6 @@ public class FailedInvoiceScheduler {
         }
     }
 
-    @NotNull
     private List<Callable<Object>> getCallables() {
         return invoiceRepository.findAllFailedInvoices()
                 .stream()

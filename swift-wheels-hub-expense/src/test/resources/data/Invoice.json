@@ -5,9 +5,9 @@
   "receptionistEmployeeId": 1,
   "bookingId": 1,
   "carReturnDate": "2099-02-22",
-  "isVehicleDamaged": true,
-  "damageCost": 50,
+  "isVehicleDamaged": false,
+  "damageCost": 0,
   "additionalPayment": 0,
   "totalAmount": 550,
-  "comments": "comment"
+  "comments": null
 }

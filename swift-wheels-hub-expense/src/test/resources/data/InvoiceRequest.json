@@ -4,8 +4,9 @@
   "returnBranchId": 1,
   "bookingId": 1,
   "carReturnDate": "2099-02-22",
-  "isVehicleDamaged": false,
-  "damageCost": 0,
+  "isVehicleDamaged": true,
+  "damageCost": 50,
   "additionalPayment": 0,
-  "totalAmount": 550
+  "totalAmount": 550,
+  "comments": "comment"
 }

@@ -15,9 +15,6 @@ public record InvoiceResponse(
         @NotEmpty(message = "Username cannot be empty")
         String customerUsername,
 
-        @NotEmpty(message = "Customer email cannot be empty")
-        String customerEmail,
-
         @NotNull(message = "Car id cannot be null")
         Long carId,
 
@@ -45,7 +42,6 @@ public record InvoiceResponse(
         return "InvoiceResponse{" + "\n" +
                 "id=" + id + "\n" +
                 "customerUsername='" + customerUsername + "\n" +
-                "customerEmail='" + customerEmail + "\n" +
                 "carId=" + carId + "\n" +
                 "receptionistEmployeeId=" + receptionistEmployeeId + "\n" +
                 "bookingId=" + bookingId + "\n" +

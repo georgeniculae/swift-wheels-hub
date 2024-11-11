@@ -263,14 +263,11 @@ class InvoiceServiceTest {
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
         when(bookingService.findBookingById(any(AuthenticationInfo.class), anyLong())).thenReturn(bookingResponse);
         when(invoiceRepository.save(any(Invoice.class))).thenReturn(closedInvoice);
-        when(carService.markCarAsAvailable(any(AuthenticationInfo.class), any(CarUpdateDetails.class)))
-                .thenReturn(statusUpdateResponse);
         when(bookingService.closeBooking(any(AuthenticationInfo.class), any(BookingClosingDetails.class)))
                 .thenReturn(bookingUpdateResponse);
-        when(revenueService.processClosing(any(Invoice.class))).thenReturn(invoice);
 
         InvoiceResponse invoiceResponse = invoiceService.closeInvoice(1L, invoiceRequest);
-        AssertionUtils.assertInvoiceResponse(invoice, invoiceResponse);
+        AssertionUtils.assertInvoiceResponse(closedInvoice, invoiceResponse);
 
         verify(invoiceMapper).mapEntityToDto(any(Invoice.class));
         verify(executorService, times(2)).submit(any(Callable.class));
