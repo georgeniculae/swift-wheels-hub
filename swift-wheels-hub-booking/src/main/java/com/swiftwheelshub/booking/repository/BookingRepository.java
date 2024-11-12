@@ -33,11 +33,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Optional<Booking> findByDateOfBooking(LocalDate dateOfBooking);
 
     @Query("""
-            From Booking booking
-            where booking.customerUsername = ?1""")
-    List<Booking> findByCustomerUsername(String customerUsername);
-
-    @Query("""
             Select sum(booking.amount)
             From Booking booking
             where booking.customerUsername = ?1""")
