@@ -1,10 +1,17 @@
 package com.swiftwheelshub.expense.scheduler;
 
+import com.swiftwheelshub.dto.AuthenticationInfo;
+import com.swiftwheelshub.dto.BookingClosingDetails;
+import com.swiftwheelshub.dto.BookingUpdateResponse;
+import com.swiftwheelshub.dto.CarUpdateDetails;
+import com.swiftwheelshub.dto.StatusUpdateResponse;
+import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.expense.repository.FailedBookingRollbackRepository;
 import com.swiftwheelshub.expense.repository.InvoiceRepository;
 import com.swiftwheelshub.expense.service.BookingService;
 import com.swiftwheelshub.expense.service.CarService;
 import com.swiftwheelshub.expense.service.RevenueService;
+import com.swiftwheelshub.expense.util.TestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,8 +21,16 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class FailedInvoiceSchedulerTest {
@@ -48,8 +63,28 @@ class FailedInvoiceSchedulerTest {
     }
 
     @Test
-    void processFailedInvoicesTest_success() {
+    void processFailedInvoicesTest_success() throws InterruptedException {
+        Invoice invoice = TestUtil.getResourceAsJson("/data/Invoice.json", Invoice.class);
 
+        Invoice failedInvoice = TestUtil.getResourceAsJson("/data/FailedInvoice.json", Invoice.class);
+
+        BookingUpdateResponse bookingUpdateResponse =
+                TestUtil.getResourceAsJson("/data/SuccessfulBookingUpdateResponse.json", BookingUpdateResponse.class);
+
+        StatusUpdateResponse statusUpdateResponse =
+                TestUtil.getResourceAsJson("/data/SuccessfulStatusUpdateResponse.json", StatusUpdateResponse.class);
+
+        when(invoiceRepository.findAllFailedInvoices()).thenReturn(List.of(failedInvoice));
+        when(failedBookingRollbackRepository.doesNotExistByBookingId(anyLong())).thenReturn(true);
+        when(bookingService.closeBooking(any(AuthenticationInfo.class), any(BookingClosingDetails.class)))
+                .thenReturn(bookingUpdateResponse);
+        when(carService.markCarAsAvailable(any(AuthenticationInfo.class), any(CarUpdateDetails.class)))
+                .thenReturn(statusUpdateResponse);
+        when(revenueService.processClosing(any(Invoice.class))).thenReturn(invoice);
+
+        assertDoesNotThrow(() -> failedInvoiceScheduler.processFailedInvoices());
+
+        verify(executorService).invokeAll(anyList());
     }
 
 }
