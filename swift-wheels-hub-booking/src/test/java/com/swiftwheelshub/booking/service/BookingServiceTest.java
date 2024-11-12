@@ -9,11 +9,13 @@ import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
+import com.swiftwheelshub.dto.BookingRollbackResponse;
 import com.swiftwheelshub.dto.BookingUpdateResponse;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.StatusUpdateResponse;
 import com.swiftwheelshub.entity.Booking;
+import com.swiftwheelshub.entity.BookingStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.lib.security.ApiKeyAuthenticationToken;
@@ -42,6 +44,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -50,6 +53,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -214,6 +218,26 @@ class BookingServiceTest {
                 assertDoesNotThrow(() -> bookingService.updateBooking(1L, bookingRequest));
 
         assertNotNull(updatedBookingResponse);
+    }
+
+    @Test
+    void rollbackBookingTest_success() {
+        doNothing().when(bookingRepository).updateStatusById(any(BookingStatus.class), anyLong());
+
+        BookingRollbackResponse bookingRollbackResponse = bookingService.rollbackBooking(1L);
+
+        assertTrue(bookingRollbackResponse.isSuccessful());
+        assertEquals(1L, bookingRollbackResponse.bookingId());
+    }
+
+    @Test
+    void rollbackBookingTest_failedBookingUpdate() {
+        doThrow(new RuntimeException()).when(bookingRepository).updateStatusById(any(BookingStatus.class), anyLong());
+
+        BookingRollbackResponse bookingRollbackResponse = bookingService.rollbackBooking(1L);
+
+        assertFalse(bookingRollbackResponse.isSuccessful());
+        assertEquals(1L, bookingRollbackResponse.bookingId());
     }
 
     @Test

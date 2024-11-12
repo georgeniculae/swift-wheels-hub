@@ -1,6 +1,7 @@
 package com.swiftwheelshub.booking.repository;
 
 import com.swiftwheelshub.entity.Booking;
+import com.swiftwheelshub.entity.BookingStatus;
 import jakarta.persistence.QueryHint;
 import org.hibernate.jpa.HibernateHints;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -87,5 +88,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             From Booking b
             where b.customerUsername = ?1""")
     void deleteByCustomerUsername(String customerUsername);
+
+    @Transactional
+    @Modifying
+    @Query("""
+            update Booking b
+            set b.status = ?1
+            where b.id = ?2""")
+    void updateStatusById(BookingStatus status, Long id);
 
 }

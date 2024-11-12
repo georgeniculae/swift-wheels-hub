@@ -5,6 +5,7 @@ import com.swiftwheelshub.booking.util.TestUtil;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
+import com.swiftwheelshub.dto.BookingRollbackResponse;
 import com.swiftwheelshub.dto.BookingUpdateResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = BookingController.class)
@@ -135,7 +135,6 @@ class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
-
 
 
     @Test
@@ -345,7 +344,6 @@ class BookingControllerTest {
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.put(PATH + "/{id}", 1L)
                         .contextPath(PATH)
                         .with(csrf())
-                        .with(user("admin").password("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(content))
@@ -391,6 +389,41 @@ class BookingControllerTest {
 
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
+    void rollbackBookingTest_success() throws Exception {
+        BookingRollbackResponse bookingRollbackResponse =
+                TestUtil.getResourceAsJson("/data/SuccessfulBookingRollbackResponse.json", BookingRollbackResponse.class);
+
+        when(bookingService.rollbackBooking(anyLong())).thenReturn(bookingRollbackResponse);
+
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.patch(PATH + "/{id}/rollback", 1L)
+                        .contextPath(PATH)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void rollbackBookingTest_unauthorized() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.patch(PATH + "/{id}/rollback", 1L)
+                        .contextPath(PATH)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andReturn()
+                .getResponse();
+
+        assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void deleteBookingByUsernameTest_success() throws Exception {
         doNothing().when(bookingService).deleteBookingByCustomerUsername(anyString());
 
@@ -423,8 +456,7 @@ class BookingControllerTest {
     @WithAnonymousUser
     void deleteBookingByIdTest_forbidden() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
-                        .contextPath(PATH)
-                        .with(user("admin").password("admin").roles("ADMIN")))
+                        .contextPath(PATH))
                 .andExpect(status().isForbidden());
     }
 
