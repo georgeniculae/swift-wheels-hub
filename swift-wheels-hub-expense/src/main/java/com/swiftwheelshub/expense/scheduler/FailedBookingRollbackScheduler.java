@@ -25,8 +25,8 @@ import java.util.concurrent.Future;
 public class FailedBookingRollbackScheduler {
 
     private final FailedBookingRollbackRepository failedBookingRollbackRepository;
-    private final ExecutorService executorService;
     private final BookingService bookingService;
+    private final ExecutorService executorService;
 
     @Value("${apikey.secret}")
     private String apikey;
