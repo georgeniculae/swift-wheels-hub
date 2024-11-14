@@ -100,6 +100,7 @@ spring:
 
 apikey:
   secret: ${API_KEY_SECRET}
+  machine-role: ${INVOICE_SERVICE_ROLE}
 
 springdoc:
   swagger-ui:

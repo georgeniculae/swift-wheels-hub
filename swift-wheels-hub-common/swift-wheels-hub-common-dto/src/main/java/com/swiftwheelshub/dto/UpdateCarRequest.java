@@ -16,7 +16,7 @@ public record UpdateCarRequest(
     public String toString() {
         return "UpdateCarRequest{" + "\n" +
                 "carId=" + carId + "\n" +
-                "carStage=" + carState + "\n" +
+                "carState=" + carState + "\n" +
                 "}";
     }
 

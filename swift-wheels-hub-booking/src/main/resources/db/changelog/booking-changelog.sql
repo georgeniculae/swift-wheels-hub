@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS public.booking
     rental_branch_id       BIGINT                                  NOT NULL,
     return_branch_id       BIGINT,
     booking_process_status VARCHAR(255),
-    car_stage              VARCHAR(255),
     CONSTRAINT pk_booking PRIMARY KEY (id)
 );
 

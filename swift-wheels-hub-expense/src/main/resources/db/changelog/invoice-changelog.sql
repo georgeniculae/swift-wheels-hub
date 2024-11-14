@@ -15,5 +15,6 @@ CREATE TABLE IF NOT EXISTS public.invoice
     additional_payment       DECIMAL,
     total_amount             DECIMAL,
     comments                 VARCHAR(255),
+    invoice_process_status   VARCHAR(255),
     CONSTRAINT pk_invoice PRIMARY KEY (id)
 );

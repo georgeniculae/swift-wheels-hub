@@ -50,7 +50,7 @@ public record CarResponse(
                 "yearOfProduction=" + yearOfProduction + "\n" +
                 "color='" + color + "\n" +
                 "mileage=" + mileage + "\n" +
-                "carStage=" + carState + "\n" +
+                "carState=" + carState + "\n" +
                 "amount=" + amount + "\n" +
                 "originalBranchId=" + originalBranchId + "\n" +
                 "actualBranchId=" + actualBranchId + "\n" +
