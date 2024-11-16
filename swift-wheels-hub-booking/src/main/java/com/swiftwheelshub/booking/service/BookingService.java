@@ -287,7 +287,7 @@ public class BookingService implements RetryListener {
     private void lockCar(String carId) {
         Boolean isUsed = redisTemplate.opsForValue().setIfAbsent(carId, LOCKED, Duration.ofMinutes(1));
 
-        if (Boolean.TRUE.equals(isUsed)) {
+        if (Boolean.FALSE.equals(isUsed)) {
             throw new SwiftWheelsHubResponseStatusException(HttpStatus.BAD_REQUEST, "Car is unavailable");
         }
     }
