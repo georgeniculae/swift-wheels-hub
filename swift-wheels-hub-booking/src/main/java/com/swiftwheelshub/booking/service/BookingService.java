@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -284,9 +285,9 @@ public class BookingService implements RetryListener {
     }
 
     private void lockCar(String carId) {
-        Boolean isLocked = redisTemplate.opsForValue().setIfAbsent(carId, LOCKED);
+        Boolean isUsed = redisTemplate.opsForValue().setIfAbsent(carId, LOCKED, Duration.ofMinutes(1));
 
-        if (Boolean.TRUE.equals(isLocked)) {
+        if (Boolean.TRUE.equals(isUsed)) {
             throw new SwiftWheelsHubResponseStatusException(HttpStatus.BAD_REQUEST, "Car is unavailable");
         }
     }

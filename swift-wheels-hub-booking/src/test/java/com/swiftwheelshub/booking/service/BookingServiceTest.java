@@ -36,6 +36,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
@@ -120,7 +121,7 @@ class BookingServiceTest {
         SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        when(valueOperations.setIfAbsent(anyString(), anyString())).thenReturn(false);
+        when(valueOperations.setIfAbsent(anyString(), anyString(), any(Duration.class))).thenReturn(false);
         when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(carResponse);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
         when(carStatusUpdaterService.changeCarStatus(any(AuthenticationInfo.class), anyLong(), any(CarState.class)))
@@ -206,7 +207,7 @@ class BookingServiceTest {
         SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        when(valueOperations.setIfAbsent(anyString(), anyString())).thenReturn(false);
+        when(valueOperations.setIfAbsent(anyString(), anyString(), any(Duration.class))).thenReturn(false);
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
         when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(carResponse);
         when(bookingRepository.save(any(Booking.class))).thenReturn(updatedBooking);
