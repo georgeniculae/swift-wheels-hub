@@ -169,8 +169,8 @@ cors:
 
 rest-client:
   url:
-    swift-wheels-hub-bookings: http://swift-wheels-hub-booking/bookings
     swift-wheels-hub-agency-cars: http://swift-wheels-hub-agency/agency/cars
+    swift-wheels-hub-bookings: http://swift-wheels-hub-booking/bookings
 
 sendgrid:
   enabled: true
