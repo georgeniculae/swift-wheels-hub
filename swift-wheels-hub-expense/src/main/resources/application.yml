@@ -34,15 +34,10 @@ spring:
   cloud:
     loadbalancer:
       enabled: true
-      ribbon:
-        enabled: false
       cache:
         enabled: true
     consul:
       enabled: true
-      config:
-        enabled: false
-        acl-token: ${CONSUL_ACL_TOKEN}
       host: localhost
       port: 8500
       discovery:
@@ -175,9 +170,7 @@ cors:
 rest-client:
   url:
     swift-wheels-hub-bookings: http://swift-wheels-hub-booking/bookings
-    swift-wheels-hub-agency-branches: http://swift-wheels-hub-agency/agency/branches
     swift-wheels-hub-agency-cars: http://swift-wheels-hub-agency/agency/cars
-    swift-wheels-hub-agency-employees: http://swift-wheels-hub-agency/agency/employees
 
 sendgrid:
   enabled: true
