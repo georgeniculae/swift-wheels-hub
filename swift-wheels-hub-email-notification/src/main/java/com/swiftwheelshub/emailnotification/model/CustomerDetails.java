@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.lang.NonNull;
 
 @Entity
@@ -26,7 +25,7 @@ public class CustomerDetails extends BaseEntity {
     @NonNull
     private String email;
 
-    public CustomerDetails(@NotNull String email) {
+    public CustomerDetails(@NonNull String email) {
         this.email = email;
     }
 
