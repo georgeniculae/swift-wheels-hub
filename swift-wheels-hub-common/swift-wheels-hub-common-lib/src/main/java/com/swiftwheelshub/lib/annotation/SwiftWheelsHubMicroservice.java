@@ -22,7 +22,10 @@ import java.lang.annotation.Target;
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class, UserDetailsServiceAutoConfiguration.class})
+@SpringBootApplication(exclude = {
+        SecurityAutoConfiguration.class,
+        UserDetailsServiceAutoConfiguration.class
+})
 @EnableJpaRepositories("com.swiftwheelshub")
 @ComponentScan(basePackages = {"com.swiftwheelshub"})
 @EntityScan("com.swiftwheelshub")
