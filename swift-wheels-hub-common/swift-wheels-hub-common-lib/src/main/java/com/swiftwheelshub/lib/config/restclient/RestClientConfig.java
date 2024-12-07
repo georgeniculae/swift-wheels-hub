@@ -1,15 +1,15 @@
 package com.swiftwheelshub.lib.config.restclient;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.web.client.ClientHttpRequestFactories;
-import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
+import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
 import java.time.Duration;
+import java.util.List;
 
 @Configuration
 public class RestClientConfig {
@@ -22,13 +22,16 @@ public class RestClientConfig {
 
     @Bean
     public RestClient restClient(@Qualifier("loadBalancedRestClientBuilder") RestClient.Builder restClientBuilder) {
-        ClientHttpRequestFactory requestFactory = ClientHttpRequestFactories.get(
-                ClientHttpRequestFactorySettings.DEFAULTS
-                        .withConnectTimeout(Duration.ofSeconds(60))
-                        .withReadTimeout(Duration.ofSeconds(60))
-        );
+        SimpleClientHttpRequestFactory clientHttpRequestFactory = ClientHttpRequestFactoryBuilder.simple()
+                .withCustomizers(
+                        List.of(
+                                requestFactory -> requestFactory.setConnectTimeout(Duration.ofSeconds(60)),
+                                requestFactory -> requestFactory.setReadTimeout(Duration.ofSeconds(60))
+                        )
+                )
+                .build();
 
-        return restClientBuilder.requestFactory(requestFactory)
+        return restClientBuilder.requestFactory(clientHttpRequestFactory)
                 .build();
     }
 
