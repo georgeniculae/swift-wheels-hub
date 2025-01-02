@@ -111,7 +111,8 @@ class BookingServiceTest {
     void saveBookingTest_success() {
         Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
 
-        BookingRequest bookingRequest = TestUtil.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
+        BookingRequest bookingRequest =
+                TestUtil.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
 
         AvailableCarInfo availableCarInfo =
                 TestUtil.getResourceAsJson("/data/AvailableCarInfo.json", AvailableCarInfo.class);

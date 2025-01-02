@@ -9,9 +9,7 @@ import java.time.LocalDate;
 
 @Builder
 public record InvoiceRequest(
-        @NotNull(message = "Car id cannot be null")
-        Long carId,
-
+        @NotNull(message = "Receptionist employee id cannot be null")
         Long receptionistEmployeeId,
 
         @NotNull(message = "Return branch id cannot be null")
@@ -30,22 +28,18 @@ public record InvoiceRequest(
 
         BigDecimal additionalPayment,
 
-        BigDecimal totalAmount,
-
         String comments
 ) {
 
     @Override
     public String toString() {
         return "InvoiceRequest{" + "\n" +
-                "previousCarId=" + carId + "\n" +
                 "returnBranchId=" + receptionistEmployeeId + "\n" +
                 "bookingId=" + bookingId + "\n" +
                 "carReturnDate=" + carReturnDate + "\n" +
                 "isVehicleDamaged=" + isVehicleDamaged + "\n" +
                 "damageCost=" + damageCost + "\n" +
                 "additionalPayment=" + additionalPayment + "\n" +
-                "totalAmount=" + totalAmount + "\n" +
                 "comments='" + comments + "\n" +
                 "}";
     }

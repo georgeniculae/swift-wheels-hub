@@ -228,11 +228,9 @@ public class InvoiceService implements RetryListener {
         Invoice existingInvoice = findEntityById(id);
 
         Long receptionistEmployeeId = invoiceRequest.receptionistEmployeeId();
-        Long carId = invoiceRequest.carId();
 
         existingInvoice.setCarReturnDate(invoiceRequest.carReturnDate());
         existingInvoice.setReceptionistEmployeeId(receptionistEmployeeId);
-        existingInvoice.setCarId(carId);
         existingInvoice.setIsVehicleDamaged(invoiceRequest.isVehicleDamaged());
         existingInvoice.setDamageCost(getDamageCost(invoiceRequest));
         existingInvoice.setAdditionalPayment(getAdditionalPayment(invoiceRequest));

@@ -1,9 +1,7 @@
 {
-  "status": "IN_PROGRESS",
+  "dateOfBooking": "2099-02-20",
   "carId": 1,
   "dateFrom": "2099-02-21",
   "dateTo": "2099-02-22",
-  "rentalCarPrice": 500,
-  "rentalBranchId": 1,
-  "returnBranchId": 1
+  "rentalBranchId": 1
 }

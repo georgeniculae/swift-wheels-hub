@@ -12,7 +12,6 @@ public class AssertionUtil {
         assertEquals(booking.getDateOfBooking(), bookingRequest.dateOfBooking());
         assertEquals(booking.getDateFrom(), bookingRequest.dateFrom());
         assertEquals(booking.getDateTo(), bookingRequest.dateTo());
-        assertEquals(booking.getAmount(), bookingRequest.amount());
     }
 
     public static void assertBooking(Booking booking, BookingResponse bookingResponse) {

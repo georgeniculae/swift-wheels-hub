@@ -1,5 +1,4 @@
 {
-  "carId": 1,
   "receptionistEmployeeId": 1,
   "returnBranchId": 1,
   "bookingId": 1,
@@ -7,6 +6,5 @@
   "isVehicleDamaged": true,
   "damageCost": 50,
   "additionalPayment": 0,
-  "totalAmount": 550,
   "comments": "comment"
 }
