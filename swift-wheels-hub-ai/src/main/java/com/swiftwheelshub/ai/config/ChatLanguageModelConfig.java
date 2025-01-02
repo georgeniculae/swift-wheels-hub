@@ -6,7 +6,6 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaOptions;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,10 +13,9 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class ChatLanguageModelConfig {
 
-
     @Bean
-    public OllamaApi ollamaApi(@Value("${spring.ai.ollama.base-url}") String baseUrl) {
-        return new OllamaApi(baseUrl);
+    public OllamaApi ollamaApi() {
+        return new OllamaApi();
     }
 
     @Bean
