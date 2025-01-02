@@ -5,6 +5,7 @@ import com.swiftwheelshub.agency.mapper.CarMapperImpl;
 import com.swiftwheelshub.agency.repository.CarRepository;
 import com.swiftwheelshub.agency.util.AssertionUtils;
 import com.swiftwheelshub.agency.util.TestUtil;
+import com.swiftwheelshub.dto.AvailableCarInfo;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.UpdateCarsRequest;
@@ -203,8 +204,8 @@ class CarServiceTest {
 
         when(carRepository.findById(anyLong())).thenReturn(Optional.ofNullable(car));
 
-        CarResponse carResponse = carService.findAvailableCar(1L);
-        AssertionUtils.assertCarResponse(Objects.requireNonNull(car), carResponse);
+        AvailableCarInfo availableCarInfo = carService.findAvailableCar(1L);
+        AssertionUtils.assertAvailableCarInfo(Objects.requireNonNull(car), availableCarInfo);
     }
 
 }

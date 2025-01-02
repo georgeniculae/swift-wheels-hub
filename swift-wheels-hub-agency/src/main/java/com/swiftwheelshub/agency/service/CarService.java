@@ -2,6 +2,7 @@ package com.swiftwheelshub.agency.service;
 
 import com.swiftwheelshub.agency.mapper.CarMapper;
 import com.swiftwheelshub.agency.repository.CarRepository;
+import com.swiftwheelshub.dto.AvailableCarInfo;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarStatusUpdate;
@@ -45,11 +46,11 @@ public class CarService {
         return carMapper.mapEntityToDto(car);
     }
 
-    public CarResponse findAvailableCar(Long id) {
+    public AvailableCarInfo findAvailableCar(Long id) {
         Car car = findEntityById(id);
         checkCarAvailability(car);
 
-        return carMapper.mapEntityToDto(car);
+        return carMapper.mapToAvailableCarInfo(car);
     }
 
     @Transactional(readOnly = true)

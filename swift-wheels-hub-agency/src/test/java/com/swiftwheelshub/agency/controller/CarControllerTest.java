@@ -2,6 +2,7 @@ package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.CarService;
 import com.swiftwheelshub.agency.util.TestUtil;
+import com.swiftwheelshub.dto.AvailableCarInfo;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import org.junit.jupiter.api.Test;
@@ -168,7 +169,8 @@ class CarControllerTest {
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void findAvailableCarTest_success() throws Exception {
-        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        AvailableCarInfo carResponse =
+                TestUtil.getResourceAsJson("/data/AvailableCarInfo.json", AvailableCarInfo.class);
 
         when(carService.findAvailableCar(anyLong())).thenReturn(carResponse);
 
@@ -217,9 +219,10 @@ class CarControllerTest {
     @Test
     @WithAnonymousUser
     void findAvailableCarTest_unauthorized() throws Exception {
-        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        AvailableCarInfo availableCarInfo =
+                TestUtil.getResourceAsJson("/data/AvailableCarInfo.json", AvailableCarInfo.class);
 
-        when(carService.findAvailableCar(anyLong())).thenReturn(carResponse);
+        when(carService.findAvailableCar(anyLong())).thenReturn(availableCarInfo);
 
         mockMvc.perform(get(PATH + "/{id}/availability", 1L)
                         .contentType(MediaType.APPLICATION_JSON)

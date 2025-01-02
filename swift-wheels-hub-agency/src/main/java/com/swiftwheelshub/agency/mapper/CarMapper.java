@@ -1,5 +1,6 @@
 package com.swiftwheelshub.agency.mapper;
 
+import com.swiftwheelshub.dto.AvailableCarInfo;
 import com.swiftwheelshub.dto.BodyCategory;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
@@ -34,6 +35,9 @@ public interface CarMapper {
     @Mapping(target = "carStatus", expression = "java(mapToCarStatus(carRequest.carState()))")
     @Mapping(target = "image", expression = "java(mapToImage(image))")
     Car mapDtoToEntity(CarRequest carRequest, MultipartFile image);
+
+    @Mapping(target = "actualBranchId", expression = "java(car.getActualBranch().getId())")
+    AvailableCarInfo mapToAvailableCarInfo(Car car);
 
     default BodyType mapToBodyType(BodyCategory bodyCategory) {
         return BodyType.valueOf(bodyCategory.name());

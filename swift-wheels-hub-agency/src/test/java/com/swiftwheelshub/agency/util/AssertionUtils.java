@@ -1,5 +1,6 @@
 package com.swiftwheelshub.agency.util;
 
+import com.swiftwheelshub.dto.AvailableCarInfo;
 import com.swiftwheelshub.dto.BranchRequest;
 import com.swiftwheelshub.dto.BranchResponse;
 import com.swiftwheelshub.dto.CarRequest;
@@ -37,6 +38,12 @@ public class AssertionUtils {
         assertEquals(car.getMileage(), carResponse.mileage());
         assertEquals(car.getCarStatus().getDisplayName(), carResponse.carState().getDisplayName());
         assertEquals(car.getAmount(), carResponse.amount());
+    }
+
+    public static void assertAvailableCarInfo(Car car, AvailableCarInfo availableCarInfo) {
+        assertEquals(car.getId(), availableCarInfo.id());
+        assertEquals(car.getActualBranch().getId(), availableCarInfo.actualBranchId());
+        assertEquals(car.getAmount(), availableCarInfo.amount());
     }
 
     public static void assertBranchRequest(Branch branch, BranchRequest branchRequest) {

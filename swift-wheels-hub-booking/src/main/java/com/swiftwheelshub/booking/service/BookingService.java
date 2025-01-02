@@ -5,12 +5,12 @@ import com.swiftwheelshub.booking.producer.CreateBookingCarUpdateProducerService
 import com.swiftwheelshub.booking.producer.UpdateBookingUpdateCarsProducerService;
 import com.swiftwheelshub.booking.repository.BookingRepository;
 import com.swiftwheelshub.dto.AuthenticationInfo;
+import com.swiftwheelshub.dto.AvailableCarInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.dto.BookingRollbackResponse;
 import com.swiftwheelshub.dto.BookingUpdateResponse;
-import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.CarStatusUpdate;
 import com.swiftwheelshub.dto.UpdateCarsRequest;
@@ -111,8 +111,8 @@ public class BookingService implements RetryListener {
             AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
             lockCar(newBookingRequest.carId().toString());
 
-            CarResponse carResponse = carService.findAvailableCarById(authenticationInfo, newBookingRequest.carId());
-            Booking createdBooking = createNewBooking(authenticationInfo, newBookingRequest, carResponse);
+            AvailableCarInfo availableCarInfo = carService.findAvailableCarById(authenticationInfo, newBookingRequest.carId());
+            Booking createdBooking = createNewBooking(authenticationInfo, newBookingRequest, availableCarInfo);
 
             Booking savedCreatedBooking = bookingRepository.save(createdBooking);
 
@@ -216,18 +216,18 @@ public class BookingService implements RetryListener {
 
     private Booking createNewBooking(AuthenticationInfo authenticationInfo,
                                      BookingRequest newBookingRequest,
-                                     CarResponse carResponse) {
+                                     AvailableCarInfo availableCarInfo) {
         Booking newBooking = bookingMapper.mapDtoToEntity(newBookingRequest);
-        BigDecimal amount = carResponse.amount();
+        BigDecimal amount = availableCarInfo.amount();
 
         newBooking.setCustomerUsername(authenticationInfo.username());
         newBooking.setCustomerEmail(authenticationInfo.email());
-        newBooking.setActualCarId(carResponse.id());
+        newBooking.setActualCarId(availableCarInfo.id());
         newBooking.setDateOfBooking(LocalDate.now());
-        newBooking.setRentalBranchId(carResponse.actualBranchId());
+        newBooking.setRentalBranchId(availableCarInfo.actualBranchId());
         newBooking.setStatus(BookingStatus.IN_PROGRESS);
         newBooking.setAmount(getAmount(newBookingRequest, amount));
-        newBooking.setRentalCarPrice(carResponse.amount());
+        newBooking.setRentalCarPrice(amount);
         newBooking.setBookingProcessStatus(BookingProcessStatus.IN_CREATION);
 
         return newBooking;
@@ -277,12 +277,12 @@ public class BookingService implements RetryListener {
 
         lockCar(updatedBookingRequest.carId().toString());
         AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
-        CarResponse newCarResponse = carService.findAvailableCarById(authenticationInfo, newCarId);
+        AvailableCarInfo availableCarInfo = carService.findAvailableCarById(authenticationInfo, newCarId);
 
-        existingBooking.setAmount(getAmount(updatedBookingRequest, newCarResponse.amount()));
-        existingBooking.setActualCarId(newCarResponse.id());
+        existingBooking.setAmount(getAmount(updatedBookingRequest, availableCarInfo.amount()));
+        existingBooking.setActualCarId(availableCarInfo.id());
         existingBooking.setPreviousCarId(existingCarId);
-        existingBooking.setRentalBranchId(newCarResponse.actualBranchId());
+        existingBooking.setRentalBranchId(availableCarInfo.actualBranchId());
         existingBooking.setBookingProcessStatus(BookingProcessStatus.IN_UPDATE);
         Booking savedIntermediateBooking = bookingRepository.save(existingBooking);
 

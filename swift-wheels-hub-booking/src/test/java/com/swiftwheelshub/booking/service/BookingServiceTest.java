@@ -8,12 +8,12 @@ import com.swiftwheelshub.booking.repository.BookingRepository;
 import com.swiftwheelshub.booking.util.AssertionUtils;
 import com.swiftwheelshub.booking.util.TestUtil;
 import com.swiftwheelshub.dto.AuthenticationInfo;
+import com.swiftwheelshub.dto.AvailableCarInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.dto.BookingRollbackResponse;
 import com.swiftwheelshub.dto.BookingUpdateResponse;
-import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarStatusUpdate;
 import com.swiftwheelshub.dto.UpdateCarsRequest;
 import com.swiftwheelshub.entity.Booking;
@@ -113,7 +113,8 @@ class BookingServiceTest {
 
         BookingRequest bookingRequest = TestUtil.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
 
-        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        AvailableCarInfo availableCarInfo =
+                TestUtil.getResourceAsJson("/data/AvailableCarInfo.json", AvailableCarInfo.class);
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
         ApiKeyAuthenticationToken apiKeyAuthenticationToken =
@@ -123,7 +124,7 @@ class BookingServiceTest {
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.setIfAbsent(anyString(), anyString(), any(Duration.class))).thenReturn(true);
-        when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(carResponse);
+        when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(availableCarInfo);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
         when(createBookingCarUpdateProducerService.changeCarStatus(any(CarStatusUpdate.class))).thenReturn(true);
         when(redisTemplate.delete(anyString())).thenReturn(true);
@@ -187,8 +188,10 @@ class BookingServiceTest {
     void updateBookingTest_updatedCar_success() {
         Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
         Booking updatedBooking = TestUtil.getResourceAsJson("/data/UpdatedBooking.json", Booking.class);
-        BookingRequest bookingRequest = TestUtil.getResourceAsJson("/data/UpdatedBookingRequest.json", BookingRequest.class);
-        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+        BookingRequest bookingRequest =
+                TestUtil.getResourceAsJson("/data/UpdatedBookingRequest.json", BookingRequest.class);
+        AvailableCarInfo availableCarInfo =
+                TestUtil.getResourceAsJson("/data/AvailableCarInfo.json", AvailableCarInfo.class);
 
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-API-KEY", "apikey");
@@ -206,7 +209,7 @@ class BookingServiceTest {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.setIfAbsent(anyString(), anyString(), any(Duration.class))).thenReturn(true);
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
-        when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(carResponse);
+        when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(availableCarInfo);
         when(bookingRepository.save(any(Booking.class))).thenReturn(updatedBooking);
         when(updateBookingUpdateCarsProducerService.updateCarsStatus(any(UpdateCarsRequest.class))).thenReturn(true);
         when(redisTemplate.delete(anyString())).thenReturn(true);

@@ -1,6 +1,7 @@
 package com.swiftwheelshub.agency.controller;
 
 import com.swiftwheelshub.agency.service.CarService;
+import com.swiftwheelshub.dto.AvailableCarInfo;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
 import lombok.RequiredArgsConstructor;
@@ -70,10 +71,10 @@ public class CarController {
 
     @GetMapping(path = "/{id}/availability")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<CarResponse> findCarsByFilter(@PathVariable("id") Long id) {
-        CarResponse availableCarResponse = carService.findAvailableCar(id);
+    public ResponseEntity<AvailableCarInfo> findCarsByFilter(@PathVariable("id") Long id) {
+        AvailableCarInfo availableCarInfo = carService.findAvailableCar(id);
 
-        return ResponseEntity.ok(availableCarResponse);
+        return ResponseEntity.ok(availableCarInfo);
     }
 
     @GetMapping(path = "/{id}/image")
