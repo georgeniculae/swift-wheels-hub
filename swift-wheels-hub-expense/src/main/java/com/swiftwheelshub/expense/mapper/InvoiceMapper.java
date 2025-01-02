@@ -1,9 +1,12 @@
 package com.swiftwheelshub.expense.mapper;
 
+import com.swiftwheelshub.dto.InvoiceReprocessRequest;
+import com.swiftwheelshub.dto.InvoiceRequest;
 import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.entity.Invoice;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(
@@ -14,5 +17,11 @@ import org.mapstruct.ReportingPolicy;
 public interface InvoiceMapper {
 
     InvoiceResponse mapEntityToDto(Invoice invoice);
+
+    @Mapping(target = "invoiceProcessStatus", constant = "SAVED_CLOSED_INVOICE")
+    Invoice getSuccessfulCreatedInvoice(Invoice invoice);
+
+    @Mapping(target = "invoiceId", expression = "java(id)")
+    InvoiceReprocessRequest mapToInvoiceReprocessRequest(Long id, InvoiceRequest invoiceRequest);
 
 }

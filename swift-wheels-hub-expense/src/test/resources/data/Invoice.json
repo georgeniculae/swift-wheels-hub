@@ -1,13 +1,17 @@
 {
   "id": 1,
   "customerUsername": "test",
+  "customerEmail": "test@mail.com",
   "carId": 1,
   "receptionistEmployeeId": 1,
   "bookingId": 1,
+  "dateFrom": "2099-02-21",
+  "dateTo": "2099-02-22",
   "carReturnDate": "2099-02-22",
   "isVehicleDamaged": false,
   "damageCost": 0,
   "additionalPayment": 0,
-  "totalAmount": 550,
+  "rentalCarPrice": 500,
+  "totalAmount": 500,
   "comments": null
 }

@@ -29,8 +29,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  kafka:
-    bootstrap-servers: localhost:9092
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
@@ -52,6 +50,66 @@ spring:
         healthCheckInterval: 10s
         hostname: localhost
         failFast: false
+    function:
+      definition: carUpdateAfterBookingSaveConsumer;carUpdateAfterBookingUpdateConsumer;carUpdateAfterInvoiceCloseConsumer
+    stream:
+      defaultBinder: kafka
+      bindings:
+        carUpdateAfterBookingSaveConsumer-in-0:
+          binder: kafka
+          destination: ${SAVE_BOOKING_CAR_UPDATE_TOPIC}
+          contentType: application/json
+          group: ${AGENCY_CONSUMER_GROUP}
+          consumer:
+            default-retryable: true
+            max-attempts: 3
+            back-off-max-interval: 10000
+            back-off-multiplier: 1.0
+        carUpdateAfterBookingUpdateConsumer-in-0:
+          binder: kafka
+          destination: ${UPDATE_BOOKING_CARS_UPDATE_TOPIC}
+          contentType: application/json
+          group: ${AGENCY_CONSUMER_GROUP}
+          consumer:
+            default-retryable: true
+            max-attempts: 3
+            back-off-max-interval: 10000
+            back-off-multiplier: 1.0
+        carUpdateAfterInvoiceCloseConsumer-in-0:
+          binder: kafka
+          destination: ${INVOICE_CAR_UPDATE_DETAILS_TOPIC}
+          contentType: application/json
+          group: ${AGENCY_CONSUMER_GROUP}
+          consumer:
+            default-retryable: true
+            max-attempts: 3
+            back-off-max-interval: 10000
+            back-off-multiplier: 1.0
+      kafka:
+        binder:
+          auto-create-topics: true
+          auto-add-partitions: false
+          consumer-properties:
+            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            allow.auto.create.topics: true
+            auto.offset.reset: latest
+        bindings:
+          carUpdateAfterBookingSaveConsumer-in-0:
+            consumer:
+              ack-mode: MANUAL_IMMEDIATE
+          carUpdateAfterBookingUpdateConsumer-in-0:
+            consumer:
+              ack-mode: MANUAL_IMMEDIATE
+          carUpdateAfterInvoiceCloseConsumer-in-0:
+            consumer:
+              ack-mode: MANUAL_IMMEDIATE
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      enable-auto-commit: false
+    listener:
+      missing-topics-fatal: false
   servlet:
     multipart:
       enabled: true
@@ -76,8 +134,6 @@ management:
   server:
     port: ${server.port}
   endpoint:
-    loggers:
-      enabled: true
     health:
       group:
         custom:

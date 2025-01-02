@@ -1,21 +1,20 @@
 package com.swiftwheelshub.expense.service;
 
-import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.BookingRollbackResponse;
-import com.swiftwheelshub.dto.BookingUpdateResponse;
 import com.swiftwheelshub.dto.CarUpdateDetails;
+import com.swiftwheelshub.dto.InvoiceReprocessRequest;
 import com.swiftwheelshub.dto.InvoiceRequest;
 import com.swiftwheelshub.dto.InvoiceResponse;
-import com.swiftwheelshub.dto.StatusUpdateResponse;
 import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.expense.mapper.InvoiceMapper;
 import com.swiftwheelshub.expense.mapper.InvoiceMapperImpl;
-import com.swiftwheelshub.expense.model.FailedBookingRollback;
-import com.swiftwheelshub.expense.repository.FailedBookingRollbackRepository;
+import com.swiftwheelshub.expense.producer.BookingRollbackProducerService;
+import com.swiftwheelshub.expense.producer.BookingUpdateProducerService;
+import com.swiftwheelshub.expense.producer.CarStatusUpdateProducerService;
+import com.swiftwheelshub.expense.producer.FailedInvoiceDlqProducerService;
 import com.swiftwheelshub.expense.repository.InvoiceRepository;
 import com.swiftwheelshub.expense.util.AssertionUtils;
 import com.swiftwheelshub.expense.util.TestUtil;
@@ -35,9 +34,6 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -62,19 +57,19 @@ class InvoiceServiceTest {
     private RevenueService revenueService;
 
     @Mock
-    private BookingService bookingService;
+    private BookingUpdateProducerService bookingUpdateProducerService;
+
+    @Mock
+    private CarStatusUpdateProducerService carStatusUpdateProducerService;
 
     @Mock
     private InvoiceRepository invoiceRepository;
 
     @Mock
-    private CarService carService;
+    private BookingRollbackProducerService bookingRollbackProducerService;
 
     @Mock
-    private FailedBookingRollbackRepository failedBookingRollbackRepository;
-
-    @Spy
-    private ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
+    private FailedInvoiceDlqProducerService failedInvoiceDlqProducerService;
 
     @Spy
     private InvoiceMapper invoiceMapper = new InvoiceMapperImpl();
@@ -187,7 +182,6 @@ class InvoiceServiceTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void closeInvoiceTest_success() {
         Invoice invoice = TestUtil.getResourceAsJson("/data/Invoice.json", Invoice.class);
 
@@ -196,15 +190,6 @@ class InvoiceServiceTest {
         InvoiceRequest invoiceRequest =
                 TestUtil.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
 
-        BookingResponse bookingResponse =
-                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
-
-        BookingUpdateResponse bookingUpdateResponse =
-                TestUtil.getResourceAsJson("/data/SuccessfulBookingUpdateResponse.json", BookingUpdateResponse.class);
-
-        StatusUpdateResponse statusUpdateResponse =
-                TestUtil.getResourceAsJson("/data/SuccessfulStatusUpdateResponse.json", StatusUpdateResponse.class);
-
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-API-KEY", "apikey");
         httpServletRequest.addHeader("X-ROLES", "ROLE_user");
@@ -219,36 +204,22 @@ class InvoiceServiceTest {
         SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
-        when(bookingService.findBookingById(any(AuthenticationInfo.class), anyLong())).thenReturn(bookingResponse);
         when(invoiceRepository.save(any(Invoice.class))).thenReturn(closedInvoice);
-        when(carService.markCarAsAvailable(any(AuthenticationInfo.class), any(CarUpdateDetails.class)))
-                .thenReturn(statusUpdateResponse);
-        when(bookingService.closeBooking(any(AuthenticationInfo.class), any(BookingClosingDetails.class)))
-                .thenReturn(bookingUpdateResponse);
+        when(bookingUpdateProducerService.closeBooking(any(BookingClosingDetails.class))).thenReturn(true);
+        when(carStatusUpdateProducerService.markCarAsAvailable(any(CarUpdateDetails.class))).thenReturn(true);
         when(revenueService.processClosing(any(Invoice.class))).thenReturn(invoice);
 
-        InvoiceResponse invoiceResponse = invoiceService.closeInvoice(1L, invoiceRequest);
-        AssertionUtils.assertInvoiceResponse(invoice, invoiceResponse);
-
-        verify(invoiceMapper).mapEntityToDto(any(Invoice.class));
-        verify(executorService, times(2)).submit(any(Callable.class));
+        assertDoesNotThrow(() -> invoiceService.closeInvoice(1L, invoiceRequest));
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void closeInvoiceTest_failedBookingCall() {
+    void closeInvoiceTest_failedBookingUpdate() {
         Invoice invoice = TestUtil.getResourceAsJson("/data/Invoice.json", Invoice.class);
 
         Invoice closedInvoice = TestUtil.getResourceAsJson("/data/ClosedInvoice.json", Invoice.class);
 
         InvoiceRequest invoiceRequest =
                 TestUtil.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
-
-        BookingResponse bookingResponse =
-                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
-
-        BookingUpdateResponse bookingUpdateResponse =
-                TestUtil.getResourceAsJson("/data/FailedBookingUpdateResponse.json", BookingUpdateResponse.class);
 
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-API-KEY", "apikey");
@@ -264,39 +235,21 @@ class InvoiceServiceTest {
         SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
-        when(bookingService.findBookingById(any(AuthenticationInfo.class), anyLong())).thenReturn(bookingResponse);
         when(invoiceRepository.save(any(Invoice.class))).thenReturn(closedInvoice);
-        when(bookingService.closeBooking(any(AuthenticationInfo.class), any(BookingClosingDetails.class)))
-                .thenReturn(bookingUpdateResponse);
+        when(bookingUpdateProducerService.closeBooking(any(BookingClosingDetails.class))).thenReturn(false);
+        when(failedInvoiceDlqProducerService.sendMessage(any(InvoiceReprocessRequest.class))).thenReturn(true);
 
-        InvoiceResponse invoiceResponse = invoiceService.closeInvoice(1L, invoiceRequest);
-        AssertionUtils.assertInvoiceResponse(closedInvoice, invoiceResponse);
-
-        verify(invoiceMapper).mapEntityToDto(any(Invoice.class));
-        verify(executorService, times(2)).submit(any(Callable.class));
+        assertDoesNotThrow(() -> invoiceService.closeInvoice(1L, invoiceRequest));
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void closeInvoiceTest_failedBookingAndCarUpdate() {
+    void closeInvoiceTest_failedCarUpdate() {
         Invoice invoice = TestUtil.getResourceAsJson("/data/Invoice.json", Invoice.class);
 
         Invoice closedInvoice = TestUtil.getResourceAsJson("/data/ClosedInvoice.json", Invoice.class);
 
         InvoiceRequest invoiceRequest =
                 TestUtil.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
-
-        BookingResponse bookingResponse =
-                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
-
-        BookingUpdateResponse bookingUpdateResponse =
-                TestUtil.getResourceAsJson("/data/SuccessfulBookingUpdateResponse.json", BookingUpdateResponse.class);
-
-        StatusUpdateResponse statusUpdateResponse =
-                TestUtil.getResourceAsJson("/data/FailedStatusUpdateResponse.json", StatusUpdateResponse.class);
-
-        BookingRollbackResponse bookingRollbackResponse =
-                TestUtil.getResourceAsJson("/data/SuccessfulBookingRollbackResponse.json", BookingRollbackResponse.class);
 
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-API-KEY", "apikey");
@@ -312,45 +265,22 @@ class InvoiceServiceTest {
         SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
-        when(bookingService.findBookingById(any(AuthenticationInfo.class), anyLong())).thenReturn(bookingResponse);
         when(invoiceRepository.save(any(Invoice.class))).thenReturn(closedInvoice);
-        when(bookingService.closeBooking(any(AuthenticationInfo.class), any(BookingClosingDetails.class)))
-                .thenReturn(bookingUpdateResponse);
-        when(carService.markCarAsAvailable(any(AuthenticationInfo.class), any(CarUpdateDetails.class)))
-                .thenReturn(statusUpdateResponse);
-        when(bookingService.rollbackBooking(any(AuthenticationInfo.class), anyLong())).thenReturn(bookingRollbackResponse);
+        when(bookingUpdateProducerService.closeBooking(any(BookingClosingDetails.class))).thenReturn(true);
+        when(carStatusUpdateProducerService.markCarAsAvailable(any(CarUpdateDetails.class))).thenReturn(false);
+        when(bookingRollbackProducerService.rollbackBooking(anyLong())).thenReturn(true);
 
-        InvoiceResponse invoiceResponse = invoiceService.closeInvoice(1L, invoiceRequest);
-        AssertionUtils.assertInvoiceResponse(closedInvoice, invoiceResponse);
+        assertDoesNotThrow(() -> invoiceService.closeInvoice(1L, invoiceRequest));
 
-        verify(invoiceMapper).mapEntityToDto(any(Invoice.class));
-        verify(executorService, times(2)).submit(any(Callable.class));
+        verify(invoiceMapper).mapToInvoiceReprocessRequest(anyLong(), any(InvoiceRequest.class));
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void closeInvoiceTest_failedBookingRollback() {
+    void closeInvoiceTest_errorOnSavingInvoice() {
         Invoice invoice = TestUtil.getResourceAsJson("/data/Invoice.json", Invoice.class);
-
-        Invoice closedInvoice = TestUtil.getResourceAsJson("/data/ClosedInvoice.json", Invoice.class);
 
         InvoiceRequest invoiceRequest =
                 TestUtil.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
-
-        BookingResponse bookingResponse =
-                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
-
-        BookingUpdateResponse bookingUpdateResponse =
-                TestUtil.getResourceAsJson("/data/SuccessfulBookingUpdateResponse.json", BookingUpdateResponse.class);
-
-        StatusUpdateResponse statusUpdateResponse =
-                TestUtil.getResourceAsJson("/data/FailedStatusUpdateResponse.json", StatusUpdateResponse.class);
-
-        BookingRollbackResponse bookingRollbackResponse =
-                TestUtil.getResourceAsJson("/data/FailedBookingRollbackResponse.json", BookingRollbackResponse.class);
-
-        FailedBookingRollback failedBookingRollback =
-                TestUtil.getResourceAsJson("/data/FailedBookingRollback.json", FailedBookingRollback.class);
 
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-API-KEY", "apikey");
@@ -366,20 +296,12 @@ class InvoiceServiceTest {
         SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
 
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
-        when(bookingService.findBookingById(any(AuthenticationInfo.class), anyLong())).thenReturn(bookingResponse);
-        when(invoiceRepository.save(any(Invoice.class))).thenReturn(closedInvoice);
-        when(bookingService.closeBooking(any(AuthenticationInfo.class), any(BookingClosingDetails.class)))
-                .thenReturn(bookingUpdateResponse);
-        when(carService.markCarAsAvailable(any(AuthenticationInfo.class), any(CarUpdateDetails.class)))
-                .thenReturn(statusUpdateResponse);
-        when(bookingService.rollbackBooking(any(AuthenticationInfo.class), anyLong())).thenReturn(bookingRollbackResponse);
-        when(failedBookingRollbackRepository.save(any(FailedBookingRollback.class))).thenReturn(failedBookingRollback);
+        when(invoiceRepository.save(any(Invoice.class))).thenThrow(new RuntimeException());
+        when(failedInvoiceDlqProducerService.sendMessage(any(InvoiceReprocessRequest.class))).thenReturn(true);
 
-        InvoiceResponse invoiceResponse = invoiceService.closeInvoice(1L, invoiceRequest);
-        AssertionUtils.assertInvoiceResponse(closedInvoice, invoiceResponse);
+        assertDoesNotThrow(() -> invoiceService.closeInvoice(1L, invoiceRequest));
 
-        verify(invoiceMapper).mapEntityToDto(any(Invoice.class));
-        verify(executorService, times(2)).submit(any(Callable.class));
+        verify(invoiceMapper).mapToInvoiceReprocessRequest(anyLong(), any(InvoiceRequest.class));
     }
 
 }

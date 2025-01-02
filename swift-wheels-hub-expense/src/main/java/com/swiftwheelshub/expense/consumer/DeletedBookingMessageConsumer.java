@@ -1,6 +1,7 @@
 package com.swiftwheelshub.expense.consumer;
 
 import com.swiftwheelshub.expense.service.InvoiceService;
+import com.swiftwheelshub.lib.util.KafkaUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +17,12 @@ public class DeletedBookingMessageConsumer {
 
     @Bean
     public Consumer<Message<Long>> deletedBookingConsumer() {
-        return message -> invoiceService.deleteInvoiceByBookingId(message.getPayload());
+        return this::processMessage;
+    }
+
+    private void processMessage(Message<Long> message) {
+        invoiceService.deleteInvoiceByBookingId(message.getPayload());
+        KafkaUtil.acknowledgeMessage(message.getHeaders());
     }
 
 }

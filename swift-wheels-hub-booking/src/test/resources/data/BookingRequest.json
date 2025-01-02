@@ -3,7 +3,6 @@
   "carId": 1,
   "dateFrom": "2099-02-21",
   "dateTo": "2099-02-22",
-  "amount": 500,
   "rentalCarPrice": 500,
   "rentalBranchId": 1,
   "returnBranchId": 1

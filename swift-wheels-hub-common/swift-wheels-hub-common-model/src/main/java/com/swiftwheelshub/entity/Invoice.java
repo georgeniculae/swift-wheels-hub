@@ -28,6 +28,9 @@ public class Invoice extends BaseEntity {
     @NotEmpty(message = "Username cannot be empty")
     private String customerUsername;
 
+    @NotEmpty(message = "Email cannot be empty")
+    private String customerEmail;
+
     @NotNull(message = "Car id cannot be null")
     private Long carId;
 
@@ -37,6 +40,16 @@ public class Invoice extends BaseEntity {
 
     @NotNull(message = "Booking id cannot be null")
     private Long bookingId;
+
+    @NotNull(message = "Date from cannot be null")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
+    private LocalDate dateFrom;
+
+    @NotNull(message = "Date to cannot be null")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
+    private LocalDate dateTo;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
@@ -49,6 +62,9 @@ public class Invoice extends BaseEntity {
     private BigDecimal additionalPayment;
 
     private BigDecimal totalAmount;
+
+    @NotNull(message = "Rental car price cannot be null")
+    private BigDecimal rentalCarPrice;
 
     private String comments;
 

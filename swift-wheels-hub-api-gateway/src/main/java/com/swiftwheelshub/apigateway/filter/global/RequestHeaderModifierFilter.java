@@ -34,6 +34,7 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
 
     private static final String X_API_KEY_HEADER = "X-API-KEY";
     private static final String X_USERNAME = "X-USERNAME";
+    private static final String X_EMAIL = "X-EMAIL";
     private static final String X_ROLES = "X-ROLES";
     private static final String REGISTER_PATH = "register";
     private static final String DEFINITION_PATH = "definition";
@@ -83,11 +84,21 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
                 .flatMap(authenticationInfo -> filterValidatedRequest(chain, exchange, authenticationInfo));
     }
 
+    @SuppressWarnings("unchecked")
     private Mono<AuthenticationInfo> getAuthenticationInfo(Jwt jwt) {
         return Mono.zip(
-                getUsername(jwt),
-                getRoles(jwt),
-                (username, roles) -> AuthenticationInfo.builder().username(username).roles(roles).build()
+                List.of(
+                        getUsername(jwt),
+                        getEmail(jwt),
+                        getRoles(jwt)
+                ),
+                authenticationDetails -> {
+                    String username = (String) authenticationDetails[0];
+                    String email = (String) authenticationDetails[1];
+                    List<String> roles = (List<String>) authenticationDetails[2];
+
+                    return getAuthenticationInfo(username, email, roles);
+                }
         );
     }
 
@@ -96,11 +107,24 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
                 .switchIfEmpty(Mono.defer(() -> Mono.just(StringUtils.EMPTY)));
     }
 
+    private Mono<String> getEmail(Jwt jwt) {
+        return Mono.just(jwtAuthenticationTokenConverter.extractEmail(jwt))
+                .switchIfEmpty(Mono.defer(() -> Mono.just(StringUtils.EMPTY)));
+    }
+
     private Mono<List<String>> getRoles(Jwt jwt) {
         return jwtAuthenticationTokenConverter.extractGrantedAuthorities(jwt)
                 .map(GrantedAuthority::getAuthority)
                 .collectList()
                 .switchIfEmpty(Mono.just(List.of()));
+    }
+
+    private AuthenticationInfo getAuthenticationInfo(String username, String email, List<String> roles) {
+        return AuthenticationInfo.builder()
+                .username(username)
+                .email(email)
+                .roles(roles)
+                .build();
     }
 
     private String getAuthorizationToken(ServerHttpRequest request) {
@@ -122,16 +146,20 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     private ServerWebExchange createMutatedServerWebExchange(ServerWebExchange exchange,
                                                              AuthenticationInfo authenticationInfo) {
         return exchange.mutate()
-                .request(mutateHeaders(authenticationInfo.username(), authenticationInfo.roles()))
+                .request(mutateHeaders(authenticationInfo.username(), authenticationInfo.email(), authenticationInfo.roles()))
                 .build();
     }
 
-    private Consumer<ServerHttpRequest.Builder> mutateHeaders(String username, List<String> roles) {
+    private Consumer<ServerHttpRequest.Builder> mutateHeaders(String username, String email, List<String> roles) {
         return requestBuilder -> {
             requestBuilder.header(X_API_KEY_HEADER, apikey);
 
             if (ObjectUtils.isNotEmpty(username)) {
                 requestBuilder.header(X_USERNAME, username);
+            }
+
+            if (ObjectUtils.isNotEmpty(email)) {
+                requestBuilder.header(X_EMAIL, email);
             }
 
             if (ObjectUtils.isNotEmpty(roles)) {

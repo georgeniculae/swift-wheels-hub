@@ -12,11 +12,6 @@ spring:
   threads:
     virtual:
       enabled: true
-  datasource:
-    url: jdbc:p6spy:postgresql://localhost:5432/swift_wheels_hub_email_notification
-    username: ${POSTGRESQL_USERNAME}
-    password: ${POSTGRESQL_PASSWORD}
-    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
   cloud:
     loadbalancer:
       enabled: true
@@ -36,7 +31,7 @@ spring:
         hostname: localhost
         failFast: false
     function:
-      definition: emailNotificationConsumer;customerInfoConsumer
+      definition: emailNotificationConsumer
     stream:
       defaultBinder: kafka
       bindings:
@@ -45,11 +40,11 @@ spring:
           destination: ${EMAIL_NOTIFICATION_TOPIC}
           contentType: application/json
           group: ${EMAIL_NOTIFICATION_CONSUMER_GROUP}
-        customerInfoConsumer-in-0:
-          binder: kafka
-          destination: ${CUSTOMER_INFO_TOPIC}
-          contentType: application/json
-          group: ${EMAIL_NOTIFICATION_CONSUMER_GROUP}
+          consumer:
+            default-retryable: true
+            max-attempts: 3
+            back-off-max-interval: 10000
+            back-off-multiplier: 1.0
       kafka:
         binder:
           auto-create-topics: true
@@ -58,8 +53,16 @@ spring:
             key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
             value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
             allow.auto.create.topics: true
+            auto.offset.reset: latest
+        bindings:
+          emailNotificationConsumer-in-0:
+            consumer:
+              ack-mode: MANUAL_IMMEDIATE
+              standard-headers: both
   kafka:
     bootstrap-servers: localhost:9092
+    consumer:
+      enable-auto-commit: false
     listener:
       missing-topics-fatal: false
   sendgrid:
@@ -69,8 +72,6 @@ management:
   server:
     port: ${server.port}
   endpoint:
-    loggers:
-      enabled: true
     health:
       group:
         custom:
@@ -100,7 +101,7 @@ logging:
 sendgrid:
   enabled: true
   mail:
-    mailFrom: ${SENDGRID_MAIL_FROM}
+    from: ${SENDGRID_MAIL_FROM}
     name: Swift Wheels Hub
 
 mustache-template:

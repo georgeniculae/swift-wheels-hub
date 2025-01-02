@@ -15,16 +15,26 @@ public record InvoiceResponse(
         @NotEmpty(message = "Username cannot be empty")
         String customerUsername,
 
+        @NotEmpty(message = "Email cannot be empty")
+        String customerEmail,
+
         @NotNull(message = "Car id cannot be null")
         Long carId,
 
         Long receptionistEmployeeId,
 
+        Long returnBranchId,
+
         @NotNull(message = "Booking id cannot be null")
         Long bookingId,
 
-        @DateTimeFormat(pattern = "yyyy-MM-dd")
         LocalDate carReturnDate,
+
+        @DateTimeFormat(pattern = "yyyy-MM-dd")
+        LocalDate dateTo,
+
+        @DateTimeFormat(pattern = "yyyy-MM-dd")
+        LocalDate dateFrom,
 
         Boolean isVehicleDamaged,
 
@@ -34,24 +44,34 @@ public record InvoiceResponse(
 
         BigDecimal totalAmount,
 
-        String comments
+        BigDecimal rentalCarPrice,
+
+        String comments,
+
+        InvoiceProcessState invoiceProcessState
 ) {
 
     @Override
     public String toString() {
-        return "InvoiceResponse{" + "\n" +
-                "id=" + id + "\n" +
-                "customerUsername='" + customerUsername + "\n" +
-                "carId=" + carId + "\n" +
-                "receptionistEmployeeId=" + receptionistEmployeeId + "\n" +
-                "bookingId=" + bookingId + "\n" +
-                "carReturnDate=" + carReturnDate + "\n" +
-                "isVehicleDamaged=" + isVehicleDamaged + "\n" +
-                "damageCost=" + damageCost + "\n" +
-                "additionalPayment=" + additionalPayment + "\n" +
-                "totalAmount=" + totalAmount + "\n" +
-                "comments='" + comments + "\n" +
-                "}";
+        return "InvoiceResponse{" +
+                "id='" + id + '\'' +
+                ", customerUsername='" + customerUsername + '\'' +
+                ", customerEmail='" + customerEmail + '\'' +
+                ", previousCarId='" + carId + '\'' +
+                ", receptionistEmployeeId='" + receptionistEmployeeId + '\'' +
+                ", returnBranchId='" + returnBranchId + '\'' +
+                ", bookingId='" + bookingId + '\'' +
+                ", carReturnDate=" + carReturnDate +
+                ", dateTo=" + dateTo +
+                ", dateFrom=" + dateFrom +
+                ", isVehicleDamaged=" + isVehicleDamaged +
+                ", damageCost=" + damageCost +
+                ", additionalPayment=" + additionalPayment +
+                ", totalAmount=" + totalAmount +
+                ", rentalCarPrice=" + rentalCarPrice +
+                ", comments='" + comments + '\'' +
+                ", invoiceProcessState=" + invoiceProcessState +
+                '}';
     }
 
 }

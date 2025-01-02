@@ -21,6 +21,9 @@ public record BookingResponse(
         @NotEmpty(message = "Username cannot be empty")
         String customerUsername,
 
+        @NotEmpty(message = "Email cannot be empty")
+        String customerEmail,
+
         @NotNull(message = "Car id cannot be null")
         Long carId,
 
@@ -31,8 +34,6 @@ public record BookingResponse(
         @NotNull(message = "Date to cannot be blank")
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         LocalDate dateTo,
-
-        BigDecimal amount,
 
         BigDecimal rentalCarPrice,
 
@@ -49,10 +50,9 @@ public record BookingResponse(
                 "dateOfBooking=" + dateOfBooking + "\n" +
                 "status=" + status + "\n" +
                 "customerUsername='" + customerUsername + "\n" +
-                "carId=" + carId + "\n" +
+                "previousCarId=" + carId + "\n" +
                 "dateFrom=" + dateFrom + "\n" +
                 "dateTo=" + dateTo + "\n" +
-                "amount=" + amount + "\n" +
                 "rentalCarPrice=" + rentalCarPrice + "\n" +
                 "rentalBranchId=" + rentalBranchId + "\n" +
                 "returnBranchId=" + returnBranchId + "\n" +

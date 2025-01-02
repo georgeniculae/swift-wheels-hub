@@ -3,9 +3,6 @@ package com.swiftwheelshub.agency.controller;
 import com.swiftwheelshub.agency.service.CarService;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
-import com.swiftwheelshub.dto.CarState;
-import com.swiftwheelshub.dto.CarUpdateDetails;
-import com.swiftwheelshub.dto.UpdateCarRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +10,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -120,31 +115,6 @@ public class CarController {
                                                  @RequestPart @Validated CarRequest carRequest,
                                                  @RequestPart MultipartFile image) {
         CarResponse updatedCarResponse = carService.updateCar(id, carRequest, image);
-
-        return ResponseEntity.ok(updatedCarResponse);
-    }
-
-    @PatchMapping(path = "/{id}/change-status")
-    @PreAuthorize("hasAnyRole('user', 'booking_service')")
-    public ResponseEntity<CarResponse> updateCarStatus(@PathVariable("id") Long id, @RequestParam CarState carState) {
-        CarResponse updatedCarResponse = carService.updateCarStatus(id, carState);
-
-        return ResponseEntity.ok(updatedCarResponse);
-    }
-
-    @PutMapping(path = "/update-statuses")
-    @PreAuthorize("hasAnyRole('user', 'booking_service')")
-    public ResponseEntity<List<CarResponse>> updateCarsStatuses(@RequestBody @Validated List<UpdateCarRequest> carsForUpdate) {
-        List<CarResponse> updatedCarResponses = carService.updateCarsStatus(carsForUpdate);
-
-        return ResponseEntity.ok(updatedCarResponses);
-    }
-
-    @PutMapping(path = "/{id}/update-after-return")
-    @PreAuthorize("hasAnyRole('user', 'booking_service')")
-    public ResponseEntity<CarResponse> updateCarWhenBookingIsClosed(@PathVariable("id") Long id,
-                                                                    @RequestBody @Validated CarUpdateDetails carUpdateDetails) {
-        CarResponse updatedCarResponse = carService.updateCarWhenBookingIsClosed(id, carUpdateDetails);
 
         return ResponseEntity.ok(updatedCarResponse);
     }

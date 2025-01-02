@@ -1,25 +1,22 @@
 package com.swiftwheelshub.expense.service;
 
-import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.BookingRollbackResponse;
-import com.swiftwheelshub.dto.BookingUpdateResponse;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.CarUpdateDetails;
+import com.swiftwheelshub.dto.InvoiceReprocessRequest;
 import com.swiftwheelshub.dto.InvoiceRequest;
 import com.swiftwheelshub.dto.InvoiceResponse;
-import com.swiftwheelshub.dto.StatusUpdateResponse;
 import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.entity.InvoiceProcessStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.expense.mapper.InvoiceMapper;
-import com.swiftwheelshub.expense.model.FailedBookingRollback;
-import com.swiftwheelshub.expense.repository.FailedBookingRollbackRepository;
+import com.swiftwheelshub.expense.producer.BookingRollbackProducerService;
+import com.swiftwheelshub.expense.producer.BookingUpdateProducerService;
+import com.swiftwheelshub.expense.producer.CarStatusUpdateProducerService;
+import com.swiftwheelshub.expense.producer.FailedInvoiceDlqProducerService;
 import com.swiftwheelshub.expense.repository.InvoiceRepository;
-import com.swiftwheelshub.lib.exceptionhandling.ExceptionUtil;
-import com.swiftwheelshub.lib.util.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -32,8 +29,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Stream;
 
 @Service
@@ -43,11 +38,11 @@ public class InvoiceService implements RetryListener {
 
     private final InvoiceRepository invoiceRepository;
     private final RevenueService revenueService;
-    private final BookingService bookingService;
-    private final CarService carService;
+    private final BookingUpdateProducerService bookingUpdateProducerService;
+    private final CarStatusUpdateProducerService carStatusUpdateProducerService;
     private final InvoiceMapper invoiceMapper;
-    private final ExecutorService executorService;
-    private final FailedBookingRollbackRepository failedBookingRollbackRepository;
+    private final FailedInvoiceDlqProducerService failedInvoiceDlqProducerService;
+    private final BookingRollbackProducerService bookingRollbackProducerService;
 
     @Transactional(readOnly = true)
     public List<InvoiceResponse> findAllInvoices() {
@@ -96,8 +91,12 @@ public class InvoiceService implements RetryListener {
             Invoice invoice = new Invoice();
 
             invoice.setCustomerUsername(newBookingResponse.customerUsername());
+            invoice.setCustomerEmail(newBookingResponse.customerEmail());
             invoice.setCarId(newBookingResponse.carId());
             invoice.setBookingId(newBookingResponse.id());
+            invoice.setRentalCarPrice(newBookingResponse.rentalCarPrice());
+            invoice.setDateFrom(newBookingResponse.dateFrom());
+            invoice.setDateTo(newBookingResponse.dateTo());
 
             invoiceRepository.save(invoice);
 
@@ -108,26 +107,26 @@ public class InvoiceService implements RetryListener {
     }
 
     public void updateInvoiceAfterBookingUpdate(BookingResponse bookingResponse) {
-        Invoice invoice = findInvoiceByBookingId(bookingResponse.id());
-        invoice.setCarId(bookingResponse.carId());
+        try {
+            Invoice invoice = findInvoiceByBookingId(bookingResponse.id());
+            invoice.setCarId(bookingResponse.carId());
 
-        invoiceRepository.save(invoice);
+            invoiceRepository.save(invoice);
+        } catch (Exception e) {
+            throw new SwiftWheelsHubResponseStatusException(HttpStatus.BAD_REQUEST, "Error while updating invoice");
+        }
     }
 
-    public InvoiceResponse closeInvoice(Long id, InvoiceRequest invoiceRequest) {
+    public void closeInvoice(Long id, InvoiceRequest invoiceRequest) {
         try {
             validateInvoice(invoiceRequest);
+            Invoice existingInvoiceUpdated = updateInvoiceWithBookingDetails(id, invoiceRequest);
 
-            AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
-            Invoice existingInvoiceUpdated = updateInvoiceWithBookingDetails(id, authenticationInfo, invoiceRequest);
-
-            Invoice savedInvoice = completeInvoiceAfterBookingAndCarUpdate(invoiceRequest, authenticationInfo, existingInvoiceUpdated);
-
-            return invoiceMapper.mapEntityToDto(savedInvoice);
+            completeInvoiceAfterBookingAndCarUpdate(invoiceRequest, existingInvoiceUpdated);
         } catch (Exception e) {
             log.error("Error occurred while closing invoice: {}", e.getMessage());
 
-            throw ExceptionUtil.handleException(e);
+            failedInvoiceDlqProducerService.sendMessage(invoiceMapper.mapToInvoiceReprocessRequest(id, invoiceRequest));
         }
     }
 
@@ -135,61 +134,51 @@ public class InvoiceService implements RetryListener {
         invoiceRepository.deleteByBookingId(bookingId);
     }
 
-    private Invoice completeInvoiceAfterBookingAndCarUpdate(InvoiceRequest invoiceRequest,
-                                                            AuthenticationInfo authenticationInfo,
-                                                            Invoice existingInvoiceUpdated) {
-        boolean successful = updateBookingAndCar(invoiceRequest, authenticationInfo, existingInvoiceUpdated);
+    private void completeInvoiceAfterBookingAndCarUpdate(InvoiceRequest invoiceRequest, Invoice existingInvoiceUpdated) {
+        boolean successful = updateBookingAndCar(invoiceRequest, existingInvoiceUpdated);
 
         if (successful) {
             existingInvoiceUpdated.setInvoiceProcessStatus(InvoiceProcessStatus.SAVED_CLOSED_INVOICE);
+            revenueService.processClosing(existingInvoiceUpdated);
+            log.info("Invoice with id: {} has been successfully closed", existingInvoiceUpdated.getId());
 
-            return revenueService.processClosing(existingInvoiceUpdated);
+            return;
         }
 
         existingInvoiceUpdated.setInvoiceProcessStatus(InvoiceProcessStatus.FAILED_CLOSED_INVOICE);
+        invoiceRepository.save(existingInvoiceUpdated);
 
-        return invoiceRepository.save(existingInvoiceUpdated);
+        InvoiceReprocessRequest invoiceReprocessRequest =
+                invoiceMapper.mapToInvoiceReprocessRequest(existingInvoiceUpdated.getId(), invoiceRequest);
+
+        failedInvoiceDlqProducerService.sendMessage(invoiceReprocessRequest);
+
+        log.warn("Invoice with id: {} has failed to close, storing it to DLQ", existingInvoiceUpdated.getId());
     }
 
-    private boolean updateBookingAndCar(InvoiceRequest invoiceRequest,
-                                        AuthenticationInfo authenticationInfo,
-                                        Invoice savedInvoice) {
-        BookingUpdateResponse bookingUpdateResponse = closeBooking(invoiceRequest, authenticationInfo);
+    private boolean updateBookingAndCar(InvoiceRequest invoiceRequest, Invoice savedInvoice) {
+        boolean isBookingUpdated = closeBooking(invoiceRequest);
 
-        if (bookingUpdateResponse.isSuccessful()) {
-            StatusUpdateResponse statusUpdateResponse = markCarAsAvailable(authenticationInfo, savedInvoice);
+        if (isBookingUpdated) {
+            boolean isCarUpdated = carStatusUpdateProducerService.markCarAsAvailable(getCarUpdateDetails(savedInvoice));
 
-            if (statusUpdateResponse.isUpdateSuccessful()) {
+            if (isCarUpdated) {
                 return true;
             } else {
-                handleBookingRollback(authenticationInfo, savedInvoice);
+                log.error("Error occurred while updating booking");
+                bookingRollbackProducerService.rollbackBooking(savedInvoice.getBookingId());
             }
         }
 
         return false;
     }
 
-    private StatusUpdateResponse markCarAsAvailable(AuthenticationInfo authenticationInfo, Invoice savedInvoice) {
-        return carService.markCarAsAvailable(authenticationInfo, getCarUpdateDetails(savedInvoice));
-    }
-
-    private BookingUpdateResponse closeBooking(InvoiceRequest invoiceRequest, AuthenticationInfo authenticationInfo) {
+    private boolean closeBooking(InvoiceRequest invoiceRequest) {
         Long bookingId = invoiceRequest.bookingId();
         Long returnBranchId = invoiceRequest.returnBranchId();
         BookingClosingDetails bookingClosingDetails = getBookingClosingDetails(bookingId, returnBranchId);
 
-        return bookingService.closeBooking(authenticationInfo, bookingClosingDetails);
-    }
-
-    private void handleBookingRollback(AuthenticationInfo authenticationInfo, Invoice savedInvoice) {
-        Long bookingId = savedInvoice.getBookingId();
-
-        BookingRollbackResponse rollbackBookingResponse =
-                bookingService.rollbackBooking(authenticationInfo, bookingId);
-
-        if (!rollbackBookingResponse.isSuccessful()) {
-            failedBookingRollbackRepository.save(new FailedBookingRollback(bookingId));
-        }
+        return bookingUpdateProducerService.closeBooking(bookingClosingDetails);
     }
 
     private void validateInvoice(InvoiceRequest invoiceRequest) {
@@ -235,17 +224,12 @@ public class InvoiceService implements RetryListener {
         return ObjectUtils.isEmpty(invoiceRequest.additionalPayment()) ? BigDecimal.ZERO : invoiceRequest.additionalPayment();
     }
 
-    private Invoice updateInvoiceWithBookingDetails(Long id,
-                                                    AuthenticationInfo authenticationInfo,
-                                                    InvoiceRequest invoiceRequest) {
-        Invoice existingInvoice = getExistingInvoice(id);
-        BookingResponse bookingResponse = getBookingResponse(authenticationInfo, invoiceRequest);
+    private Invoice updateInvoiceWithBookingDetails(Long id, InvoiceRequest invoiceRequest) {
+        Invoice existingInvoice = findEntityById(id);
 
         Long receptionistEmployeeId = invoiceRequest.receptionistEmployeeId();
         Long carId = invoiceRequest.carId();
-        String customerUsername = bookingResponse.customerUsername();
 
-        existingInvoice.setCustomerUsername(customerUsername);
         existingInvoice.setCarReturnDate(invoiceRequest.carReturnDate());
         existingInvoice.setReceptionistEmployeeId(receptionistEmployeeId);
         existingInvoice.setCarId(carId);
@@ -253,38 +237,11 @@ public class InvoiceService implements RetryListener {
         existingInvoice.setDamageCost(getDamageCost(invoiceRequest));
         existingInvoice.setAdditionalPayment(getAdditionalPayment(invoiceRequest));
         existingInvoice.setComments(invoiceRequest.comments());
-        existingInvoice.setTotalAmount(getTotalAmount(invoiceRequest, bookingResponse));
+        existingInvoice.setTotalAmount(getTotalAmount(existingInvoice, invoiceRequest));
+        existingInvoice.setReturnBranchId(invoiceRequest.returnBranchId());
         existingInvoice.setInvoiceProcessStatus(InvoiceProcessStatus.IN_CLOSING);
 
         return invoiceRepository.save(existingInvoice);
-    }
-
-    private BookingResponse getBookingResponse(AuthenticationInfo authenticationInfo, InvoiceRequest invoiceRequest) {
-        try {
-            return executorService.submit(
-                            () -> bookingService.findBookingById(
-                                    authenticationInfo,
-                                    invoiceRequest.bookingId()
-                            )
-                    )
-                    .get();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw ExceptionUtil.handleException(e);
-        } catch (ExecutionException e) {
-            throw ExceptionUtil.handleException(e);
-        }
-    }
-
-    private Invoice getExistingInvoice(Long id) {
-        try {
-            return executorService.submit(() -> findEntityById(id)).get();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw ExceptionUtil.handleException(e);
-        } catch (ExecutionException e) {
-            throw ExceptionUtil.handleException(e);
-        }
     }
 
     private CarUpdateDetails getCarUpdateDetails(Invoice invoice) {
@@ -302,11 +259,11 @@ public class InvoiceService implements RetryListener {
                 .build();
     }
 
-    private BigDecimal getTotalAmount(InvoiceRequest invoiceRequest, BookingResponse bookingResponse) {
+    private BigDecimal getTotalAmount(Invoice existingInvoice, InvoiceRequest invoiceRequest) {
         LocalDate carReturnDate = invoiceRequest.carReturnDate();
-        LocalDate bookingDateTo = bookingResponse.dateTo();
-        LocalDate bookingDateFrom = bookingResponse.dateFrom();
-        BigDecimal carAmount = bookingResponse.rentalCarPrice();
+        LocalDate bookingDateTo = existingInvoice.getDateTo();
+        LocalDate bookingDateFrom = existingInvoice.getDateFrom();
+        BigDecimal carAmount = existingInvoice.getRentalCarPrice();
 
         boolean isReturnDatePassed = carReturnDate.isAfter(bookingDateTo);
 
@@ -323,7 +280,7 @@ public class InvoiceService implements RetryListener {
     }
 
     private BigDecimal getAmountForLateReturn(LocalDate carReturnDate, LocalDate bookingDateTo, LocalDate
-            bookingDateFrom,
+                                                      bookingDateFrom,
                                               BigDecimal carAmount) {
         return carAmount.multiply(BigDecimal.valueOf(getDaysPeriod(bookingDateFrom, bookingDateTo)))
                 .add(BigDecimal.valueOf(getDaysPeriod(bookingDateTo, carReturnDate)).multiply(BigDecimal.valueOf(2)).multiply(carAmount));

@@ -38,14 +38,12 @@ spring:
         auditLogInfoProducer-out-0:
           destination: ${CUSTOMER_AUDIT_LOG_INFO_TOPIC}
           contentType: application/json
-        customerInfoProducer-out-0:
-          destination: ${CUSTOMER_INFO_REACTIVE_TOPIC}
-          contentType: application/json
   kafka:
     bootstrap-servers: localhost:9092
     producer:
       keySerializer: org.apache.kafka.common.serialization.StringSerializer
       valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
 
 springdoc:
   swagger-ui:
@@ -59,8 +57,6 @@ management:
   server:
     port: ${server.port}
   endpoint:
-    loggers:
-      enabled: true
     health:
       group:
         custom:

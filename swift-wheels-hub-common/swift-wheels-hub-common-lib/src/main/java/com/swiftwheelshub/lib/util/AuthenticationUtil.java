@@ -18,9 +18,12 @@ public class AuthenticationUtil {
         String apikey = principal.getName();
         Collection<GrantedAuthority> authorities = principal.getAuthorities();
         String username = HttpRequestUtil.extractUsername();
+        String email = HttpRequestUtil.extractEmail();
 
-        return AuthenticationInfo.builder().apikey(apikey)
+        return AuthenticationInfo.builder()
+                .apikey(apikey)
                 .username(username)
+                .email(email)
                 .roles(extractRoles(authorities))
                 .build();
     }

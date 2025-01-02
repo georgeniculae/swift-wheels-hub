@@ -49,7 +49,6 @@ public class CustomerService {
     private static final String $ = "$";
     private final Keycloak keycloak;
     private final BookingService bookingService;
-    private final CustomerInfoProducerService customerInfoProducerService;
     private final CustomerMapper customerMapper;
 
     @Value("${keycloak.realm}")
@@ -86,8 +85,6 @@ public class CustomerService {
             final int statusCode = response.getStatus();
 
             if (HttpStatus.CREATED.value() == statusCode) {
-                customerInfoProducerService.sendMessage(userRepresentation);
-
                 return getRegistrationResponse(userRepresentation, response, request);
             }
 

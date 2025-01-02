@@ -7,8 +7,7 @@ import com.swiftwheelshub.agency.util.AssertionUtils;
 import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
-import com.swiftwheelshub.dto.CarState;
-import com.swiftwheelshub.dto.UpdateCarRequest;
+import com.swiftwheelshub.dto.UpdateCarsRequest;
 import com.swiftwheelshub.entity.Branch;
 import com.swiftwheelshub.entity.Car;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
@@ -188,25 +187,14 @@ class CarServiceTest {
     void updateCarsStatusTest_success() {
         Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
 
-        UpdateCarRequest updateCarRequest =
-                TestUtil.getResourceAsJson("/data/UpdateCarRequest.json", UpdateCarRequest.class);
+        UpdateCarsRequest updateCarsRequest =
+                TestUtil.getResourceAsJson("/data/UpdateCarsRequest.json", UpdateCarsRequest.class);
 
         when(carRepository.findAllById(anyList())).thenReturn(List.of(car));
         when(carRepository.saveAll(anyList())).thenReturn(List.of(car));
 
-        List<CarResponse> carResponses = carService.updateCarsStatus(List.of(updateCarRequest));
+        List<CarResponse> carResponses = carService.updateCarsStatus(updateCarsRequest);
         AssertionUtils.assertCarResponse(car, carResponses.getFirst());
-    }
-
-    @Test
-    void updateCarStatusTest_success() {
-        Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
-
-        when(carRepository.findById(anyLong())).thenReturn(Optional.ofNullable(car));
-        when(carRepository.save(any(Car.class))).thenReturn(car);
-
-        CarResponse carResponse = carService.updateCarStatus(1L, CarState.AVAILABLE);
-        AssertionUtils.assertCarResponse(Objects.requireNonNull(car), carResponse);
     }
 
     @Test

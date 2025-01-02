@@ -2,7 +2,7 @@ package com.swiftwheelshub.booking.eventhandling;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiftwheelshub.booking.mapper.BookingMapper;
-import com.swiftwheelshub.booking.service.BookingProducerService;
+import com.swiftwheelshub.booking.producer.BookingProducerService;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.entity.BookingProcessStatus;
@@ -21,6 +21,7 @@ import org.apache.commons.text.CaseUtils;
 import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
+import org.springframework.retry.RetryListener;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -34,7 +35,7 @@ import static io.debezium.data.Envelope.Operation;
 
 @Component
 @Slf4j
-public class DebeziumListener {
+public class DebeziumListener implements RetryListener {
 
     private static final String UNDERSCORE = "_";
     private static final char UNDERSCORE_CHAR = '_';
@@ -46,12 +47,12 @@ public class DebeziumListener {
     private final ObjectMapper objectMapper;
     private final BookingMapper bookingMapper;
 
-    public DebeziumListener(Configuration userConnectorConfiguration,
+    public DebeziumListener(Configuration connectorConfiguration,
                             BookingProducerService bookingProducerService,
                             ObjectMapper objectMapper,
                             BookingMapper bookingMapper) {
         this.debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect.class))
-                .using(userConnectorConfiguration.asProperties())
+                .using(connectorConfiguration.asProperties())
                 .notifying(this::handleChangeEvent)
                 .build();
         this.bookingProducerService = bookingProducerService;

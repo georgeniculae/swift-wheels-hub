@@ -1,8 +1,12 @@
 package com.swiftwheelshub.booking.service;
 
+import com.swiftwheelshub.booking.producer.BookingProducerService;
 import com.swiftwheelshub.booking.util.TestUtil;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,6 +43,14 @@ class BookingProducerServiceTest {
 
         CompletableFuture<SendResult<String, Object>> result = new CompletableFuture<>();
 
+        ProducerRecord<String, Object> producerRecord =
+                new ProducerRecord<>("saved-booking-out-0", 1, 2022020202L, "key", "value");
+
+        RecordMetadata recordMetadata =
+                new RecordMetadata(new TopicPartition("saved-booking-out-0", 1), 1, 1, 0, 1, 1);
+
+        result.complete(new SendResult<>(producerRecord, recordMetadata));
+
         when(kafkaTemplate.send(any(Message.class))).thenReturn(result);
 
         assertDoesNotThrow(() -> bookingProducerService.sendSavedBooking(bookingResponse));
@@ -51,7 +63,7 @@ class BookingProducerServiceTest {
         BookingResponse bookingResponse =
                 TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        when(kafkaTemplate.send(any(Message.class))).thenThrow(new SwiftWheelsHubException("error"));
+        when(kafkaTemplate.send(any(Message.class))).thenThrow(new RuntimeException("error"));
 
         SwiftWheelsHubException swiftWheelsHubException =
                 assertThrows(SwiftWheelsHubException.class, () -> bookingProducerService.sendSavedBooking(bookingResponse));
@@ -68,6 +80,14 @@ class BookingProducerServiceTest {
 
         CompletableFuture<SendResult<String, Object>> result = new CompletableFuture<>();
 
+        ProducerRecord<String, Object> producerRecord =
+                new ProducerRecord<>("updated-booking-out-0", 1, 2022020202L, "key", "value");
+
+        RecordMetadata recordMetadata =
+                new RecordMetadata(new TopicPartition("updated-booking-out-0", 1), 1, 1, 0, 1, 1);
+
+        result.complete(new SendResult<>(producerRecord, recordMetadata));
+
         when(kafkaTemplate.send(any(Message.class))).thenReturn(result);
 
         assertDoesNotThrow(() -> bookingProducerService.sendUpdatedBooking(bookingResponse));
@@ -80,7 +100,7 @@ class BookingProducerServiceTest {
         BookingResponse bookingResponse =
                 TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        when(kafkaTemplate.send(any(Message.class))).thenThrow(new SwiftWheelsHubException("error"));
+        when(kafkaTemplate.send(any(Message.class))).thenThrow(new RuntimeException("error"));
 
         SwiftWheelsHubException swiftWheelsHubException =
                 assertThrows(SwiftWheelsHubException.class, () -> bookingProducerService.sendSavedBooking(bookingResponse));
@@ -94,6 +114,14 @@ class BookingProducerServiceTest {
 
         CompletableFuture<SendResult<String, Object>> result = new CompletableFuture<>();
 
+        ProducerRecord<String, Object> producerRecord =
+                new ProducerRecord<>("deleted-booking-out-0", 1, 2022020202L, "key", "value");
+
+        RecordMetadata recordMetadata =
+                new RecordMetadata(new TopicPartition("deleted-booking-out-0", 1), 1, 1, 0, 1, 1);
+
+        result.complete(new SendResult<>(producerRecord, recordMetadata));
+
         when(kafkaTemplate.send(any(Message.class))).thenReturn(result);
 
         assertDoesNotThrow(() -> bookingProducerService.sendDeletedBooking(1L));
@@ -103,7 +131,7 @@ class BookingProducerServiceTest {
     void sendDeletedBookingTest_errorOnSendingMessage() {
         ReflectionTestUtils.setField(bookingProducerService, "deletedBookingProducerTopicName", "deleted-booking-out-0");
 
-        when(kafkaTemplate.send(any(Message.class))).thenThrow(new SwiftWheelsHubException("error"));
+        when(kafkaTemplate.send(any(Message.class))).thenThrow(new RuntimeException("error"));
 
         SwiftWheelsHubException swiftWheelsHubException =
                 assertThrows(SwiftWheelsHubException.class, () -> bookingProducerService.sendDeletedBooking(1L));

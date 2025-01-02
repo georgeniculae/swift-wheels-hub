@@ -1,11 +1,8 @@
 package com.swiftwheelshub.booking.controller;
 
 import com.swiftwheelshub.booking.service.BookingService;
-import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.BookingRollbackResponse;
-import com.swiftwheelshub.dto.BookingUpdateResponse;
 import com.swiftwheelshub.lib.aspect.LogActivity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -89,14 +85,6 @@ public class BookingController {
         return ResponseEntity.ok(saveBookingResponse);
     }
 
-    @PostMapping(path = "/close-booking")
-    @PreAuthorize("hasAnyRole('user', 'invoice_service')")
-    public ResponseEntity<BookingUpdateResponse> closeBooking(@RequestBody @Validated BookingClosingDetails bookingClosingDetails) {
-        BookingUpdateResponse bookingUpdateResponse = bookingService.closeBooking(bookingClosingDetails);
-
-        return ResponseEntity.ok(bookingUpdateResponse);
-    }
-
     @PutMapping(path = "/{id}")
     @PreAuthorize("hasRole('user')")
     @LogActivity(
@@ -108,14 +96,6 @@ public class BookingController {
         BookingResponse updatedBookingResponse = bookingService.updateBooking(id, bookingRequest);
 
         return ResponseEntity.ok(updatedBookingResponse);
-    }
-
-    @PatchMapping(path = "/{id}/rollback")
-    @PreAuthorize("hasAnyRole('user', 'invoice_service')")
-    public ResponseEntity<BookingRollbackResponse> rollbackBooking(@PathVariable("id") Long id) {
-        BookingRollbackResponse bookingRollbackResponse = bookingService.rollbackBooking(id);
-
-        return ResponseEntity.ok(bookingRollbackResponse);
     }
 
     @DeleteMapping(path = "/{username}")

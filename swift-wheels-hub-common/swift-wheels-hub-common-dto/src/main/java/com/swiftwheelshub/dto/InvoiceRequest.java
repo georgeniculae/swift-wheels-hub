@@ -23,6 +23,7 @@ public record InvoiceRequest(
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         LocalDate carReturnDate,
 
+        @NotNull
         Boolean isVehicleDamaged,
 
         BigDecimal damageCost,
@@ -37,8 +38,8 @@ public record InvoiceRequest(
     @Override
     public String toString() {
         return "InvoiceRequest{" + "\n" +
-                "carId=" + carId + "\n" +
-                "receptionistEmployeeId=" + receptionistEmployeeId + "\n" +
+                "previousCarId=" + carId + "\n" +
+                "returnBranchId=" + receptionistEmployeeId + "\n" +
                 "bookingId=" + bookingId + "\n" +
                 "carReturnDate=" + carReturnDate + "\n" +
                 "isVehicleDamaged=" + isVehicleDamaged + "\n" +

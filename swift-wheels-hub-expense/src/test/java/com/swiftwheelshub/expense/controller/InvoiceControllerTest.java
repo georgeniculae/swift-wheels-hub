@@ -19,7 +19,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -217,18 +216,12 @@ class InvoiceControllerTest {
 
         String content = TestUtil.writeValueAsString(invoiceRequest);
 
-        InvoiceResponse invoiceResponse =
-                TestUtil.getResourceAsJson("/data/InvoiceResponse.json", InvoiceResponse.class);
-
-        when(invoiceService.closeInvoice(anyLong(), any(InvoiceRequest.class)))
-                .thenReturn(invoiceResponse);
-
         MockHttpServletResponse response = mockMvc.perform(put(PATH + "/{id}", 1L)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(content))
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andReturn()
                 .getResponse();
 

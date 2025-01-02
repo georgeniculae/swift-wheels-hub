@@ -5,7 +5,7 @@ import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.expense.mapper.InvoiceMapper;
-import com.swiftwheelshub.expense.service.EmailNotificationProducer;
+import com.swiftwheelshub.expense.producer.InvoiceProducerService;
 import io.debezium.config.Configuration;
 import io.debezium.data.Envelope;
 import io.debezium.embedded.Connect;
@@ -20,6 +20,7 @@ import org.apache.commons.text.CaseUtils;
 import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
+import org.springframework.retry.RetryListener;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -33,25 +34,25 @@ import static io.debezium.data.Envelope.Operation;
 
 @Component
 @Slf4j
-public class DebeziumListener {
+public class DebeziumListener implements RetryListener {
 
     private static final String UNDERSCORE = "_";
     private static final char UNDERSCORE_CHAR = '_';
     private final Executor executor = Executors.newVirtualThreadPerTaskExecutor();
     private final DebeziumEngine<RecordChangeEvent<SourceRecord>> debeziumEngine;
-    private final EmailNotificationProducer emailNotificationProducer;
+    private final InvoiceProducerService invoiceProducerService;
     private final InvoiceMapper invoiceMapper;
     private final ObjectMapper objectMapper;
 
-    public DebeziumListener(Configuration userConnectorConfiguration,
-                            EmailNotificationProducer emailNotificationProducer,
+    public DebeziumListener(Configuration connectorConfiguration,
+                            InvoiceProducerService invoiceProducerService,
                             InvoiceMapper invoiceMapper,
                             ObjectMapper objectMapper) {
         this.debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect.class))
-                .using(userConnectorConfiguration.asProperties())
+                .using(connectorConfiguration.asProperties())
                 .notifying(this::handleChangeEvent)
                 .build();
-        this.emailNotificationProducer = emailNotificationProducer;
+        this.invoiceProducerService = invoiceProducerService;
         this.invoiceMapper = invoiceMapper;
         this.objectMapper = objectMapper;
     }
@@ -116,7 +117,7 @@ public class DebeziumListener {
         InvoiceResponse invoiceResponse = invoiceMapper.mapEntityToDto(invoice);
 
         if (Operation.UPDATE.equals(operation) && ObjectUtils.isNotEmpty(invoiceResponse.totalAmount())) {
-            emailNotificationProducer.sendMessage(invoiceResponse);
+            invoiceProducerService.sendMessage(invoiceResponse);
         }
     }
 

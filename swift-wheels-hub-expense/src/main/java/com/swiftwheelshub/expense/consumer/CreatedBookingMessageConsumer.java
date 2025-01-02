@@ -2,6 +2,7 @@ package com.swiftwheelshub.expense.consumer;
 
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.expense.service.InvoiceService;
+import com.swiftwheelshub.lib.util.KafkaUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +18,12 @@ public class CreatedBookingMessageConsumer {
 
     @Bean
     public Consumer<Message<BookingResponse>> savedBookingConsumer() {
-        return bookingResponseMessage -> invoiceService.saveInvoice(bookingResponseMessage.getPayload());
+        return this::processMessage;
+    }
+
+    private void processMessage(Message<BookingResponse> bookingResponseMessage) {
+        invoiceService.saveInvoice(bookingResponseMessage.getPayload());
+        KafkaUtil.acknowledgeMessage(bookingResponseMessage.getHeaders());
     }
 
 }

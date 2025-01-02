@@ -1,6 +1,8 @@
 package com.swiftwheelshub.booking.service;
 
 import com.swiftwheelshub.booking.mapper.BookingMapper;
+import com.swiftwheelshub.booking.producer.CreateBookingCarUpdateProducerService;
+import com.swiftwheelshub.booking.producer.UpdateBookingUpdateCarsProducerService;
 import com.swiftwheelshub.booking.repository.BookingRepository;
 import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
@@ -10,8 +12,8 @@ import com.swiftwheelshub.dto.BookingRollbackResponse;
 import com.swiftwheelshub.dto.BookingUpdateResponse;
 import com.swiftwheelshub.dto.CarResponse;
 import com.swiftwheelshub.dto.CarState;
-import com.swiftwheelshub.dto.StatusUpdateResponse;
-import com.swiftwheelshub.dto.UpdateCarRequest;
+import com.swiftwheelshub.dto.CarStatusUpdate;
+import com.swiftwheelshub.dto.UpdateCarsRequest;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.entity.BookingProcessStatus;
 import com.swiftwheelshub.entity.BookingStatus;
@@ -45,7 +47,8 @@ public class BookingService implements RetryListener {
     private static final String LOCKED = "Locked";
     private final BookingRepository bookingRepository;
     private final CarService carService;
-    private final CarStatusUpdaterService carStatusUpdaterService;
+    private final CreateBookingCarUpdateProducerService createBookingCarUpdateProducerService;
+    private final UpdateBookingUpdateCarsProducerService updateBookingUpdateCarsProducerService;
     private final RedisTemplate<String, String> redisTemplate;
     private final BookingMapper bookingMapper;
 
@@ -109,13 +112,14 @@ public class BookingService implements RetryListener {
             lockCar(newBookingRequest.carId().toString());
 
             CarResponse carResponse = carService.findAvailableCarById(authenticationInfo, newBookingRequest.carId());
-            Booking createdBooking = createNewBooking(authenticationInfo.username(), newBookingRequest, carResponse);
+            Booking createdBooking = createNewBooking(authenticationInfo, newBookingRequest, carResponse);
 
             Booking savedCreatedBooking = bookingRepository.save(createdBooking);
 
-            StatusUpdateResponse statusUpdateResponse =
-                    carStatusUpdaterService.changeCarStatus(authenticationInfo, carResponse.id(), CarState.NOT_AVAILABLE);
-            BookingProcessStatus bookingProcessStatus = getCreatedBookingProcessStatus(statusUpdateResponse);
+            boolean isCarUpdated =
+                    createBookingCarUpdateProducerService.changeCarStatus(getCarStatusUpdate(savedCreatedBooking.getActualCarId()));
+
+            BookingProcessStatus bookingProcessStatus = getCreatedBookingProcessStatus(isCarUpdated);
             savedCreatedBooking.setBookingProcessStatus(bookingProcessStatus);
             unlockCar(savedCreatedBooking.getActualCarId().toString());
 
@@ -127,6 +131,13 @@ public class BookingService implements RetryListener {
 
             throw ExceptionUtil.handleException(e);
         }
+    }
+
+    private CarStatusUpdate getCarStatusUpdate(Long carId) {
+        return CarStatusUpdate.builder()
+                .carId(carId)
+                .carState(CarState.NOT_AVAILABLE)
+                .build();
     }
 
     public BookingResponse updateBooking(Long id, BookingRequest updatedBookingRequest) {
@@ -203,13 +214,14 @@ public class BookingService implements RetryListener {
                 .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Booking with id " + id + " does not exist"));
     }
 
-    private Booking createNewBooking(String username,
+    private Booking createNewBooking(AuthenticationInfo authenticationInfo,
                                      BookingRequest newBookingRequest,
                                      CarResponse carResponse) {
         Booking newBooking = bookingMapper.mapDtoToEntity(newBookingRequest);
         BigDecimal amount = carResponse.amount();
 
-        newBooking.setCustomerUsername(username);
+        newBooking.setCustomerUsername(authenticationInfo.username());
+        newBooking.setCustomerEmail(authenticationInfo.email());
         newBooking.setActualCarId(carResponse.id());
         newBooking.setDateOfBooking(LocalDate.now());
         newBooking.setRentalBranchId(carResponse.actualBranchId());
@@ -221,16 +233,16 @@ public class BookingService implements RetryListener {
         return newBooking;
     }
 
-    private BookingProcessStatus getCreatedBookingProcessStatus(StatusUpdateResponse statusUpdateResponse) {
-        if (statusUpdateResponse.isUpdateSuccessful()) {
+    private BookingProcessStatus getCreatedBookingProcessStatus(boolean isCarUpdated) {
+        if (isCarUpdated) {
             return BookingProcessStatus.SAVED_CREATED_BOOKING;
         }
 
         return BookingProcessStatus.FAILED_CREATED_BOOKING;
     }
 
-    private BookingProcessStatus getUpdatedBookingProcessStatus(StatusUpdateResponse statusUpdateResponse) {
-        if (statusUpdateResponse.isUpdateSuccessful()) {
+    private BookingProcessStatus getUpdatedBookingProcessStatus(boolean areCarsUpdated) {
+        if (areCarsUpdated) {
             return BookingProcessStatus.SAVED_UPDATED_BOOKING;
         }
 
@@ -274,10 +286,9 @@ public class BookingService implements RetryListener {
         existingBooking.setBookingProcessStatus(BookingProcessStatus.IN_UPDATE);
         Booking savedIntermediateBooking = bookingRepository.save(existingBooking);
 
-        StatusUpdateResponse statusUpdateResponse =
-                updateCarsStatuses(authenticationInfo, existingCarId, updatedBookingRequest.carId());
+        boolean areCarsUpdated = updateCarsStatuses(existingCarId, updatedBookingRequest.carId());
 
-        BookingProcessStatus bookingProcessStatus = getUpdatedBookingProcessStatus(statusUpdateResponse);
+        BookingProcessStatus bookingProcessStatus = getUpdatedBookingProcessStatus(areCarsUpdated);
         savedIntermediateBooking.setBookingProcessStatus(bookingProcessStatus);
         unlockCar(savedIntermediateBooking.getActualCarId().toString());
 
@@ -309,15 +320,13 @@ public class BookingService implements RetryListener {
         return amount.multiply(BigDecimal.valueOf(bookingDays));
     }
 
-    private StatusUpdateResponse updateCarsStatuses(AuthenticationInfo authenticationInfo,
-                                                    Long existingCarId,
-                                                    Long newCarId) {
-        List<UpdateCarRequest> carsForUpdate = List.of(
-                new UpdateCarRequest(existingCarId, CarState.AVAILABLE),
-                new UpdateCarRequest(newCarId, CarState.NOT_AVAILABLE)
-        );
+    private boolean updateCarsStatuses(Long existingCarId, Long newCarId) {
+        UpdateCarsRequest updateCarsRequest = UpdateCarsRequest.builder()
+                .previousCarId(existingCarId)
+                .actualCarId(newCarId)
+                .build();
 
-        return carStatusUpdaterService.updateCarsStatuses(authenticationInfo, carsForUpdate);
+        return updateBookingUpdateCarsProducerService.updateCarsStatus(updateCarsRequest);
     }
 
 }

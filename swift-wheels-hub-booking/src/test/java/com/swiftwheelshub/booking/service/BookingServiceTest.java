@@ -2,6 +2,8 @@ package com.swiftwheelshub.booking.service;
 
 import com.swiftwheelshub.booking.mapper.BookingMapper;
 import com.swiftwheelshub.booking.mapper.BookingMapperImpl;
+import com.swiftwheelshub.booking.producer.CreateBookingCarUpdateProducerService;
+import com.swiftwheelshub.booking.producer.UpdateBookingUpdateCarsProducerService;
 import com.swiftwheelshub.booking.repository.BookingRepository;
 import com.swiftwheelshub.booking.util.AssertionUtils;
 import com.swiftwheelshub.booking.util.TestUtil;
@@ -12,8 +14,8 @@ import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.dto.BookingRollbackResponse;
 import com.swiftwheelshub.dto.BookingUpdateResponse;
 import com.swiftwheelshub.dto.CarResponse;
-import com.swiftwheelshub.dto.CarState;
-import com.swiftwheelshub.dto.StatusUpdateResponse;
+import com.swiftwheelshub.dto.CarStatusUpdate;
+import com.swiftwheelshub.dto.UpdateCarsRequest;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.entity.BookingStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
@@ -50,7 +52,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -71,7 +72,10 @@ class BookingServiceTest {
     private CarService carService;
 
     @Mock
-    private CarStatusUpdaterService carStatusUpdaterService;
+    private CreateBookingCarUpdateProducerService createBookingCarUpdateProducerService;
+
+    @Mock
+    private UpdateBookingUpdateCarsProducerService updateBookingUpdateCarsProducerService;
 
     @Mock
     private RedisTemplate<String, String> redisTemplate;
@@ -111,9 +115,6 @@ class BookingServiceTest {
 
         CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
-        StatusUpdateResponse statusUpdateResponse =
-                TestUtil.getResourceAsJson("/data/SuccessfulStatusUpdateResponse.json", StatusUpdateResponse.class);
-
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
         ApiKeyAuthenticationToken apiKeyAuthenticationToken =
                 new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
@@ -124,8 +125,7 @@ class BookingServiceTest {
         when(valueOperations.setIfAbsent(anyString(), anyString(), any(Duration.class))).thenReturn(true);
         when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(carResponse);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
-        when(carStatusUpdaterService.changeCarStatus(any(AuthenticationInfo.class), anyLong(), any(CarState.class)))
-                .thenReturn(statusUpdateResponse);
+        when(createBookingCarUpdateProducerService.changeCarStatus(any(CarStatusUpdate.class))).thenReturn(true);
         when(redisTemplate.delete(anyString())).thenReturn(true);
 
         BookingResponse actualBookingResponse =
@@ -190,9 +190,6 @@ class BookingServiceTest {
         BookingRequest bookingRequest = TestUtil.getResourceAsJson("/data/UpdatedBookingRequest.json", BookingRequest.class);
         CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
 
-        StatusUpdateResponse statusUpdateResponse =
-                TestUtil.getResourceAsJson("/data/SuccessfulStatusUpdateResponse.json", StatusUpdateResponse.class);
-
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.addHeader("X-API-KEY", "apikey");
         httpServletRequest.addHeader("X-ROLES", "ROLE_user");
@@ -211,8 +208,7 @@ class BookingServiceTest {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
         when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(carResponse);
         when(bookingRepository.save(any(Booking.class))).thenReturn(updatedBooking);
-        when(carStatusUpdaterService.updateCarsStatuses(any(AuthenticationInfo.class), anyList()))
-                .thenReturn(statusUpdateResponse);
+        when(updateBookingUpdateCarsProducerService.updateCarsStatus(any(UpdateCarsRequest.class))).thenReturn(true);
         when(redisTemplate.delete(anyString())).thenReturn(true);
 
         BookingResponse updatedBookingResponse =

@@ -1,6 +1,7 @@
 {
   "id": 1,
   "customerUsername": "user",
+  "customerEmail": "user@mail.com",
   "carId": 1,
   "receptionistEmployeeId": 1,
   "bookingId": 1,

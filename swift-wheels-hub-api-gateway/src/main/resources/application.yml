@@ -122,8 +122,6 @@ management:
   server:
     port: ${PORT:8088}
   endpoint:
-    loggers:
-      enabled: true
     health:
       group:
         custom:

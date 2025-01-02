@@ -2,11 +2,8 @@ package com.swiftwheelshub.booking.controller;
 
 import com.swiftwheelshub.booking.service.BookingService;
 import com.swiftwheelshub.booking.util.TestUtil;
-import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.BookingRollbackResponse;
-import com.swiftwheelshub.dto.BookingUpdateResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -273,65 +270,6 @@ class BookingControllerTest {
 
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
-    void closeBookingTest_success() throws Exception {
-        BookingUpdateResponse bookingUpdateResponse =
-                TestUtil.getResourceAsJson("/data/BookingUpdateResponse.json", BookingUpdateResponse.class);
-
-        BookingClosingDetails bookingClosingDetails =
-                TestUtil.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
-
-        String content = TestUtil.writeValueAsString(bookingClosingDetails);
-
-        when(bookingService.closeBooking(any(BookingClosingDetails.class))).thenReturn(bookingUpdateResponse);
-
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/close-booking")
-                        .contextPath(PATH)
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(content))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
-    }
-
-    @Test
-    @WithAnonymousUser
-    void closeBookingTest_unauthorized() throws Exception {
-        BookingClosingDetails bookingClosingDetails =
-                TestUtil.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
-
-        String content = TestUtil.writeValueAsString(bookingClosingDetails);
-
-        mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/close-booking")
-                        .contextPath(PATH)
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(content))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @WithAnonymousUser
-    void closeBookingTest_forbidden() throws Exception {
-        BookingClosingDetails bookingClosingDetails =
-                TestUtil.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
-
-        String content = TestUtil.writeValueAsString(bookingClosingDetails);
-
-        mockMvc.perform(MockMvcRequestBuilders.post(PATH + "/close-booking")
-                        .contextPath(PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(content))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void updateBookingTest_success() throws Exception {
         BookingResponse bookingResponse =
                 TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
@@ -387,40 +325,6 @@ class BookingControllerTest {
                 .andExpect(status().isForbidden());
     }
 
-    @Test
-    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
-    void rollbackBookingTest_success() throws Exception {
-        BookingRollbackResponse bookingRollbackResponse =
-                TestUtil.getResourceAsJson("/data/SuccessfulBookingRollbackResponse.json", BookingRollbackResponse.class);
-
-        when(bookingService.rollbackBooking(anyLong())).thenReturn(bookingRollbackResponse);
-
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.patch(PATH + "/{id}/rollback", 1L)
-                        .contextPath(PATH)
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
-    }
-
-    @Test
-    @WithAnonymousUser
-    void rollbackBookingTest_unauthorized() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.patch(PATH + "/{id}/rollback", 1L)
-                        .contextPath(PATH)
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
-    }
 
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")

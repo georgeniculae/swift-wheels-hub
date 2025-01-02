@@ -4,9 +4,9 @@ import com.swiftwheelshub.agency.mapper.CarMapper;
 import com.swiftwheelshub.agency.repository.CarRepository;
 import com.swiftwheelshub.dto.CarRequest;
 import com.swiftwheelshub.dto.CarResponse;
-import com.swiftwheelshub.dto.CarState;
+import com.swiftwheelshub.dto.CarStatusUpdate;
 import com.swiftwheelshub.dto.CarUpdateDetails;
-import com.swiftwheelshub.dto.UpdateCarRequest;
+import com.swiftwheelshub.dto.UpdateCarsRequest;
 import com.swiftwheelshub.entity.BodyType;
 import com.swiftwheelshub.entity.Branch;
 import com.swiftwheelshub.entity.Car;
@@ -104,17 +104,15 @@ public class CarService {
         return carMapper.mapEntityToDto(savedCar);
     }
 
-    public CarResponse updateCarStatus(Long id, CarState carState) {
-        Car car = findEntityById(id);
-        car.setCarStatus(CarStatus.valueOf(carState.name()));
+    public void updateCarStatus(CarStatusUpdate carStatusUpdate) {
+        Car car = findEntityById(carStatusUpdate.carId());
+        car.setCarStatus(CarStatus.valueOf(carStatusUpdate.carState().name()));
 
-        Car savedCar = saveEntity(car);
-
-        return carMapper.mapEntityToDto(savedCar);
+        saveEntity(car);
     }
 
-    public List<CarResponse> updateCarsStatus(List<UpdateCarRequest> updateCarRequests) {
-        List<Car> updatableCars = getUpdatableCars(updateCarRequests);
+    public List<CarResponse> updateCarsStatus(UpdateCarsRequest updateCarsRequest) {
+        List<Car> updatableCars = getUpdatableCars(updateCarsRequest);
 
         return carRepository.saveAll(updatableCars)
                 .stream()
@@ -129,14 +127,12 @@ public class CarService {
         return getCarResponses(savedCars.stream());
     }
 
-    public CarResponse updateCarWhenBookingIsClosed(Long id, CarUpdateDetails carUpdateDetails) {
-        Car car = findEntityById(id);
+    public void updateCarWhenBookingIsClosed(CarUpdateDetails carUpdateDetails) {
+        Car car = findEntityById(carUpdateDetails.carId());
         car.setCarStatus(CarStatus.valueOf(carUpdateDetails.carState().name()));
         car.setActualBranch(getActualBranch(carUpdateDetails));
 
-        Car savedCar = saveEntity(car);
-
-        return carMapper.mapEntityToDto(savedCar);
+        saveEntity(car);
     }
 
     public void deleteCarById(Long id) {
@@ -169,26 +165,26 @@ public class CarService {
         }
     }
 
-    private List<Car> getUpdatableCars(List<UpdateCarRequest> updateCarRequests) {
-        return carRepository.findAllById(getIds(updateCarRequests))
+    private List<Car> getUpdatableCars(UpdateCarsRequest updateCarsRequest) {
+        return carRepository.findAllById(getIds(updateCarsRequest))
                 .stream()
-                .peek(car -> car.setCarStatus(getUpdatedCarStatus(updateCarRequests, car)))
+                .peek(car -> car.setCarStatus(getUpdatedCarStatus(updateCarsRequest, car)))
                 .toList();
     }
 
-    private List<Long> getIds(List<UpdateCarRequest> carsForUpdate) {
-        return carsForUpdate.stream()
-                .map(UpdateCarRequest::carId)
-                .toList();
+    private List<Long> getIds(UpdateCarsRequest updateCarsRequest) {
+        return List.of(
+                updateCarsRequest.previousCarId(),
+                updateCarsRequest.actualCarId()
+        );
     }
 
-    private CarStatus getUpdatedCarStatus(List<UpdateCarRequest> updateCarRequests, Car car) {
-        UpdateCarRequest matchingUpdateCarRequest = updateCarRequests.stream()
-                .filter(updateCarRequest -> car.getId().equals(updateCarRequest.carId()))
-                .findAny()
-                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Car details not found"));
+    private CarStatus getUpdatedCarStatus(UpdateCarsRequest updateCarRequests, Car car) {
+        if (car.getId().equals(updateCarRequests.previousCarId())) {
+            return CarStatus.AVAILABLE;
+        }
 
-        return CarStatus.valueOf(matchingUpdateCarRequest.carState().name());
+        return CarStatus.NOT_AVAILABLE;
     }
 
     private Branch getActualBranch(CarUpdateDetails carUpdateDetails) {

@@ -38,6 +38,9 @@ public class Booking extends BaseEntity {
     @NotEmpty(message = "Username cannot be empty")
     private String customerUsername;
 
+    @NotEmpty(message = "Email cannot be empty")
+    private String customerEmail;
+
     @NotNull(message = "Car id cannot be null")
     private Long actualCarId;
 
@@ -55,6 +58,7 @@ public class Booking extends BaseEntity {
 
     private BigDecimal amount;
 
+    @NotNull(message = "Rental car price cannot be null")
     private BigDecimal rentalCarPrice;
 
     @NotNull(message = "Rental branch id cannot be null")

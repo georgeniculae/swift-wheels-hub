@@ -19,8 +19,8 @@ public record CarUpdateDetails(
     @Override
     public String toString() {
         return "CarUpdateDetails{" + "\n" +
-                "carId=" + carId + "\n" +
-                "carState=" + carState + "\n" +
+                "previousCarId=" + carId + "\n" +
+                "actualCarId=" + carState + "\n" +
                 "returnBranchId=" + receptionistEmployeeId + "\n" +
                 "}";
     }

@@ -1,5 +1,6 @@
 package com.swiftwheelshub.lib.util;
 
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +19,7 @@ public class HttpRequestUtil {
     private static final String X_API_KEY = "X-API-KEY";
     private static final String X_ROLES = "X-ROLES";
     private static final String X_USERNAME = "X-USERNAME";
+    private static final String X_EMAIL = "X-EMAIL";
 
     public static Consumer<HttpHeaders> setHttpHeaders(String apiKey, List<String> roles) {
         return httpHeaders -> {
@@ -29,13 +31,25 @@ public class HttpRequestUtil {
     }
 
     public static String extractUsername() {
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = Optional.ofNullable(requestAttributes)
-                .orElseThrow()
-                .getRequest();
+        HttpServletRequest request = getRequest();
 
         return Optional.ofNullable(request.getHeader(X_USERNAME))
                 .orElse(StringUtils.EMPTY);
+    }
+
+    public static String extractEmail() {
+        HttpServletRequest request = getRequest();
+
+        return Optional.ofNullable(request.getHeader(X_EMAIL))
+                .orElse(StringUtils.EMPTY);
+    }
+
+    private static HttpServletRequest getRequest() {
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+        return Optional.ofNullable(requestAttributes)
+                .orElseThrow(() -> new SwiftWheelsHubException("Request attributes are null"))
+                .getRequest();
     }
 
 }
