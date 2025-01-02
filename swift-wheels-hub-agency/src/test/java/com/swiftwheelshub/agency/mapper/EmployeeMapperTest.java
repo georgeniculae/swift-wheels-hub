@@ -1,6 +1,6 @@
 package com.swiftwheelshub.agency.mapper;
 
-import com.swiftwheelshub.agency.util.AssertionUtils;
+import com.swiftwheelshub.agency.util.AssertionUtil;
 import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.EmployeeRequest;
 import com.swiftwheelshub.dto.EmployeeResponse;
@@ -25,7 +25,7 @@ class EmployeeMapperTest {
         EmployeeResponse employeeResponse = assertDoesNotThrow(() -> employeeMapper.mapEntityToDto(employee));
 
         assertNotNull(employeeResponse);
-        AssertionUtils.assertEmployeeResponse(employee, employeeResponse);
+        AssertionUtil.assertEmployeeResponse(employee, employeeResponse);
     }
 
     @Test
@@ -41,7 +41,7 @@ class EmployeeMapperTest {
         Employee employee = assertDoesNotThrow(() -> employeeMapper.mapDtoToEntity(employeeRequest));
 
         assertNotNull(employeeRequest);
-        AssertionUtils.assertEmployeeRequest(employee, employeeRequest);
+        AssertionUtil.assertEmployeeRequest(employee, employeeRequest);
     }
 
     @Test

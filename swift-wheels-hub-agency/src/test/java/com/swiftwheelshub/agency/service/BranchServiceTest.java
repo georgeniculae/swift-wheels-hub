@@ -3,7 +3,7 @@ package com.swiftwheelshub.agency.service;
 import com.swiftwheelshub.agency.mapper.BranchMapper;
 import com.swiftwheelshub.agency.mapper.BranchMapperImpl;
 import com.swiftwheelshub.agency.repository.BranchRepository;
-import com.swiftwheelshub.agency.util.AssertionUtils;
+import com.swiftwheelshub.agency.util.AssertionUtil;
 import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.BranchRequest;
 import com.swiftwheelshub.dto.BranchResponse;
@@ -92,7 +92,7 @@ class BranchServiceTest {
         when(branchRepository.save(any(Branch.class))).thenReturn(branch);
 
         BranchResponse savedBranchResponse = assertDoesNotThrow(() -> branchService.saveBranch(branchRequest));
-        AssertionUtils.assertBranchResponse(branch, savedBranchResponse);
+        AssertionUtil.assertBranchResponse(branch, savedBranchResponse);
     }
 
     @Test
@@ -102,7 +102,7 @@ class BranchServiceTest {
         when(branchRepository.findAllBranches()).thenReturn(Stream.of(branch));
 
         List<BranchResponse> branchResponses = assertDoesNotThrow(() -> branchService.findAllBranches());
-        AssertionUtils.assertBranchResponse(branch, branchResponses.getFirst());
+        AssertionUtil.assertBranchResponse(branch, branchResponses.getFirst());
     }
 
     @Test
@@ -112,7 +112,7 @@ class BranchServiceTest {
         when(branchRepository.findByFilter(anyString())).thenReturn(Stream.of(branch));
 
         List<BranchResponse> branchResponses = branchService.findBranchesByFilter("Test");
-        AssertionUtils.assertBranchResponse(branch, branchResponses.getFirst());
+        AssertionUtil.assertBranchResponse(branch, branchResponses.getFirst());
     }
 
 }

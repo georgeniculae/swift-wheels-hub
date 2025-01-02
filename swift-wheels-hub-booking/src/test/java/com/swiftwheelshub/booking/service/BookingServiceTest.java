@@ -5,7 +5,7 @@ import com.swiftwheelshub.booking.mapper.BookingMapperImpl;
 import com.swiftwheelshub.booking.producer.CreateBookingCarUpdateProducerService;
 import com.swiftwheelshub.booking.producer.UpdateBookingUpdateCarsProducerService;
 import com.swiftwheelshub.booking.repository.BookingRepository;
-import com.swiftwheelshub.booking.util.AssertionUtils;
+import com.swiftwheelshub.booking.util.AssertionUtil;
 import com.swiftwheelshub.booking.util.TestUtil;
 import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.AvailableCarInfo;
@@ -278,7 +278,7 @@ class BookingServiceTest {
         BookingResponse bookingResponse =
                 assertDoesNotThrow(() -> bookingService.findBookingByDateOfBooking("2099-02-20"));
 
-        AssertionUtils.assertBooking(booking, bookingResponse);
+        AssertionUtil.assertBooking(booking, bookingResponse);
     }
 
     @Test

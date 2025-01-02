@@ -1,6 +1,6 @@
 package com.swiftwheelshub.audit.mapper;
 
-import com.swiftwheelshub.audit.util.AssertionUtils;
+import com.swiftwheelshub.audit.util.AssertionUtil;
 import com.swiftwheelshub.audit.util.TestUtil;
 import com.swiftwheelshub.dto.AuditLogInfoRequest;
 import com.swiftwheelshub.entity.BookingAuditLogInfo;
@@ -22,7 +22,7 @@ class BookingAuditLogInfoMapperTest {
 
         BookingAuditLogInfo bookingAuditLogInfo = auditLogInfoMapper.mapDtoToBookingEntity(auditLogInfoRequest);
 
-        AssertionUtils.assertAuditLogInfo(auditLogInfoRequest, bookingAuditLogInfo);
+        AssertionUtil.assertAuditLogInfo(auditLogInfoRequest, bookingAuditLogInfo);
     }
 
 }

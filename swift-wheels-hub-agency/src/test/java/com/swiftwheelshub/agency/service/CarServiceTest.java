@@ -3,7 +3,7 @@ package com.swiftwheelshub.agency.service;
 import com.swiftwheelshub.agency.mapper.CarMapper;
 import com.swiftwheelshub.agency.mapper.CarMapperImpl;
 import com.swiftwheelshub.agency.repository.CarRepository;
-import com.swiftwheelshub.agency.util.AssertionUtils;
+import com.swiftwheelshub.agency.util.AssertionUtil;
 import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.AvailableCarInfo;
 import com.swiftwheelshub.dto.CarRequest;
@@ -68,7 +68,7 @@ class CarServiceTest {
         when(carRepository.findAllCars()).thenReturn(Stream.of(car));
 
         List<CarResponse> carResponses = assertDoesNotThrow(() -> carService.findAllCars());
-        AssertionUtils.assertCarResponse(car, carResponses.getFirst());
+        AssertionUtil.assertCarResponse(car, carResponses.getFirst());
     }
 
     @Test
@@ -79,7 +79,7 @@ class CarServiceTest {
 
         List<CarResponse> carResponses = assertDoesNotThrow(() -> carService.findCarsByFilter("Test"));
 
-        AssertionUtils.assertCarResponse(car, carResponses.getFirst());
+        AssertionUtil.assertCarResponse(car, carResponses.getFirst());
     }
 
     @Test
@@ -129,7 +129,7 @@ class CarServiceTest {
         when(carRepository.save(any(Car.class))).thenReturn(car);
 
         CarResponse savedCarResponse = assertDoesNotThrow(() -> carService.saveCar(carRequest, image));
-        AssertionUtils.assertCarResponse(car, savedCarResponse);
+        AssertionUtil.assertCarResponse(car, savedCarResponse);
     }
 
     @Test
@@ -164,7 +164,7 @@ class CarServiceTest {
         when(carRepository.saveAll(anyList())).thenReturn(List.of(car));
 
         List<CarResponse> carResponses = carService.uploadCars(file);
-        AssertionUtils.assertCarResponse(car, carResponses.getFirst());
+        AssertionUtil.assertCarResponse(car, carResponses.getFirst());
     }
 
     @Test
@@ -195,7 +195,7 @@ class CarServiceTest {
         when(carRepository.saveAll(anyList())).thenReturn(List.of(car));
 
         List<CarResponse> carResponses = carService.updateCarsStatus(updateCarsRequest);
-        AssertionUtils.assertCarResponse(car, carResponses.getFirst());
+        AssertionUtil.assertCarResponse(car, carResponses.getFirst());
     }
 
     @Test
@@ -205,7 +205,7 @@ class CarServiceTest {
         when(carRepository.findById(anyLong())).thenReturn(Optional.ofNullable(car));
 
         AvailableCarInfo availableCarInfo = carService.findAvailableCar(1L);
-        AssertionUtils.assertAvailableCarInfo(Objects.requireNonNull(car), availableCarInfo);
+        AssertionUtil.assertAvailableCarInfo(Objects.requireNonNull(car), availableCarInfo);
     }
 
 }

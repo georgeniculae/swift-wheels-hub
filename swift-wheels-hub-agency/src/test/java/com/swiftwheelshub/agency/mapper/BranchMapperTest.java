@@ -1,6 +1,6 @@
 package com.swiftwheelshub.agency.mapper;
 
-import com.swiftwheelshub.agency.util.AssertionUtils;
+import com.swiftwheelshub.agency.util.AssertionUtil;
 import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.BranchRequest;
 import com.swiftwheelshub.dto.BranchResponse;
@@ -25,7 +25,7 @@ class BranchMapperTest {
         BranchResponse branchResponse = assertDoesNotThrow(() -> branchMapper.mapEntityToDto(branch));
 
         assertNotNull(branchResponse);
-        AssertionUtils.assertBranchResponse(branch, branchResponse);
+        AssertionUtil.assertBranchResponse(branch, branchResponse);
     }
 
     @Test
@@ -40,7 +40,7 @@ class BranchMapperTest {
         Branch branch = assertDoesNotThrow(() -> branchMapper.mapDtoToEntity(branchRequest));
 
         assertNotNull(branch);
-        AssertionUtils.assertBranchRequest(branch, branchRequest);
+        AssertionUtil.assertBranchRequest(branch, branchRequest);
     }
 
     @Test

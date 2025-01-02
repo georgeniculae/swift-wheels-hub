@@ -3,7 +3,7 @@ package com.swiftwheelshub.agency.service;
 import com.swiftwheelshub.agency.mapper.RentalOfficeMapper;
 import com.swiftwheelshub.agency.mapper.RentalOfficeMapperImpl;
 import com.swiftwheelshub.agency.repository.RentalOfficeRepository;
-import com.swiftwheelshub.agency.util.AssertionUtils;
+import com.swiftwheelshub.agency.util.AssertionUtil;
 import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.RentalOfficeRequest;
 import com.swiftwheelshub.dto.RentalOfficeResponse;
@@ -58,7 +58,7 @@ class RentalOfficeServiceTest {
         List<RentalOfficeResponse> rentalOfficeResponses =
                 assertDoesNotThrow(() -> rentalOfficeService.findAllRentalOffices());
 
-        AssertionUtils.assertRentalOfficeResponse(rentalOffice, rentalOfficeResponses.getFirst());
+        AssertionUtil.assertRentalOfficeResponse(rentalOffice, rentalOfficeResponses.getFirst());
     }
 
     @Test
@@ -71,7 +71,7 @@ class RentalOfficeServiceTest {
         RentalOfficeResponse rentalOfficeResponse =
                 assertDoesNotThrow(() -> rentalOfficeService.findRentalOfficeById(1L));
 
-        AssertionUtils.assertRentalOfficeResponse(rentalOffice, rentalOfficeResponse);
+        AssertionUtil.assertRentalOfficeResponse(rentalOffice, rentalOfficeResponse);
     }
 
     @Test
@@ -97,7 +97,7 @@ class RentalOfficeServiceTest {
         RentalOfficeResponse savedRentalOfficeResponse =
                 assertDoesNotThrow(() -> rentalOfficeService.saveRentalOffice(rentalOfficeRequest));
 
-        AssertionUtils.assertRentalOfficeResponse(rentalOffice, savedRentalOfficeResponse);
+        AssertionUtil.assertRentalOfficeResponse(rentalOffice, savedRentalOfficeResponse);
 
         verify(rentalOfficeRepository, times(1)).save(argumentCaptor.capture());
         verify(rentalOfficeMapper).mapEntityToDto(any(RentalOffice.class));
@@ -114,7 +114,7 @@ class RentalOfficeServiceTest {
         RentalOfficeResponse updatedRentalOfficeResponse =
                 assertDoesNotThrow(() -> rentalOfficeService.updateRentalOffice(1L, rentalOfficeRequest));
 
-        AssertionUtils.assertRentalOfficeResponse(rentalOffice, updatedRentalOfficeResponse);
+        AssertionUtil.assertRentalOfficeResponse(rentalOffice, updatedRentalOfficeResponse);
     }
 
     @Test
@@ -126,7 +126,7 @@ class RentalOfficeServiceTest {
         List<RentalOfficeResponse> rentalOfficeResponses =
                 rentalOfficeService.findRentalOfficeByFilter("Test Rental Office");
 
-        AssertionUtils.assertRentalOfficeResponse(rentalOffice, rentalOfficeResponses.getFirst());
+        AssertionUtil.assertRentalOfficeResponse(rentalOffice, rentalOfficeResponses.getFirst());
     }
 
 }

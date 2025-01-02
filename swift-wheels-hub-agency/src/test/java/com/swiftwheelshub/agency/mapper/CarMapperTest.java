@@ -1,6 +1,6 @@
 package com.swiftwheelshub.agency.mapper;
 
-import com.swiftwheelshub.agency.util.AssertionUtils;
+import com.swiftwheelshub.agency.util.AssertionUtil;
 import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.AvailableCarInfo;
 import com.swiftwheelshub.dto.CarRequest;
@@ -28,7 +28,7 @@ class CarMapperTest {
         CarResponse carResponse = Assertions.assertDoesNotThrow(() -> carMapper.mapEntityToDto(car));
 
         assertNotNull(carResponse);
-        AssertionUtils.assertCarResponse(car, carResponse);
+        AssertionUtil.assertCarResponse(car, carResponse);
     }
 
     @Test
@@ -48,7 +48,7 @@ class CarMapperTest {
         Car car = Assertions.assertDoesNotThrow(() -> carMapper.mapDtoToEntity(carRequest, image));
 
         assertNotNull(car);
-        AssertionUtils.assertCarRequest(car, carRequest);
+        AssertionUtil.assertCarRequest(car, carRequest);
     }
 
     @Test
@@ -64,7 +64,7 @@ class CarMapperTest {
 
         AvailableCarInfo availableCarInfo = carMapper.mapToAvailableCarInfo(car);
 
-        AssertionUtils.assertAvailableCarInfo(car, availableCarInfo);
+        AssertionUtil.assertAvailableCarInfo(car, availableCarInfo);
     }
 
     @Test

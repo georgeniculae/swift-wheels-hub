@@ -2,7 +2,7 @@ package com.swiftwheelshub.customer.service;
 
 import com.swiftwheelshub.customer.mapper.CustomerMapper;
 import com.swiftwheelshub.customer.mapper.CustomerMapperImpl;
-import com.swiftwheelshub.customer.util.AssertionUtils;
+import com.swiftwheelshub.customer.util.AssertionUtil;
 import com.swiftwheelshub.customer.util.TestData;
 import com.swiftwheelshub.customer.util.TestUtil;
 import com.swiftwheelshub.dto.AuthenticationInfo;
@@ -131,7 +131,7 @@ class CustomerServiceTest {
 
         UserInfo currentUser = customerService.getCurrentUser();
 
-        AssertionUtils.assertUserDetails(userRepresentation, currentUser);
+        AssertionUtil.assertUserDetails(userRepresentation, currentUser);
 
         verify(customerMapper).mapUserToUserInfo(any(UserRepresentation.class));
     }
@@ -179,7 +179,7 @@ class CustomerServiceTest {
 
         UserInfo user = customerService.findUserByUsername("user");
 
-        AssertionUtils.assertUserDetails(userRepresentation, user);
+        AssertionUtil.assertUserDetails(userRepresentation, user);
     }
 
     @Test
@@ -226,7 +226,7 @@ class CustomerServiceTest {
 
             RegistrationResponse registrationResponse = customerService.registerCustomer(registerRequest);
 
-            AssertionUtils.assertRegistrationResponse(registerRequest, registrationResponse);
+            AssertionUtil.assertRegistrationResponse(registerRequest, registrationResponse);
 
             verify(customerMapper).mapToRegistrationResponse(any(UserRepresentation.class));
         }
@@ -270,7 +270,7 @@ class CustomerServiceTest {
 
         UserInfo userInfo = customerService.updateUser("user", userUpdateRequest);
 
-        AssertionUtils.assertUserDetails(userUpdateRequest, userInfo);
+        AssertionUtil.assertUserDetails(userUpdateRequest, userInfo);
     }
 
     @Test

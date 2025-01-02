@@ -5,7 +5,7 @@ import com.swiftwheelshub.entity.BookingAuditLogInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AssertionUtils {
+public class AssertionUtil {
 
     public static void assertAuditLogInfo(AuditLogInfoRequest auditLogInfoRequest, BookingAuditLogInfo bookingAuditLogInfo) {
         assertEquals(auditLogInfoRequest.username(), bookingAuditLogInfo.getUsername());

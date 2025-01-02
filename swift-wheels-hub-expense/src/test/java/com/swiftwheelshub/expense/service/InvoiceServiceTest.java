@@ -16,7 +16,7 @@ import com.swiftwheelshub.expense.producer.BookingUpdateProducerService;
 import com.swiftwheelshub.expense.producer.CarStatusUpdateProducerService;
 import com.swiftwheelshub.expense.producer.FailedInvoiceDlqProducerService;
 import com.swiftwheelshub.expense.repository.InvoiceRepository;
-import com.swiftwheelshub.expense.util.AssertionUtils;
+import com.swiftwheelshub.expense.util.AssertionUtil;
 import com.swiftwheelshub.expense.util.TestUtil;
 import com.swiftwheelshub.lib.security.ApiKeyAuthenticationToken;
 import org.junit.jupiter.api.Test;
@@ -81,7 +81,7 @@ class InvoiceServiceTest {
         when(invoiceRepository.findAllInvoices()).thenReturn(Stream.of(invoice));
 
         List<InvoiceResponse> invoiceResponses = invoiceService.findAllInvoices();
-        AssertionUtils.assertInvoiceResponse(invoice, invoiceResponses.getFirst());
+        AssertionUtil.assertInvoiceResponse(invoice, invoiceResponses.getFirst());
     }
 
     @Test
@@ -93,7 +93,7 @@ class InvoiceServiceTest {
         assertDoesNotThrow(() -> invoiceService.findAllInvoices());
         List<InvoiceResponse> allActiveInvoices = invoiceService.findAllActiveInvoices();
 
-        AssertionUtils.assertInvoiceResponse(invoice, allActiveInvoices.getFirst());
+        AssertionUtil.assertInvoiceResponse(invoice, allActiveInvoices.getFirst());
     }
 
     @Test
@@ -105,7 +105,7 @@ class InvoiceServiceTest {
         assertDoesNotThrow(() -> invoiceService.findInvoiceById(1L));
         InvoiceResponse invoiceResponse = invoiceService.findInvoiceById(1L);
 
-        AssertionUtils.assertInvoiceResponse(invoice, invoiceResponse);
+        AssertionUtil.assertInvoiceResponse(invoice, invoiceResponse);
     }
 
     @Test
@@ -128,7 +128,7 @@ class InvoiceServiceTest {
         List<InvoiceResponse> invoiceResponses =
                 assertDoesNotThrow(() -> invoiceService.findInvoiceByComments("comment"));
 
-        AssertionUtils.assertInvoiceResponse(invoice, invoiceResponses.getFirst());
+        AssertionUtil.assertInvoiceResponse(invoice, invoiceResponses.getFirst());
     }
 
     @Test
@@ -139,7 +139,7 @@ class InvoiceServiceTest {
 
         List<InvoiceResponse> invoices = invoiceService.findAllInvoicesByCustomerUsername("user");
 
-        AssertionUtils.assertInvoiceResponse(invoice, invoices.getFirst());
+        AssertionUtil.assertInvoiceResponse(invoice, invoices.getFirst());
     }
 
     @Test

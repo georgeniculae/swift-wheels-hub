@@ -3,7 +3,7 @@ package com.swiftwheelshub.agency.service;
 import com.swiftwheelshub.agency.mapper.EmployeeMapper;
 import com.swiftwheelshub.agency.mapper.EmployeeMapperImpl;
 import com.swiftwheelshub.agency.repository.EmployeeRepository;
-import com.swiftwheelshub.agency.util.AssertionUtils;
+import com.swiftwheelshub.agency.util.AssertionUtil;
 import com.swiftwheelshub.agency.util.TestUtil;
 import com.swiftwheelshub.dto.EmployeeRequest;
 import com.swiftwheelshub.dto.EmployeeResponse;
@@ -53,7 +53,7 @@ class EmployeeServiceTest {
         when(employeeRepository.findAllEmployee()).thenReturn(Stream.of(employee));
 
         List<EmployeeResponse> employeeResponses = assertDoesNotThrow(() -> employeeService.findAllEmployees());
-        AssertionUtils.assertEmployeeResponse(employee, employeeResponses.getFirst());
+        AssertionUtil.assertEmployeeResponse(employee, employeeResponses.getFirst());
     }
 
     @Test
@@ -63,7 +63,7 @@ class EmployeeServiceTest {
         when(employeeRepository.findById(anyLong())).thenReturn(Optional.of(employee));
 
         EmployeeResponse employeeResponse = assertDoesNotThrow(() -> employeeService.findEmployeeById(1L));
-        AssertionUtils.assertEmployeeResponse(employee, employeeResponse);
+        AssertionUtil.assertEmployeeResponse(employee, employeeResponse);
     }
 
     @Test
@@ -90,7 +90,7 @@ class EmployeeServiceTest {
         when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 
         EmployeeResponse savedEmployeeResponse = assertDoesNotThrow(() -> employeeService.saveEmployee(employeeRequest));
-        AssertionUtils.assertEmployeeResponse(employee, savedEmployeeResponse);
+        AssertionUtil.assertEmployeeResponse(employee, savedEmployeeResponse);
 
         verify(employeeMapper).mapEntityToDto(any(Employee.class));
     }
@@ -109,7 +109,7 @@ class EmployeeServiceTest {
         when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 
         EmployeeResponse employeeResponse = assertDoesNotThrow(() -> employeeService.updateEmployee(1L, employeeRequest));
-        AssertionUtils.assertEmployeeResponse(employee, employeeResponse);
+        AssertionUtil.assertEmployeeResponse(employee, employeeResponse);
     }
 
     @Test
@@ -119,7 +119,7 @@ class EmployeeServiceTest {
         when(employeeRepository.findAllEmployeesByBranchId(anyLong())).thenReturn(Stream.of(employee));
 
         List<EmployeeResponse> employeeResponses = assertDoesNotThrow(() -> employeeService.findEmployeesByBranchId(1L));
-        AssertionUtils.assertEmployeeResponse(employee, employeeResponses.getFirst());
+        AssertionUtil.assertEmployeeResponse(employee, employeeResponses.getFirst());
     }
 
     @Test
@@ -129,7 +129,7 @@ class EmployeeServiceTest {
         when(employeeRepository.findByFilter(anyString())).thenReturn(Stream.of(employee));
 
         List<EmployeeResponse> employeeResponses = employeeService.findEmployeesByFilter("Ion");
-        AssertionUtils.assertEmployeeResponse(employee, employeeResponses.getFirst());
+        AssertionUtil.assertEmployeeResponse(employee, employeeResponses.getFirst());
     }
 
 }

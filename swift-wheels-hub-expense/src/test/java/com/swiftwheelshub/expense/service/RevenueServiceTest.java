@@ -5,7 +5,7 @@ import com.swiftwheelshub.entity.Revenue;
 import com.swiftwheelshub.expense.mapper.RevenueMapper;
 import com.swiftwheelshub.expense.mapper.RevenueMapperImpl;
 import com.swiftwheelshub.expense.repository.RevenueRepository;
-import com.swiftwheelshub.expense.util.AssertionUtils;
+import com.swiftwheelshub.expense.util.AssertionUtil;
 import com.swiftwheelshub.expense.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +43,7 @@ class RevenueServiceTest {
         when(revenueRepository.findAllRevenues()).thenReturn(Stream.of(revenue));
 
         List<RevenueResponse> revenueResponses = revenueService.findAllRevenues();
-        AssertionUtils.assertRevenueResponse(revenue, revenueResponses.getFirst());
+        AssertionUtil.assertRevenueResponse(revenue, revenueResponses.getFirst());
 
         verify(revenueMapper).mapEntityToDto(any(Revenue.class));
     }
@@ -57,7 +57,7 @@ class RevenueServiceTest {
         List<RevenueResponse> revenueResponses =
                 assertDoesNotThrow(() -> revenueService.findRevenuesByDate(LocalDate.parse("2099-02-20")));
 
-        AssertionUtils.assertRevenueResponse(revenue, revenueResponses.getFirst());
+        AssertionUtil.assertRevenueResponse(revenue, revenueResponses.getFirst());
 
         verify(revenueMapper, times(1)).mapEntityToDto(any(Revenue.class));
     }

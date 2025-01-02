@@ -1,6 +1,6 @@
 package com.swiftwheelshub.booking.mapper;
 
-import com.swiftwheelshub.booking.util.AssertionUtils;
+import com.swiftwheelshub.booking.util.AssertionUtil;
 import com.swiftwheelshub.booking.util.TestUtil;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
@@ -20,7 +20,7 @@ class BookingMapperTest {
 
         BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
 
-        AssertionUtils.assertBooking(booking, bookingResponse);
+        AssertionUtil.assertBooking(booking, bookingResponse);
     }
 
     @Test
@@ -30,7 +30,7 @@ class BookingMapperTest {
 
         Booking actualBooking = bookingMapper.mapDtoToEntity(bookingRequest);
 
-        AssertionUtils.assertBooking(actualBooking, bookingRequest);
+        AssertionUtil.assertBooking(actualBooking, bookingRequest);
     }
 
 }
