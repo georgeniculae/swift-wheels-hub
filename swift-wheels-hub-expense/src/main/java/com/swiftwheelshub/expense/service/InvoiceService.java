@@ -134,6 +134,11 @@ public class InvoiceService implements RetryListener {
         invoiceRepository.deleteByBookingId(bookingId);
     }
 
+    public Invoice findEntityById(Long id) {
+        return invoiceRepository.findById(id)
+                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Invoice with id " + id + " does not exist"));
+    }
+
     private void completeInvoiceAfterBookingAndCarUpdate(InvoiceRequest invoiceRequest, Invoice existingInvoiceUpdated) {
         boolean successful = updateBookingAndCar(invoiceRequest, existingInvoiceUpdated);
 
@@ -190,11 +195,6 @@ public class InvoiceService implements RetryListener {
                     "If the vehicle is damaged, the damage cost cannot be null/empty"
             );
         }
-    }
-
-    private Invoice findEntityById(Long id) {
-        return invoiceRepository.findById(id)
-                .orElseThrow(() -> new SwiftWheelsHubNotFoundException("Invoice with id " + id + " does not exist"));
     }
 
     private Invoice findInvoiceByBookingId(Long bookingId) {

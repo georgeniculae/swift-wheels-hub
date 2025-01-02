@@ -18,9 +18,6 @@ public interface InvoiceMapper {
 
     InvoiceResponse mapEntityToDto(Invoice invoice);
 
-    @Mapping(target = "invoiceProcessStatus", constant = "SAVED_CLOSED_INVOICE")
-    Invoice getSuccessfulCreatedInvoice(Invoice invoice);
-
     @Mapping(target = "invoiceId", expression = "java(id)")
     InvoiceReprocessRequest mapToInvoiceReprocessRequest(Long id, InvoiceRequest invoiceRequest);
 
