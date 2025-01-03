@@ -140,9 +140,9 @@ public class InvoiceService implements RetryListener {
     }
 
     private void completeInvoiceAfterBookingAndCarUpdate(InvoiceRequest invoiceRequest, Invoice existingInvoiceUpdated) {
-        boolean successful = updateBookingAndCar(invoiceRequest, existingInvoiceUpdated);
+        boolean successfulUpdate = updateBookingAndCar(invoiceRequest, existingInvoiceUpdated);
 
-        if (successful) {
+        if (successfulUpdate) {
             existingInvoiceUpdated.setInvoiceProcessStatus(InvoiceProcessStatus.SAVED_CLOSED_INVOICE);
             revenueService.processClosing(existingInvoiceUpdated);
             log.info("Invoice with id: {} has been successfully closed", existingInvoiceUpdated.getId());
@@ -153,6 +153,10 @@ public class InvoiceService implements RetryListener {
         existingInvoiceUpdated.setInvoiceProcessStatus(InvoiceProcessStatus.FAILED_CLOSED_INVOICE);
         invoiceRepository.save(existingInvoiceUpdated);
 
+        processFailedInvoice(invoiceRequest, existingInvoiceUpdated);
+    }
+
+    private void processFailedInvoice(InvoiceRequest invoiceRequest, Invoice existingInvoiceUpdated) {
         InvoiceReprocessRequest invoiceReprocessRequest =
                 invoiceMapper.mapToInvoiceReprocessRequest(existingInvoiceUpdated.getId(), invoiceRequest);
 
@@ -165,14 +169,14 @@ public class InvoiceService implements RetryListener {
         boolean isBookingUpdated = closeBooking(invoiceRequest);
 
         if (isBookingUpdated) {
-            boolean isCarUpdated = carStatusUpdateProducerService.markCarAsAvailable(getCarUpdateDetails(savedInvoice));
-
-            if (isCarUpdated) {
+            if (carStatusUpdateProducerService.markCarAsAvailable(getCarUpdateDetails(savedInvoice))) {
                 return true;
-            } else {
-                log.error("Error occurred while updating booking");
-                bookingRollbackProducerService.rollbackBooking(savedInvoice.getBookingId());
             }
+
+            log.error("Error occurred while updating booking");
+            bookingRollbackProducerService.rollbackBooking(savedInvoice.getBookingId());
+
+            return false;
         }
 
         return false;
