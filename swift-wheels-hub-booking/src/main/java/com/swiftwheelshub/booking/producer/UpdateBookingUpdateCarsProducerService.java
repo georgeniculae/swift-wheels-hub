@@ -1,6 +1,7 @@
 package com.swiftwheelshub.booking.producer;
 
 import com.swiftwheelshub.dto.UpdateCarsRequest;
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -47,9 +48,7 @@ public class UpdateBookingUpdateCarsProducerService {
 
             return true;
         } catch (Exception e) {
-            log.error("Error sending message: {}", e.getMessage(), e);
-
-            return false;
+            throw new SwiftWheelsHubException("Error updating cars status message: " + e.getMessage());
         }
     }
 

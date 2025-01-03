@@ -1,6 +1,7 @@
 package com.swiftwheelshub.expense.producer;
 
 import com.swiftwheelshub.dto.InvoiceReprocessRequest;
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,9 +50,7 @@ public class FailedInvoiceDlqProducerService {
 
             return true;
         } catch (Exception e) {
-            log.error("Error sending message: {}: {}", invoiceReprocessRequest, e.getMessage(), e);
-
-            return false;
+            throw new SwiftWheelsHubException("Error sending message: " + invoiceReprocessRequest + " " + e.getMessage());
         }
     }
 

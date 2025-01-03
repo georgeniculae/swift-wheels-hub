@@ -1,6 +1,7 @@
 package com.swiftwheelshub.expense.producer;
 
 import com.swiftwheelshub.dto.CarUpdateDetails;
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,9 +51,7 @@ public class CarStatusUpdateProducerService {
 
             return true;
         } catch (Exception e) {
-            log.error("Error setting car available: {}: {}", carUpdateDetails, e.getMessage(), e);
-
-            return false;
+            throw new SwiftWheelsHubException("Error setting car available: " + carUpdateDetails + " " + e.getMessage());
         }
     }
 

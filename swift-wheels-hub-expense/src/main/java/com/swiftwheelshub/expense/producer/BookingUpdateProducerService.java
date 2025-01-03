@@ -1,6 +1,7 @@
 package com.swiftwheelshub.expense.producer;
 
 import com.swiftwheelshub.dto.BookingClosingDetails;
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,9 +51,7 @@ public class BookingUpdateProducerService {
 
             return true;
         } catch (Exception e) {
-            log.error("Error while closing booking: {}: {}", bookingClosingDetails, e.getMessage(), e);
-
-            return false;
+            throw new SwiftWheelsHubException("Error while closing booking: " + bookingClosingDetails + " " + e.getMessage());
         }
     }
 

@@ -1,5 +1,6 @@
 package com.swiftwheelshub.expense.producer;
 
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +9,7 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -44,10 +46,15 @@ public class BookingRollbackProducerService {
 
             return true;
         } catch (Exception e) {
-            log.error("Error sending message: {}: {}", bookingId, e.getMessage(), e);
-
-            return false;
+            throw new SwiftWheelsHubException("Error sending message: " + bookingId + " " + e.getMessage());
         }
+    }
+
+    @Recover
+    public boolean recover(Exception e, Long bookingId) {
+        log.error("Error while trying to rollback booking: {}: {}", bookingId, e.getMessage(), e);
+
+        return false;
     }
 
     private Message<Long> buildMessage(Long bookingId, String topicName) {
