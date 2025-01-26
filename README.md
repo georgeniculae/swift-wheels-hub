@@ -39,6 +39,6 @@ Swift Wheels Hub is a Java-based application designed to manage booking and invo
 - SQL Database
 
 ### Installation
-1. Clone the repository:
-   ```sh
+   Clone the repository:
+```sh
    git clone https://github.com/georgeniculae/swift-wheels-hub.git
