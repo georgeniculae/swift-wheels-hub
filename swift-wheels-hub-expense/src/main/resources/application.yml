@@ -56,9 +56,6 @@ spring:
         auditLogInfoProducer-out-0:
           destination: ${EXPENSE_AUDIT_LOG_INFO_TOPIC}
           contentType: application/json
-        bookingRollbackProducer-out-0:
-          destination: ${BOOKING_ROLLBACK_TOPIC}
-          contentType: application/json
         bookingUpdateProducer-out-0:
           destination: ${BOOKING_UPDATE_TOPIC}
           contentType: application/json

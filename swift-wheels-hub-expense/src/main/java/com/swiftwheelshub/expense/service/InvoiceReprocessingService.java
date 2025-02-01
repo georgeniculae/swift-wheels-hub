@@ -7,7 +7,6 @@ import com.swiftwheelshub.dto.InvoiceReprocessRequest;
 import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.entity.InvoiceProcessStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
-import com.swiftwheelshub.expense.producer.BookingRollbackProducerService;
 import com.swiftwheelshub.expense.producer.BookingUpdateProducerService;
 import com.swiftwheelshub.expense.producer.CarStatusUpdateProducerService;
 import com.swiftwheelshub.expense.repository.InvoiceRepository;
@@ -23,7 +22,6 @@ public class InvoiceReprocessingService implements RetryListener {
 
     private final BookingUpdateProducerService bookingUpdateProducerService;
     private final CarStatusUpdateProducerService carStatusUpdateProducerService;
-    private final BookingRollbackProducerService bookingRollbackProducerService;
     private final InvoiceService invoiceService;
     private final InvoiceRepository invoiceRepository;
 
@@ -31,9 +29,8 @@ public class InvoiceReprocessingService implements RetryListener {
         BookingClosingDetails bookingClosingDetails =
                 getBookingClosingDetails(invoiceReprocessRequest.bookingId(), invoiceReprocessRequest.returnBranchId());
 
-        if (bookingUpdateProducerService.closeBooking(bookingClosingDetails)) {
-            if (carStatusUpdateProducerService.markCarAsAvailable(getCarUpdateDetails(invoiceReprocessRequest))) {
-
+        if (carStatusUpdateProducerService.markCarAsAvailable(getCarUpdateDetails(invoiceReprocessRequest))) {
+            if (bookingUpdateProducerService.closeBooking(bookingClosingDetails)) {
                 Invoice failedInvoice = invoiceService.findEntityById(invoiceReprocessRequest.invoiceId());
                 failedInvoice.setInvoiceProcessStatus(InvoiceProcessStatus.SAVED_CLOSED_INVOICE);
                 invoiceRepository.save(failedInvoice);
@@ -41,8 +38,6 @@ public class InvoiceReprocessingService implements RetryListener {
                 return;
             }
         }
-
-        bookingRollbackProducerService.rollbackBooking(invoiceReprocessRequest.bookingId());
 
         throw new SwiftWheelsHubException("Invoice reprocessing failed");
     }

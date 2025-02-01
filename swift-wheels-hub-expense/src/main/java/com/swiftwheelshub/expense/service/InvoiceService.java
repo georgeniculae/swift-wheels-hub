@@ -12,7 +12,6 @@ import com.swiftwheelshub.entity.InvoiceProcessStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.expense.mapper.InvoiceMapper;
-import com.swiftwheelshub.expense.producer.BookingRollbackProducerService;
 import com.swiftwheelshub.expense.producer.BookingUpdateProducerService;
 import com.swiftwheelshub.expense.producer.CarStatusUpdateProducerService;
 import com.swiftwheelshub.expense.producer.FailedInvoiceDlqProducerService;
@@ -42,7 +41,6 @@ public class InvoiceService implements RetryListener {
     private final CarStatusUpdateProducerService carStatusUpdateProducerService;
     private final InvoiceMapper invoiceMapper;
     private final FailedInvoiceDlqProducerService failedInvoiceDlqProducerService;
-    private final BookingRollbackProducerService bookingRollbackProducerService;
 
     @Transactional(readOnly = true)
     public List<InvoiceResponse> findAllInvoices() {
@@ -140,7 +138,7 @@ public class InvoiceService implements RetryListener {
     }
 
     private void completeInvoiceAfterBookingAndCarUpdate(InvoiceRequest invoiceRequest, Invoice existingInvoiceUpdated) {
-        boolean successfulUpdate = updateBookingAndCar(invoiceRequest, existingInvoiceUpdated);
+        boolean successfulUpdate = updateCarAndBooking(invoiceRequest, existingInvoiceUpdated);
 
         if (successfulUpdate) {
             existingInvoiceUpdated.setInvoiceProcessStatus(InvoiceProcessStatus.SAVED_CLOSED_INVOICE);
@@ -165,18 +163,11 @@ public class InvoiceService implements RetryListener {
         log.warn("Invoice with id: {} has failed to close, storing it to DLQ", existingInvoiceUpdated.getId());
     }
 
-    private boolean updateBookingAndCar(InvoiceRequest invoiceRequest, Invoice savedInvoice) {
-        boolean isBookingUpdated = closeBooking(invoiceRequest);
+    private boolean updateCarAndBooking(InvoiceRequest invoiceRequest, Invoice savedInvoice) {
+        boolean isCarMarkedAsAvailable = carStatusUpdateProducerService.markCarAsAvailable(getCarUpdateDetails(savedInvoice));
 
-        if (isBookingUpdated) {
-            if (carStatusUpdateProducerService.markCarAsAvailable(getCarUpdateDetails(savedInvoice))) {
-                return true;
-            }
-
-            log.error("Error occurred while updating booking");
-            bookingRollbackProducerService.rollbackBooking(savedInvoice.getBookingId());
-
-            return false;
+        if (isCarMarkedAsAvailable) {
+            return closeBooking(invoiceRequest);
         }
 
         return false;

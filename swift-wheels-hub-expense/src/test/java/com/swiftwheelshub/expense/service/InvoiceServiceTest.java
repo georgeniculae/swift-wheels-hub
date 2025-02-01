@@ -11,7 +11,6 @@ import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.expense.mapper.InvoiceMapper;
 import com.swiftwheelshub.expense.mapper.InvoiceMapperImpl;
-import com.swiftwheelshub.expense.producer.BookingRollbackProducerService;
 import com.swiftwheelshub.expense.producer.BookingUpdateProducerService;
 import com.swiftwheelshub.expense.producer.CarStatusUpdateProducerService;
 import com.swiftwheelshub.expense.producer.FailedInvoiceDlqProducerService;
@@ -64,9 +63,6 @@ class InvoiceServiceTest {
 
     @Mock
     private InvoiceRepository invoiceRepository;
-
-    @Mock
-    private BookingRollbackProducerService bookingRollbackProducerService;
 
     @Mock
     private FailedInvoiceDlqProducerService failedInvoiceDlqProducerService;
@@ -205,8 +201,8 @@ class InvoiceServiceTest {
 
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
         when(invoiceRepository.save(any(Invoice.class))).thenReturn(closedInvoice);
-        when(bookingUpdateProducerService.closeBooking(any(BookingClosingDetails.class))).thenReturn(true);
         when(carStatusUpdateProducerService.markCarAsAvailable(any(CarUpdateDetails.class))).thenReturn(true);
+        when(bookingUpdateProducerService.closeBooking(any(BookingClosingDetails.class))).thenReturn(true);
         when(revenueService.processClosing(any(Invoice.class))).thenReturn(invoice);
 
         assertDoesNotThrow(() -> invoiceService.closeInvoice(1L, invoiceRequest));
@@ -236,6 +232,7 @@ class InvoiceServiceTest {
 
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
         when(invoiceRepository.save(any(Invoice.class))).thenReturn(closedInvoice);
+        when(carStatusUpdateProducerService.markCarAsAvailable(any(CarUpdateDetails.class))).thenReturn(true);
         when(bookingUpdateProducerService.closeBooking(any(BookingClosingDetails.class))).thenReturn(false);
         when(failedInvoiceDlqProducerService.sendMessage(any(InvoiceReprocessRequest.class))).thenReturn(true);
 
@@ -266,9 +263,7 @@ class InvoiceServiceTest {
 
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
         when(invoiceRepository.save(any(Invoice.class))).thenReturn(closedInvoice);
-        when(bookingUpdateProducerService.closeBooking(any(BookingClosingDetails.class))).thenReturn(true);
         when(carStatusUpdateProducerService.markCarAsAvailable(any(CarUpdateDetails.class))).thenReturn(false);
-        when(bookingRollbackProducerService.rollbackBooking(anyLong())).thenReturn(true);
 
         assertDoesNotThrow(() -> invoiceService.closeInvoice(1L, invoiceRequest));
 

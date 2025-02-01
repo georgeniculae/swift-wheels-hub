@@ -9,7 +9,6 @@ import com.swiftwheelshub.dto.AvailableCarInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.BookingRollbackResponse;
 import com.swiftwheelshub.dto.BookingUpdateResponse;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.CarStatusUpdate;
@@ -166,18 +165,6 @@ public class BookingService implements RetryListener {
             log.error("Error occurred while closing booking: {}", e.getMessage());
 
             return new BookingUpdateResponse(false);
-        }
-    }
-
-    public BookingRollbackResponse rollbackBooking(Long bookingId) {
-        try {
-            bookingRepository.updateStatusById(BookingStatus.IN_PROGRESS, bookingId);
-
-            return new BookingRollbackResponse(true, bookingId);
-        } catch (Exception e) {
-            log.error("Error occurred while rollback: {}", e.getMessage());
-
-            return new BookingRollbackResponse(false, bookingId);
         }
     }
 
