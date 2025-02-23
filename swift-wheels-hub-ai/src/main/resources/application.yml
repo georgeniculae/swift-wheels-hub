@@ -18,7 +18,6 @@ spring:
     client:
       connect-timeout: 60s
       read-timeout: 120s
-      factory: reactor
   ai:
     ollama:
       chat:
