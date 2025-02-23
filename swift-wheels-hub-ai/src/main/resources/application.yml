@@ -16,7 +16,7 @@ spring:
       enabled: true
   http:
     client:
-      connect-timeout: 30s
+      connect-timeout: 60s
       read-timeout: 120s
       factory: reactor
   ai:
