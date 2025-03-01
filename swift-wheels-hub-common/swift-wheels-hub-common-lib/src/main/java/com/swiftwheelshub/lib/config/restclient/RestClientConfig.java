@@ -17,11 +17,6 @@ public class RestClientConfig {
     @Bean(name = "loadBalancedRestClientBuilder")
     @LoadBalanced
     public RestClient.Builder restClientBuilder() {
-        return RestClient.builder();
-    }
-
-    @Bean
-    public RestClient restClient(@Qualifier("loadBalancedRestClientBuilder") RestClient.Builder restClientBuilder) {
         SimpleClientHttpRequestFactory clientHttpRequestFactory = ClientHttpRequestFactoryBuilder.simple()
                 .withCustomizers(
                         List.of(
@@ -31,8 +26,12 @@ public class RestClientConfig {
                 )
                 .build();
 
-        return restClientBuilder.requestFactory(clientHttpRequestFactory)
-                .build();
+        return RestClient.builder().requestFactory(clientHttpRequestFactory);
+    }
+
+    @Bean
+    public RestClient restClient(@Qualifier("loadBalancedRestClientBuilder") RestClient.Builder restClientBuilder) {
+        return restClientBuilder.build();
     }
 
 }

@@ -14,10 +14,6 @@ spring:
   threads:
     virtual:
       enabled: true
-  http:
-    client:
-      connect-timeout: 60s
-      read-timeout: 120s
   ai:
     ollama:
       chat:
