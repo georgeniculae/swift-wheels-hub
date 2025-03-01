@@ -56,6 +56,7 @@ public class SwaggerRequestValidatorService {
                 .orElseThrow(() -> new SwiftWheelsHubException("Swagger folder does not exist"));
 
         String swaggerContent = swaggerFile.getSwaggerContent();
+
         OpenApiInteractionValidator validator = OpenApiInteractionValidator.createForInlineApiSpecification(swaggerContent)
                 .withWhitelist(getWhitelist())
                 .build();
@@ -72,6 +73,7 @@ public class SwaggerRequestValidatorService {
     private String getValidationErrorMessage(ValidationReport validationReport) {
         return validationReport.getMessages()
                 .stream()
+                .filter(message -> ValidationReport.Level.IGNORE != message.getLevel())
                 .map(ValidationReport.Message::getMessage)
                 .collect(Collectors.joining());
     }
