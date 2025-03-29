@@ -1,5 +1,8 @@
 package com.swiftwheelshub.apigateway.config.webclient;
 
+import io.netty.channel.ChannelOption;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -16,18 +19,21 @@ public class WebClientConfig {
     @Bean(name = "loadBalancedWebClientBuilder")
     @LoadBalanced
     public WebClient.Builder webClientBuilder() {
-        return WebClient.builder();
+        HttpClient httpClient = HttpClient.create()
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 60000)
+                .responseTimeout(Duration.ofSeconds(60))
+                .doOnConnected(
+                        connection -> connection
+                                .addHandlerFirst(new ReadTimeoutHandler(60))
+                                .addHandlerLast(new WriteTimeoutHandler(60))
+                );
+
+        return WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient));
     }
 
     @Bean
     public WebClient webClient(@Qualifier("loadBalancedWebClientBuilder") WebClient.Builder webClientBuilder) {
-        HttpClient httpClient = HttpClient.create()
-                .responseTimeout(Duration.ofSeconds(60));
-
-        ReactorClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
-
-        return webClientBuilder.clientConnector(connector)
-                .build();
+        return webClientBuilder.build();
     }
 
 }
