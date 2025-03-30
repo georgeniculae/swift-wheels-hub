@@ -41,8 +41,7 @@ class CarSuggestionControllerTest {
         CarSuggestionResponse carSuggestionResponse =
                 TestUtil.getResourceAsJson("/data/CarSuggestionResponse.json", CarSuggestionResponse.class);
 
-        when(carSuggestionService.getChatOutput(any(TripInfo.class)))
-                .thenReturn(carSuggestionResponse);
+        when(carSuggestionService.getChatOutput(any(TripInfo.class))).thenReturn(carSuggestionResponse);
 
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/car-suggestion?destination=Sinaia&peopleCount=3&tripKind=city&tripDate=2024-06-20")
                         .contextPath(PATH)
