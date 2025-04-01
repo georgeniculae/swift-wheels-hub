@@ -13,12 +13,15 @@ import com.swiftwheelshub.entity.Branch;
 import com.swiftwheelshub.entity.Car;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +33,10 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -57,6 +64,9 @@ class CarServiceTest {
 
     @Mock
     private ExcelParserService excelParserService;
+
+    @Mock
+    private ExecutorService executorService;
 
     @Spy
     private CarMapper carMapper = new CarMapperImpl();
@@ -133,6 +143,7 @@ class CarServiceTest {
     }
 
     @Test
+    @SuppressWarnings({"unchecked", "rawtypes"})
     void updateCarTest_success() {
         Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
         Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
@@ -141,8 +152,21 @@ class CarServiceTest {
         MockMultipartFile image =
                 new MockMultipartFile("car", "car.jpg", MediaType.TEXT_PLAIN_VALUE, "car".getBytes());
 
-        when(branchService.findEntityById(anyLong())).thenReturn(branch);
-        when(carRepository.findById(anyLong())).thenReturn(Optional.of(car));
+        when(executorService.submit(any(Callable.class))).thenAnswer(new Answer() {
+            private int count = 0;
+
+            public Object answer(InvocationOnMock invocation) {
+                count++;
+
+                if (count == 1) {
+                    return getFuture(car);
+                } else if (count == 2) {
+                    return getFuture(branch);
+                } else {
+                    return getFuture(branch);
+                }
+            }
+        });
         when(carRepository.save(any(Car.class))).thenReturn(car);
 
         CarResponse updatedCarResponse = carService.updateCar(1L, carRequest, image);
@@ -206,6 +230,35 @@ class CarServiceTest {
 
         AvailableCarInfo availableCarInfo = carService.findAvailableCar(1L);
         AssertionUtil.assertAvailableCarInfo(Objects.requireNonNull(car), availableCarInfo);
+    }
+
+    private <T> Future<T> getFuture(T t) {
+        return new Future<>() {
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                return false;
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return false;
+            }
+
+            @Override
+            public boolean isDone() {
+                return false;
+            }
+
+            @Override
+            public T get() {
+                return t;
+            }
+
+            @Override
+            public T get(long timeout, @NotNull TimeUnit unit) {
+                return t;
+            }
+        };
     }
 
 }

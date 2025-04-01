@@ -12,6 +12,7 @@ import com.swiftwheelshub.entity.BodyType;
 import com.swiftwheelshub.entity.Branch;
 import com.swiftwheelshub.entity.Car;
 import com.swiftwheelshub.entity.CarStatus;
+import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.stream.Stream;
 
 @Service
@@ -32,6 +37,7 @@ public class CarService {
     private final EmployeeService employeeService;
     private final ExcelParserService excelParserService;
     private final CarMapper carMapper;
+    private final ExecutorService executorService;
 
     @Transactional(readOnly = true)
     public List<CarResponse> findAllCars() {
@@ -84,11 +90,14 @@ public class CarService {
     }
 
     public CarResponse updateCar(Long id, CarRequest updatedCarRequest, MultipartFile image) {
-        Car existingCar = findEntityById(id);
+        Future<Car> existingCarFuture = getFuture(() -> findEntityById(id));
+        Future<Branch> originalBranch = getFuture(() -> branchService.findEntityById(updatedCarRequest.originalBranchId()));
+        Future<Branch> actualBranch = getFuture(() -> branchService.findEntityById(updatedCarRequest.actualBranchId()));
 
-        Long branchId = updatedCarRequest.originalBranchId();
-        Branch branch = branchService.findEntityById(branchId);
+        Car existingCar = getFutureResult(existingCarFuture);
 
+        existingCar.setOriginalBranch(getFutureResult(originalBranch));
+        existingCar.setActualBranch(getFutureResult(actualBranch));
         existingCar.setMake(updatedCarRequest.make());
         existingCar.setModel(updatedCarRequest.model());
         existingCar.setBodyType(BodyType.valueOf(updatedCarRequest.bodyCategory().name()));
@@ -97,7 +106,6 @@ public class CarService {
         existingCar.setMileage(updatedCarRequest.mileage());
         existingCar.setAmount(updatedCarRequest.amount());
         existingCar.setCarStatus(CarStatus.valueOf(updatedCarRequest.carState().name()));
-        existingCar.setOriginalBranch(branch);
         existingCar.setImage(carMapper.mapToImage(image));
 
         Car savedCar = saveEntity(existingCar);
@@ -178,6 +186,21 @@ public class CarService {
                 updateCarsRequest.previousCarId(),
                 updateCarsRequest.actualCarId()
         );
+    }
+
+    private <T> Future<T> getFuture(Callable<T> branchCallable) {
+        return executorService.submit(branchCallable);
+    }
+
+    private <T> T getFutureResult(Future<T> future) {
+        try {
+            return future.get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new SwiftWheelsHubException(e.getMessage());
+        } catch (ExecutionException e) {
+            throw new SwiftWheelsHubException(e.getMessage());
+        }
     }
 
     private CarStatus getUpdatedCarStatus(UpdateCarsRequest updateCarRequests, Car car) {
