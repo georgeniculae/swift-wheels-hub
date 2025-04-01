@@ -21,10 +21,6 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
     public Map<String, Object> getErrorAttributes(ServerRequest request, ErrorAttributeOptions options) {
         Map<String, Object> errorAttributes = super.getErrorAttributes(request, options);
 
-        return addErrorAttributes(request, errorAttributes);
-    }
-
-    private Map<String, Object> addErrorAttributes(ServerRequest request, Map<String, Object> errorAttributes) {
         Throwable error = super.getError(request);
         String message = getMessage(errorAttributes, error);
 
@@ -36,7 +32,7 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
     private String getMessage(Map<String, Object> errorAttributes, Throwable error) {
         String message = error.getMessage();
 
-        if (HttpStatus.INTERNAL_SERVER_ERROR.value() == (Integer) errorAttributes.get(STATUS) && message.length() > 500) {
+        if (HttpStatus.INTERNAL_SERVER_ERROR.value() == (Integer) errorAttributes.get(STATUS) && message.length() > 1000) {
             return UNEXPECTED_ERROR;
         }
 
