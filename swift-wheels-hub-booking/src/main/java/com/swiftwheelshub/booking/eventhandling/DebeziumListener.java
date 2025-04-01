@@ -27,8 +27,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 import static io.debezium.data.Envelope.Operation;
@@ -41,13 +40,14 @@ public class DebeziumListener implements RetryListener {
     private static final char UNDERSCORE_CHAR = '_';
     private static final String FAILED_PROCESS_STATUS_PREFIX = "FAILED";
     public static final String IN_PROCESS_STATUS_PREFIX = "IN_";
-    private final Executor executor = Executors.newVirtualThreadPerTaskExecutor();
     private final DebeziumEngine<RecordChangeEvent<SourceRecord>> debeziumEngine;
+    private final ExecutorService executorService;
     private final BookingProducerService bookingProducerService;
     private final ObjectMapper objectMapper;
     private final BookingMapper bookingMapper;
 
     public DebeziumListener(Configuration connectorConfiguration,
+                            ExecutorService executorService,
                             BookingProducerService bookingProducerService,
                             ObjectMapper objectMapper,
                             BookingMapper bookingMapper) {
@@ -55,6 +55,7 @@ public class DebeziumListener implements RetryListener {
                 .using(connectorConfiguration.asProperties())
                 .notifying(this::handleChangeEvent)
                 .build();
+        this.executorService = executorService;
         this.bookingProducerService = bookingProducerService;
         this.objectMapper = objectMapper;
         this.bookingMapper = bookingMapper;
@@ -62,7 +63,7 @@ public class DebeziumListener implements RetryListener {
 
     @PostConstruct
     private void start() {
-        executor.execute(debeziumEngine);
+        executorService.execute(debeziumEngine);
     }
 
     @PreDestroy
