@@ -6,7 +6,7 @@ import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.lib.exceptionhandling.ExceptionHandling;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Spy;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(MockitoExtension.class)
 class ExceptionHandlingTest {
 
-    @Spy
-    private final ExceptionHandling exceptionHandling = new ExceptionHandling();
+    @InjectMocks
+    private ExceptionHandling exceptionHandling;
 
     @Test
     void handleExceptionTest() {
