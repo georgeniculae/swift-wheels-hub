@@ -7,11 +7,13 @@ import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.nio.file.AccessDeniedException;
 import java.util.Map;
@@ -71,8 +73,16 @@ public class ExceptionHandling extends DefaultErrorAttributes {
             status = HttpStatus.valueOf(errorResponse.getStatusCode().value());
         }
 
+        if (e instanceof HttpMessageNotReadableException) {
+            status = HttpStatus.BAD_REQUEST;
+        }
+
         if (e instanceof AccessDeniedException) {
             status = HttpStatus.UNAUTHORIZED;
+        }
+
+        if (e instanceof NoHandlerFoundException) {
+            status = HttpStatus.NOT_FOUND;
         }
 
         return status;
