@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -53,7 +52,7 @@ public class ExcelParserService {
             excelCarRequests.add(generateCar(values));
         }
 
-        return Collections.unmodifiableList(excelCarRequests);
+        return List.copyOf(excelCarRequests);
     }
 
     private List<Picture> getSheetPictures(Sheet sheet) {
@@ -81,7 +80,7 @@ public class ExcelParserService {
 
         values.add(getCarPictureData(sheetPictures, currentRow));
 
-        return Collections.unmodifiableList(values);
+        return List.copyOf(values);
     }
 
     private PictureData getCarPictureData(List<Picture> sheetPictures, Row currentRow) {
