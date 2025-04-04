@@ -1,7 +1,7 @@
 package com.swiftwheelshub.agency.consumer;
 
 import com.swiftwheelshub.agency.service.CarService;
-import com.swiftwheelshub.dto.CarUpdateDetails;
+import com.swiftwheelshub.dto.CarStatusUpdate;
 import com.swiftwheelshub.lib.util.KafkaUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,19 +14,19 @@ import java.util.function.Consumer;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
-public class CarUpdateAfterInvoiceCloseMessageConsumer {
+public class UpdatedCarBookingSavedMessageConsumer {
 
     private final CarService carService;
 
     @Bean
-    public Consumer<Message<CarUpdateDetails>> carUpdateAfterInvoiceCloseConsumer() {
+    public Consumer<Message<CarStatusUpdate>> updatedCarBookingSavedConsumer() {
         return this::processCarUpdate;
     }
 
-    private void processCarUpdate(Message<CarUpdateDetails> message) {
-        carService.updateCarWhenBookingIsClosed(message.getPayload());
+    private void processCarUpdate(Message<CarStatusUpdate> message) {
+        carService.updateCarStatus(message.getPayload());
         KafkaUtil.acknowledgeMessage(message.getHeaders());
-        log.info("Car status updated after closing booking");
+        log.info("Car status updated");
     }
 
 }
