@@ -48,8 +48,8 @@ public class HttpRequestUtil {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
         return Optional.ofNullable(requestAttributes)
-                .orElseThrow(() -> new SwiftWheelsHubException("Request attributes are null"))
-                .getRequest();
+                .map(ServletRequestAttributes::getRequest)
+                .orElseThrow(() -> new SwiftWheelsHubException("Request attributes are null"));
     }
 
 }
