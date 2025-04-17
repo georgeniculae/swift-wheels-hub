@@ -49,7 +49,7 @@ spring:
         hostname: localhost
         failFast: false
     function:
-      definition: bookingUpdateConsumer
+      definition: bookingUpdateConsumer;failedCreatedBookingDlqConsumer;failedCreatedBookingDlqConsumer
     stream:
       defaultBinder: kafka
       bindings:
@@ -58,6 +58,12 @@ spring:
           contentType: application/json
         deletedBookingProducer-out-0:
           destination: ${DELETED_BOOKING_TOPIC}
+          contentType: application/json
+        failedCreatedBookingDlqProducer-out-0:
+          destination: ${FAILED_CREATED_BOOKING_DLQ_TOPIC}
+          contentType: application/json
+        failedUpdatedBookingDlqProducer-out-0:
+          destination: ${FAILED_UPDATED_BOOKING_DLQ_TOPIC}
           contentType: application/json
         saveBookingCarUpdateProducer-out-0:
           destination: ${SAVE_BOOKING_CAR_UPDATE_TOPIC}
@@ -74,6 +80,26 @@ spring:
         bookingUpdateConsumer-in-0:
           binder: kafka
           destination: ${BOOKING_UPDATE_TOPIC}
+          contentType: application/json
+          group: ${BOOKING_CONSUMER_GROUP}
+          consumer:
+            default-retryable: true
+            max-attempts: 3
+            back-off-max-interval: 10000
+            back-off-multiplier: 1.0
+        failedCreatedBookingDlqConsumer-in-0:
+          binder: kafka
+          destination: ${FAILED_CREATED_BOOKING_DLQ_TOPIC}
+          contentType: application/json
+          group: ${BOOKING_CONSUMER_GROUP}
+          consumer:
+            default-retryable: true
+            max-attempts: 3
+            back-off-max-interval: 10000
+            back-off-multiplier: 1.0
+        failedUpdatedBookingDlqConsumer-in-0:
+          binder: kafka
+          destination: ${FAILED_UPDATED_BOOKING_DLQ_TOPIC}
           contentType: application/json
           group: ${BOOKING_CONSUMER_GROUP}
           consumer:

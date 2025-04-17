@@ -68,6 +68,4 @@ public class Invoice extends BaseEntity {
 
     private String comments;
 
-    private InvoiceProcessStatus invoiceProcessStatus;
-
 }

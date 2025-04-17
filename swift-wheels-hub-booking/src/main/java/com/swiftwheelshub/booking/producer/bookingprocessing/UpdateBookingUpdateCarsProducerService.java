@@ -1,6 +1,6 @@
-package com.swiftwheelshub.booking.producer;
+package com.swiftwheelshub.booking.producer.bookingprocessing;
 
-import com.swiftwheelshub.dto.CarStatusUpdate;
+import com.swiftwheelshub.dto.UpdateCarsRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,11 +19,11 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CreateBookingCarUpdateProducerService {
+public class UpdateBookingUpdateCarsProducerService {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    @Value("${spring.cloud.stream.bindings.saveBookingCarUpdateProducer-out-0.destination}")
+    @Value("${spring.cloud.stream.bindings.updateBookingCarsUpdateProducer-out-0.destination}")
     private String topicName;
 
     @Retryable(
@@ -32,29 +32,29 @@ public class CreateBookingCarUpdateProducerService {
             backoff = @Backoff(value = 5000L),
             listeners = "bookingService"
     )
-    public boolean changeCarStatus(CarStatusUpdate carStatusUpdate) {
+    public boolean updateCarsStatus(UpdateCarsRequest updateCarsRequest) {
         try {
-            kafkaTemplate.send(buildMessage(carStatusUpdate, topicName))
+            kafkaTemplate.send(buildMessage(updateCarsRequest, topicName))
                     .whenComplete((result, e) -> {
                         if (ObjectUtils.isEmpty(e)) {
-                            logSentMessage(carStatusUpdate, result);
+                            logSentMessage(updateCarsRequest, result);
 
                             return;
                         }
 
-                        log.error("Unable to send car status update message: {} due to : {}", carStatusUpdate, e.getMessage());
+                        log.error("Unable to send message: {} due to : {}", updateCarsRequest, e.getMessage());
                     })
                     .join();
 
             return true;
         } catch (Exception e) {
-            throw new SwiftWheelsHubException("Error while updating car status: " + carStatusUpdate.carId() + " " + e.getMessage());
+            throw new SwiftWheelsHubException("Error updating cars status message: " + e.getMessage());
         }
     }
 
     @Recover
-    public boolean recover(Exception e, CarStatusUpdate carStatusUpdate) {
-        log.error("Error after re-trying change car status: {}: {}", carStatusUpdate, e.getMessage(), e);
+    public boolean recover(Exception e, UpdateCarsRequest updateCarsRequest) {
+        log.error("Error after re-trying update cars status: {}: {}", updateCarsRequest, e.getMessage(), e);
 
         return false;
     }
@@ -65,8 +65,8 @@ public class CreateBookingCarUpdateProducerService {
                 .build();
     }
 
-    private void logSentMessage(CarStatusUpdate carStatusUpdate, SendResult<String, Object> result) {
-        log.info("Sent message: {} with offset: {}", carStatusUpdate, result.getRecordMetadata().offset());
+    private void logSentMessage(UpdateCarsRequest updateCarsRequest, SendResult<String, Object> result) {
+        log.info("Sent message: {} with offset: {}", updateCarsRequest, result.getRecordMetadata().offset());
     }
 
 }

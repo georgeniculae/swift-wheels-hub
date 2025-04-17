@@ -15,8 +15,8 @@ public record CarStatusUpdate(
     @Override
     public String toString() {
         return "CarStatusUpdate{" + "\n" +
-                "previousCarId=" + carId + "\n" +
-                "actualCarId=" + carState + "\n" +
+                "carId=" + carId + "\n" +
+                "carState=" + carState + "\n" +
                 "}";
     }
 

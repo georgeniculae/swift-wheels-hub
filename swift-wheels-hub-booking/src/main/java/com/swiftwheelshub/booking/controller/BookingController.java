@@ -82,7 +82,7 @@ public class BookingController {
     public ResponseEntity<BookingResponse> addBooking(@RequestBody @Validated BookingRequest bookingRequest) {
         BookingResponse saveBookingResponse = bookingService.saveBooking(bookingRequest);
 
-        return ResponseEntity.ok(saveBookingResponse);
+        return ResponseEntity.accepted().body(saveBookingResponse);
     }
 
     @PutMapping(path = "/{id}")
@@ -95,7 +95,7 @@ public class BookingController {
                                                          @RequestBody @Validated BookingRequest bookingRequest) {
         BookingResponse updatedBookingResponse = bookingService.updateBooking(id, bookingRequest);
 
-        return ResponseEntity.ok(updatedBookingResponse);
+        return ResponseEntity.accepted().body(updatedBookingResponse);
     }
 
     @DeleteMapping(path = "/{username}")

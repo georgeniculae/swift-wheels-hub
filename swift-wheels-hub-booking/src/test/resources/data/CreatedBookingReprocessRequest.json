@@ -3,10 +3,11 @@
   "dateOfBooking": "2099-02-20",
   "status": "IN_PROGRESS",
   "customerUsername": "admin",
+  "customerEmail": "admin@mail.com",
+  "previousCarId": 1,
   "actualCarId": 1,
   "dateFrom": "2099-02-21",
   "dateTo": "2099-02-22",
-  "amount": 500,
   "rentalCarPrice": 500,
   "rentalBranchId": 1,
   "returnBranchId": 1

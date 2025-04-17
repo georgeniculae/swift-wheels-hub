@@ -8,7 +8,6 @@ import com.swiftwheelshub.dto.InvoiceReprocessRequest;
 import com.swiftwheelshub.dto.InvoiceRequest;
 import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.entity.Invoice;
-import com.swiftwheelshub.entity.InvoiceProcessStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.expense.mapper.InvoiceMapper;
@@ -141,14 +140,12 @@ public class InvoiceService implements RetryListener {
         boolean successfulUpdate = updateCarAndBooking(invoiceRequest, existingInvoiceUpdated);
 
         if (successfulUpdate) {
-            existingInvoiceUpdated.setInvoiceProcessStatus(InvoiceProcessStatus.SAVED_CLOSED_INVOICE);
             revenueService.processClosing(existingInvoiceUpdated);
             log.info("Invoice with id: {} has been successfully closed", existingInvoiceUpdated.getId());
 
             return;
         }
 
-        existingInvoiceUpdated.setInvoiceProcessStatus(InvoiceProcessStatus.FAILED_CLOSED_INVOICE);
         invoiceRepository.save(existingInvoiceUpdated);
 
         processFailedInvoice(invoiceRequest, existingInvoiceUpdated);
@@ -232,7 +229,6 @@ public class InvoiceService implements RetryListener {
         existingInvoice.setComments(invoiceRequest.comments());
         existingInvoice.setTotalAmount(getTotalAmount(existingInvoice, invoiceRequest));
         existingInvoice.setReturnBranchId(invoiceRequest.returnBranchId());
-        existingInvoice.setInvoiceProcessStatus(InvoiceProcessStatus.IN_CLOSING);
 
         return invoiceRepository.save(existingInvoice);
     }

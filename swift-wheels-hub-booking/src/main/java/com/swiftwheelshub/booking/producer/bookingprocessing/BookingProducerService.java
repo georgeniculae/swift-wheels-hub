@@ -1,4 +1,4 @@
-package com.swiftwheelshub.booking.producer;
+package com.swiftwheelshub.booking.producer.bookingprocessing;
 
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
@@ -37,7 +37,7 @@ public class BookingProducerService {
             backoff = @Backoff(value = 5000L),
             listeners = "debeziumListener"
     )
-    public void sendSavedBooking(BookingResponse bookingResponse) {
+    public boolean sendSavedBooking(BookingResponse bookingResponse) {
         try {
             kafkaTemplate.send(buildMessage(bookingResponse, savedBookingProducerTopicName))
                     .whenComplete((result, e) -> {
@@ -46,8 +46,10 @@ public class BookingProducerService {
                         }
                     })
                     .join();
+
+            return true;
         } catch (Exception e) {
-            throw new SwiftWheelsHubException("Unable to send message: " + bookingResponse + " due to : " + e.getMessage());
+            throw new SwiftWheelsHubException("Unable to send created booking: " + bookingResponse + " due to : " + e.getMessage());
         }
     }
 
@@ -57,7 +59,7 @@ public class BookingProducerService {
             backoff = @Backoff(value = 5000L),
             listeners = "debeziumListener"
     )
-    public void sendUpdatedBooking(BookingResponse bookingResponse) {
+    public boolean sendUpdatedBooking(BookingResponse bookingResponse) {
         try {
             kafkaTemplate.send(buildMessage(bookingResponse, updatedBookingProducerTopicName))
                     .whenComplete((result, e) -> {
@@ -66,8 +68,10 @@ public class BookingProducerService {
                         }
                     })
                     .join();
+
+            return true;
         } catch (Exception e) {
-            throw new SwiftWheelsHubException("Unable to send message: " + bookingResponse + " due to : " + e.getMessage());
+            throw new SwiftWheelsHubException("Unable to send updated booking: " + bookingResponse + " due to : " + e.getMessage());
         }
     }
 

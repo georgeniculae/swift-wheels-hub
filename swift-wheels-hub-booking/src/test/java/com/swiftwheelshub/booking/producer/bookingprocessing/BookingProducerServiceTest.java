@@ -1,6 +1,5 @@
-package com.swiftwheelshub.booking.service;
+package com.swiftwheelshub.booking.producer.bookingprocessing;
 
-import com.swiftwheelshub.booking.producer.BookingProducerService;
 import com.swiftwheelshub.booking.util.TestUtil;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
@@ -41,14 +40,13 @@ class BookingProducerServiceTest {
         BookingResponse bookingResponse =
                 TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        CompletableFuture<SendResult<String, Object>> result = new CompletableFuture<>();
-
         ProducerRecord<String, Object> producerRecord =
-                new ProducerRecord<>("saved-booking-out-0", 1, 2022020202L, "key", "value");
+                new ProducerRecord<>("saved-booking-out-0", 1, 2025070202L, "key", "value");
 
         RecordMetadata recordMetadata =
                 new RecordMetadata(new TopicPartition("saved-booking-out-0", 1), 1, 1, 0, 1, 1);
 
+        CompletableFuture<SendResult<String, Object>> result = new CompletableFuture<>();
         result.complete(new SendResult<>(producerRecord, recordMetadata));
 
         when(kafkaTemplate.send(any(Message.class))).thenReturn(result);
@@ -78,14 +76,13 @@ class BookingProducerServiceTest {
         BookingResponse bookingResponse =
                 TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
 
-        CompletableFuture<SendResult<String, Object>> result = new CompletableFuture<>();
-
         ProducerRecord<String, Object> producerRecord =
-                new ProducerRecord<>("updated-booking-out-0", 1, 2022020202L, "key", "value");
+                new ProducerRecord<>("updated-booking-out-0", 1, 2025070202L, "key", "value");
 
         RecordMetadata recordMetadata =
                 new RecordMetadata(new TopicPartition("updated-booking-out-0", 1), 1, 1, 0, 1, 1);
 
+        CompletableFuture<SendResult<String, Object>> result = new CompletableFuture<>();
         result.complete(new SendResult<>(producerRecord, recordMetadata));
 
         when(kafkaTemplate.send(any(Message.class))).thenReturn(result);
@@ -112,14 +109,13 @@ class BookingProducerServiceTest {
     void sendDeletedBookingTest_success() {
         ReflectionTestUtils.setField(bookingProducerService, "deletedBookingProducerTopicName", "deleted-booking-out-0");
 
-        CompletableFuture<SendResult<String, Object>> result = new CompletableFuture<>();
-
         ProducerRecord<String, Object> producerRecord =
-                new ProducerRecord<>("deleted-booking-out-0", 1, 2022020202L, "key", "value");
+                new ProducerRecord<>("deleted-booking-out-0", 1, 2025070202L, "key", "value");
 
         RecordMetadata recordMetadata =
                 new RecordMetadata(new TopicPartition("deleted-booking-out-0", 1), 1, 1, 0, 1, 1);
 
+        CompletableFuture<SendResult<String, Object>> result = new CompletableFuture<>();
         result.complete(new SendResult<>(producerRecord, recordMetadata));
 
         when(kafkaTemplate.send(any(Message.class))).thenReturn(result);

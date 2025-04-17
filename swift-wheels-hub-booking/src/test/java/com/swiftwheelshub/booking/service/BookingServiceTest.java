@@ -2,8 +2,6 @@ package com.swiftwheelshub.booking.service;
 
 import com.swiftwheelshub.booking.mapper.BookingMapper;
 import com.swiftwheelshub.booking.mapper.BookingMapperImpl;
-import com.swiftwheelshub.booking.producer.CreateBookingCarUpdateProducerService;
-import com.swiftwheelshub.booking.producer.UpdateBookingUpdateCarsProducerService;
 import com.swiftwheelshub.booking.repository.BookingRepository;
 import com.swiftwheelshub.booking.util.AssertionUtil;
 import com.swiftwheelshub.booking.util.TestUtil;
@@ -13,8 +11,6 @@ import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.dto.BookingUpdateResponse;
-import com.swiftwheelshub.dto.CarStatusUpdate;
-import com.swiftwheelshub.dto.UpdateCarsRequest;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
@@ -68,12 +64,6 @@ class BookingServiceTest {
     private CarService carService;
 
     @Mock
-    private CreateBookingCarUpdateProducerService createBookingCarUpdateProducerService;
-
-    @Mock
-    private UpdateBookingUpdateCarsProducerService updateBookingUpdateCarsProducerService;
-
-    @Mock
     private RedisTemplate<String, String> redisTemplate;
 
     @Mock
@@ -123,8 +113,6 @@ class BookingServiceTest {
         when(valueOperations.setIfAbsent(anyString(), anyString(), any(Duration.class))).thenReturn(true);
         when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(availableCarInfo);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
-        when(createBookingCarUpdateProducerService.changeCarStatus(any(CarStatusUpdate.class))).thenReturn(true);
-        when(redisTemplate.delete(anyString())).thenReturn(true);
 
         BookingResponse actualBookingResponse =
                 assertDoesNotThrow(() -> bookingService.saveBooking(bookingRequest));
@@ -208,8 +196,6 @@ class BookingServiceTest {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
         when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(availableCarInfo);
         when(bookingRepository.save(any(Booking.class))).thenReturn(updatedBooking);
-        when(updateBookingUpdateCarsProducerService.updateCarsStatus(any(UpdateCarsRequest.class))).thenReturn(true);
-        when(redisTemplate.delete(anyString())).thenReturn(true);
 
         BookingResponse updatedBookingResponse =
                 assertDoesNotThrow(() -> bookingService.updateBooking(1L, bookingRequest));

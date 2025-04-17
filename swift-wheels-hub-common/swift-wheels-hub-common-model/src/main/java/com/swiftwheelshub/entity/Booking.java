@@ -66,7 +66,4 @@ public class Booking extends BaseEntity {
 
     private Long returnBranchId;
 
-    @Enumerated(EnumType.STRING)
-    private BookingProcessStatus bookingProcessStatus;
-
 }

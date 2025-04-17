@@ -2,10 +2,8 @@ package com.swiftwheelshub.booking.eventhandling;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiftwheelshub.booking.mapper.BookingMapper;
-import com.swiftwheelshub.booking.producer.BookingProducerService;
 import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.entity.Booking;
-import com.swiftwheelshub.entity.BookingProcessStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import io.debezium.config.Configuration;
 import io.debezium.data.Envelope;
@@ -38,26 +36,30 @@ public class DebeziumListener implements RetryListener {
 
     private static final String UNDERSCORE = "_";
     private static final char UNDERSCORE_CHAR = '_';
-    private static final String FAILED_PROCESS_STATUS_PREFIX = "FAILED";
-    public static final String IN_PROCESS_STATUS_PREFIX = "IN_";
     private final DebeziumEngine<RecordChangeEvent<SourceRecord>> debeziumEngine;
     private final ExecutorService executorService;
-    private final BookingProducerService bookingProducerService;
     private final ObjectMapper objectMapper;
+    private final CreatedBookingProcessorService createdBookingProcessorService;
+    private final UpdatedBookingProcessorService updatedBookingProcessorService;
+    private final DeletedBookingProcessorService deletedBookingProcessorService;
     private final BookingMapper bookingMapper;
 
     public DebeziumListener(Configuration connectorConfiguration,
                             ExecutorService executorService,
-                            BookingProducerService bookingProducerService,
                             ObjectMapper objectMapper,
+                            CreatedBookingProcessorService createdBookingProcessorService,
+                            UpdatedBookingProcessorService updatedBookingProcessorService,
+                            DeletedBookingProcessorService deletedBookingProcessorService,
                             BookingMapper bookingMapper) {
         this.debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect.class))
                 .using(connectorConfiguration.asProperties())
                 .notifying(this::handleChangeEvent)
                 .build();
         this.executorService = executorService;
-        this.bookingProducerService = bookingProducerService;
         this.objectMapper = objectMapper;
+        this.createdBookingProcessorService = createdBookingProcessorService;
+        this.updatedBookingProcessorService = updatedBookingProcessorService;
+        this.deletedBookingProcessorService = deletedBookingProcessorService;
         this.bookingMapper = bookingMapper;
     }
 
@@ -110,32 +112,23 @@ public class DebeziumListener implements RetryListener {
 
     private void handleBookingSending(Map<String, Object> payload, Operation operation) {
         Booking booking = objectMapper.convertValue(payload, Booking.class);
-        String bookingProcessStatusName = booking.getBookingProcessStatus().name();
+        BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
 
-        if (isProcessable(bookingProcessStatusName)) {
-            BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
+        if (isCreated(operation)) {
+            createdBookingProcessorService.handleBookingCreation(booking, bookingResponse);
 
-            if (isCreated(bookingProcessStatusName)) {
-                bookingProducerService.sendSavedBooking(bookingResponse);
-
-                return;
-            }
-
-            if (isUpdated(operation, bookingProcessStatusName)) {
-                bookingProducerService.sendUpdatedBooking(bookingResponse);
-
-                return;
-            }
-
-            if (isDeleted(operation)) {
-                bookingProducerService.sendDeletedBooking(bookingResponse.id());
-            }
+            return;
         }
-    }
 
-    private boolean isProcessable(String bookingProcessStatusName) {
-        return !bookingProcessStatusName.startsWith(FAILED_PROCESS_STATUS_PREFIX) &&
-                !bookingProcessStatusName.startsWith(IN_PROCESS_STATUS_PREFIX);
+        if (isUpdated(operation)) {
+            updatedBookingProcessorService.handleBookingUpdate(booking, bookingResponse);
+
+            return;
+        }
+
+        if (isDeleted(operation)) {
+            deletedBookingProcessorService.handleBookingDeletion(bookingResponse);
+        }
     }
 
     private String getCamelCaseFieldName(String fieldName) {
@@ -146,13 +139,12 @@ public class DebeziumListener implements RetryListener {
         return fieldName;
     }
 
-    private boolean isCreated(String bookingProcessStatusName) {
-        return BookingProcessStatus.SAVED_CREATED_BOOKING.name().equals(bookingProcessStatusName);
+    private boolean isCreated(Operation operation) {
+        return Operation.CREATE.equals(operation);
     }
 
-    private boolean isUpdated(Operation operation, String bookingProcessStatusName) {
-        return Operation.UPDATE.equals(operation) &&
-                BookingProcessStatus.SAVED_UPDATED_BOOKING.name().equals(bookingProcessStatusName);
+    private boolean isUpdated(Operation operation) {
+        return Operation.UPDATE.equals(operation);
     }
 
     private boolean isDeleted(Operation operation) {
