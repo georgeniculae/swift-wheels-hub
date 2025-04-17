@@ -10,7 +10,6 @@ import com.swiftwheelshub.dto.AvailableCarInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.BookingUpdateResponse;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
@@ -43,7 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -145,8 +143,7 @@ class BookingServiceTest {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
 
-        BookingUpdateResponse bookingUpdateResponse = bookingService.closeBooking(bookingClosingDetails);
-        assertTrue(bookingUpdateResponse.isSuccessful());
+        assertDoesNotThrow(() -> bookingService.closeBooking(bookingClosingDetails));
     }
 
     @Test

@@ -7,7 +7,6 @@ import com.swiftwheelshub.dto.AvailableCarInfo;
 import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingRequest;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.BookingUpdateResponse;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.entity.BookingStatus;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
@@ -129,18 +128,17 @@ public class BookingService implements RetryListener {
         }
     }
 
-    public BookingUpdateResponse closeBooking(BookingClosingDetails bookingClosingDetails) {
+    public void closeBooking(BookingClosingDetails bookingClosingDetails) {
         try {
             Booking existingBooking = findEntityById(bookingClosingDetails.bookingId());
             existingBooking.setStatus(BookingStatus.CLOSED);
             existingBooking.setReturnBranchId(bookingClosingDetails.returnBranchId());
             bookingRepository.save(existingBooking);
 
-            return new BookingUpdateResponse(true);
         } catch (Exception e) {
             log.error("Error occurred while closing booking: {}", e.getMessage());
 
-            return new BookingUpdateResponse(false);
+            throw new SwiftWheelsHubException(e.getMessage());
         }
     }
 
