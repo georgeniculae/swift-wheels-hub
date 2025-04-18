@@ -9,6 +9,7 @@ import com.swiftwheelshub.expense.mapper.InvoiceMapper;
 import com.swiftwheelshub.expense.producer.BookingUpdateProducerService;
 import com.swiftwheelshub.expense.producer.CarStatusUpdateProducerService;
 import com.swiftwheelshub.expense.producer.FailedInvoiceDlqProducerService;
+import com.swiftwheelshub.expense.producer.InvoiceProducerService;
 import com.swiftwheelshub.expense.service.RevenueService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,29 +23,25 @@ public class InvoiceProcessorService {
     private final RevenueService revenueService;
     private final BookingUpdateProducerService bookingUpdateProducerService;
     private final CarStatusUpdateProducerService carStatusUpdateProducerService;
-    private final InvoiceMapper invoiceMapper;
+    private final InvoiceProducerService invoiceProducerService;
     private final FailedInvoiceDlqProducerService failedInvoiceDlqProducerService;
+    private final InvoiceMapper invoiceMapper;
 
     public void processInvoice(Invoice existingInvoiceUpdated) {
         boolean successfulUpdate = updateCarAndBooking(existingInvoiceUpdated);
 
         if (successfulUpdate) {
-            revenueService.processClosing(existingInvoiceUpdated);
-            log.info("Invoice with id: {} has been successfully closed", existingInvoiceUpdated.getId());
+            boolean isInvoiceSent = invoiceProducerService.sendMessage(invoiceMapper.mapEntityToDto(existingInvoiceUpdated));
 
-            return;
+            if (isInvoiceSent) {
+                revenueService.addRevenue(existingInvoiceUpdated);
+                log.info("Invoice with id: {} has been successfully closed", existingInvoiceUpdated.getId());
+
+                return;
+            }
         }
 
         processFailedInvoice(existingInvoiceUpdated);
-    }
-
-    private void processFailedInvoice(Invoice existingInvoiceUpdated) {
-        InvoiceReprocessRequest invoiceReprocessRequest =
-                invoiceMapper.mapToInvoiceReprocessRequest(existingInvoiceUpdated);
-
-        failedInvoiceDlqProducerService.sendMessage(invoiceReprocessRequest);
-
-        log.warn("Invoice with id: {} has failed to close, storing it to DLQ", existingInvoiceUpdated.getId());
     }
 
     private boolean updateCarAndBooking(Invoice invoice) {
@@ -63,6 +60,15 @@ public class InvoiceProcessorService {
         BookingClosingDetails bookingClosingDetails = getBookingClosingDetails(bookingId, returnBranchId);
 
         return bookingUpdateProducerService.closeBooking(bookingClosingDetails);
+    }
+
+    private void processFailedInvoice(Invoice existingInvoiceUpdated) {
+        InvoiceReprocessRequest invoiceReprocessRequest =
+                invoiceMapper.mapToInvoiceReprocessRequest(existingInvoiceUpdated);
+
+        failedInvoiceDlqProducerService.sendMessage(invoiceReprocessRequest);
+
+        log.warn("Invoice with id: {} has failed to close, storing it to DLQ", existingInvoiceUpdated.getId());
     }
 
     private CarUpdateDetails getCarUpdateDetails(Invoice invoice) {

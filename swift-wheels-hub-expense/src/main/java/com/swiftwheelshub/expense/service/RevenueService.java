@@ -4,7 +4,6 @@ import com.swiftwheelshub.dto.RevenueResponse;
 import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.entity.Revenue;
 import com.swiftwheelshub.expense.mapper.RevenueMapper;
-import com.swiftwheelshub.expense.repository.InvoiceRepository;
 import com.swiftwheelshub.expense.repository.RevenueRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ import java.util.stream.Stream;
 public class RevenueService {
 
     private final RevenueRepository revenueRepository;
-    private final InvoiceRepository invoiceRepository;
     private final RevenueMapper revenueMapper;
 
     public BigDecimal getTotalAmount() {
@@ -41,12 +39,8 @@ public class RevenueService {
         }
     }
 
-    @Transactional
-    public Invoice processClosing(Invoice invoice) {
-        Invoice savedInvoice = invoiceRepository.save(invoice);
+    public void addRevenue(Invoice invoice) {
         revenueRepository.save(getRevenue(invoice));
-
-        return savedInvoice;
     }
 
     private Revenue getRevenue(Invoice invoice) {
