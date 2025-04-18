@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -52,11 +51,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @QueryHint(name = HibernateHints.HINT_READ_ONLY, value = "true")
     })
     Stream<Booking> findBookingsByUser(String username);
-
-    @Query("""
-            From Booking b
-            where cast(b.bookingProcessStatus as string) like 'FAILED%'""")
-    List<Booking> findAllFailedBookings();
 
     @Query("""
             Select count(booking)
