@@ -1,9 +1,6 @@
 package com.swiftwheelshub.expense.service;
 
-import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.BookingResponse;
-import com.swiftwheelshub.dto.CarUpdateDetails;
-import com.swiftwheelshub.dto.InvoiceReprocessRequest;
 import com.swiftwheelshub.dto.InvoiceRequest;
 import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.entity.Invoice;
@@ -11,9 +8,6 @@ import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
 import com.swiftwheelshub.expense.mapper.InvoiceMapper;
 import com.swiftwheelshub.expense.mapper.InvoiceMapperImpl;
-import com.swiftwheelshub.expense.producer.BookingUpdateProducerService;
-import com.swiftwheelshub.expense.producer.CarStatusUpdateProducerService;
-import com.swiftwheelshub.expense.producer.FailedInvoiceDlqProducerService;
 import com.swiftwheelshub.expense.repository.InvoiceRepository;
 import com.swiftwheelshub.expense.util.AssertionUtil;
 import com.swiftwheelshub.expense.util.TestUtil;
@@ -53,19 +47,7 @@ class InvoiceServiceTest {
     private InvoiceService invoiceService;
 
     @Mock
-    private RevenueService revenueService;
-
-    @Mock
-    private BookingUpdateProducerService bookingUpdateProducerService;
-
-    @Mock
-    private CarStatusUpdateProducerService carStatusUpdateProducerService;
-
-    @Mock
     private InvoiceRepository invoiceRepository;
-
-    @Mock
-    private FailedInvoiceDlqProducerService failedInvoiceDlqProducerService;
 
     @Spy
     private InvoiceMapper invoiceMapper = new InvoiceMapperImpl();
@@ -201,102 +183,11 @@ class InvoiceServiceTest {
 
         when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
         when(invoiceRepository.save(any(Invoice.class))).thenReturn(closedInvoice);
-        when(carStatusUpdateProducerService.markCarAsAvailable(any(CarUpdateDetails.class))).thenReturn(true);
-        when(bookingUpdateProducerService.closeBooking(any(BookingClosingDetails.class))).thenReturn(true);
-        when(revenueService.processClosing(any(Invoice.class))).thenReturn(invoice);
 
-        assertDoesNotThrow(() -> invoiceService.closeInvoice(1L, invoiceRequest));
-    }
+        InvoiceResponse invoiceResponse = invoiceService.closeInvoice(1L, invoiceRequest);
+        assertNotNull(invoiceResponse);
 
-    @Test
-    void closeInvoiceTest_failedBookingUpdate() {
-        Invoice invoice = TestUtil.getResourceAsJson("/data/Invoice.json", Invoice.class);
-
-        Invoice closedInvoice = TestUtil.getResourceAsJson("/data/ClosedInvoice.json", Invoice.class);
-
-        InvoiceRequest invoiceRequest =
-                TestUtil.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
-
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.addHeader("X-API-KEY", "apikey");
-        httpServletRequest.addHeader("X-ROLES", "ROLE_user");
-
-        RequestAttributes servletWebRequest = new ServletWebRequest(httpServletRequest);
-        RequestContextHolder.setRequestAttributes(servletWebRequest);
-
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
-        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
-                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
-
-        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
-
-        when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
-        when(invoiceRepository.save(any(Invoice.class))).thenReturn(closedInvoice);
-        when(carStatusUpdateProducerService.markCarAsAvailable(any(CarUpdateDetails.class))).thenReturn(true);
-        when(bookingUpdateProducerService.closeBooking(any(BookingClosingDetails.class))).thenReturn(false);
-        when(failedInvoiceDlqProducerService.sendMessage(any(InvoiceReprocessRequest.class))).thenReturn(true);
-
-        assertDoesNotThrow(() -> invoiceService.closeInvoice(1L, invoiceRequest));
-    }
-
-    @Test
-    void closeInvoiceTest_failedCarUpdate() {
-        Invoice invoice = TestUtil.getResourceAsJson("/data/Invoice.json", Invoice.class);
-
-        Invoice closedInvoice = TestUtil.getResourceAsJson("/data/ClosedInvoice.json", Invoice.class);
-
-        InvoiceRequest invoiceRequest =
-                TestUtil.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
-
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.addHeader("X-API-KEY", "apikey");
-        httpServletRequest.addHeader("X-ROLES", "ROLE_user");
-
-        RequestAttributes servletWebRequest = new ServletWebRequest(httpServletRequest);
-        RequestContextHolder.setRequestAttributes(servletWebRequest);
-
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
-        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
-                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
-
-        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
-
-        when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
-        when(invoiceRepository.save(any(Invoice.class))).thenReturn(closedInvoice);
-        when(carStatusUpdateProducerService.markCarAsAvailable(any(CarUpdateDetails.class))).thenReturn(false);
-
-        assertDoesNotThrow(() -> invoiceService.closeInvoice(1L, invoiceRequest));
-
-        verify(invoiceMapper).mapToInvoiceReprocessRequest(anyLong(), any(InvoiceRequest.class));
-    }
-
-    @Test
-    void closeInvoiceTest_errorOnSavingInvoice() {
-        Invoice invoice = TestUtil.getResourceAsJson("/data/Invoice.json", Invoice.class);
-
-        InvoiceRequest invoiceRequest =
-                TestUtil.getResourceAsJson("/data/InvoiceRequest.json", InvoiceRequest.class);
-
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.addHeader("X-API-KEY", "apikey");
-        httpServletRequest.addHeader("X-ROLES", "ROLE_user");
-
-        RequestAttributes servletWebRequest = new ServletWebRequest(httpServletRequest);
-        RequestContextHolder.setRequestAttributes(servletWebRequest);
-
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
-        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
-                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
-
-        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
-
-        when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
-        when(invoiceRepository.save(any(Invoice.class))).thenThrow(new RuntimeException());
-        when(failedInvoiceDlqProducerService.sendMessage(any(InvoiceReprocessRequest.class))).thenReturn(true);
-
-        assertDoesNotThrow(() -> invoiceService.closeInvoice(1L, invoiceRequest));
-
-        verify(invoiceMapper).mapToInvoiceReprocessRequest(anyLong(), any(InvoiceRequest.class));
+        verify(invoiceMapper).mapEntityToDto(any(Invoice.class));
     }
 
 }

@@ -1,11 +1,8 @@
 package com.swiftwheelshub.expense.eventhandling;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.swiftwheelshub.dto.InvoiceResponse;
 import com.swiftwheelshub.entity.Invoice;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
-import com.swiftwheelshub.expense.mapper.InvoiceMapper;
-import com.swiftwheelshub.expense.producer.InvoiceProducerService;
 import io.debezium.config.Configuration;
 import io.debezium.data.Envelope;
 import io.debezium.embedded.Connect;
@@ -39,22 +36,19 @@ public class DebeziumListener implements RetryListener {
     private static final char UNDERSCORE_CHAR = '_';
     private final DebeziumEngine<RecordChangeEvent<SourceRecord>> debeziumEngine;
     private final ExecutorService executorService;
-    private final InvoiceProducerService invoiceProducerService;
-    private final InvoiceMapper invoiceMapper;
+    private final InvoiceProcessorService invoiceProcessorService;
     private final ObjectMapper objectMapper;
 
     public DebeziumListener(Configuration connectorConfiguration,
                             ExecutorService executorService,
-                            InvoiceProducerService invoiceProducerService,
-                            InvoiceMapper invoiceMapper,
+                            InvoiceProcessorService invoiceProcessorService,
                             ObjectMapper objectMapper) {
         this.debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect.class))
                 .using(connectorConfiguration.asProperties())
                 .notifying(this::handleChangeEvent)
                 .build();
         this.executorService = executorService;
-        this.invoiceProducerService = invoiceProducerService;
-        this.invoiceMapper = invoiceMapper;
+        this.invoiceProcessorService = invoiceProcessorService;
         this.objectMapper = objectMapper;
     }
 
@@ -115,10 +109,9 @@ public class DebeziumListener implements RetryListener {
 
     private void notifyCustomer(Map<String, Object> payload, Operation operation) {
         Invoice invoice = objectMapper.convertValue(payload, Invoice.class);
-        InvoiceResponse invoiceResponse = invoiceMapper.mapEntityToDto(invoice);
 
-        if (Operation.UPDATE.equals(operation) && ObjectUtils.isNotEmpty(invoiceResponse.totalAmount())) {
-            invoiceProducerService.sendMessage(invoiceResponse);
+        if (Operation.UPDATE.equals(operation) && ObjectUtils.isNotEmpty(invoice.getTotalAmount())) {
+            invoiceProcessorService.processInvoice(invoice);
         }
     }
 

@@ -221,7 +221,7 @@ class InvoiceControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(content))
-                .andExpect(status().isNoContent())
+                .andExpect(status().isAccepted())
                 .andReturn()
                 .getResponse();
 

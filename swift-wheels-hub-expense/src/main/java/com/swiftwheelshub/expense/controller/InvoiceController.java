@@ -78,11 +78,11 @@ public class InvoiceController {
             sentParameters = {"id", "invoiceRequest"},
             activityDescription = "Invoice closing"
     )
-    public ResponseEntity<Void> closeInvoice(@PathVariable("id") Long id,
-                                             @RequestBody @Validated InvoiceRequest invoiceRequest) {
-        invoiceService.closeInvoice(id, invoiceRequest);
+    public ResponseEntity<InvoiceResponse> closeInvoice(@PathVariable("id") Long id,
+                                                        @RequestBody @Validated InvoiceRequest invoiceRequest) {
+        InvoiceResponse invoiceResponse = invoiceService.closeInvoice(id, invoiceRequest);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.accepted().body(invoiceResponse);
     }
 
 }
