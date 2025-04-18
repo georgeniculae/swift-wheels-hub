@@ -1,8 +1,6 @@
 package com.swiftwheelshub.booking.eventhandling;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.swiftwheelshub.booking.mapper.BookingMapper;
-import com.swiftwheelshub.dto.BookingResponse;
 import com.swiftwheelshub.entity.Booking;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import io.debezium.config.Configuration;
@@ -43,14 +41,12 @@ public class DebeziumListener implements RetryListener {
     private final CreatedBookingProcessorService createdBookingProcessorService;
     private final UpdatedBookingProcessorService updatedBookingProcessorService;
     private final DeletedBookingProcessorService deletedBookingProcessorService;
-    private final BookingMapper bookingMapper;
 
     public DebeziumListener(Configuration connectorConfiguration,
                             ObjectMapper objectMapper,
                             CreatedBookingProcessorService createdBookingProcessorService,
                             UpdatedBookingProcessorService updatedBookingProcessorService,
-                            DeletedBookingProcessorService deletedBookingProcessorService,
-                            BookingMapper bookingMapper) {
+                            DeletedBookingProcessorService deletedBookingProcessorService) {
         this.debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect.class))
                 .using(connectorConfiguration.asProperties())
                 .notifying(this::handleChangeEvent)
@@ -59,7 +55,6 @@ public class DebeziumListener implements RetryListener {
         this.createdBookingProcessorService = createdBookingProcessorService;
         this.updatedBookingProcessorService = updatedBookingProcessorService;
         this.deletedBookingProcessorService = deletedBookingProcessorService;
-        this.bookingMapper = bookingMapper;
     }
 
     @PostConstruct
@@ -111,22 +106,21 @@ public class DebeziumListener implements RetryListener {
 
     private void handleBookingSending(Map<String, Object> payload, Operation operation) {
         Booking booking = objectMapper.convertValue(payload, Booking.class);
-        BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
 
         if (isCreated(operation)) {
-            createdBookingProcessorService.handleBookingCreation(booking, bookingResponse);
+            createdBookingProcessorService.handleBookingCreation(booking);
 
             return;
         }
 
         if (isUpdated(operation)) {
-            updatedBookingProcessorService.handleBookingUpdate(booking, bookingResponse);
+            updatedBookingProcessorService.handleBookingUpdate(booking);
 
             return;
         }
 
         if (isDeleted(operation)) {
-            deletedBookingProcessorService.handleBookingDeletion(bookingResponse);
+            deletedBookingProcessorService.handleBookingDeletion(booking.getId());
         }
     }
 

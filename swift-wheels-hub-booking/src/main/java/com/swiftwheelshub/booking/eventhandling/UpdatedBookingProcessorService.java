@@ -22,11 +22,12 @@ public class UpdatedBookingProcessorService {
     private final FailedUpdatedBookingDlqProducerService failedUpdatedBookingDlqProducerService;
     private final BookingMapper bookingMapper;
 
-    public void handleBookingUpdate(Booking booking, BookingResponse bookingResponse) {
+    public void handleBookingUpdate(Booking booking) {
         boolean areCarsUpdated = updateCarsStatuses(booking.getPreviousCarId(), booking.getActualCarId());
 
         if (areCarsUpdated) {
             unlockCar(booking.getActualCarId().toString());
+            BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
             boolean isBookingUpdated = bookingProducerService.sendUpdatedBooking(bookingResponse);
 
             if (!isBookingUpdated) {

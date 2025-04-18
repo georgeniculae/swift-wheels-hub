@@ -23,12 +23,13 @@ public class CreatedBookingProcessorService {
     private final FailedCreatedBookingDlqProducerService failedCreatedBookingDlqProducerService;
     private final BookingMapper bookingMapper;
 
-    public void handleBookingCreation(Booking booking, BookingResponse bookingResponse) {
+    public void handleBookingCreation(Booking booking) {
         boolean isCarStatusChanged =
                 createdBookingCarUpdateProducerService.changeCarStatus(getCarStatusUpdate(booking.getActualCarId()));
 
         if (isCarStatusChanged) {
             unlockCar(booking.getActualCarId().toString());
+            BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
             boolean isBookingSent = bookingProducerService.sendSavedBooking(bookingResponse);
 
             if (!isBookingSent) {

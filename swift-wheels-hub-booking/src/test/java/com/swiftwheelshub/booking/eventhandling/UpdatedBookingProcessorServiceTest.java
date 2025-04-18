@@ -51,27 +51,21 @@ class UpdatedBookingProcessorServiceTest {
         Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
         booking.setPreviousCarId(1L);
 
-        BookingResponse bookingResponse =
-                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
-
         when(updateBookingUpdateCarsProducerService.updateCarsStatus(any(UpdateCarsRequest.class))).thenReturn(true);
         when(redisTemplate.delete(anyString())).thenReturn(true);
         when(bookingProducerService.sendUpdatedBooking(any(BookingResponse.class))).thenReturn(true);
 
-        assertDoesNotThrow(() -> updatedBookingProcessorService.handleBookingUpdate(booking, bookingResponse));
+        assertDoesNotThrow(() -> updatedBookingProcessorService.handleBookingUpdate(booking));
     }
 
     @Test
     void handleBookingCreationTest_failedOnUpdatingCar() {
         Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
 
-        BookingResponse bookingResponse =
-                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
-
         when(updateBookingUpdateCarsProducerService.updateCarsStatus(any(UpdateCarsRequest.class))).thenReturn(false);
         doNothing().when(failedUpdatedBookingDlqProducerService).sendFailedUpdatedBooking(any(UpdatedBookingReprocessRequest.class));
 
-        assertDoesNotThrow(() -> updatedBookingProcessorService.handleBookingUpdate(booking, bookingResponse));
+        assertDoesNotThrow(() -> updatedBookingProcessorService.handleBookingUpdate(booking));
         verify(bookingMapper).mapToUpdatedBookingReprocessRequest(any(Booking.class));
     }
 
@@ -80,15 +74,12 @@ class UpdatedBookingProcessorServiceTest {
         Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
         booking.setPreviousCarId(1L);
 
-        BookingResponse bookingResponse =
-                TestUtil.getResourceAsJson("/data/BookingResponse.json", BookingResponse.class);
-
         when(updateBookingUpdateCarsProducerService.updateCarsStatus(any(UpdateCarsRequest.class))).thenReturn(true);
         when(redisTemplate.delete(anyString())).thenReturn(true);
         when(bookingProducerService.sendUpdatedBooking(any(BookingResponse.class))).thenReturn(false);
         doNothing().when(failedUpdatedBookingDlqProducerService).sendFailedUpdatedBooking(any(UpdatedBookingReprocessRequest.class));
 
-        assertDoesNotThrow(() -> updatedBookingProcessorService.handleBookingUpdate(booking, bookingResponse));
+        assertDoesNotThrow(() -> updatedBookingProcessorService.handleBookingUpdate(booking));
         verify(bookingMapper).mapToUpdatedBookingReprocessRequest(any(Booking.class));
     }
 
