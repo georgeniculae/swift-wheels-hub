@@ -26,7 +26,7 @@ public class UpdatedBookingProcessorService {
         boolean areCarsUpdated = updateCarsStatuses(booking.getPreviousCarId(), booking.getActualCarId());
 
         if (areCarsUpdated) {
-            unlockCar(booking.getPreviousCarId().toString());
+            unlockCar(booking.getActualCarId().toString());
             boolean isBookingUpdated = bookingProducerService.sendUpdatedBooking(bookingResponse);
 
             if (!isBookingUpdated) {
