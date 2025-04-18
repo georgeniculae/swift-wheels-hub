@@ -17,7 +17,7 @@ public class FailedUpdatedBookingDlqMessageConsumer {
     private final UpdatedBookingReprocessService updatedBookingReprocessService;
 
     @Bean
-    public Consumer<Message<UpdatedBookingReprocessRequest>> failedCreatedBookingDlqConsumer() {
+    public Consumer<Message<UpdatedBookingReprocessRequest>> failedUpdatedBookingDlqConsumer() {
         return this::processMessage;
     }
 

@@ -49,7 +49,7 @@ spring:
         hostname: localhost
         failFast: false
     function:
-      definition: bookingUpdateConsumer;failedCreatedBookingDlqConsumer;failedCreatedBookingDlqConsumer
+      definition: bookingUpdateConsumer;failedCreatedBookingDlqConsumer;failedUpdatedBookingDlqConsumer
     stream:
       defaultBinder: kafka
       bindings:
