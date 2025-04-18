@@ -65,11 +65,11 @@ spring:
         failedUpdatedBookingDlqProducer-out-0:
           destination: ${FAILED_UPDATED_BOOKING_DLQ_TOPIC}
           contentType: application/json
-        saveBookingCarUpdateProducer-out-0:
-          destination: ${SAVE_BOOKING_CAR_UPDATE_TOPIC}
-          contentType: application/json
         savedBookingProducer-out-0:
           destination: ${SAVED_BOOKING_TOPIC}
+          contentType: application/json
+        saveBookingCarUpdateProducer-out-0:
+          destination: ${SAVE_BOOKING_CAR_UPDATE_TOPIC}
           contentType: application/json
         updateBookingCarsUpdateProducer-out-0:
           destination: ${UPDATE_BOOKING_CARS_UPDATE_TOPIC}
