@@ -23,7 +23,7 @@ public class FailedUpdatedBookingDlqProducerService {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    @Value("${spring.cloud.stream.bindings.failedUpdatedBookingProducer-out-0.destination}")
+    @Value("${spring.cloud.stream.bindings.failedUpdatedBookingDlqProducer-out-0.destination}")
     private String topicName;
 
     @Retryable(
