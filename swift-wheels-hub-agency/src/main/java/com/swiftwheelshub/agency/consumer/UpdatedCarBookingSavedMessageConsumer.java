@@ -26,7 +26,7 @@ public class UpdatedCarBookingSavedMessageConsumer {
     private void processCarUpdate(Message<CarStatusUpdate> message) {
         carService.updateCarStatus(message.getPayload());
         KafkaUtil.acknowledgeMessage(message.getHeaders());
-        log.info("Car status updated");
+        log.info("Car status updated after booking creation");
     }
 
 }
