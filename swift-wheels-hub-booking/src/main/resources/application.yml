@@ -49,7 +49,7 @@ spring:
         hostname: localhost
         failFast: false
     function:
-      definition: bookingUpdateConsumer;failedCreatedBookingDlqConsumer;failedUpdatedBookingDlqConsumer
+      definition: bookingUpdateConsumer;failedCreatedBookingDlqConsumer;failedUpdatedBookingDlqConsumer;usernameConsumer
     stream:
       defaultBinder: kafka
       bindings:
@@ -107,6 +107,16 @@ spring:
             max-attempts: 3
             back-off-max-interval: 10000
             back-off-multiplier: 1.0
+        usernameConsumer-in-0:
+          binder: kafka
+          destination: ${USERNAME_TOPIC}
+          contentType: application/json
+          group: ${BOOKING_CONSUMER_GROUP}
+          consumer:
+            default-retryable: true
+            max-attempts: 3
+            back-off-max-interval: 10000
+            back-off-multiplier: 1.0
       kafka:
         binder:
           auto-create-topics: true
@@ -118,6 +128,18 @@ spring:
             auto.offset.reset: latest
         bindings:
           bookingUpdateConsumer-in-0:
+            consumer:
+              ack-mode: MANUAL_IMMEDIATE
+              standard-headers: both
+          failedCreatedBookingDlqConsumer-in-0:
+            consumer:
+              ack-mode: MANUAL_IMMEDIATE
+              standard-headers: both
+          failedUpdatedBookingDlqConsumer-in-0:
+            consumer:
+              ack-mode: MANUAL_IMMEDIATE
+              standard-headers: both
+          usernameConsumer-in-0:
             consumer:
               ack-mode: MANUAL_IMMEDIATE
               standard-headers: both

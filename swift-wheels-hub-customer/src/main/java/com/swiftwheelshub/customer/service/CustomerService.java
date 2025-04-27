@@ -1,7 +1,6 @@
 package com.swiftwheelshub.customer.service;
 
 import com.swiftwheelshub.customer.mapper.CustomerMapper;
-import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserInfo;
@@ -9,7 +8,6 @@ import com.swiftwheelshub.dto.UserUpdateRequest;
 import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.exception.SwiftWheelsHubNotFoundException;
 import com.swiftwheelshub.exception.SwiftWheelsHubResponseStatusException;
-import com.swiftwheelshub.lib.util.AuthenticationUtil;
 import com.swiftwheelshub.lib.util.HttpRequestUtil;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
@@ -27,6 +25,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.retry.RetryListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.ErrorResponse;
 
@@ -37,7 +36,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CustomerService {
+public class CustomerService implements RetryListener {
 
     private static final String ADDRESS = "address";
     private static final String DATE_OF_BIRTH = "dateOfBirth";
@@ -48,7 +47,7 @@ public class CustomerService {
     private static final String ROLE = "role_";
     private static final String $ = "$";
     private final Keycloak keycloak;
-    private final BookingService bookingService;
+    private final UsernameProducerService usernameProducerService;
     private final CustomerMapper customerMapper;
 
     @Value("${keycloak.realm}")
@@ -114,7 +113,6 @@ public class CustomerService {
     public void deleteUserByUsername(String username) {
         UserRepresentation userRepresentation = getUserRepresentation(username);
         UserResource userResource = findById(userRepresentation.getId());
-        AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
 
         try {
             userResource.remove();
@@ -122,7 +120,7 @@ public class CustomerService {
             handleRestEasyCallException(e);
         }
 
-        bookingService.deleteBookingsByUsername(authenticationInfo, username);
+        usernameProducerService.sendUsername(username);
     }
 
     public void deleteCurrentUser() {

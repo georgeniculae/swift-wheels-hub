@@ -5,7 +5,6 @@ import com.swiftwheelshub.customer.mapper.CustomerMapperImpl;
 import com.swiftwheelshub.customer.util.AssertionUtil;
 import com.swiftwheelshub.customer.util.TestData;
 import com.swiftwheelshub.customer.util.TestUtil;
-import com.swiftwheelshub.dto.AuthenticationInfo;
 import com.swiftwheelshub.dto.RegisterRequest;
 import com.swiftwheelshub.dto.RegistrationResponse;
 import com.swiftwheelshub.dto.UserInfo;
@@ -95,7 +94,7 @@ class CustomerServiceTest {
     private RoleScopeResource roleScopeResource;
 
     @Mock
-    private BookingService bookingService;
+    private UsernameProducerService usernameProducerService;
 
     @Spy
     private CustomerMapper customerMapper = new CustomerMapperImpl();
@@ -307,7 +306,7 @@ class CustomerServiceTest {
         when(realmResource.users()).thenReturn(usersResource);
         when(usersResource.get(anyString())).thenReturn(userResource);
         doNothing().when(userResource).remove();
-        doNothing().when(bookingService).deleteBookingsByUsername(any(AuthenticationInfo.class), anyString());
+        doNothing().when(usernameProducerService).sendUsername(anyString());
         when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of(userRepresentation));
 
         assertDoesNotThrow(() -> customerService.deleteUserByUsername("user"));

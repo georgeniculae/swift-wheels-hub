@@ -325,22 +325,6 @@ class BookingControllerTest {
                 .andExpect(status().isForbidden());
     }
 
-
-    @Test
-    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
-    void deleteBookingByUsernameTest_success() throws Exception {
-        doNothing().when(bookingService).deleteBookingByCustomerUsername(anyString());
-
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.delete(PATH + "/{id}", 1L)
-                        .contextPath(PATH)
-                        .with(csrf()))
-                .andExpect(status().isNoContent())
-                .andReturn()
-                .getResponse();
-
-        assertNotNull(response.getContentAsString());
-    }
-
     @Test
     @WithAnonymousUser
     void deleteBookingByUnauthorizedTest_success() throws Exception {
