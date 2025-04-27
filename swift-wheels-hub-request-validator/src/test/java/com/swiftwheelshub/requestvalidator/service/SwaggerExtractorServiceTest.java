@@ -31,37 +31,27 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class SwaggerExtractorServiceTest {
 
+    private static String agencyContent;
+    private static String aiContent;
+    private static String bookingContent;
+    private static String customerContent;
+    private static String expenseContent;
+    private static List<RegisteredEndpoints.RegisteredEndpoint> endpoints;
+
     @InjectMocks
     private SwaggerExtractorService swaggerExtractorService;
-
     @Mock
     private RestClient restClient;
-
     @Mock
     @SuppressWarnings("rawtypes")
     private RestClient.RequestHeadersUriSpec requestHeadersUriSpec;
-
     @Mock
     @SuppressWarnings("rawtypes")
     private RestClient.RequestHeadersSpec requestHeadersSpec;
-
     @Mock
     private RestClient.ResponseSpec responseSpec;
-
     @Mock
     private RegisteredEndpoints registeredEndpoints;
-
-    private static String agencyContent;
-
-    private static String aiContent;
-
-    private static String bookingContent;
-
-    private static String customerContent;
-
-    private static String expenseContent;
-
-    private static List<RegisteredEndpoints.RegisteredEndpoint> endpoints;
 
     @BeforeAll
     static void setUp() {
