@@ -21,7 +21,7 @@ public class UsernameProducerService {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    @Value("${spring.cloud.stream.bindings.savedBookingProducer-out-0.destination}")
+    @Value("${spring.cloud.stream.bindings.usernameProducer-out-0.destination}")
     private String topicName;
 
     @Retryable(
