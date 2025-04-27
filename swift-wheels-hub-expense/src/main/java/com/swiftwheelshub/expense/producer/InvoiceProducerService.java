@@ -11,7 +11,6 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +30,7 @@ public class InvoiceProducerService {
             backoff = @Backoff(value = 5000L),
             listeners = "debeziumListener"
     )
-    public boolean sendMessage(InvoiceResponse invoiceResponse) {
+    public void sendMessage(InvoiceResponse invoiceResponse) {
         try {
             kafkaTemplate.send(buildMessage(invoiceResponse, topicName))
                     .whenComplete((result, e) -> {
@@ -44,20 +43,11 @@ public class InvoiceProducerService {
                         log.error("Unable to send invoice: {} due to : {}", invoiceResponse, e.getMessage());
                     })
                     .join();
-
-            return true;
         } catch (Exception e) {
             log.error("Error sending invoice: {}: {}", invoiceResponse, e.getMessage(), e);
 
             throw new SwiftWheelsHubException("Unable to send invoice: " + invoiceResponse + " due to : " + e.getMessage());
         }
-    }
-
-    @Recover
-    public boolean recover(Exception e, InvoiceResponse invoiceResponse) {
-        log.error("Error after re-trying sending invoice: {}: {}", invoiceResponse, e.getMessage(), e);
-
-        return false;
     }
 
     private Message<InvoiceResponse> buildMessage(InvoiceResponse invoiceResponse, String topicName) {

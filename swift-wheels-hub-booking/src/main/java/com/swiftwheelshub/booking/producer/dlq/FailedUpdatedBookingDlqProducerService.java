@@ -12,7 +12,6 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
@@ -44,13 +43,6 @@ public class FailedUpdatedBookingDlqProducerService {
         } catch (Exception e) {
             throw new SwiftWheelsHubException("Unable to send failed updated booking: " + updatedBookingReprocessRequest + " due to : " + e.getMessage());
         }
-    }
-
-    @Recover
-    public boolean recover(Exception e, UpdatedBookingReprocessRequest updatedBookingReprocessRequest) {
-        log.error("Error after re-trying to send created booking: {}: {}", updatedBookingReprocessRequest, e.getMessage(), e);
-
-        return false;
     }
 
     private <T> Message<T> buildMessage(T t, String topicName) {

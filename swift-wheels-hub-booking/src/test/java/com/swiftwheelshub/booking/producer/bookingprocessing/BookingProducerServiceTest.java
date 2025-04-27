@@ -100,7 +100,7 @@ class BookingProducerServiceTest {
         when(kafkaTemplate.send(any(Message.class))).thenThrow(new RuntimeException("error"));
 
         SwiftWheelsHubException swiftWheelsHubException =
-                assertThrows(SwiftWheelsHubException.class, () -> bookingProducerService.sendSavedBooking(bookingResponse));
+                assertThrows(SwiftWheelsHubException.class, () -> bookingProducerService.sendUpdatedBooking(bookingResponse));
 
         assertNotNull(swiftWheelsHubException);
     }

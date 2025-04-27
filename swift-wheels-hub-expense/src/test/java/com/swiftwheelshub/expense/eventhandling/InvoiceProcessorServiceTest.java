@@ -23,8 +23,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class InvoiceProcessorServiceTest {
@@ -54,9 +54,9 @@ class InvoiceProcessorServiceTest {
     void processInvoiceTest_success() {
         Invoice closedInvoice = TestUtil.getResourceAsJson("/data/ClosedInvoice.json", Invoice.class);
 
-        when(carStatusUpdateProducerService.markCarAsAvailable(any(CarUpdateDetails.class))).thenReturn(true);
-        when(bookingUpdateProducerService.closeBooking(any(BookingClosingDetails.class))).thenReturn(true);
-        when(invoiceProducerService.sendMessage(any(InvoiceResponse.class))).thenReturn(true);
+        doNothing().when(carStatusUpdateProducerService).markCarAsAvailable(any(CarUpdateDetails.class));
+        doNothing().when(bookingUpdateProducerService).closeBooking(any(BookingClosingDetails.class));
+        doNothing().when(invoiceProducerService).sendMessage(any(InvoiceResponse.class));
         doNothing().when(revenueService).addRevenue(any(Invoice.class));
 
         assertDoesNotThrow(() -> invoiceProcessorService.processInvoice(closedInvoice));
@@ -66,7 +66,7 @@ class InvoiceProcessorServiceTest {
     void processInvoiceTest_failedCarUpdate() {
         Invoice closedInvoice = TestUtil.getResourceAsJson("/data/ClosedInvoice.json", Invoice.class);
 
-        when(carStatusUpdateProducerService.markCarAsAvailable(any(CarUpdateDetails.class))).thenReturn(false);
+        doThrow(new RuntimeException("Test")).when(carStatusUpdateProducerService).markCarAsAvailable(any(CarUpdateDetails.class));
 
         assertDoesNotThrow(() -> invoiceProcessorService.processInvoice(closedInvoice));
 
@@ -77,9 +77,9 @@ class InvoiceProcessorServiceTest {
     void processInvoiceTest_failedBookingUpdate() {
         Invoice closedInvoice = TestUtil.getResourceAsJson("/data/ClosedInvoice.json", Invoice.class);
 
-        when(carStatusUpdateProducerService.markCarAsAvailable(any(CarUpdateDetails.class))).thenReturn(true);
-        when(bookingUpdateProducerService.closeBooking(any(BookingClosingDetails.class))).thenReturn(false);
-        when(failedInvoiceDlqProducerService.sendMessage(any(InvoiceReprocessRequest.class))).thenReturn(true);
+        doNothing().when(carStatusUpdateProducerService).markCarAsAvailable(any(CarUpdateDetails.class));
+        doThrow(new RuntimeException("Test")).when(bookingUpdateProducerService).closeBooking(any(BookingClosingDetails.class));
+        doNothing().when(failedInvoiceDlqProducerService).sendMessage(any(InvoiceReprocessRequest.class));
 
         assertDoesNotThrow(() -> invoiceProcessorService.processInvoice(closedInvoice));
     }
@@ -88,10 +88,10 @@ class InvoiceProcessorServiceTest {
     void processInvoiceTest_failedInvoiceSend() {
         Invoice closedInvoice = TestUtil.getResourceAsJson("/data/ClosedInvoice.json", Invoice.class);
 
-        when(carStatusUpdateProducerService.markCarAsAvailable(any(CarUpdateDetails.class))).thenReturn(true);
-        when(bookingUpdateProducerService.closeBooking(any(BookingClosingDetails.class))).thenReturn(true);
-        when(invoiceProducerService.sendMessage(any(InvoiceResponse.class))).thenReturn(false);
-        when(failedInvoiceDlqProducerService.sendMessage(any(InvoiceReprocessRequest.class))).thenReturn(true);
+        doNothing().when(carStatusUpdateProducerService).markCarAsAvailable(any(CarUpdateDetails.class));
+        doNothing().when(bookingUpdateProducerService).closeBooking(any(BookingClosingDetails.class));
+        doThrow(new RuntimeException("Test")).when(invoiceProducerService).sendMessage(any(InvoiceResponse.class));
+        doNothing().when(failedInvoiceDlqProducerService).sendMessage(any(InvoiceReprocessRequest.class));
 
         assertDoesNotThrow(() -> invoiceProcessorService.processInvoice(closedInvoice));
     }

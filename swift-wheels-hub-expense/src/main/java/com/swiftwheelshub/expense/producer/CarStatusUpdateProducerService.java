@@ -10,7 +10,6 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -31,7 +30,7 @@ public class CarStatusUpdateProducerService {
             backoff = @Backoff(value = 5000L),
             listeners = {"invoiceService", "invoiceReprocessingService"}
     )
-    public boolean markCarAsAvailable(CarUpdateDetails carUpdateDetails) {
+    public void markCarAsAvailable(CarUpdateDetails carUpdateDetails) {
         try {
             kafkaTemplate.send(buildMessage(carUpdateDetails, topicName))
                     .whenComplete((result, e) -> {
@@ -48,18 +47,9 @@ public class CarStatusUpdateProducerService {
                         log.error("Unable to send message: {} due to : {}", carUpdateDetails, e.getMessage());
                     })
                     .join();
-
-            return true;
         } catch (Exception e) {
             throw new SwiftWheelsHubException("Error setting car available: " + carUpdateDetails + " " + e.getMessage());
         }
-    }
-
-    @Recover
-    public boolean recover(Exception e, CarUpdateDetails carUpdateDetails) {
-        log.error("Error after re-trying set car available: {}: {}", carUpdateDetails, e.getMessage(), e);
-
-        return false;
     }
 
     private Message<CarUpdateDetails> buildMessage(CarUpdateDetails carUpdateDetails, String topicName) {

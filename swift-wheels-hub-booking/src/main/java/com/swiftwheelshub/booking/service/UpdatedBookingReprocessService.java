@@ -19,27 +19,22 @@ public class UpdatedBookingReprocessService {
     private final BookingMapper bookingMapper;
 
     public void reprocessUpdatedBooking(UpdatedBookingReprocessRequest reprocessRequest) {
-        boolean areCarsUpdated = updateCarsStatuses(reprocessRequest.previousCarId(), reprocessRequest.actualCarId());
-
-        if (areCarsUpdated) {
+        try {
+            updateCarsStatuses(reprocessRequest.previousCarId(), reprocessRequest.actualCarId());
             BookingResponse bookingResponse = bookingMapper.mapReprocessRequestToBookingResponse(reprocessRequest);
-            boolean isBookingUpdated = bookingProducerService.sendUpdatedBooking(bookingResponse);
-
-            if (isBookingUpdated) {
-                return;
-            }
+            bookingProducerService.sendUpdatedBooking(bookingResponse);
+        } catch (Exception e) {
+            throw new SwiftWheelsHubException("Failed to reprocess updated booking: " + e.getMessage());
         }
-
-        throw new SwiftWheelsHubException("Failed to reprocess updated booking");
     }
 
-    private boolean updateCarsStatuses(Long previousCarId, Long actualCarId) {
+    private void updateCarsStatuses(Long previousCarId, Long actualCarId) {
         UpdateCarsRequest updateCarsRequest = UpdateCarsRequest.builder()
                 .previousCarId(previousCarId)
                 .actualCarId(actualCarId)
                 .build();
 
-        return updateBookingUpdateCarsProducerService.updateCarsStatus(updateCarsRequest);
+        updateBookingUpdateCarsProducerService.updateCarsStatus(updateCarsRequest);
     }
 
 }

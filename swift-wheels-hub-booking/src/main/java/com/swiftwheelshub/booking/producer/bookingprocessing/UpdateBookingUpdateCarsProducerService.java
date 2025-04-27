@@ -12,7 +12,6 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +31,7 @@ public class UpdateBookingUpdateCarsProducerService {
             backoff = @Backoff(value = 5000L),
             listeners = "bookingService"
     )
-    public boolean updateCarsStatus(UpdateCarsRequest updateCarsRequest) {
+    public void updateCarsStatus(UpdateCarsRequest updateCarsRequest) {
         try {
             kafkaTemplate.send(buildMessage(updateCarsRequest, topicName))
                     .whenComplete((result, e) -> {
@@ -45,18 +44,9 @@ public class UpdateBookingUpdateCarsProducerService {
                         log.error("Unable to send message: {} due to : {}", updateCarsRequest, e.getMessage());
                     })
                     .join();
-
-            return true;
         } catch (Exception e) {
             throw new SwiftWheelsHubException("Error updating cars status message: " + e.getMessage());
         }
-    }
-
-    @Recover
-    public boolean recover(Exception e, UpdateCarsRequest updateCarsRequest) {
-        log.error("Error after re-trying update cars status: {}: {}", updateCarsRequest, e.getMessage(), e);
-
-        return false;
     }
 
     private <T> Message<T> buildMessage(T t, String topicName) {

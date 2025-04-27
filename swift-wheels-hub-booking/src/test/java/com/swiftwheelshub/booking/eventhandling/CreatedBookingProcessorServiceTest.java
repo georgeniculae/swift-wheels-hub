@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -50,9 +51,9 @@ class CreatedBookingProcessorServiceTest {
     void handleBookingCreationTest_success() {
         Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
 
-        when(createdBookingCarUpdateProducerService.changeCarStatus(any(CarStatusUpdate.class))).thenReturn(true);
+        doNothing().when(createdBookingCarUpdateProducerService).changeCarStatus(any(CarStatusUpdate.class));
         when(redisTemplate.delete(anyString())).thenReturn(true);
-        when(bookingProducerService.sendSavedBooking(any(BookingResponse.class))).thenReturn(true);
+        doNothing().when(bookingProducerService).sendSavedBooking(any(BookingResponse.class));
 
         assertDoesNotThrow(() -> createdBookingProcessorService.handleBookingCreation(booking));
     }
@@ -61,7 +62,7 @@ class CreatedBookingProcessorServiceTest {
     void handleBookingCreationTest_failedOnUpdatingCar() {
         Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
 
-        when(createdBookingCarUpdateProducerService.changeCarStatus(any(CarStatusUpdate.class))).thenReturn(false);
+        doThrow(new RuntimeException("Test")).when(createdBookingCarUpdateProducerService).changeCarStatus(any(CarStatusUpdate.class));
         doNothing().when(failedCreatedBookingDlqProducerService).sendFailedCreatedBooking(any(CreatedBookingReprocessRequest.class));
 
         assertDoesNotThrow(() -> createdBookingProcessorService.handleBookingCreation(booking));
@@ -72,9 +73,9 @@ class CreatedBookingProcessorServiceTest {
     void handleBookingCreationTest_failedOnSendingBooking() {
         Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
 
-        when(createdBookingCarUpdateProducerService.changeCarStatus(any(CarStatusUpdate.class))).thenReturn(true);
+        doNothing().when(createdBookingCarUpdateProducerService).changeCarStatus(any(CarStatusUpdate.class));
         when(redisTemplate.delete(anyString())).thenReturn(true);
-        when(bookingProducerService.sendSavedBooking(any(BookingResponse.class))).thenReturn(false);
+        doThrow(new RuntimeException("Test")).when(bookingProducerService).sendSavedBooking(any(BookingResponse.class));
         doNothing().when(failedCreatedBookingDlqProducerService).sendFailedCreatedBooking(any(CreatedBookingReprocessRequest.class));
 
         assertDoesNotThrow(() -> createdBookingProcessorService.handleBookingCreation(booking));

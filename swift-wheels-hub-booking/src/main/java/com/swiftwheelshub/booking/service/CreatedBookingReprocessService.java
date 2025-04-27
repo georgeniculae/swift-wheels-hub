@@ -20,19 +20,13 @@ public class CreatedBookingReprocessService {
     private final BookingMapper bookingMapper;
 
     public void reprocessCreatedBooking(CreatedBookingReprocessRequest reprocessRequest) {
-        boolean isCarStatusChanged =
-                createdBookingCarUpdateProducerService.changeCarStatus(getCarStatusUpdate(reprocessRequest.actualCarId()));
-
-        if (isCarStatusChanged) {
+        try {
+            createdBookingCarUpdateProducerService.changeCarStatus(getCarStatusUpdate(reprocessRequest.actualCarId()));
             BookingResponse bookingResponse = bookingMapper.mapReprocessRequestToBookingResponse(reprocessRequest);
-            boolean isBookingSent = bookingProducerService.sendSavedBooking(bookingResponse);
-
-            if (isBookingSent) {
-                return;
-            }
+            bookingProducerService.sendSavedBooking(bookingResponse);
+        } catch (Exception e) {
+            throw new SwiftWheelsHubException(e.getMessage());
         }
-
-        throw new SwiftWheelsHubException("Failed to reprocess created booking");
     }
 
     private CarStatusUpdate getCarStatusUpdate(Long carId) {

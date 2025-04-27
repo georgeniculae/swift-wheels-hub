@@ -36,10 +36,12 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -92,6 +94,29 @@ class BookingServiceTest {
     }
 
     @Test
+    void findBookingsByLoggedInUserTest_success() {
+        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
+
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader("X-API-KEY", "apikey");
+        httpServletRequest.addHeader("X-ROLES", "ROLE_user");
+
+        RequestAttributes servletWebRequest = new ServletWebRequest(httpServletRequest);
+        RequestContextHolder.setRequestAttributes(servletWebRequest);
+
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
+
+        when(bookingRepository.findBookingsByUser(anyString())).thenReturn(Stream.of(booking));
+
+        List<BookingResponse> bookingsByLoggedInUser = bookingService.findBookingsByLoggedInUser();
+        assertFalse(bookingsByLoggedInUser.isEmpty());
+    }
+
+    @Test
     void saveBookingTest_success() {
         Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
 
@@ -100,6 +125,14 @@ class BookingServiceTest {
 
         AvailableCarInfo availableCarInfo =
                 TestUtil.getResourceAsJson("/data/AvailableCarInfo.json", AvailableCarInfo.class);
+
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader("X-API-KEY", "apikey");
+        httpServletRequest.addHeader("X-ROLES", "ROLE_user");
+        httpServletRequest.addHeader("X-EMAIL", "test@email.com");
+
+        RequestAttributes servletWebRequest = new ServletWebRequest(httpServletRequest);
+        RequestContextHolder.setRequestAttributes(servletWebRequest);
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
         ApiKeyAuthenticationToken apiKeyAuthenticationToken =
@@ -118,6 +151,39 @@ class BookingServiceTest {
         assertNotNull(actualBookingResponse);
 
         verify(bookingMapper).mapEntityToDto(any(Booking.class));
+    }
+
+    @Test
+    void saveBookingTest_errorOnSavingBooking() {
+        BookingRequest bookingRequest =
+                TestUtil.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
+
+        AvailableCarInfo availableCarInfo =
+                TestUtil.getResourceAsJson("/data/AvailableCarInfo.json", AvailableCarInfo.class);
+
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader("X-API-KEY", "apikey");
+        httpServletRequest.addHeader("X-ROLES", "ROLE_user");
+        httpServletRequest.addHeader("X-EMAIL", "test@email.com");
+
+        RequestAttributes servletWebRequest = new ServletWebRequest(httpServletRequest);
+        RequestContextHolder.setRequestAttributes(servletWebRequest);
+
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
+
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.setIfAbsent(anyString(), anyString(), any(Duration.class))).thenReturn(true);
+        when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(availableCarInfo);
+        when(bookingRepository.save(any(Booking.class))).thenThrow(new RuntimeException("Test"));
+
+        SwiftWheelsHubException swiftWheelsHubException =
+                assertThrows(SwiftWheelsHubException.class, () -> bookingService.saveBooking(bookingRequest));
+
+        assertNotNull(swiftWheelsHubException);
     }
 
     @Test
@@ -147,6 +213,35 @@ class BookingServiceTest {
     }
 
     @Test
+    void closeBookingTest_errorOnSavingBooking() {
+        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
+
+        BookingClosingDetails bookingClosingDetails =
+                TestUtil.getResourceAsJson("/data/BookingClosingDetails.json", BookingClosingDetails.class);
+
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.addHeader("X-API-KEY", "apikey");
+        httpServletRequest.addHeader("X-ROLES", "ROLE_user");
+
+        RequestAttributes servletWebRequest = new ServletWebRequest(httpServletRequest);
+        RequestContextHolder.setRequestAttributes(servletWebRequest);
+
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
+
+        when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
+        when(bookingRepository.save(any(Booking.class))).thenThrow(new RuntimeException("Test"));
+
+        SwiftWheelsHubException swiftWheelsHubException =
+                assertThrows(SwiftWheelsHubException.class, () -> bookingService.closeBooking(bookingClosingDetails));
+
+        assertNotNull(swiftWheelsHubException);
+    }
+
+    @Test
     void updateBookingTest_success() {
         Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
         BookingRequest bookingRequest = TestUtil.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
@@ -164,6 +259,26 @@ class BookingServiceTest {
                 assertDoesNotThrow(() -> bookingService.updateBooking(1L, bookingRequest));
 
         assertNotNull(updatedBookingResponse);
+    }
+
+    @Test
+    void updateBookingTest_errorOnSavingBooking() {
+        Booking booking = TestUtil.getResourceAsJson("/data/Booking.json", Booking.class);
+        BookingRequest bookingRequest = TestUtil.getResourceAsJson("/data/BookingRequest.json", BookingRequest.class);
+
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
+
+        when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
+        when(bookingRepository.save(any(Booking.class))).thenThrow(new RuntimeException("Test"));
+
+        SwiftWheelsHubException swiftWheelsHubException =
+                assertThrows(SwiftWheelsHubException.class, () -> bookingService.updateBooking(1L, bookingRequest));
+
+        assertNotNull(swiftWheelsHubException);
     }
 
     @Test

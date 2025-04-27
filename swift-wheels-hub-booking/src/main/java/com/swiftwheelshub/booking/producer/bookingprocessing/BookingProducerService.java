@@ -37,7 +37,7 @@ public class BookingProducerService {
             backoff = @Backoff(value = 5000L),
             listeners = "debeziumListener"
     )
-    public boolean sendSavedBooking(BookingResponse bookingResponse) {
+    public void sendSavedBooking(BookingResponse bookingResponse) {
         try {
             kafkaTemplate.send(buildMessage(bookingResponse, savedBookingProducerTopicName))
                     .whenComplete((result, e) -> {
@@ -46,8 +46,6 @@ public class BookingProducerService {
                         }
                     })
                     .join();
-
-            return true;
         } catch (Exception e) {
             throw new SwiftWheelsHubException("Unable to send created booking: " + bookingResponse + " due to : " + e.getMessage());
         }
@@ -59,7 +57,7 @@ public class BookingProducerService {
             backoff = @Backoff(value = 5000L),
             listeners = "debeziumListener"
     )
-    public boolean sendUpdatedBooking(BookingResponse bookingResponse) {
+    public void sendUpdatedBooking(BookingResponse bookingResponse) {
         try {
             kafkaTemplate.send(buildMessage(bookingResponse, updatedBookingProducerTopicName))
                     .whenComplete((result, e) -> {
@@ -68,8 +66,6 @@ public class BookingProducerService {
                         }
                     })
                     .join();
-
-            return true;
         } catch (Exception e) {
             throw new SwiftWheelsHubException("Unable to send updated booking: " + bookingResponse + " due to : " + e.getMessage());
         }

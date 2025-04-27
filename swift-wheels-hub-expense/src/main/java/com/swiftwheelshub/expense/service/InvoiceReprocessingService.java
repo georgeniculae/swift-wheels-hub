@@ -4,7 +4,6 @@ import com.swiftwheelshub.dto.BookingClosingDetails;
 import com.swiftwheelshub.dto.CarState;
 import com.swiftwheelshub.dto.CarUpdateDetails;
 import com.swiftwheelshub.dto.InvoiceReprocessRequest;
-import com.swiftwheelshub.exception.SwiftWheelsHubException;
 import com.swiftwheelshub.expense.producer.BookingUpdateProducerService;
 import com.swiftwheelshub.expense.producer.CarStatusUpdateProducerService;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +23,8 @@ public class InvoiceReprocessingService implements RetryListener {
         BookingClosingDetails bookingClosingDetails =
                 getBookingClosingDetails(invoiceReprocessRequest.bookingId(), invoiceReprocessRequest.returnBranchId());
 
-        if (carStatusUpdateProducerService.markCarAsAvailable(getCarUpdateDetails(invoiceReprocessRequest))) {
-            if (bookingUpdateProducerService.closeBooking(bookingClosingDetails)) {
-                return;
-            }
-        }
-
-        throw new SwiftWheelsHubException("Invoice reprocessing failed");
+        carStatusUpdateProducerService.markCarAsAvailable(getCarUpdateDetails(invoiceReprocessRequest));
+        bookingUpdateProducerService.closeBooking(bookingClosingDetails);
     }
 
     private BookingClosingDetails getBookingClosingDetails(Long bookingId, Long returnBranchId) {

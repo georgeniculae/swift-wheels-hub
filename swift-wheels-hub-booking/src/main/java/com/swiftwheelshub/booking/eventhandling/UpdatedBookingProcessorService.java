@@ -9,11 +9,13 @@ import com.swiftwheelshub.dto.UpdateCarsRequest;
 import com.swiftwheelshub.dto.UpdatedBookingReprocessRequest;
 import com.swiftwheelshub.entity.Booking;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UpdatedBookingProcessorService {
 
     private final UpdateBookingUpdateCarsProducerService updateBookingUpdateCarsProducerService;
@@ -23,32 +25,27 @@ public class UpdatedBookingProcessorService {
     private final BookingMapper bookingMapper;
 
     public void handleBookingUpdate(Booking booking) {
-        boolean areCarsUpdated = updateCarsStatuses(booking.getPreviousCarId(), booking.getActualCarId());
-
-        if (areCarsUpdated) {
+        try {
+            updateCarsStatuses(booking.getPreviousCarId(), booking.getActualCarId());
             unlockCar(booking.getActualCarId().toString());
+
             BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
-            boolean isBookingUpdated = bookingProducerService.sendUpdatedBooking(bookingResponse);
+            bookingProducerService.sendUpdatedBooking(bookingResponse);
+        } catch (Exception e) {
+            log.error("Error while processing updated booking: {}", e.getMessage());
 
-            if (!isBookingUpdated) {
-                UpdatedBookingReprocessRequest reprocessRequest = bookingMapper.mapToUpdatedBookingReprocessRequest(booking);
-                failedUpdatedBookingDlqProducerService.sendFailedUpdatedBooking(reprocessRequest);
-            }
-
-            return;
+            UpdatedBookingReprocessRequest reprocessRequest = bookingMapper.mapToUpdatedBookingReprocessRequest(booking);
+            failedUpdatedBookingDlqProducerService.sendFailedUpdatedBooking(reprocessRequest);
         }
-
-        UpdatedBookingReprocessRequest reprocessRequest = bookingMapper.mapToUpdatedBookingReprocessRequest(booking);
-        failedUpdatedBookingDlqProducerService.sendFailedUpdatedBooking(reprocessRequest);
     }
 
-    private boolean updateCarsStatuses(Long previousCarId, Long actualCarId) {
+    private void updateCarsStatuses(Long previousCarId, Long actualCarId) {
         UpdateCarsRequest updateCarsRequest = UpdateCarsRequest.builder()
                 .previousCarId(previousCarId)
                 .actualCarId(actualCarId)
                 .build();
 
-        return updateBookingUpdateCarsProducerService.updateCarsStatus(updateCarsRequest);
+        updateBookingUpdateCarsProducerService.updateCarsStatus(updateCarsRequest);
     }
 
     private void unlockCar(String carId) {

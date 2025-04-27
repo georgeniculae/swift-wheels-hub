@@ -28,38 +28,29 @@ public class InvoiceProcessorService {
     private final InvoiceMapper invoiceMapper;
 
     public void processInvoice(Invoice existingInvoiceUpdated) {
-        boolean successfulUpdate = updateCarAndBooking(existingInvoiceUpdated);
+        try {
+            updateCarAndBooking(existingInvoiceUpdated);
 
-        if (successfulUpdate) {
-            boolean isInvoiceSent = invoiceProducerService.sendMessage(invoiceMapper.mapEntityToDto(existingInvoiceUpdated));
-
-            if (isInvoiceSent) {
-                revenueService.addRevenue(existingInvoiceUpdated);
-                log.info("Invoice with id: {} has been successfully closed", existingInvoiceUpdated.getId());
-
-                return;
-            }
+            invoiceProducerService.sendMessage(invoiceMapper.mapEntityToDto(existingInvoiceUpdated));
+            revenueService.addRevenue(existingInvoiceUpdated);
+            log.info("Invoice with id: {} has been successfully closed", existingInvoiceUpdated.getId());
+        } catch (Exception e) {
+            log.error("Error while processing invoice with id: {}: {}", existingInvoiceUpdated.getId(), e.getMessage());
+            processFailedInvoice(existingInvoiceUpdated);
         }
-
-        processFailedInvoice(existingInvoiceUpdated);
     }
 
-    private boolean updateCarAndBooking(Invoice invoice) {
-        boolean isCarMarkedAsAvailable = carStatusUpdateProducerService.markCarAsAvailable(getCarUpdateDetails(invoice));
-
-        if (isCarMarkedAsAvailable) {
-            return closeBooking(invoice);
-        }
-
-        return false;
+    private void updateCarAndBooking(Invoice invoice) {
+        carStatusUpdateProducerService.markCarAsAvailable(getCarUpdateDetails(invoice));
+        closeBooking(invoice);
     }
 
-    private boolean closeBooking(Invoice invoice) {
+    private void closeBooking(Invoice invoice) {
         Long bookingId = invoice.getBookingId();
         Long returnBranchId = invoice.getReturnBranchId();
         BookingClosingDetails bookingClosingDetails = getBookingClosingDetails(bookingId, returnBranchId);
 
-        return bookingUpdateProducerService.closeBooking(bookingClosingDetails);
+        bookingUpdateProducerService.closeBooking(bookingClosingDetails);
     }
 
     private void processFailedInvoice(Invoice existingInvoiceUpdated) {

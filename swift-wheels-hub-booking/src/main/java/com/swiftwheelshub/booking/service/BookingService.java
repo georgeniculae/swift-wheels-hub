@@ -140,6 +140,7 @@ public class BookingService implements RetryListener {
         }
     }
 
+    @Transactional
     public void deleteBookingByCustomerUsername(String username) {
         boolean existsInProgressBookingsByCustomer = bookingRepository.existsInProgressBookingsByCustomerUsername(username);
 
@@ -147,11 +148,7 @@ public class BookingService implements RetryListener {
             throw new SwiftWheelsHubException("There are bookings in progress for this user");
         }
 
-        try {
-            bookingRepository.deleteByCustomerUsername(username);
-        } catch (Exception e) {
-            throw new SwiftWheelsHubException(e.getMessage());
-        }
+        bookingRepository.deleteByCustomerUsername(username);
     }
 
     private void validateBookingDates(BookingRequest newBookingRequest) {

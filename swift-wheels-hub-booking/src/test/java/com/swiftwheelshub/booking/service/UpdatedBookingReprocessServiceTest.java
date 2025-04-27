@@ -19,8 +19,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UpdatedBookingReprocessServiceTest {
@@ -42,8 +43,8 @@ class UpdatedBookingReprocessServiceTest {
         UpdatedBookingReprocessRequest reprocessRequest =
                 TestUtil.getResourceAsJson("/data/UpdatedBookingReprocessRequest.json", UpdatedBookingReprocessRequest.class);
 
-        when(updateBookingUpdateCarsProducerService.updateCarsStatus(any(UpdateCarsRequest.class))).thenReturn(true);
-        when(bookingProducerService.sendUpdatedBooking(any(BookingResponse.class))).thenReturn(true);
+        doNothing().when(updateBookingUpdateCarsProducerService).updateCarsStatus(any(UpdateCarsRequest.class));
+        doNothing().when(bookingProducerService).sendUpdatedBooking(any(BookingResponse.class));
 
         assertDoesNotThrow(() -> updatedBookingReprocessService.reprocessUpdatedBooking(reprocessRequest));
         verify(bookingMapper).mapReprocessRequestToBookingResponse(any(UpdatedBookingReprocessRequest.class));
@@ -54,8 +55,8 @@ class UpdatedBookingReprocessServiceTest {
         UpdatedBookingReprocessRequest reprocessRequest =
                 TestUtil.getResourceAsJson("/data/UpdatedBookingReprocessRequest.json", UpdatedBookingReprocessRequest.class);
 
-        when(updateBookingUpdateCarsProducerService.updateCarsStatus(any(UpdateCarsRequest.class))).thenReturn(true);
-        when(bookingProducerService.sendUpdatedBooking(any(BookingResponse.class))).thenReturn(false);
+        doNothing().when(updateBookingUpdateCarsProducerService).updateCarsStatus(any(UpdateCarsRequest.class));
+        doThrow(new RuntimeException("Test")).when(bookingProducerService).sendUpdatedBooking(any(BookingResponse.class));
 
         assertThrows(SwiftWheelsHubException.class, () -> updatedBookingReprocessService.reprocessUpdatedBooking(reprocessRequest));
     }

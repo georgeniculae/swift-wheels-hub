@@ -30,7 +30,7 @@ public class FailedInvoiceDlqProducerService {
             backoff = @Backoff(value = 5000L),
             listeners = "invoiceService"
     )
-    public boolean sendMessage(InvoiceReprocessRequest invoiceReprocessRequest) {
+    public void sendMessage(InvoiceReprocessRequest invoiceReprocessRequest) {
         try {
             kafkaTemplate.send(buildMessage(invoiceReprocessRequest, topicName))
                     .whenComplete((result, e) -> {
@@ -47,8 +47,6 @@ public class FailedInvoiceDlqProducerService {
                         log.error("Unable to send message: {} due to : {}", invoiceReprocessRequest, e.getMessage());
                     })
                     .join();
-
-            return true;
         } catch (Exception e) {
             throw new SwiftWheelsHubException("Error sending message: " + invoiceReprocessRequest + " " + e.getMessage());
         }

@@ -10,11 +10,13 @@ import com.swiftwheelshub.dto.CarStatusUpdate;
 import com.swiftwheelshub.dto.CreatedBookingReprocessRequest;
 import com.swiftwheelshub.entity.Booking;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CreatedBookingProcessorService {
 
     private final CreatedBookingCarUpdateProducerService createdBookingCarUpdateProducerService;
@@ -24,24 +26,18 @@ public class CreatedBookingProcessorService {
     private final BookingMapper bookingMapper;
 
     public void handleBookingCreation(Booking booking) {
-        boolean isCarStatusChanged =
-                createdBookingCarUpdateProducerService.changeCarStatus(getCarStatusUpdate(booking.getActualCarId()));
-
-        if (isCarStatusChanged) {
+        try {
+            createdBookingCarUpdateProducerService.changeCarStatus(getCarStatusUpdate(booking.getActualCarId()));
             unlockCar(booking.getActualCarId().toString());
+
             BookingResponse bookingResponse = bookingMapper.mapEntityToDto(booking);
-            boolean isBookingSent = bookingProducerService.sendSavedBooking(bookingResponse);
+            bookingProducerService.sendSavedBooking(bookingResponse);
+        } catch (Exception e) {
+            log.error("Error while creating booking: {}", e.getMessage());
 
-            if (!isBookingSent) {
-                CreatedBookingReprocessRequest reprocessRequest = bookingMapper.mapToCreatedBookingReprocessRequest(booking);
-                failedCreatedBookingDlqProducerService.sendFailedCreatedBooking(reprocessRequest);
-            }
-
-            return;
+            CreatedBookingReprocessRequest reprocessRequest = bookingMapper.mapToCreatedBookingReprocessRequest(booking);
+            failedCreatedBookingDlqProducerService.sendFailedCreatedBooking(reprocessRequest);
         }
-
-        CreatedBookingReprocessRequest reprocessRequest = bookingMapper.mapToCreatedBookingReprocessRequest(booking);
-        failedCreatedBookingDlqProducerService.sendFailedCreatedBooking(reprocessRequest);
     }
 
     private CarStatusUpdate getCarStatusUpdate(Long carId) {

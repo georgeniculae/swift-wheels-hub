@@ -1,14 +1,12 @@
 package com.swiftwheelshub.booking.repository;
 
 import com.swiftwheelshub.entity.Booking;
-import com.swiftwheelshub.entity.BookingStatus;
 import jakarta.persistence.QueryHint;
 import org.hibernate.jpa.HibernateHints;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -70,20 +68,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             and b.status = 'IN_PROGRESS'""")
     boolean existsInProgressBookingsByCustomerUsername(String customerUsername);
 
-    @Transactional
     @Modifying
     @Query("""
             Delete
             From Booking b
             where b.customerUsername = ?1""")
     void deleteByCustomerUsername(String customerUsername);
-
-    @Transactional
-    @Modifying
-    @Query("""
-            update Booking b
-            set b.status = ?1
-            where b.id = ?2""")
-    void updateStatusById(BookingStatus status, Long id);
 
 }

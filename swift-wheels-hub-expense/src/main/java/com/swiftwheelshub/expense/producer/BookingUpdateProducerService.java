@@ -10,7 +10,6 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -31,7 +30,7 @@ public class BookingUpdateProducerService {
             backoff = @Backoff(value = 5000L),
             listeners = {"invoiceService", "invoiceReprocessingService"}
     )
-    public boolean closeBooking(BookingClosingDetails bookingClosingDetails) {
+    public void closeBooking(BookingClosingDetails bookingClosingDetails) {
         try {
             kafkaTemplate.send(buildMessage(bookingClosingDetails, topicName))
                     .whenComplete((result, e) -> {
@@ -48,18 +47,9 @@ public class BookingUpdateProducerService {
                         log.error("Unable to send message: {} due to : {}", bookingClosingDetails, e.getMessage());
                     })
                     .join();
-
-            return true;
         } catch (Exception e) {
             throw new SwiftWheelsHubException("Error while closing booking: " + bookingClosingDetails + " " + e.getMessage());
         }
-    }
-
-    @Recover
-    public boolean recover(Exception e, BookingClosingDetails bookingClosingDetails) {
-        log.error("Error after re-trying to close booking: {}: {}", bookingClosingDetails, e.getMessage(), e);
-
-        return false;
     }
 
     private Message<BookingClosingDetails> buildMessage(BookingClosingDetails bookingClosingDetails, String topicName) {
