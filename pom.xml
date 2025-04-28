@@ -4,29 +4,29 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.swiftwheelshub</groupId>
-        <artifactId>swift-wheels-hub-parent</artifactId>
-        <version>0.0.19-SNAPSHOT</version>
+        <groupId>com.autohub</groupId>
+        <artifactId>auto-hub-parent</artifactId>
+        <version>0.0.20-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
-    <artifactId>swift-wheels-hub</artifactId>
+    <artifactId>auto-hub</artifactId>
     <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
-    <name>Swift Wheels Hub</name>
+    <name>Auto Hub</name>
 
     <modules>
-        <module>swift-wheels-hub-common</module>
-        <module>swift-wheels-hub-api-gateway</module>
-        <module>swift-wheels-hub-agency</module>
-        <module>swift-wheels-hub-ai</module>
-        <module>swift-wheels-hub-audit</module>
-        <module>swift-wheels-hub-booking</module>
-        <module>swift-wheels-hub-customer</module>
-        <module>swift-wheels-hub-email-notification</module>
-        <module>swift-wheels-hub-expense</module>
-        <module>swift-wheels-hub-request-validator</module>
+        <module>auto-hub-common</module>
+        <module>auto-hub-api-gateway</module>
+        <module>auto-hub-agency</module>
+        <module>auto-hub-ai</module>
+        <module>auto-hub-audit</module>
+        <module>auto-hub-booking</module>
+        <module>auto-hub-customer</module>
+        <module>auto-hub-email-notification</module>
+        <module>auto-hub-expense</module>
+        <module>auto-hub-request-validator</module>
     </modules>
 
     <repositories>
@@ -37,15 +37,15 @@
     </repositories>
 
     <scm>
-        <developerConnection>scm:git:https://github.com/georgeniculae/swift-wheels-hub-parent</developerConnection>
+        <developerConnection>scm:git:https://github.com/georgeniculae/auto-hub-parent</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
         <repository>
             <id>github</id>
-            <name>swift-wheels-hub</name>
-            <url>https://maven.pkg.github.com/georgeniculae/swift-wheels-hub-parent</url>
+            <name>auto-hub</name>
+            <url>https://maven.pkg.github.com/georgeniculae/auto-hub-parent</url>
         </repository>
     </distributionManagement>
 

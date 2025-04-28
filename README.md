@@ -1,6 +1,6 @@
-# Swift Wheels Hub
+# Auto Hub
 
-Swift Wheels Hub is a Java-based application designed to manage booking and invoicing for a car rental service. The project leverages Spring Boot for building the application, Maven for dependency management, and SQL for database interactions.
+Auto Hub is a Java-based application designed to manage booking and invoicing for a car rental service. The project leverages Spring Boot for building the application, Maven for dependency management, and SQL for database interactions.
 
 ## Features
 
@@ -41,4 +41,4 @@ Swift Wheels Hub is a Java-based application designed to manage booking and invo
 ### Installation
    Clone the repository:
 ```sh
-   git clone https://github.com/georgeniculae/swift-wheels-hub.git
+   git clone https://github.com/georgeniculae/auto-hub.git

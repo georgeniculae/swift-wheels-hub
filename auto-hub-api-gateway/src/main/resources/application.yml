@@ -1,0 +1,160 @@
+server:
+  port: ${PORT:8088}
+  error:
+    include-message: always
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
+
+spring:
+  application:
+    name: auto-hub-api-gateway
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/auto
+          jwk-set-uri: http://localhost:8080/realms/auto-hub/protocol/openid-connect/certs
+  codec:
+    max-in-memory-size: 20MB
+  cloud:
+    loadbalancer:
+      enabled: true
+      cache:
+        enabled: true
+    consul:
+      enabled: true
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true
+        prefer-ip-address: true
+        instanceId: ${spring.application.name}-id
+        serviceName: ${spring.application.name}
+        healthCheckPath: /actuator/health
+        healthCheckInterval: 10s
+        hostname: localhost
+        failFast: false
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: agency
+          uri: lb://auto-hub-agency
+          predicates:
+            - Path=/agency/**
+          filters:
+            - name: RequestTrace
+              args:
+                serviceId: "auto-hub-agency"
+            - name: CircuitBreaker
+              args:
+                name: fallbackHandler
+                fallbackUri: forward:/fallback
+        - id: ai
+          uri: lb://auto-hub-ai
+          predicates:
+            - Path=/ai/**
+          filters:
+            - name: RequestTrace
+              args:
+                serviceId: "auto-hub-ai"
+            - name: CircuitBreaker
+              args:
+                name: fallbackHandler
+                fallbackUri: forward:/fallback
+        - id: booking
+          uri: lb://auto-hub-booking
+          predicates:
+            - Path=/bookings/**
+          filters:
+            - name: RequestTrace
+              args:
+                serviceId: "auto-hub-booking"
+            - name: CircuitBreaker
+              args:
+                name: fallbackHandler
+                fallbackUri: forward:/fallback
+        - id: customer
+          uri: lb://auto-hub-customer
+          predicates:
+            - Path=/customers/**
+          filters:
+            - name: RequestTrace
+              args:
+                serviceId: "auto-hub-customer"
+            - name: CircuitBreaker
+              args:
+                name: fallbackHandler
+                fallbackUri: forward:/fallback
+        - id: expense
+          uri: lb://auto-hub-expense
+          predicates:
+            - Path=/expense/**
+          filters:
+            - name: RequestTrace
+              args:
+                serviceId: "auto-hub-expense"
+            - name: CircuitBreaker
+              args:
+                name: fallbackHandler
+                fallbackUri: forward:/fallback
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      fallbackHandler:
+        registerHealthIndicator: true
+        waitDurationInOpenState: 30s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+        slidingWindowSize: 20
+        minimumNumberOfCalls: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+  timelimiter:
+    instances:
+      fallbackHandler:
+        timeoutDuration: 60s
+
+management:
+  server:
+    port: ${PORT:8088}
+  endpoint:
+    health:
+      group:
+        custom:
+          show-components: always
+          show-details: always
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,loggers,prometheus
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+logging:
+  level:
+    org:
+      springframework:
+        security: ERROR
+        web:
+          csrf:
+            CsrfFilter: ERROR
+
+apikey-secret: ${API_KEY_SECRET}
+
+cors:
+  mapping: '/**'
+  allowedOrigins: '*'
+  allowedMethods: '*'
+  allowedHeaders: '*'
+  codecMaxInMemorySizeInMb: 20
+
+request-validator-url: http://auto-hub-request-validator/validate
