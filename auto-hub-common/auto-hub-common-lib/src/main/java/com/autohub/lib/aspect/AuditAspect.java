@@ -18,6 +18,8 @@ import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @Aspect
 @Component
@@ -54,7 +56,9 @@ public class AuditAspect {
     private List<String> getParametersValues(ProceedingJoinPoint joinPoint,
                                              LogActivity logActivity,
                                              MethodSignature signature) {
-        return Arrays.stream(logActivity.sentParameters())
+        return Optional.ofNullable(logActivity)
+                .stream()
+                .flatMap(activity -> Stream.of(activity.sentParameters()))
                 .map(parameter -> {
                     List<String> parameters = Arrays.asList(signature.getParameterNames());
                     int indexOfElement = parameters.indexOf(parameter);
