@@ -21,9 +21,9 @@ public class ApiKeyAuthenticationProvider implements AuthenticationProvider {
         String apiKey = authentication.getPrincipal().toString();
 
         if (apiKeySecret.equals(apiKey)) {
-            authentication.setAuthenticated(true);
+            ApiKeyAuthenticationToken apiKeyAuthenticationToken = (ApiKeyAuthenticationToken) authentication;
 
-            return authentication;
+            return new ApiKeyAuthenticationToken(apiKeyAuthenticationToken);
         }
 
         throw new AutoHubException("API Key is invalid");

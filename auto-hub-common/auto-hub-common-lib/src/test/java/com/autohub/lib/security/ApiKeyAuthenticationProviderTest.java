@@ -4,14 +4,15 @@ import com.autohub.exception.AutoHubException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class ApiKeyAuthenticationProviderTest {
@@ -19,27 +20,29 @@ class ApiKeyAuthenticationProviderTest {
     @InjectMocks
     private ApiKeyAuthenticationProvider apiKeyAuthenticationProvider;
 
-    @Mock
-    private Authentication authentication;
-
     @Test
     void authenticateTest_success() {
-        String apikey = "apikey";
-        ReflectionTestUtils.setField(apiKeyAuthenticationProvider, "apiKeySecret", apikey);
+        ReflectionTestUtils.setField(apiKeyAuthenticationProvider, "apiKeySecret", "apikey");
 
-        when(authentication.getPrincipal()).thenReturn(apikey);
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
 
-        Authentication authenticated = apiKeyAuthenticationProvider.authenticate(authentication);
-        assertEquals(authentication, authenticated);
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "apikey");
+
+        Authentication authenticated = apiKeyAuthenticationProvider.authenticate(apiKeyAuthenticationToken);
+        assertTrue(authenticated.isAuthenticated());
     }
 
     @Test
     void authenticateTest_noApiKey() {
         ReflectionTestUtils.setField(apiKeyAuthenticationProvider, "apiKeySecret", "apikey");
 
-        when(authentication.getPrincipal()).thenReturn("test");
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("user");
 
-        assertThrows(AutoHubException.class, () -> apiKeyAuthenticationProvider.authenticate(authentication));
+        ApiKeyAuthenticationToken apiKeyAuthenticationToken =
+                new ApiKeyAuthenticationToken(List.of(simpleGrantedAuthority), "test");
+
+        assertThrows(AutoHubException.class, () -> apiKeyAuthenticationProvider.authenticate(apiKeyAuthenticationToken));
     }
 
 }
