@@ -1,5 +1,7 @@
 package com.autohub.booking.mapper;
 
+import com.autohub.dto.AuthenticationInfo;
+import com.autohub.dto.AvailableCarInfo;
 import com.autohub.dto.BookingRequest;
 import com.autohub.dto.BookingResponse;
 import com.autohub.dto.CreatedBookingReprocessRequest;
@@ -9,6 +11,8 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
+
+import java.time.LocalDate;
 
 @Mapper(
         componentModel = "spring",
@@ -20,8 +24,14 @@ public interface BookingMapper {
     @Mapping(target = "carId", source = "actualCarId")
     BookingResponse mapEntityToDto(Booking booking);
 
-    @Mapping(target = "actualCarId", source = "carId")
-    Booking mapDtoToEntity(BookingRequest bookingRequest);
+    @Mapping(target = "customerUsername", expression = "java(authenticationInfo.username())")
+    @Mapping(target = "customerEmail", expression = "java(authenticationInfo.email())")
+    @Mapping(target = "actualCarId", expression = "java(availableCarInfo.id())")
+    @Mapping(target = "dateOfBooking", expression = "java(getDateOfBooking())")
+    @Mapping(target = "rentalBranchId", expression = "java(availableCarInfo.actualBranchId())")
+    @Mapping(target = "status", constant = "IN_PROGRESS")
+    @Mapping(target = "rentalCarPrice", expression = "java(availableCarInfo.amount())")
+    Booking getNewBooking(BookingRequest bookingRequest, AvailableCarInfo availableCarInfo, AuthenticationInfo authenticationInfo);
 
     CreatedBookingReprocessRequest mapToCreatedBookingReprocessRequest(Booking booking);
 
@@ -32,5 +42,9 @@ public interface BookingMapper {
 
     @Mapping(target = "carId", source = "actualCarId")
     BookingResponse mapReprocessRequestToBookingResponse(UpdatedBookingReprocessRequest reprocessRequest);
+
+    default LocalDate getDateOfBooking() {
+        return LocalDate.now();
+    }
 
 }

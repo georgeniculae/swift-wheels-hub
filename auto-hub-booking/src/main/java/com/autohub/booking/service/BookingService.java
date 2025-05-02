@@ -102,7 +102,7 @@ public class BookingService implements RetryListener {
             lockCar(newBookingRequest.carId().toString());
 
             AvailableCarInfo availableCarInfo = carService.findAvailableCarById(authenticationInfo, newBookingRequest.carId());
-            Booking createdBooking = createNewBooking(authenticationInfo, newBookingRequest, availableCarInfo);
+            Booking createdBooking = bookingMapper.getNewBooking(newBookingRequest, availableCarInfo, authenticationInfo);
 
             Booking savedBooking = bookingRepository.save(createdBooking);
 
@@ -168,24 +168,6 @@ public class BookingService implements RetryListener {
     private Booking findEntityById(Long id) {
         return bookingRepository.findById(id)
                 .orElseThrow(() -> new AutoHubNotFoundException("Booking with id " + id + " does not exist"));
-    }
-
-    private Booking createNewBooking(AuthenticationInfo authenticationInfo,
-                                     BookingRequest newBookingRequest,
-                                     AvailableCarInfo availableCarInfo) {
-        Booking newBooking = bookingMapper.mapDtoToEntity(newBookingRequest);
-        BigDecimal amount = availableCarInfo.amount();
-
-        newBooking.setCustomerUsername(authenticationInfo.username());
-        newBooking.setCustomerEmail(authenticationInfo.email());
-        newBooking.setActualCarId(availableCarInfo.id());
-        newBooking.setDateOfBooking(LocalDate.now());
-        newBooking.setRentalBranchId(availableCarInfo.actualBranchId());
-        newBooking.setStatus(BookingStatus.IN_PROGRESS);
-        newBooking.setAmount(getAmount(newBookingRequest, amount));
-        newBooking.setRentalCarPrice(amount);
-
-        return newBooking;
     }
 
     private Booking processUpdatedBooking(Long id, BookingRequest updatedBookingRequest) {
