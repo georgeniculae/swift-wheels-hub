@@ -43,7 +43,7 @@ public class RentalOfficeService {
     }
 
     public RentalOfficeResponse saveRentalOffice(RentalOfficeRequest rentalOfficeRequest) {
-        RentalOffice rentalOffice = rentalOfficeMapper.mapDtoToEntity(rentalOfficeRequest);
+        RentalOffice rentalOffice = rentalOfficeMapper.getNewRentalOffice(rentalOfficeRequest);
         RentalOffice savedRentalOffice = saveEntity(rentalOffice);
 
         return rentalOfficeMapper.mapEntityToDto(savedRentalOffice);

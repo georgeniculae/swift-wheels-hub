@@ -39,7 +39,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -77,7 +76,7 @@ class CarServiceTest {
 
         when(carRepository.findAllCars()).thenReturn(Stream.of(car));
 
-        List<CarResponse> carResponses = assertDoesNotThrow(() -> carService.findAllCars());
+        List<CarResponse> carResponses = carService.findAllCars();
         AssertionUtil.assertCarResponse(car, carResponses.getFirst());
     }
 
@@ -87,8 +86,7 @@ class CarServiceTest {
 
         when(carRepository.findByFilter(anyString())).thenReturn(Stream.of(car));
 
-        List<CarResponse> carResponses = assertDoesNotThrow(() -> carService.findCarsByFilter("Test"));
-
+        List<CarResponse> carResponses = carService.findCarsByFilter("Test");
         AssertionUtil.assertCarResponse(car, carResponses.getFirst());
     }
 
@@ -98,7 +96,7 @@ class CarServiceTest {
 
         when(carRepository.findById(anyLong())).thenReturn(Optional.of(car));
 
-        CarResponse actualCarResponse = assertDoesNotThrow(() -> carService.findCarById(1L));
+        CarResponse actualCarResponse = carService.findCarById(1L);
 
         assertNotNull(actualCarResponse);
         verify(carMapper, times(1)).mapEntityToDto(any(Car.class));
@@ -120,7 +118,7 @@ class CarServiceTest {
 
         when(carRepository.findCarsByMakeIgnoreCase(anyString())).thenReturn(Stream.of(car));
 
-        List<CarResponse> carResponses = assertDoesNotThrow(() -> carService.findCarsByMake("Test"));
+        List<CarResponse> carResponses = carService.findCarsByMake("Test");
 
         assertNotNull(carResponses);
         verify(carMapper, times(1)).mapEntityToDto(any(Car.class));
@@ -138,7 +136,7 @@ class CarServiceTest {
         when(branchService.findEntityById(anyLong())).thenReturn(branch);
         when(carRepository.save(any(Car.class))).thenReturn(car);
 
-        CarResponse savedCarResponse = assertDoesNotThrow(() -> carService.saveCar(carRequest, image));
+        CarResponse savedCarResponse = carService.saveCar(carRequest, image);
         AssertionUtil.assertCarResponse(car, savedCarResponse);
     }
 

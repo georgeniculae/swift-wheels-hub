@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -52,7 +51,7 @@ class EmployeeServiceTest {
 
         when(employeeRepository.findAllEmployee()).thenReturn(Stream.of(employee));
 
-        List<EmployeeResponse> employeeResponses = assertDoesNotThrow(() -> employeeService.findAllEmployees());
+        List<EmployeeResponse> employeeResponses = employeeService.findAllEmployees();
         AssertionUtil.assertEmployeeResponse(employee, employeeResponses.getFirst());
     }
 
@@ -62,7 +61,7 @@ class EmployeeServiceTest {
 
         when(employeeRepository.findById(anyLong())).thenReturn(Optional.of(employee));
 
-        EmployeeResponse employeeResponse = assertDoesNotThrow(() -> employeeService.findEmployeeById(1L));
+        EmployeeResponse employeeResponse = employeeService.findEmployeeById(1L);
         AssertionUtil.assertEmployeeResponse(employee, employeeResponse);
     }
 
@@ -89,7 +88,7 @@ class EmployeeServiceTest {
         when(branchService.findEntityById(anyLong())).thenReturn(branch);
         when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 
-        EmployeeResponse savedEmployeeResponse = assertDoesNotThrow(() -> employeeService.saveEmployee(employeeRequest));
+        EmployeeResponse savedEmployeeResponse = employeeService.saveEmployee(employeeRequest);
         AssertionUtil.assertEmployeeResponse(employee, savedEmployeeResponse);
 
         verify(employeeMapper).mapEntityToDto(any(Employee.class));
@@ -108,7 +107,7 @@ class EmployeeServiceTest {
         when(employeeRepository.findById(anyLong())).thenReturn(Optional.of(employee));
         when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 
-        EmployeeResponse employeeResponse = assertDoesNotThrow(() -> employeeService.updateEmployee(1L, employeeRequest));
+        EmployeeResponse employeeResponse = employeeService.updateEmployee(1L, employeeRequest);
         AssertionUtil.assertEmployeeResponse(employee, employeeResponse);
     }
 
@@ -118,7 +117,7 @@ class EmployeeServiceTest {
 
         when(employeeRepository.findAllEmployeesByBranchId(anyLong())).thenReturn(Stream.of(employee));
 
-        List<EmployeeResponse> employeeResponses = assertDoesNotThrow(() -> employeeService.findEmployeesByBranchId(1L));
+        List<EmployeeResponse> employeeResponses = employeeService.findEmployeesByBranchId(1L);
         AssertionUtil.assertEmployeeResponse(employee, employeeResponses.getFirst());
     }
 

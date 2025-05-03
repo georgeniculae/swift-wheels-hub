@@ -45,11 +45,10 @@ public class EmployeeService {
     }
 
     public EmployeeResponse saveEmployee(EmployeeRequest employeeRequest) {
-        Employee newEmployee = employeeMapper.mapDtoToEntity(employeeRequest);
-
         Long workingBranchId = employeeRequest.workingBranchId();
         Branch workingBranch = branchService.findEntityById(workingBranchId);
-        newEmployee.setWorkingBranch(workingBranch);
+
+        Employee newEmployee = employeeMapper.getNewEmployee(employeeRequest, workingBranch);
         Employee savedEmployee = saveEntity(newEmployee);
 
         return employeeMapper.mapEntityToDto(savedEmployee);

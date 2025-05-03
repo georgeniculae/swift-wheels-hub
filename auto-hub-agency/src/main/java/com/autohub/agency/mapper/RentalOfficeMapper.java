@@ -16,6 +16,6 @@ public interface RentalOfficeMapper {
 
     RentalOfficeResponse mapEntityToDto(RentalOffice rentalOffice);
 
-    RentalOffice mapDtoToEntity(RentalOfficeRequest rentalOfficeRequest);
+    RentalOffice getNewRentalOffice(RentalOfficeRequest rentalOfficeRequest);
 
 }

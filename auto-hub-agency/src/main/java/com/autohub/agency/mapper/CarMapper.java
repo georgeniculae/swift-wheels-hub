@@ -6,6 +6,7 @@ import com.autohub.dto.CarRequest;
 import com.autohub.dto.CarResponse;
 import com.autohub.dto.CarState;
 import com.autohub.entity.BodyType;
+import com.autohub.entity.Branch;
 import com.autohub.entity.Car;
 import com.autohub.entity.CarStatus;
 import com.autohub.exception.AutoHubException;
@@ -34,7 +35,9 @@ public interface CarMapper {
     @Mapping(target = "bodyType", expression = "java(mapToBodyType(carRequest.bodyCategory()))")
     @Mapping(target = "carStatus", expression = "java(mapToCarStatus(carRequest.carState()))")
     @Mapping(target = "image", expression = "java(mapToImage(image))")
-    Car mapDtoToEntity(CarRequest carRequest, MultipartFile image);
+    @Mapping(target = "originalBranch", expression = "java(originalBranch)")
+    @Mapping(target = "actualBranch", expression = "java(actualBranch)")
+    Car getNewCar(CarRequest carRequest, MultipartFile image, Branch originalBranch, Branch actualBranch);
 
     @Mapping(target = "actualBranchId", expression = "java(car.getActualBranch().getId())")
     AvailableCarInfo mapToAvailableCarInfo(Car car);

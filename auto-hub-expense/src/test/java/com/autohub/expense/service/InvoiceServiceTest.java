@@ -103,9 +103,7 @@ class InvoiceServiceTest {
 
         when(invoiceRepository.findByCommentsIgnoreCase(anyString())).thenReturn(Stream.of(invoice));
 
-        List<InvoiceResponse> invoiceResponses =
-                assertDoesNotThrow(() -> invoiceService.findInvoiceByComments("comment"));
-
+        List<InvoiceResponse> invoiceResponses = invoiceService.findInvoiceByComments("comment");
         AssertionUtil.assertInvoiceResponse(invoice, invoiceResponses.getFirst());
     }
 

@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,7 +51,7 @@ class BranchServiceTest {
 
         when(branchRepository.findById(anyLong())).thenReturn(Optional.of(branch));
 
-        BranchResponse actualBranchResponse = assertDoesNotThrow(() -> branchService.findBranchById(1L));
+        BranchResponse actualBranchResponse = branchService.findBranchById(1L);
 
         assertNotNull(actualBranchResponse);
         verify(branchMapper, times(1)).mapEntityToDto(any(Branch.class));
@@ -78,7 +77,7 @@ class BranchServiceTest {
         when(branchRepository.findById(anyLong())).thenReturn(Optional.of(branch));
         when(branchRepository.save(branch)).thenReturn(branch);
 
-        BranchResponse updatedBranchResponse = assertDoesNotThrow(() -> branchService.updateBranch(1L, branchRequest));
+        BranchResponse updatedBranchResponse = branchService.updateBranch(1L, branchRequest);
         assertNotNull(updatedBranchResponse);
     }
 
@@ -91,7 +90,7 @@ class BranchServiceTest {
         when(rentalOfficeService.findEntityById(anyLong())).thenReturn(rentalOffice);
         when(branchRepository.save(any(Branch.class))).thenReturn(branch);
 
-        BranchResponse savedBranchResponse = assertDoesNotThrow(() -> branchService.saveBranch(branchRequest));
+        BranchResponse savedBranchResponse = branchService.saveBranch(branchRequest);
         AssertionUtil.assertBranchResponse(branch, savedBranchResponse);
     }
 
@@ -101,7 +100,7 @@ class BranchServiceTest {
 
         when(branchRepository.findAllBranches()).thenReturn(Stream.of(branch));
 
-        List<BranchResponse> branchResponses = assertDoesNotThrow(() -> branchService.findAllBranches());
+        List<BranchResponse> branchResponses = branchService.findAllBranches();
         AssertionUtil.assertBranchResponse(branch, branchResponses.getFirst());
     }
 

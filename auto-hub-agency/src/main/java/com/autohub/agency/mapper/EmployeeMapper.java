@@ -2,6 +2,7 @@ package com.autohub.agency.mapper;
 
 import com.autohub.dto.EmployeeRequest;
 import com.autohub.dto.EmployeeResponse;
+import com.autohub.entity.Branch;
 import com.autohub.entity.Employee;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -18,6 +19,7 @@ public interface EmployeeMapper {
     @Mapping(target = "workingBranchId", expression = "java(employee.getWorkingBranch().getId())")
     EmployeeResponse mapEntityToDto(Employee employee);
 
-    Employee mapDtoToEntity(EmployeeRequest employeeRequest);
+    @Mapping(target = "workingBranch", expression = "java(workingBranch)")
+    Employee getNewEmployee(EmployeeRequest employeeRequest, Branch workingBranch);
 
 }

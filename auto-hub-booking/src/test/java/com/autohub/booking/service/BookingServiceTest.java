@@ -78,7 +78,7 @@ class BookingServiceTest {
 
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
-        BookingResponse actualBookingResponse = assertDoesNotThrow(() -> bookingService.findBookingById(1L));
+        BookingResponse actualBookingResponse = bookingService.findBookingById(1L);
         assertNotNull(actualBookingResponse);
     }
 
@@ -145,9 +145,7 @@ class BookingServiceTest {
         when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(availableCarInfo);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
 
-        BookingResponse actualBookingResponse =
-                assertDoesNotThrow(() -> bookingService.saveBooking(bookingRequest));
-
+        BookingResponse actualBookingResponse = bookingService.saveBooking(bookingRequest);
         assertNotNull(actualBookingResponse);
 
         verify(bookingMapper).mapEntityToDto(any(Booking.class));
@@ -255,9 +253,7 @@ class BookingServiceTest {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
 
-        BookingResponse updatedBookingResponse =
-                assertDoesNotThrow(() -> bookingService.updateBooking(1L, bookingRequest));
-
+        BookingResponse updatedBookingResponse = bookingService.updateBooking(1L, bookingRequest);
         assertNotNull(updatedBookingResponse);
     }
 
@@ -309,9 +305,7 @@ class BookingServiceTest {
         when(carService.findAvailableCarById(any(AuthenticationInfo.class), anyLong())).thenReturn(availableCarInfo);
         when(bookingRepository.save(any(Booking.class))).thenReturn(updatedBooking);
 
-        BookingResponse updatedBookingResponse =
-                assertDoesNotThrow(() -> bookingService.updateBooking(1L, bookingRequest));
-
+        BookingResponse updatedBookingResponse = bookingService.updateBooking(1L, bookingRequest);
         assertNotNull(updatedBookingResponse);
     }
 
@@ -323,7 +317,7 @@ class BookingServiceTest {
 
         when(bookingRepository.sumAmountSpentByLoggedInUser(anyString())).thenReturn(BigDecimal.valueOf(500));
 
-        BigDecimal amount = assertDoesNotThrow(() -> bookingService.getAmountSpentByLoggedInUser());
+        BigDecimal amount = bookingService.getAmountSpentByLoggedInUser();
         assertEquals(BigDecimal.valueOf(500), amount);
     }
 
@@ -331,7 +325,7 @@ class BookingServiceTest {
     void getSumOfAllBookingAmountTest_success() {
         when(bookingRepository.sumAllBookingsAmount()).thenReturn(BigDecimal.valueOf(500));
 
-        BigDecimal sumOfAllBookingAmount = assertDoesNotThrow(() -> bookingService.getSumOfAllBookingAmount());
+        BigDecimal sumOfAllBookingAmount = bookingService.getSumOfAllBookingAmount();
         assertEquals(BigDecimal.valueOf(500), sumOfAllBookingAmount);
     }
 
@@ -350,9 +344,7 @@ class BookingServiceTest {
         when(bookingRepository.findByDateOfBooking(LocalDate.of(2099, Month.FEBRUARY, 20)))
                 .thenReturn(Optional.of(booking));
 
-        BookingResponse bookingResponse =
-                assertDoesNotThrow(() -> bookingService.findBookingByDateOfBooking("2099-02-20"));
-
+        BookingResponse bookingResponse = bookingService.findBookingByDateOfBooking("2099-02-20");
         AssertionUtil.assertBooking(booking, bookingResponse);
     }
 

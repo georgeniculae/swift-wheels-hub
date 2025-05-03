@@ -5,8 +5,8 @@ import com.autohub.agency.util.TestUtil;
 import com.autohub.dto.AvailableCarInfo;
 import com.autohub.dto.CarRequest;
 import com.autohub.dto.CarResponse;
+import com.autohub.entity.Branch;
 import com.autohub.entity.Car;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -25,7 +25,7 @@ class CarMapperTest {
     void mapEntityToDtoTest_success() {
         Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
 
-        CarResponse carResponse = Assertions.assertDoesNotThrow(() -> carMapper.mapEntityToDto(car));
+        CarResponse carResponse = carMapper.mapEntityToDto(car);
 
         assertNotNull(carResponse);
         AssertionUtil.assertCarResponse(car, carResponse);
@@ -33,29 +33,27 @@ class CarMapperTest {
 
     @Test
     void mapEntityToDtoTest_null() {
-        CarResponse carResponse = Assertions.assertDoesNotThrow(() -> carMapper.mapEntityToDto(null));
-
-        assertNull(carResponse);
+        assertNull(carMapper.mapEntityToDto(null));
     }
 
     @Test
-    void mapDtoToEntityTest_success() {
+    void getNewCarTest_success() {
         MockMultipartFile image =
                 new MockMultipartFile("car", "car.jpg", MediaType.TEXT_PLAIN_VALUE, "car".getBytes());
 
         CarRequest carRequest = TestUtil.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
+        Branch originalBranch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
+        Branch actualBranch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
 
-        Car car = Assertions.assertDoesNotThrow(() -> carMapper.mapDtoToEntity(carRequest, image));
+        Car car = carMapper.getNewCar(carRequest, image, originalBranch, actualBranch);
 
         assertNotNull(car);
         AssertionUtil.assertCarRequest(car, carRequest);
     }
 
     @Test
-    void mapDtoToEntityTest_null() {
-        Car car = Assertions.assertDoesNotThrow(() -> carMapper.mapDtoToEntity(null, null));
-
-        assertNull(car);
+    void getNewCarTest_null() {
+        assertNull(carMapper.getNewCar(null, null, null, null));
     }
 
     @Test

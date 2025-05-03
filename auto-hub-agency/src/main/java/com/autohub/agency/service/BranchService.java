@@ -41,9 +41,8 @@ public class BranchService {
     }
 
     public BranchResponse saveBranch(BranchRequest branchRequest) {
-        Branch newBranch = branchMapper.mapDtoToEntity(branchRequest);
-        newBranch.setRentalOffice(rentalOfficeService.findEntityById(branchRequest.rentalOfficeId()));
-
+        RentalOffice rentalOffice = rentalOfficeService.findEntityById(branchRequest.rentalOfficeId());
+        Branch newBranch = branchMapper.getNewBranch(branchRequest, rentalOffice);
         Branch savedBranch = saveEntity(newBranch);
 
         return branchMapper.mapEntityToDto(savedBranch);

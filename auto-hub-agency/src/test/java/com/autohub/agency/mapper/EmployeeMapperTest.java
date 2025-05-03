@@ -4,12 +4,12 @@ import com.autohub.agency.util.AssertionUtil;
 import com.autohub.agency.util.TestUtil;
 import com.autohub.dto.EmployeeRequest;
 import com.autohub.dto.EmployeeResponse;
+import com.autohub.entity.Branch;
 import com.autohub.entity.Employee;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -22,7 +22,7 @@ class EmployeeMapperTest {
     void mapEntityToDtoTest_success() {
         Employee employee = TestUtil.getResourceAsJson("/data/Employee.json", Employee.class);
 
-        EmployeeResponse employeeResponse = assertDoesNotThrow(() -> employeeMapper.mapEntityToDto(employee));
+        EmployeeResponse employeeResponse = employeeMapper.mapEntityToDto(employee);
 
         assertNotNull(employeeResponse);
         AssertionUtil.assertEmployeeResponse(employee, employeeResponse);
@@ -34,19 +34,21 @@ class EmployeeMapperTest {
     }
 
     @Test
-    void mapDtoToEntityTest_success() {
+    void getNewEmployeeTest_success() {
         EmployeeRequest employeeRequest =
                 TestUtil.getResourceAsJson("/data/EmployeeRequest.json", EmployeeRequest.class);
 
-        Employee employee = assertDoesNotThrow(() -> employeeMapper.mapDtoToEntity(employeeRequest));
+        Branch workingBranch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
+
+        Employee employee = employeeMapper.getNewEmployee(employeeRequest, workingBranch);
 
         assertNotNull(employeeRequest);
         AssertionUtil.assertEmployeeRequest(employee, employeeRequest);
     }
 
     @Test
-    void mapDtoToEntityTest_null() {
-        assertNull(employeeMapper.mapDtoToEntity(null));
+    void getNewEmployeeTest_null() {
+        assertNull(employeeMapper.getNewEmployee(null, null));
     }
 
 }

@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -55,9 +54,7 @@ class RentalOfficeServiceTest {
 
         when(rentalOfficeRepository.findAllRentalOffices()).thenReturn(Stream.of(rentalOffice));
 
-        List<RentalOfficeResponse> rentalOfficeResponses =
-                assertDoesNotThrow(() -> rentalOfficeService.findAllRentalOffices());
-
+        List<RentalOfficeResponse> rentalOfficeResponses = rentalOfficeService.findAllRentalOffices();
         AssertionUtil.assertRentalOfficeResponse(rentalOffice, rentalOfficeResponses.getFirst());
     }
 
@@ -68,9 +65,7 @@ class RentalOfficeServiceTest {
 
         when(rentalOfficeRepository.findById(anyLong())).thenReturn(Optional.of(rentalOffice));
 
-        RentalOfficeResponse rentalOfficeResponse =
-                assertDoesNotThrow(() -> rentalOfficeService.findRentalOfficeById(1L));
-
+        RentalOfficeResponse rentalOfficeResponse = rentalOfficeService.findRentalOfficeById(1L);
         AssertionUtil.assertRentalOfficeResponse(rentalOffice, rentalOfficeResponse);
     }
 
@@ -94,9 +89,7 @@ class RentalOfficeServiceTest {
 
         when(rentalOfficeRepository.save(any(RentalOffice.class))).thenReturn(rentalOffice);
 
-        RentalOfficeResponse savedRentalOfficeResponse =
-                assertDoesNotThrow(() -> rentalOfficeService.saveRentalOffice(rentalOfficeRequest));
-
+        RentalOfficeResponse savedRentalOfficeResponse = rentalOfficeService.saveRentalOffice(rentalOfficeRequest);
         AssertionUtil.assertRentalOfficeResponse(rentalOffice, savedRentalOfficeResponse);
 
         verify(rentalOfficeRepository, times(1)).save(argumentCaptor.capture());
@@ -111,9 +104,7 @@ class RentalOfficeServiceTest {
         when(rentalOfficeRepository.findById(anyLong())).thenReturn(Optional.of(rentalOffice));
         when(rentalOfficeRepository.save(any(RentalOffice.class))).thenReturn(rentalOffice);
 
-        RentalOfficeResponse updatedRentalOfficeResponse =
-                assertDoesNotThrow(() -> rentalOfficeService.updateRentalOffice(1L, rentalOfficeRequest));
-
+        RentalOfficeResponse updatedRentalOfficeResponse = rentalOfficeService.updateRentalOffice(1L, rentalOfficeRequest);
         AssertionUtil.assertRentalOfficeResponse(rentalOffice, updatedRentalOfficeResponse);
     }
 

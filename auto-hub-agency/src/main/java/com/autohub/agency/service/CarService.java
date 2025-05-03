@@ -80,10 +80,10 @@ public class CarService {
     }
 
     public CarResponse saveCar(CarRequest carRequest, MultipartFile image) {
-        Car car = carMapper.mapDtoToEntity(carRequest, image);
-        car.setOriginalBranch(branchService.findEntityById(carRequest.originalBranchId()));
-        car.setActualBranch(branchService.findEntityById(carRequest.actualBranchId()));
+        Branch originalBranch = branchService.findEntityById(carRequest.originalBranchId());
+        Branch actualBranch = branchService.findEntityById(carRequest.actualBranchId());
 
+        Car car = carMapper.getNewCar(carRequest, image, originalBranch, actualBranch);
         Car savedCar = saveEntity(car);
 
         return carMapper.mapEntityToDto(savedCar);

@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -34,18 +33,18 @@ class RentalOfficeMapperTest {
     }
 
     @Test
-    void mapDtoToEntityTest_success() {
+    void getNewRentalOfficeTest_success() {
         RentalOfficeRequest rentalOfficeRequest = TestUtil.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
 
-        RentalOffice rentalOffice = assertDoesNotThrow(() -> rentalOfficeMapper.mapDtoToEntity(rentalOfficeRequest));
+        RentalOffice rentalOffice = rentalOfficeMapper.getNewRentalOffice(rentalOfficeRequest);
 
         assertNotNull(rentalOffice);
         AssertionUtil.assertRentalOfficeRequest(rentalOffice, rentalOfficeRequest);
     }
 
     @Test
-    void mapDtoToEntityTest_null() {
-        assertNull(rentalOfficeMapper.mapDtoToEntity(null));
+    void getNewRentalOfficeTest_null() {
+        assertNull(rentalOfficeMapper.getNewRentalOffice(null));
     }
 
 }

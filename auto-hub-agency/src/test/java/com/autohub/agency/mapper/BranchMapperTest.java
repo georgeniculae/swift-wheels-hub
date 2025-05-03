@@ -5,11 +5,11 @@ import com.autohub.agency.util.TestUtil;
 import com.autohub.dto.BranchRequest;
 import com.autohub.dto.BranchResponse;
 import com.autohub.entity.Branch;
+import com.autohub.entity.RentalOffice;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -22,7 +22,7 @@ class BranchMapperTest {
     void mapEntityToDtoTest_success() {
         Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
 
-        BranchResponse branchResponse = assertDoesNotThrow(() -> branchMapper.mapEntityToDto(branch));
+        BranchResponse branchResponse = branchMapper.mapEntityToDto(branch);
 
         assertNotNull(branchResponse);
         AssertionUtil.assertBranchResponse(branch, branchResponse);
@@ -34,18 +34,22 @@ class BranchMapperTest {
     }
 
     @Test
-    void mapDtoToEntityTest_success() {
-        BranchRequest branchRequest = TestUtil.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
+    void getNewBranchTest_success() {
+        BranchRequest branchRequest =
+                TestUtil.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
 
-        Branch branch = assertDoesNotThrow(() -> branchMapper.mapDtoToEntity(branchRequest));
+        RentalOffice rentalOffice =
+                TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
+
+        Branch branch = branchMapper.getNewBranch(branchRequest, rentalOffice);
 
         assertNotNull(branch);
         AssertionUtil.assertBranchRequest(branch, branchRequest);
     }
 
     @Test
-    void mapDtoToEntityTest_null() {
-        assertNull(branchMapper.mapDtoToEntity(null));
+    void getNewBranchTest_null() {
+        assertNull(branchMapper.getNewBranch(null, null));
     }
 
 }
