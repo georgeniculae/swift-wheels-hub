@@ -49,8 +49,8 @@ public class UpdateBookingUpdateCarsProducerService {
         }
     }
 
-    private <T> Message<T> buildMessage(T t, String topicName) {
-        return MessageBuilder.withPayload(t)
+    private Message<UpdateCarsRequest> buildMessage(UpdateCarsRequest updateCarsRequest, String topicName) {
+        return MessageBuilder.withPayload(updateCarsRequest)
                 .setHeader(KafkaHeaders.TOPIC, topicName)
                 .build();
     }

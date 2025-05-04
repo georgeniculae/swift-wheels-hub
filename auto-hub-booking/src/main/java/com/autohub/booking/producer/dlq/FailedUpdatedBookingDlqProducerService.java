@@ -45,8 +45,8 @@ public class FailedUpdatedBookingDlqProducerService {
         }
     }
 
-    private <T> Message<T> buildMessage(T t, String topicName) {
-        return MessageBuilder.withPayload(t)
+    private Message<UpdatedBookingReprocessRequest> buildMessage(UpdatedBookingReprocessRequest updatedBookingReprocessRequest, String topicName) {
+        return MessageBuilder.withPayload(updatedBookingReprocessRequest)
                 .setHeader(KafkaHeaders.TOPIC, topicName)
                 .build();
     }
