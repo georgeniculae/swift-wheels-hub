@@ -69,10 +69,9 @@ public class DebeziumListener implements RetryListener {
 
     private void handleChangeEvent(RecordChangeEvent<SourceRecord> sourceRecordRecordChangeEvent) {
         SourceRecord sourceRecord = sourceRecordRecordChangeEvent.record();
+        Struct sourceRecordChangeValue = (Struct) sourceRecord.value();
 
         log.info("Key = '{}', value = '{}'", sourceRecord.key(), sourceRecord.value());
-
-        Struct sourceRecordChangeValue = (Struct) sourceRecord.value();
 
         if (ObjectUtils.isNotEmpty(sourceRecordChangeValue)) {
             Operation operation = Operation.forCode((String) sourceRecordChangeValue.get(Envelope.FieldName.OPERATION));
