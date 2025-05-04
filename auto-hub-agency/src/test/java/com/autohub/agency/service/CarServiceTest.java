@@ -45,7 +45,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -99,7 +98,7 @@ class CarServiceTest {
         CarResponse actualCarResponse = carService.findCarById(1L);
 
         assertNotNull(actualCarResponse);
-        verify(carMapper, times(1)).mapEntityToDto(any(Car.class));
+        verify(carMapper).mapEntityToDto(any(Car.class));
     }
 
     @Test
@@ -121,7 +120,7 @@ class CarServiceTest {
         List<CarResponse> carResponses = carService.findCarsByMake("Test");
 
         assertNotNull(carResponses);
-        verify(carMapper, times(1)).mapEntityToDto(any(Car.class));
+        verify(carMapper).mapEntityToDto(any(Car.class));
     }
 
     @Test

@@ -42,7 +42,6 @@ class ExcelParserServiceTest {
         when(branchService.findEntityById(anyLong())).thenReturn(branch);
 
         List<Car> cars = excelParserService.extractDataFromExcel(file);
-
         assertFalse(cars.isEmpty());
     }
 

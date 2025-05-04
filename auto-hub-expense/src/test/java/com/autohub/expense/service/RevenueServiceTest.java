@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,7 +55,7 @@ class RevenueServiceTest {
         List<RevenueResponse> revenueResponses = revenueService.findRevenuesByDate(LocalDate.parse("2099-02-20"));
         AssertionUtil.assertRevenueResponse(revenue, revenueResponses.getFirst());
 
-        verify(revenueMapper, times(1)).mapEntityToDto(any(Revenue.class));
+        verify(revenueMapper).mapEntityToDto(any(Revenue.class));
     }
 
 }
