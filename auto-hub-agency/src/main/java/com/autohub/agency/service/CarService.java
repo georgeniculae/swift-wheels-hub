@@ -2,12 +2,12 @@ package com.autohub.agency.service;
 
 import com.autohub.agency.mapper.CarMapper;
 import com.autohub.agency.repository.CarRepository;
-import com.autohub.dto.AvailableCarInfo;
-import com.autohub.dto.CarRequest;
-import com.autohub.dto.CarResponse;
-import com.autohub.dto.CarStatusUpdate;
-import com.autohub.dto.CarUpdateDetails;
-import com.autohub.dto.UpdateCarsRequest;
+import com.autohub.dto.common.AvailableCarInfo;
+import com.autohub.dto.agency.CarRequest;
+import com.autohub.dto.agency.CarResponse;
+import com.autohub.dto.common.CarStatusUpdate;
+import com.autohub.dto.common.CarUpdateDetails;
+import com.autohub.dto.common.UpdateCarsRequest;
 import com.autohub.entity.agency.BodyType;
 import com.autohub.entity.agency.Branch;
 import com.autohub.entity.agency.Car;

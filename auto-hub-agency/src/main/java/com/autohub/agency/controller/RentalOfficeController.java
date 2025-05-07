@@ -1,8 +1,8 @@
 package com.autohub.agency.controller;
 
 import com.autohub.agency.service.RentalOfficeService;
-import com.autohub.dto.RentalOfficeRequest;
-import com.autohub.dto.RentalOfficeResponse;
+import com.autohub.dto.agency.RentalOfficeRequest;
+import com.autohub.dto.agency.RentalOfficeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

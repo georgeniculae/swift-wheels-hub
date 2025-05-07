@@ -1,7 +1,7 @@
 package com.autohub.booking.consumer;
 
 import com.autohub.booking.service.BookingService;
-import com.autohub.dto.BookingClosingDetails;
+import com.autohub.dto.common.BookingClosingDetails;
 import com.autohub.lib.util.KafkaUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

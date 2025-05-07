@@ -1,6 +1,6 @@
 package com.autohub.lib.aspect;
 
-import com.autohub.dto.AuditLogInfoRequest;
+import com.autohub.dto.common.AuditLogInfoRequest;
 import com.autohub.lib.exceptionhandling.ExceptionUtil;
 import com.autohub.lib.service.AuditLogProducerService;
 import com.autohub.lib.util.HttpRequestUtil;

@@ -1,7 +1,7 @@
 package com.autohub.agency.consumer;
 
 import com.autohub.agency.service.CarService;
-import com.autohub.dto.UpdateCarsRequest;
+import com.autohub.dto.common.UpdateCarsRequest;
 import com.autohub.lib.util.KafkaUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

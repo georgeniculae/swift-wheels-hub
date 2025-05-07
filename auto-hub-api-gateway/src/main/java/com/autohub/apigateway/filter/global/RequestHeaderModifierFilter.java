@@ -3,7 +3,7 @@ package com.autohub.apigateway.filter.global;
 import com.autohub.apigateway.exceptionhandling.exception.AutoHubResponseStatusException;
 import com.autohub.apigateway.exceptionhandling.handler.ExceptionUtil;
 import com.autohub.apigateway.security.JwtAuthenticationTokenConverter;
-import com.autohub.dto.AuthenticationInfo;
+import com.autohub.dto.common.AuthenticationInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;

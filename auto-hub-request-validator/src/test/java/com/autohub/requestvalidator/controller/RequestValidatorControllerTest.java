@@ -1,7 +1,7 @@
 package com.autohub.requestvalidator.controller;
 
-import com.autohub.dto.IncomingRequestDetails;
-import com.autohub.dto.RequestValidationReport;
+import com.autohub.dto.common.IncomingRequestDetails;
+import com.autohub.dto.common.RequestValidationReport;
 import com.autohub.requestvalidator.service.RedisService;
 import com.autohub.requestvalidator.service.SwaggerRequestValidatorService;
 import com.autohub.requestvalidator.util.TestUtil;

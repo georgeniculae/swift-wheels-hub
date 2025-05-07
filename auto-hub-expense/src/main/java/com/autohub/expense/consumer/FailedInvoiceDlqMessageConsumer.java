@@ -1,6 +1,6 @@
 package com.autohub.expense.consumer;
 
-import com.autohub.dto.InvoiceReprocessRequest;
+import com.autohub.dto.expense.InvoiceReprocessRequest;
 import com.autohub.expense.service.InvoiceReprocessingService;
 import com.autohub.lib.util.KafkaUtil;
 import lombok.RequiredArgsConstructor;

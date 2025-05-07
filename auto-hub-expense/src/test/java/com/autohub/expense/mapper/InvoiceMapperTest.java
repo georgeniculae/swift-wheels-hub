@@ -1,6 +1,6 @@
 package com.autohub.expense.mapper;
 
-import com.autohub.dto.InvoiceResponse;
+import com.autohub.dto.common.InvoiceResponse;
 import com.autohub.entity.invoice.Invoice;
 import com.autohub.expense.util.AssertionUtil;
 import com.autohub.expense.util.TestUtil;

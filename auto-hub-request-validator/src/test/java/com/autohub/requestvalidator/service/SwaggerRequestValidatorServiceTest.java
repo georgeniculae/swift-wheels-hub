@@ -1,7 +1,7 @@
 package com.autohub.requestvalidator.service;
 
-import com.autohub.dto.IncomingRequestDetails;
-import com.autohub.dto.RequestValidationReport;
+import com.autohub.dto.common.IncomingRequestDetails;
+import com.autohub.dto.common.RequestValidationReport;
 import com.autohub.requestvalidator.model.SwaggerFile;
 import com.autohub.requestvalidator.repository.SwaggerRepository;
 import com.autohub.requestvalidator.util.TestUtil;

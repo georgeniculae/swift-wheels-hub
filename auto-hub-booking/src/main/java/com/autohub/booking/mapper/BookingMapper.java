@@ -1,11 +1,11 @@
 package com.autohub.booking.mapper;
 
-import com.autohub.dto.AuthenticationInfo;
-import com.autohub.dto.AvailableCarInfo;
-import com.autohub.dto.BookingRequest;
-import com.autohub.dto.BookingResponse;
-import com.autohub.dto.CreatedBookingReprocessRequest;
-import com.autohub.dto.UpdatedBookingReprocessRequest;
+import com.autohub.dto.common.AuthenticationInfo;
+import com.autohub.dto.common.AvailableCarInfo;
+import com.autohub.dto.booking.BookingRequest;
+import com.autohub.dto.common.BookingResponse;
+import com.autohub.dto.booking.CreatedBookingReprocessRequest;
+import com.autohub.dto.booking.UpdatedBookingReprocessRequest;
 import com.autohub.entity.booking.Booking;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;

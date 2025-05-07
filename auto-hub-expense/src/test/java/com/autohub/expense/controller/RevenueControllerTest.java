@@ -1,6 +1,6 @@
 package com.autohub.expense.controller;
 
-import com.autohub.dto.RevenueResponse;
+import com.autohub.dto.expense.RevenueResponse;
 import com.autohub.expense.service.RevenueService;
 import com.autohub.expense.util.TestUtil;
 import org.junit.jupiter.api.Test;

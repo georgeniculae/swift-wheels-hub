@@ -2,8 +2,8 @@ package com.autohub.agency.controller;
 
 import com.autohub.agency.service.BranchService;
 import com.autohub.agency.util.TestUtil;
-import com.autohub.dto.BranchRequest;
-import com.autohub.dto.BranchResponse;
+import com.autohub.dto.agency.BranchRequest;
+import com.autohub.dto.agency.BranchResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

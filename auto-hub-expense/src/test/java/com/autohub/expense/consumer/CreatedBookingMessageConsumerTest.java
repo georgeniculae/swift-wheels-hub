@@ -1,6 +1,6 @@
 package com.autohub.expense.consumer;
 
-import com.autohub.dto.BookingResponse;
+import com.autohub.dto.common.BookingResponse;
 import com.autohub.exception.AutoHubException;
 import com.autohub.expense.service.InvoiceService;
 import com.autohub.expense.util.TestUtil;

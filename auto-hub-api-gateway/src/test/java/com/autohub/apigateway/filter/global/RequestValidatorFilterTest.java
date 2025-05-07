@@ -1,6 +1,6 @@
 package com.autohub.apigateway.filter.global;
 
-import com.autohub.dto.RequestValidationReport;
+import com.autohub.dto.common.RequestValidationReport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -1,7 +1,7 @@
 package com.autohub.booking.consumer;
 
 import com.autohub.booking.service.UpdatedBookingReprocessService;
-import com.autohub.dto.UpdatedBookingReprocessRequest;
+import com.autohub.dto.booking.UpdatedBookingReprocessRequest;
 import com.autohub.lib.util.KafkaUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

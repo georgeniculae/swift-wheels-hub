@@ -2,8 +2,8 @@ package com.autohub.booking.controller;
 
 import com.autohub.booking.service.BookingService;
 import com.autohub.booking.util.TestUtil;
-import com.autohub.dto.BookingRequest;
-import com.autohub.dto.BookingResponse;
+import com.autohub.dto.booking.BookingRequest;
+import com.autohub.dto.common.BookingResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

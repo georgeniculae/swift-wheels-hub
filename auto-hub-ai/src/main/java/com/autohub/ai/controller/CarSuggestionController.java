@@ -1,8 +1,8 @@
 package com.autohub.ai.controller;
 
 import com.autohub.ai.service.CarSuggestionService;
-import com.autohub.dto.CarSuggestionResponse;
-import com.autohub.dto.TripInfo;
+import com.autohub.dto.ai.CarSuggestionResponse;
+import com.autohub.dto.ai.TripInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

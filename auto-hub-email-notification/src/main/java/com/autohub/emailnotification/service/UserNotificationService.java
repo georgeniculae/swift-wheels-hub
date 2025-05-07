@@ -2,7 +2,7 @@ package com.autohub.emailnotification.service;
 
 import com.sendgrid.Response;
 import com.sendgrid.helpers.mail.Mail;
-import com.autohub.dto.InvoiceResponse;
+import com.autohub.dto.common.InvoiceResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

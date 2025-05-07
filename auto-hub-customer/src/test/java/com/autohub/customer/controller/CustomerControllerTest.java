@@ -2,10 +2,10 @@ package com.autohub.customer.controller;
 
 import com.autohub.customer.service.CustomerService;
 import com.autohub.customer.util.TestUtil;
-import com.autohub.dto.RegisterRequest;
-import com.autohub.dto.RegistrationResponse;
-import com.autohub.dto.UserInfo;
-import com.autohub.dto.UserUpdateRequest;
+import com.autohub.dto.customer.RegisterRequest;
+import com.autohub.dto.customer.RegistrationResponse;
+import com.autohub.dto.customer.UserInfo;
+import com.autohub.dto.customer.UserUpdateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

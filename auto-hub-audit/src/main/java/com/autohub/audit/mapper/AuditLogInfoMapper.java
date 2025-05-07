@@ -1,6 +1,6 @@
 package com.autohub.audit.mapper;
 
-import com.autohub.dto.AuditLogInfoRequest;
+import com.autohub.dto.common.AuditLogInfoRequest;
 import com.autohub.entity.audit.BookingAuditLogInfo;
 import com.autohub.entity.audit.CustomerAuditLogInfo;
 import com.autohub.entity.audit.ExpenseAuditLogInfo;

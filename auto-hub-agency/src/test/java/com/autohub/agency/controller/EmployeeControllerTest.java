@@ -2,8 +2,8 @@ package com.autohub.agency.controller;
 
 import com.autohub.agency.service.EmployeeService;
 import com.autohub.agency.util.TestUtil;
-import com.autohub.dto.EmployeeRequest;
-import com.autohub.dto.EmployeeResponse;
+import com.autohub.dto.agency.EmployeeRequest;
+import com.autohub.dto.agency.EmployeeResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

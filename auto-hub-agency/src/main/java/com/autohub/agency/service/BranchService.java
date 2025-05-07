@@ -2,8 +2,8 @@ package com.autohub.agency.service;
 
 import com.autohub.agency.mapper.BranchMapper;
 import com.autohub.agency.repository.BranchRepository;
-import com.autohub.dto.BranchRequest;
-import com.autohub.dto.BranchResponse;
+import com.autohub.dto.agency.BranchRequest;
+import com.autohub.dto.agency.BranchResponse;
 import com.autohub.entity.agency.Branch;
 import com.autohub.entity.agency.RentalOffice;
 import com.autohub.exception.AutoHubNotFoundException;

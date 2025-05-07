@@ -1,6 +1,6 @@
 package com.autohub.expense.controller;
 
-import com.autohub.dto.RevenueResponse;
+import com.autohub.dto.expense.RevenueResponse;
 import com.autohub.expense.service.RevenueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

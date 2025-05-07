@@ -1,7 +1,7 @@
 package com.autohub.booking.service;
 
-import com.autohub.dto.AuthenticationInfo;
-import com.autohub.dto.AvailableCarInfo;
+import com.autohub.dto.common.AuthenticationInfo;
+import com.autohub.dto.common.AvailableCarInfo;
 import com.autohub.exception.AutoHubNotFoundException;
 import com.autohub.exception.AutoHubResponseStatusException;
 import com.autohub.lib.util.HttpRequestUtil;

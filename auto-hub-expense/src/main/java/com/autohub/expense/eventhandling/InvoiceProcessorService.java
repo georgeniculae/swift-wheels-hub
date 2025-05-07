@@ -1,9 +1,9 @@
 package com.autohub.expense.eventhandling;
 
-import com.autohub.dto.BookingClosingDetails;
-import com.autohub.dto.CarState;
-import com.autohub.dto.CarUpdateDetails;
-import com.autohub.dto.InvoiceReprocessRequest;
+import com.autohub.dto.common.BookingClosingDetails;
+import com.autohub.dto.common.CarState;
+import com.autohub.dto.common.CarUpdateDetails;
+import com.autohub.dto.expense.InvoiceReprocessRequest;
 import com.autohub.entity.invoice.Invoice;
 import com.autohub.expense.mapper.InvoiceMapper;
 import com.autohub.expense.producer.BookingUpdateProducerService;

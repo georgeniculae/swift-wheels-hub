@@ -2,8 +2,8 @@ package com.autohub.apigateway.filter.global;
 
 import com.autohub.apigateway.exceptionhandling.exception.AutoHubResponseStatusException;
 import com.autohub.apigateway.exceptionhandling.handler.ExceptionUtil;
-import com.autohub.dto.IncomingRequestDetails;
-import com.autohub.dto.RequestValidationReport;
+import com.autohub.dto.common.IncomingRequestDetails;
+import com.autohub.dto.common.RequestValidationReport;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;

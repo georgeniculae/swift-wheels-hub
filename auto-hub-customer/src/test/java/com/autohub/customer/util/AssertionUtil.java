@@ -1,9 +1,9 @@
 package com.autohub.customer.util;
 
-import com.autohub.dto.RegisterRequest;
-import com.autohub.dto.RegistrationResponse;
-import com.autohub.dto.UserInfo;
-import com.autohub.dto.UserUpdateRequest;
+import com.autohub.dto.customer.RegisterRequest;
+import com.autohub.dto.customer.RegistrationResponse;
+import com.autohub.dto.customer.UserInfo;
+import com.autohub.dto.customer.UserUpdateRequest;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

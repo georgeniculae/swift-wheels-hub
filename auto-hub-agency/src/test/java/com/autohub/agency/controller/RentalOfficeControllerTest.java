@@ -2,8 +2,8 @@ package com.autohub.agency.controller;
 
 import com.autohub.agency.service.RentalOfficeService;
 import com.autohub.agency.util.TestUtil;
-import com.autohub.dto.RentalOfficeRequest;
-import com.autohub.dto.RentalOfficeResponse;
+import com.autohub.dto.agency.RentalOfficeRequest;
+import com.autohub.dto.agency.RentalOfficeResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

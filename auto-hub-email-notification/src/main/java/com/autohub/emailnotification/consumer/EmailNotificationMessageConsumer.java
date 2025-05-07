@@ -1,6 +1,6 @@
 package com.autohub.emailnotification.consumer;
 
-import com.autohub.dto.InvoiceResponse;
+import com.autohub.dto.common.InvoiceResponse;
 import com.autohub.emailnotification.service.UserNotificationService;
 import com.autohub.lib.util.KafkaUtil;
 import lombok.RequiredArgsConstructor;

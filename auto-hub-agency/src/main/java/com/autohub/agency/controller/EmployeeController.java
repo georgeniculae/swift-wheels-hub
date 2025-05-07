@@ -1,8 +1,8 @@
 package com.autohub.agency.controller;
 
 import com.autohub.agency.service.EmployeeService;
-import com.autohub.dto.EmployeeRequest;
-import com.autohub.dto.EmployeeResponse;
+import com.autohub.dto.agency.EmployeeRequest;
+import com.autohub.dto.agency.EmployeeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

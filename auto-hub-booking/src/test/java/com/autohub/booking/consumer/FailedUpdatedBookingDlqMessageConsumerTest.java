@@ -2,7 +2,7 @@ package com.autohub.booking.consumer;
 
 import com.autohub.booking.service.UpdatedBookingReprocessService;
 import com.autohub.booking.util.TestUtil;
-import com.autohub.dto.UpdatedBookingReprocessRequest;
+import com.autohub.dto.booking.UpdatedBookingReprocessRequest;
 import com.autohub.exception.AutoHubException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

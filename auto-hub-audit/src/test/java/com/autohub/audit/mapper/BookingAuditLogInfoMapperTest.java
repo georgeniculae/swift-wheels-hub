@@ -2,7 +2,7 @@ package com.autohub.audit.mapper;
 
 import com.autohub.audit.util.AssertionUtil;
 import com.autohub.audit.util.TestUtil;
-import com.autohub.dto.AuditLogInfoRequest;
+import com.autohub.dto.common.AuditLogInfoRequest;
 import com.autohub.entity.audit.BookingAuditLogInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

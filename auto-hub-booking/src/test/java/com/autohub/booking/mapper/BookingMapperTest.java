@@ -2,10 +2,10 @@ package com.autohub.booking.mapper;
 
 import com.autohub.booking.util.AssertionUtil;
 import com.autohub.booking.util.TestUtil;
-import com.autohub.dto.AuthenticationInfo;
-import com.autohub.dto.AvailableCarInfo;
-import com.autohub.dto.BookingRequest;
-import com.autohub.dto.BookingResponse;
+import com.autohub.dto.common.AuthenticationInfo;
+import com.autohub.dto.common.AvailableCarInfo;
+import com.autohub.dto.booking.BookingRequest;
+import com.autohub.dto.common.BookingResponse;
 import com.autohub.entity.booking.Booking;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

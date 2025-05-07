@@ -1,8 +1,8 @@
 package com.autohub.booking.controller;
 
 import com.autohub.booking.service.BookingService;
-import com.autohub.dto.BookingRequest;
-import com.autohub.dto.BookingResponse;
+import com.autohub.dto.booking.BookingRequest;
+import com.autohub.dto.common.BookingResponse;
 import com.autohub.lib.aspect.LogActivity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

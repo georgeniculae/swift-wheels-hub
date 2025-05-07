@@ -2,8 +2,8 @@ package com.autohub.agency.mapper;
 
 import com.autohub.agency.util.AssertionUtil;
 import com.autohub.agency.util.TestUtil;
-import com.autohub.dto.BranchRequest;
-import com.autohub.dto.BranchResponse;
+import com.autohub.dto.agency.BranchRequest;
+import com.autohub.dto.agency.BranchResponse;
 import com.autohub.entity.agency.Branch;
 import com.autohub.entity.agency.RentalOffice;
 import org.junit.jupiter.api.Test;

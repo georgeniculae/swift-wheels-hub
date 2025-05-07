@@ -1,6 +1,6 @@
 package com.autohub.lib.util;
 
-import com.autohub.dto.AuthenticationInfo;
+import com.autohub.dto.common.AuthenticationInfo;
 import com.autohub.lib.security.ApiKeyAuthenticationToken;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.ObjectUtils;

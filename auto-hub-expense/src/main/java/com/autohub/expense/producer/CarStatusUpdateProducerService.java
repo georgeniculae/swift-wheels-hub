@@ -1,6 +1,6 @@
 package com.autohub.expense.producer;
 
-import com.autohub.dto.CarUpdateDetails;
+import com.autohub.dto.common.CarUpdateDetails;
 import com.autohub.exception.AutoHubException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,8 +1,8 @@
 package com.autohub.customer.mapper;
 
-import com.autohub.dto.RegistrationResponse;
-import com.autohub.dto.UserInfo;
-import com.autohub.dto.UserUpdateRequest;
+import com.autohub.dto.customer.RegistrationResponse;
+import com.autohub.dto.customer.UserInfo;
+import com.autohub.dto.customer.UserUpdateRequest;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.representations.idm.UserRepresentation;

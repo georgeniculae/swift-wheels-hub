@@ -1,6 +1,6 @@
 package com.autohub.lib.service;
 
-import com.autohub.dto.AuditLogInfoRequest;
+import com.autohub.dto.common.AuditLogInfoRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;

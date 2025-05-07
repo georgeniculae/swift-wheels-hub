@@ -1,7 +1,7 @@
 package com.autohub.booking.producer.bookingprocessing;
 
 import com.autohub.booking.util.TestUtil;
-import com.autohub.dto.CarStatusUpdate;
+import com.autohub.dto.common.CarStatusUpdate;
 import com.autohub.exception.AutoHubException;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;

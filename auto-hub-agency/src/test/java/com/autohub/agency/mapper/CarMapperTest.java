@@ -2,9 +2,9 @@ package com.autohub.agency.mapper;
 
 import com.autohub.agency.util.AssertionUtil;
 import com.autohub.agency.util.TestUtil;
-import com.autohub.dto.AvailableCarInfo;
-import com.autohub.dto.CarRequest;
-import com.autohub.dto.CarResponse;
+import com.autohub.dto.common.AvailableCarInfo;
+import com.autohub.dto.agency.CarRequest;
+import com.autohub.dto.agency.CarResponse;
 import com.autohub.entity.agency.Branch;
 import com.autohub.entity.agency.Car;
 import org.junit.jupiter.api.Test;

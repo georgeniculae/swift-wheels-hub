@@ -1,7 +1,7 @@
 package com.autohub.booking.producer.dlq;
 
 import com.autohub.booking.util.TestUtil;
-import com.autohub.dto.UpdatedBookingReprocessRequest;
+import com.autohub.dto.booking.UpdatedBookingReprocessRequest;
 import com.autohub.exception.AutoHubException;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;

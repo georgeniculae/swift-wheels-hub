@@ -2,8 +2,8 @@ package com.autohub.ai.controller;
 
 import com.autohub.ai.service.CarSuggestionService;
 import com.autohub.ai.util.TestUtil;
-import com.autohub.dto.CarSuggestionResponse;
-import com.autohub.dto.TripInfo;
+import com.autohub.dto.ai.CarSuggestionResponse;
+import com.autohub.dto.ai.TripInfo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

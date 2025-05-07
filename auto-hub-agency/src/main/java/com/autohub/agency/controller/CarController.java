@@ -1,9 +1,9 @@
 package com.autohub.agency.controller;
 
 import com.autohub.agency.service.CarService;
-import com.autohub.dto.AvailableCarInfo;
-import com.autohub.dto.CarRequest;
-import com.autohub.dto.CarResponse;
+import com.autohub.dto.common.AvailableCarInfo;
+import com.autohub.dto.agency.CarRequest;
+import com.autohub.dto.agency.CarResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

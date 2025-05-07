@@ -1,6 +1,6 @@
 package com.autohub.audit.util;
 
-import com.autohub.dto.AuditLogInfoRequest;
+import com.autohub.dto.common.AuditLogInfoRequest;
 import com.autohub.entity.audit.BookingAuditLogInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

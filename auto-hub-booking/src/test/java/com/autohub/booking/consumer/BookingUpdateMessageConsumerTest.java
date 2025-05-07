@@ -2,7 +2,7 @@ package com.autohub.booking.consumer;
 
 import com.autohub.booking.service.BookingService;
 import com.autohub.booking.util.TestUtil;
-import com.autohub.dto.BookingClosingDetails;
+import com.autohub.dto.common.BookingClosingDetails;
 import com.autohub.exception.AutoHubException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

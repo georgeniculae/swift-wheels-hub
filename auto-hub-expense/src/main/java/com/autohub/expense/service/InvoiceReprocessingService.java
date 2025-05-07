@@ -1,9 +1,9 @@
 package com.autohub.expense.service;
 
-import com.autohub.dto.BookingClosingDetails;
-import com.autohub.dto.CarState;
-import com.autohub.dto.CarUpdateDetails;
-import com.autohub.dto.InvoiceReprocessRequest;
+import com.autohub.dto.common.BookingClosingDetails;
+import com.autohub.dto.common.CarState;
+import com.autohub.dto.common.CarUpdateDetails;
+import com.autohub.dto.expense.InvoiceReprocessRequest;
 import com.autohub.expense.producer.BookingUpdateProducerService;
 import com.autohub.expense.producer.CarStatusUpdateProducerService;
 import lombok.RequiredArgsConstructor;

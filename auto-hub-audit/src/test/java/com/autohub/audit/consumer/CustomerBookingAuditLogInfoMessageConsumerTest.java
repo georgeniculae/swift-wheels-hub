@@ -2,7 +2,7 @@ package com.autohub.audit.consumer;
 
 import com.autohub.audit.service.AuditLogInfoService;
 import com.autohub.audit.util.TestUtil;
-import com.autohub.dto.AuditLogInfoRequest;
+import com.autohub.dto.common.AuditLogInfoRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

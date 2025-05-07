@@ -1,7 +1,7 @@
 package com.autohub.audit.consumer;
 
 import com.autohub.audit.service.AuditLogInfoService;
-import com.autohub.dto.AuditLogInfoRequest;
+import com.autohub.dto.common.AuditLogInfoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

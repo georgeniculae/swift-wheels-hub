@@ -1,6 +1,6 @@
 package com.autohub.booking.producer.dlq;
 
-import com.autohub.dto.CreatedBookingReprocessRequest;
+import com.autohub.dto.booking.CreatedBookingReprocessRequest;
 import com.autohub.exception.AutoHubException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,8 +1,8 @@
 package com.autohub.agency.controller;
 
 import com.autohub.agency.service.BranchService;
-import com.autohub.dto.BranchRequest;
-import com.autohub.dto.BranchResponse;
+import com.autohub.dto.agency.BranchRequest;
+import com.autohub.dto.agency.BranchResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
