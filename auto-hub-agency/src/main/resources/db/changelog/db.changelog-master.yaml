@@ -1,9 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: db/changelog/rental-office-changelog.sql
-  - include:
-      file: db/changelog/branch-changelog.sql
-  - include:
-      file: db/changelog/employee-changelog.sql
-  - include:
-      file: db/changelog/car-changelog.sql

@@ -1,7 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: db/changelog/booking-audit-log-info-changelog.sql
-  - include:
-      file: db/changelog/customer-audit-log-info-changelog.sql
-  - include:
-      file: db/changelog/expense-audit-log-info-changelog.sql
