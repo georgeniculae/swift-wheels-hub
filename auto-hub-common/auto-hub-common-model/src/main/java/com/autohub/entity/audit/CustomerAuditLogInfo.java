@@ -1,5 +1,6 @@
-package com.autohub.entity;
+package com.autohub.entity.audit;
 
+import com.autohub.entity.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,12 +15,12 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "expense_audit_log_info", schema = "public")
+@Table(name = "customer_audit_log_info", schema = "public")
 @NoArgsConstructor
 @Builder
 @Getter
 @Setter
-public class ExpenseAuditLogInfo extends BaseEntity {
+public class CustomerAuditLogInfo extends BaseEntity {
 
     @NotEmpty(message = "Method name cannot be empty")
     private String methodName;
@@ -31,7 +32,7 @@ public class ExpenseAuditLogInfo extends BaseEntity {
     @Builder.Default
     private List<String> parametersValues = new ArrayList<>();
 
-    public ExpenseAuditLogInfo(String methodName, String username, LocalDateTime timestamp, List<String> parametersValues) {
+    public CustomerAuditLogInfo(String methodName, String username, LocalDateTime timestamp, List<String> parametersValues) {
         this.methodName = methodName;
         this.username = username;
         this.timestamp = timestamp;

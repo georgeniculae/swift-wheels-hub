@@ -6,7 +6,7 @@ import com.autohub.dto.AuthenticationInfo;
 import com.autohub.dto.AvailableCarInfo;
 import com.autohub.dto.BookingRequest;
 import com.autohub.dto.BookingResponse;
-import com.autohub.entity.Booking;
+import com.autohub.entity.booking.Booking;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

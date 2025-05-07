@@ -2,7 +2,7 @@ package com.autohub.agency.mapper;
 
 import com.autohub.dto.RentalOfficeRequest;
 import com.autohub.dto.RentalOfficeResponse;
-import com.autohub.entity.RentalOffice;
+import com.autohub.entity.agency.RentalOffice;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;

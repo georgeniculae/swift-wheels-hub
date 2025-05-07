@@ -1,4 +1,4 @@
-package com.autohub.entity;
+package com.autohub.entity.booking;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

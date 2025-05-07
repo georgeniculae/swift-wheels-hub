@@ -2,8 +2,8 @@ package com.autohub.expense.util;
 
 import com.autohub.dto.InvoiceResponse;
 import com.autohub.dto.RevenueResponse;
-import com.autohub.entity.Invoice;
-import com.autohub.entity.Revenue;
+import com.autohub.entity.invoice.Invoice;
+import com.autohub.entity.invoice.Revenue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

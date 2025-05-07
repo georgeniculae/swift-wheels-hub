@@ -9,10 +9,10 @@ import com.autohub.dto.EmployeeRequest;
 import com.autohub.dto.EmployeeResponse;
 import com.autohub.dto.RentalOfficeRequest;
 import com.autohub.dto.RentalOfficeResponse;
-import com.autohub.entity.Branch;
-import com.autohub.entity.Car;
-import com.autohub.entity.Employee;
-import com.autohub.entity.RentalOffice;
+import com.autohub.entity.agency.Branch;
+import com.autohub.entity.agency.Car;
+import com.autohub.entity.agency.Employee;
+import com.autohub.entity.agency.RentalOffice;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

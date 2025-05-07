@@ -1,7 +1,7 @@
 package com.autohub.expense.mapper;
 
 import com.autohub.dto.RevenueResponse;
-import com.autohub.entity.Revenue;
+import com.autohub.entity.invoice.Revenue;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;

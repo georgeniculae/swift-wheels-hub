@@ -1,5 +1,6 @@
-package com.autohub.entity;
+package com.autohub.entity.invoice;
 
+import com.autohub.entity.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;

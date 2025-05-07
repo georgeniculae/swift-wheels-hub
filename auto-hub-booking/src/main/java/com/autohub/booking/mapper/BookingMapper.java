@@ -6,7 +6,7 @@ import com.autohub.dto.BookingRequest;
 import com.autohub.dto.BookingResponse;
 import com.autohub.dto.CreatedBookingReprocessRequest;
 import com.autohub.dto.UpdatedBookingReprocessRequest;
-import com.autohub.entity.Booking;
+import com.autohub.entity.booking.Booking;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

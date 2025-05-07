@@ -1,6 +1,6 @@
 package com.autohub.agency.repository;
 
-import com.autohub.entity.Branch;
+import com.autohub.entity.agency.Branch;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;

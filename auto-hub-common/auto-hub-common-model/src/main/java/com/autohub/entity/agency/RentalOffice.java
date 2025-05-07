@@ -1,5 +1,6 @@
-package com.autohub.entity;
+package com.autohub.entity.agency;
 
+import com.autohub.entity.common.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

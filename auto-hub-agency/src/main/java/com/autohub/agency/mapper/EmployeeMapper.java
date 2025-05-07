@@ -2,8 +2,8 @@ package com.autohub.agency.mapper;
 
 import com.autohub.dto.EmployeeRequest;
 import com.autohub.dto.EmployeeResponse;
-import com.autohub.entity.Branch;
-import com.autohub.entity.Employee;
+import com.autohub.entity.agency.Branch;
+import com.autohub.entity.agency.Employee;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

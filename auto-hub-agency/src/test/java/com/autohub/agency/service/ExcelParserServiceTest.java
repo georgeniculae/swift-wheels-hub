@@ -1,8 +1,8 @@
 package com.autohub.agency.service;
 
 import com.autohub.agency.util.TestUtil;
-import com.autohub.entity.Branch;
-import com.autohub.entity.Car;
+import com.autohub.entity.agency.Branch;
+import com.autohub.entity.agency.Car;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

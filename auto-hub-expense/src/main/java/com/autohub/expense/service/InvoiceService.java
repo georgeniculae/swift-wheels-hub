@@ -3,7 +3,7 @@ package com.autohub.expense.service;
 import com.autohub.dto.BookingResponse;
 import com.autohub.dto.InvoiceRequest;
 import com.autohub.dto.InvoiceResponse;
-import com.autohub.entity.Invoice;
+import com.autohub.entity.invoice.Invoice;
 import com.autohub.exception.AutoHubNotFoundException;
 import com.autohub.exception.AutoHubResponseStatusException;
 import com.autohub.expense.mapper.InvoiceMapper;

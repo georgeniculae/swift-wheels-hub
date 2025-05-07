@@ -1,4 +1,4 @@
-package com.autohub.entity;
+package com.autohub.entity.common;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;

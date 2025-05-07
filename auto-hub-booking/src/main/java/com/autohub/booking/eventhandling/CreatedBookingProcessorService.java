@@ -8,7 +8,7 @@ import com.autohub.dto.BookingResponse;
 import com.autohub.dto.CarState;
 import com.autohub.dto.CarStatusUpdate;
 import com.autohub.dto.CreatedBookingReprocessRequest;
-import com.autohub.entity.Booking;
+import com.autohub.entity.booking.Booking;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;

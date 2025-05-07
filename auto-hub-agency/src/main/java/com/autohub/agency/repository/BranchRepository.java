@@ -1,6 +1,6 @@
 package com.autohub.agency.repository;
 
-import com.autohub.entity.Branch;
+import com.autohub.entity.agency.Branch;
 import jakarta.persistence.QueryHint;
 import org.hibernate.jpa.HibernateHints;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,9 +1,9 @@
 package com.autohub.audit.mapper;
 
 import com.autohub.dto.AuditLogInfoRequest;
-import com.autohub.entity.BookingAuditLogInfo;
-import com.autohub.entity.CustomerAuditLogInfo;
-import com.autohub.entity.ExpenseAuditLogInfo;
+import com.autohub.entity.audit.BookingAuditLogInfo;
+import com.autohub.entity.audit.CustomerAuditLogInfo;
+import com.autohub.entity.audit.ExpenseAuditLogInfo;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;

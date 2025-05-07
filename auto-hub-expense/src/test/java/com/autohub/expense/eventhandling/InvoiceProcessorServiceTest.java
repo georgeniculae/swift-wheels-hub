@@ -4,7 +4,7 @@ import com.autohub.dto.BookingClosingDetails;
 import com.autohub.dto.CarUpdateDetails;
 import com.autohub.dto.InvoiceReprocessRequest;
 import com.autohub.dto.InvoiceResponse;
-import com.autohub.entity.Invoice;
+import com.autohub.entity.invoice.Invoice;
 import com.autohub.expense.mapper.InvoiceMapper;
 import com.autohub.expense.mapper.InvoiceMapperImpl;
 import com.autohub.expense.producer.BookingUpdateProducerService;

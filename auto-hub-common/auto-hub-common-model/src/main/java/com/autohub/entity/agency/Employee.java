@@ -1,5 +1,6 @@
-package com.autohub.entity;
+package com.autohub.entity.agency;
 
+import com.autohub.entity.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
