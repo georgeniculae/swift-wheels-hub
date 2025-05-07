@@ -2,10 +2,10 @@ package com.autohub.booking.service;
 
 import com.autohub.booking.mapper.BookingMapper;
 import com.autohub.booking.repository.BookingRepository;
+import com.autohub.dto.booking.BookingRequest;
 import com.autohub.dto.common.AuthenticationInfo;
 import com.autohub.dto.common.AvailableCarInfo;
 import com.autohub.dto.common.BookingClosingDetails;
-import com.autohub.dto.booking.BookingRequest;
 import com.autohub.dto.common.BookingResponse;
 import com.autohub.entity.booking.Booking;
 import com.autohub.entity.booking.BookingStatus;

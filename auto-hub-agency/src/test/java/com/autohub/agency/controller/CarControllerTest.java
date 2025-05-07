@@ -2,9 +2,9 @@ package com.autohub.agency.controller;
 
 import com.autohub.agency.service.CarService;
 import com.autohub.agency.util.TestUtil;
-import com.autohub.dto.common.AvailableCarInfo;
 import com.autohub.dto.agency.CarRequest;
 import com.autohub.dto.agency.CarResponse;
+import com.autohub.dto.common.AvailableCarInfo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

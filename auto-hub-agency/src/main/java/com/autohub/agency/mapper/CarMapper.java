@@ -1,9 +1,9 @@
 package com.autohub.agency.mapper;
 
-import com.autohub.dto.common.AvailableCarInfo;
 import com.autohub.dto.agency.BodyCategory;
 import com.autohub.dto.agency.CarRequest;
 import com.autohub.dto.agency.CarResponse;
+import com.autohub.dto.common.AvailableCarInfo;
 import com.autohub.dto.common.CarState;
 import com.autohub.entity.agency.BodyType;
 import com.autohub.entity.agency.Branch;

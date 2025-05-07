@@ -1,7 +1,7 @@
 package com.autohub.ai.service;
 
-import com.autohub.dto.common.AuthenticationInfo;
 import com.autohub.dto.agency.CarResponse;
+import com.autohub.dto.common.AuthenticationInfo;
 import com.autohub.exception.AutoHubException;
 import com.autohub.exception.AutoHubResponseStatusException;
 import com.autohub.lib.util.HttpRequestUtil;

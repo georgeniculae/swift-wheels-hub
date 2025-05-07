@@ -1,9 +1,9 @@
 package com.autohub.ai.service;
 
-import com.autohub.dto.common.AuthenticationInfo;
 import com.autohub.dto.agency.CarResponse;
 import com.autohub.dto.ai.CarSuggestionResponse;
 import com.autohub.dto.ai.TripInfo;
+import com.autohub.dto.common.AuthenticationInfo;
 import com.autohub.lib.util.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.retry.RetryListener;

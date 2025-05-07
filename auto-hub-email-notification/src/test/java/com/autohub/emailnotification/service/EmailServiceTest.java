@@ -1,13 +1,13 @@
 package com.autohub.emailnotification.service;
 
+import com.autohub.dto.common.InvoiceResponse;
+import com.autohub.emailnotification.util.TestUtil;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
 import com.sendgrid.SendGrid;
 import com.sendgrid.helpers.mail.Mail;
-import com.autohub.dto.common.InvoiceResponse;
-import com.autohub.emailnotification.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

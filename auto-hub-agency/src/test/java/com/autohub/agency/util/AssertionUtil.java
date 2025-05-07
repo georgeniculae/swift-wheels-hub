@@ -1,6 +1,5 @@
 package com.autohub.agency.util;
 
-import com.autohub.dto.common.AvailableCarInfo;
 import com.autohub.dto.agency.BranchRequest;
 import com.autohub.dto.agency.BranchResponse;
 import com.autohub.dto.agency.CarRequest;
@@ -9,6 +8,7 @@ import com.autohub.dto.agency.EmployeeRequest;
 import com.autohub.dto.agency.EmployeeResponse;
 import com.autohub.dto.agency.RentalOfficeRequest;
 import com.autohub.dto.agency.RentalOfficeResponse;
+import com.autohub.dto.common.AvailableCarInfo;
 import com.autohub.entity.agency.Branch;
 import com.autohub.entity.agency.Car;
 import com.autohub.entity.agency.Employee;
