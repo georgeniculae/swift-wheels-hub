@@ -5,9 +5,9 @@ import com.autohub.audit.repository.BookingAuditLogInfoRepository;
 import com.autohub.audit.repository.CustomerAuditLogInfoRepository;
 import com.autohub.audit.repository.ExpenseAuditLogInfoRepository;
 import com.autohub.dto.common.AuditLogInfoRequest;
-import com.autohub.entity.audit.BookingAuditLogInfo;
-import com.autohub.entity.audit.CustomerAuditLogInfo;
-import com.autohub.entity.audit.ExpenseAuditLogInfo;
+import com.autohub.audit.entity.BookingAuditLogInfo;
+import com.autohub.audit.entity.CustomerAuditLogInfo;
+import com.autohub.audit.entity.ExpenseAuditLogInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

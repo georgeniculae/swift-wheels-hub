@@ -1,6 +1,5 @@
-package com.autohub.entity.agency;
+package com.autohub.agency.entity;
 
-import com.autohub.entity.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

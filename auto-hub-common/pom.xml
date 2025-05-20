@@ -17,7 +17,6 @@
     <description>Auto Hub Common Parent</description>
 
     <modules>
-        <module>auto-hub-common-model</module>
         <module>auto-hub-common-dto</module>
         <module>auto-hub-common-lib</module>
         <module>auto-hub-common-exception</module>

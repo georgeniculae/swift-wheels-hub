@@ -10,7 +10,7 @@ import com.autohub.dto.common.AuthenticationInfo;
 import com.autohub.dto.common.AvailableCarInfo;
 import com.autohub.dto.common.BookingClosingDetails;
 import com.autohub.dto.common.BookingResponse;
-import com.autohub.entity.booking.Booking;
+import com.autohub.booking.entity.Booking;
 import com.autohub.exception.AutoHubException;
 import com.autohub.exception.AutoHubNotFoundException;
 import com.autohub.lib.security.ApiKeyAuthenticationToken;

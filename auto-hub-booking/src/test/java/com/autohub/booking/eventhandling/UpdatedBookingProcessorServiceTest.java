@@ -9,7 +9,7 @@ import com.autohub.booking.util.TestUtil;
 import com.autohub.dto.booking.UpdatedBookingReprocessRequest;
 import com.autohub.dto.common.BookingResponse;
 import com.autohub.dto.common.UpdateCarsRequest;
-import com.autohub.entity.booking.Booking;
+import com.autohub.booking.entity.Booking;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

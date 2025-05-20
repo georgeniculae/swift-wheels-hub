@@ -7,7 +7,7 @@ import com.autohub.booking.producer.dlq.FailedUpdatedBookingDlqProducerService;
 import com.autohub.dto.booking.UpdatedBookingReprocessRequest;
 import com.autohub.dto.common.BookingResponse;
 import com.autohub.dto.common.UpdateCarsRequest;
-import com.autohub.entity.booking.Booking;
+import com.autohub.booking.entity.Booking;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;

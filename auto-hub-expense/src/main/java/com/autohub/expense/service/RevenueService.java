@@ -1,8 +1,8 @@
 package com.autohub.expense.service;
 
 import com.autohub.dto.expense.RevenueResponse;
-import com.autohub.entity.invoice.Invoice;
-import com.autohub.entity.invoice.Revenue;
+import com.autohub.expense.entity.Invoice;
+import com.autohub.expense.entity.Revenue;
 import com.autohub.expense.mapper.RevenueMapper;
 import com.autohub.expense.repository.RevenueRepository;
 import lombok.RequiredArgsConstructor;

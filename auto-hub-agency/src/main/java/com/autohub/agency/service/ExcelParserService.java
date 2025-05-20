@@ -1,9 +1,9 @@
 package com.autohub.agency.service;
 
-import com.autohub.entity.agency.BodyType;
-import com.autohub.entity.agency.Car;
-import com.autohub.entity.agency.CarFields;
-import com.autohub.entity.agency.CarStatus;
+import com.autohub.agency.entity.BodyType;
+import com.autohub.agency.entity.Car;
+import com.autohub.agency.entity.CarFields;
+import com.autohub.agency.entity.CarStatus;
 import com.autohub.exception.AutoHubException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;

@@ -1,6 +1,6 @@
 package com.autohub.expense.eventhandling;
 
-import com.autohub.entity.invoice.Invoice;
+import com.autohub.expense.entity.Invoice;
 import com.autohub.exception.AutoHubException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.debezium.config.Configuration;

@@ -1,6 +1,6 @@
 package com.autohub.booking.repository;
 
-import com.autohub.entity.booking.Booking;
+import com.autohub.booking.entity.Booking;
 import jakarta.persistence.QueryHint;
 import org.hibernate.jpa.HibernateHints;
 import org.springframework.data.jpa.repository.JpaRepository;

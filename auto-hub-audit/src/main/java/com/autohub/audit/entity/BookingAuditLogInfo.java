@@ -1,6 +1,5 @@
-package com.autohub.entity.audit;
+package com.autohub.audit.entity;
 
-import com.autohub.entity.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;

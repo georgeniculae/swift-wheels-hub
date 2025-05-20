@@ -2,7 +2,7 @@ package com.autohub.expense.mapper;
 
 import com.autohub.dto.common.InvoiceResponse;
 import com.autohub.dto.expense.InvoiceReprocessRequest;
-import com.autohub.entity.invoice.Invoice;
+import com.autohub.expense.entity.Invoice;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

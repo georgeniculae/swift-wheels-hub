@@ -1,6 +1,6 @@
 package com.autohub.booking.eventhandling;
 
-import com.autohub.entity.booking.Booking;
+import com.autohub.booking.entity.Booking;
 import com.autohub.exception.AutoHubException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.debezium.config.Configuration;

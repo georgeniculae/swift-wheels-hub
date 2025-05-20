@@ -1,4 +1,4 @@
-package com.autohub.entity.agency;
+package com.autohub.agency.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

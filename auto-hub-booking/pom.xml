@@ -22,12 +22,6 @@
     <dependencies>
         <dependency>
             <groupId>com.autohub</groupId>
-            <artifactId>auto-hub-common-model</artifactId>
-            <version>${auto-hub-common.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autohub</groupId>
             <artifactId>auto-hub-common-lib</artifactId>
             <version>${auto-hub-common.version}</version>
         </dependency>

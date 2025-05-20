@@ -7,7 +7,7 @@ import com.autohub.agency.util.AssertionUtil;
 import com.autohub.agency.util.TestUtil;
 import com.autohub.dto.agency.RentalOfficeRequest;
 import com.autohub.dto.agency.RentalOfficeResponse;
-import com.autohub.entity.agency.RentalOffice;
+import com.autohub.agency.entity.RentalOffice;
 import com.autohub.exception.AutoHubNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

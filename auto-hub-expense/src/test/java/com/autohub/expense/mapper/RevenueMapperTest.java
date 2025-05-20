@@ -1,7 +1,7 @@
 package com.autohub.expense.mapper;
 
 import com.autohub.dto.expense.RevenueResponse;
-import com.autohub.entity.invoice.Revenue;
+import com.autohub.expense.entity.Revenue;
 import com.autohub.expense.util.AssertionUtil;
 import com.autohub.expense.util.TestUtil;
 import org.junit.jupiter.api.Test;

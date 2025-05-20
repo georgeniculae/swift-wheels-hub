@@ -4,7 +4,7 @@ import com.autohub.agency.mapper.RentalOfficeMapper;
 import com.autohub.agency.repository.RentalOfficeRepository;
 import com.autohub.dto.agency.RentalOfficeRequest;
 import com.autohub.dto.agency.RentalOfficeResponse;
-import com.autohub.entity.agency.RentalOffice;
+import com.autohub.agency.entity.RentalOffice;
 import com.autohub.exception.AutoHubNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

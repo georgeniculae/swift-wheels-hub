@@ -1,7 +1,7 @@
 package com.autohub.expense.service;
 
 import com.autohub.dto.expense.RevenueResponse;
-import com.autohub.entity.invoice.Revenue;
+import com.autohub.expense.entity.Revenue;
 import com.autohub.expense.mapper.RevenueMapper;
 import com.autohub.expense.mapper.RevenueMapperImpl;
 import com.autohub.expense.repository.RevenueRepository;

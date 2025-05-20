@@ -1,7 +1,8 @@
-package com.autohub.entity.invoice;
+package com.autohub.booking.entity;
 
-import com.autohub.entity.common.BaseEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -18,13 +19,21 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "invoice", schema = "public")
+@Table(name = "booking", schema = "public")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Setter
-public class Invoice extends BaseEntity {
+public class Booking extends BaseEntity {
+
+    @NotNull(message = "Date of booking cannot be null")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
+    private LocalDate dateOfBooking;
+
+    @Enumerated(EnumType.STRING)
+    private BookingStatus status;
 
     @NotEmpty(message = "Username cannot be empty")
     private String customerUsername;
@@ -33,40 +42,28 @@ public class Invoice extends BaseEntity {
     private String customerEmail;
 
     @NotNull(message = "Car id cannot be null")
-    private Long carId;
+    private Long actualCarId;
 
-    private Long receptionistEmployeeId;
-
-    private Long returnBranchId;
-
-    @NotNull(message = "Booking id cannot be null")
-    private Long bookingId;
+    private Long previousCarId;
 
     @NotNull(message = "Date from cannot be null")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
     private LocalDate dateFrom;
 
-    @NotNull(message = "Date to cannot be null")
+    @NotNull(message = "Date to cannot be blank")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
     private LocalDate dateTo;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Temporal(TemporalType.DATE)
-    private LocalDate carReturnDate;
-
-    private Boolean isVehicleDamaged;
-
-    private BigDecimal damageCost;
-
-    private BigDecimal additionalPayment;
-
-    private BigDecimal totalAmount;
+    private BigDecimal amount;
 
     @NotNull(message = "Rental car price cannot be null")
     private BigDecimal rentalCarPrice;
 
-    private String comments;
+    @NotNull(message = "Rental branch id cannot be null")
+    private Long rentalBranchId;
+
+    private Long returnBranchId;
 
 }

@@ -1,6 +1,6 @@
 package com.autohub.expense.repository;
 
-import com.autohub.entity.invoice.Revenue;
+import com.autohub.expense.entity.Revenue;
 import jakarta.persistence.QueryHint;
 import org.hibernate.jpa.HibernateHints;
 import org.springframework.data.jpa.repository.JpaRepository;
